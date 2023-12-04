@@ -1,4 +1,4 @@
-package com.example.flutter_citizenapp
+package com.sioc.sma.flutter_citizenapp
 
 import io.flutter.embedding.android.FlutterActivity
 
