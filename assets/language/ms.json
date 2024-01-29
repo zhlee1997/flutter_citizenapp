@@ -1,0 +1,359 @@
+{
+  "login": "Log Masuk",
+
+  "logout": "Log Keluar",
+
+  "please_login": "Log masuk untuk Talikhidmat, butang kecemasan, CCTV video langsung dan pembayaran bil.",
+
+  "close": "Tutup",
+
+  "services": "Perkhidmatan",
+
+  "talikhidmat": "Talikhidmat",
+
+  "new_case": "Kes Baru",
+
+  "case_location": "Lokasi Kes",
+
+  "get": "Kedudukan",
+
+  "category": "Kategori",
+
+  "latitude": "Latitud",
+
+  "longitude": "Longitud",
+
+  "complaint": "Aduan",
+
+  "compliment": "Pujian",
+
+  "enquiry": "Pertanyaan",
+
+  "request_for_service": "Permintaan Perkhidmatan",
+
+  "suggestion": "Cadangan",
+
+  "message": "Mesej",
+
+  "a_pothole": "Nampak satu lubang di tengah trek joging",
+
+  "please_enter_messages": "Sila masukkan mesej",
+
+  "photo_library": "Album",
+
+  "camera": "Kamera",
+
+  "submit_c": "Hantar Kes",
+
+  "are_you": "Adakah anda pasti untuk menghantar?",
+
+  "yes": "Ya",
+
+  "no": "Tidak",
+
+  "submit_successful": "Berjaya!",
+
+  "thank_you_for_your_feedback": "Terima Kasih atas maklum balas anda.",
+
+  "great": "OK",
+
+  "emergency_button": "Butang Kecemasan",
+
+  "note": "Catatan: Sila gunakan perkhidmatan ini dengan berhati-hati. Butang kecemasan ini akan meminta maklumat peribadi pengguna dan lokasi semasa untuk mengeluarkan panggilan untuk mendapatkan bantuan.",
+
+  "harassment": "Gangguan",
+
+  "fire/rescue": "Bomba/Penyelamatan",
+
+  "traffic_accident/injuries": "Kemalangan Jalan Raya/Kecederaan",
+
+  "theft/robbery": "Kes Curian/Rompakan",
+
+  "physical_violence": "Keganasan Fizikal",
+
+  "others": "Lain-lain",
+
+  "caution": "Berhati-hati!",
+
+  "do_you": "Adakah anda pasti hantar permintaan ini:",
+
+  "location_recorded": "Lokasi telah direcod",
+
+  "your_emergency": "Permintaan bantuan anda teleh diterima.",
+
+  "ok": "OK",
+
+  "state_an_emergency": "Nyatakan Keadaan Kecemasan",
+
+  "type_here": "Taip di Sini",
+
+  "cancel": "Batal",
+
+  "send": "Hantar",
+
+  "traffic_images": "Gambar Lalu Lintas",
+
+  "updated_on": "Kemaskini pada:",
+
+  "tourism_information": "Maklumat Pelancongan",
+
+  "information_detail": "Maklumat Terperinci",
+
+  "live_video": "Video Langsung",
+
+  "subscription": "(Langganan)",
+
+  "cctv_map": "Peta CCTV",
+
+  "play_now": "TONTON",
+
+  "live_cctv": "CCTV Langsung",
+
+  "nearby_cctv": "CCTV Berdekatan",
+
+  "bill_payment": "Pembayaran Bil",
+
+  "assessment_rate": "Cukai Pintu",
+
+  "please_refer": "Sila rujuk bil untuk maklumat akaun",
+
+  "account_number": "Nombor Akaun",
+
+  "enter_account_number": "Sila Masuk Nombor Akaun",
+
+  "bill_amount": "Amaun Bil",
+
+  "enter_bill_amount": "Sila Masuk Amaun Bil",
+
+  "please_allow": "Akaun anda akan dikemas kini dalam masa tiga hari bekerja setelah pembayaran.",
+
+  "proceed_to": "Buat Pesanan",
+
+  "checkout": "Pesanan",
+
+  "payment_details": "Butiran Pembayaran",
+
+  "payment_descrip": "Penerangan Pembayaran",
+
+  "pay_with": "Bayar dengan S Pay Global",
+
+  "success_transact": "Transaksi Berjaya",
+
+  "fail_transact": "Transaksi Gagal",
+
+  "your_payment_success": "Pembayaran anda berjaya dilakukan",
+
+  "your_payment_fail": "Pembayaran anda gagal",
+
+  "done": "Selesai",
+
+  "bus_schedule": "Jadual Bas",
+
+  "bus_map": "Peta Laluan Bas",
+
+  "select": "Pilih",
+
+  "choose_l": "Pilih Laluan Bas",
+
+  "choose": "Pilih",
+
+  "loading": "Sedang Memuatkan",
+
+  "103_bus_route": "103 - Laluan Bas",
+
+  "bus_stop": "Perhentian Bas",
+
+  "bus_station": "Perhentian Bas",
+
+  "scheduled_a": "Anggaran Masa Ketibaan",
+
+  "next_a": "Waktu Ketibaan Seterusnya",
+
+  "direction": "Arah",
+
+  "announcement": "Pengumuman",
+
+  "view_all": "Semak Semua",
+
+  "announcement_detail": "Perincian Pengumuman",
+
+  "inbox": "Peti Masuk",
+
+  "mark_all": "Tanda sebagai dibaca",
+
+  "inbox_detail": "Perincian Peti Masuk",
+
+  "reported_cases": "Kes yang Dilapor",
+
+  "emergency_cases": "Kes Kecemasan",
+
+  "new": "Baru",
+
+  "pending": "Belum Selesai",
+
+  "resolved": "Selesai",
+
+  "no_data": "Tiada Data",
+
+  "end_of": "Hujung Halaman",
+
+  "case_d": "Perincian Kes",
+
+  "case_n": "Nombor Kes",
+
+  "case_s": "Status Kes",
+
+  "case_id": "ID Kes",
+
+  "date_sub": "Tarikh Dihantar",
+
+  "case_loca": "Lokasi Kes",
+
+  "request_d": "Butiran",
+
+  "attachments": "Lampiran",
+
+  "load_m": "Muat lagi",
+
+  "my_transactions": "Bil Saya",
+
+  "no_transactions": "Tiada Transaksi",
+
+  "no_tran_his": "Tiada Sejarah Transaksi",
+
+  "monthly_transac": "Transaksi Bulanan",
+
+  "transaction_hist": "Sejarah Transaksi",
+
+  "transaction_d": "Butiran Transaksi",
+
+  "transaction_n": "Nombor Transaksi ",
+
+  "my_profile": "Profil",
+
+  "upgrad": "NAIK TARAF",
+
+  "normal_mem": "Ahli Biasa",
+
+  "vip_m": "Ahli VIP hingga",
+
+  "email_add": "Alamat E-mel",
+
+  "mobile_num": "Nombor Telefon Bimbit",
+
+  "address": "Alamat Rumah",
+
+  "to_edit": "Untuk mengedit profil, sila kunjungi ",
+
+  "upgrade_p": "Pelan Naif Taraf",
+
+  "benefits": "Faedah",
+
+  "cctv_streaming": "Penstriman CCTV",
+
+  "no_ads": "Tiada Iklan",
+
+  "fee_month": "RM 5.00 /Bulan",
+
+  "subscribe": "LANGGAN",
+
+  "settings": "Tetapan",
+
+  "splash": "Muzik halaman permulaan",
+
+  "enabled": "Aktifkan",
+
+  "disabled": "Nyahaktif",
+
+  "support": "Sokongan",
+
+  "terms_cond": "Terma dan Syarat",
+
+  "privacy_poli": "Dasar Privasi",
+
+  "about_app": "Tentang CitizenApp",
+
+  "find_out": "Maklumat Lanjut",
+
+  "app_vers": "Versi App",
+
+  "unknown_location": "Lokasi Tidak Diketahui",
+
+  "to_detect": "Untuk mengesan lokasi semasa, periksa sama ada perkhidmatan GPS atau kebenaran lokasi diaktifkan",
+
+  "no_announcement_data": "Tiada Data Pengumuman",
+
+  "login_error": "Ralat Log Masuk",
+
+  "no_inbox_data": "Tiada Data Peti Masuk",
+
+  "delete": "Padam",
+
+  "payment_failed": "Pembayaran gagal",
+
+  "payment_in_progress": "Pembayaran Sedang Berlangsung",
+
+  "upload_photo": "Memuat naik Foto",
+
+  "upload_fail": "Gagal Memuat naik",
+
+  "submit_fail": "Hantaran Gagal",
+
+  "warning": "Amaran",
+
+  "do_you_discard": "Adakah anda ingin membuang data ini?",
+
+  "please_enter_case_location": "Sila masukkan lokasi kes",
+
+  "no_reported_case": "Tiada Kes yang Dilaporkan",
+
+  "no_tourism_data": "Tiada Maklumat Pelancongan",
+
+  "google_maps_required": "Google Maps diperlukan",
+
+  "more_info": "Maklumat Lanjut",
+
+  "routing_agencies": "Agensi",
+
+  "case_timeline": "Garis Masa Kes",
+
+  "do_you_logout": "Adakah anda mahu log keluar?",
+
+  "logging_out": "Sedang Keluar",
+
+  "capturing_video": "Sedang Muat Video",
+
+  "greater_than_0": "Besar daripada 0.00",
+
+  "image_not_found": "Gambar Tidak Dijumpai",
+
+  "eg_flood": "Contoh: Banjir",
+
+  "please_install_spay": "Sila muat turun S Pay Global",
+
+  "cctv_not_found": "CCTV tidak dijumpai",
+
+  "bus_map_not_loaded": "Peta Bas tidak dimuat",
+
+  "subscription_1": "Langganan",
+
+  "message_deleted": "Mesej dipadamkan",
+
+  "bus_stop_not_found": "Perhentian bas tidak dijumpai",
+
+  "unauthorized_access": "Akses Tidak Dibenarkan",
+
+  "signed_out": "Log Keluar.",
+
+  "want_to_have_full": "Ingin mendapat akses penuh?\nLanggan untuk menikmati faedah VIP",
+
+  "sign_out_failed": "Log keluar gagal",
+
+  "please_try_again": "Sila cuba lagi",
+
+  "image_less_than_10": "Gambar perlu kurang daripada 10MB",
+
+  "could_not_network": "Tidak dapat sambung ke internet",
+
+  "camera_is_not_available": "Kamera tidak tersedia"
+}

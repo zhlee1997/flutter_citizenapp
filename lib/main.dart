@@ -1,4 +1,20 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:month_year_picker/month_year_picker.dart';
+
+import './routes.dart';
+import './utils/navigation_service.dart';
+import './screens/home_screen.dart';
+import './screens/splash_video_screen.dart';
+
+// providers
+import './providers/language_provider.dart';
+
+// language settings
+import './utils/app_localization.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,28 +26,75 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (ctx) => LanguageProvider(),
+        )
+      ],
+      child: Consumer<LanguageProvider>(
+        child: const SplashVideoScreen(),
+        builder: (BuildContext context, dynamic languageData, Widget? child) {
+          return MaterialApp(
+            navigatorKey: NavigationService.instance.navigationKey,
+            title: 'SMA CitizenApp',
+            routes: routes,
+            onUnknownRoute: (_) => MaterialPageRoute(
+              builder: (_) => HomeScreen(),
+            ),
+            locale: languageData.locale,
+            supportedLocales: const [
+              Locale('en', 'US'),
+              Locale('zh', 'CN'),
+              Locale('ms', 'MY'),
+            ],
+            // These delegates make sure that the localization data for the proper language is loaded
+            localizationsDelegates: const [
+              // THIS CLASS WILL BE ADDED LATER
+              // A class which loads the translations from JSON files
+              AppLocalization.delegate,
+              // Built-in localization of basic text for Material widgets
+              GlobalMaterialLocalizations.delegate,
+              // Built-in localization for text direction LTR/RTL
+              GlobalWidgetsLocalizations.delegate,
+              // Built-in localization of basic text for Cupertino widgets
+              GlobalCupertinoLocalizations.delegate,
+              // AppLocalizations.delegate,
+              MonthYearPickerLocalizations.delegate,
+            ],
+            localeResolutionCallback: (locale, supportedLocales) {
+              // Check if the current device locale is supported
+              for (var supportedLocale in supportedLocales) {
+                if (supportedLocale.languageCode == locale!.languageCode) {
+                  return supportedLocale;
+                }
+              }
+
+              // If the locale of the device is not supported, use the first one
+              // from the list (English, in this case).
+              return supportedLocales.first;
+            },
+            theme: ThemeData(
+              useMaterial3: true,
+              visualDensity: VisualDensity.adaptivePlatformDensity,
+              colorScheme:
+                  ColorScheme.fromSeed(seedColor: Colors.deepPurple).copyWith(
+                secondary: Colors.purple[50],
+                background: Colors.white,
+              ),
+              textTheme: ThemeData.light().textTheme.copyWith(
+                    displayLarge: TextStyle(
+                      fontSize: Platform.isIOS ? 18.0 : 16.0,
+                    ),
+                    titleMedium: TextStyle(
+                      fontSize: Platform.isIOS ? 14.0 : 12.0,
+                    ),
+                  ),
+            ),
+            home: child,
+          );
+        },
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
