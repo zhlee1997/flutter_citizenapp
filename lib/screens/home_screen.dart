@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_citizenapp/utils/app_constant.dart';
+import 'package:flutter_citizenapp/screens/home_page.dart';
+import 'package:flutter_citizenapp/screens/notifications/notifications_bottom_nav_screen.dart';
+import 'package:flutter_citizenapp/screens/profile/profile_bottom_nav_screen.dart';
+import 'package:flutter_citizenapp/screens/services/services_bottom_nav_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   static const routeName = 'home-page-screen';
@@ -11,77 +14,188 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _counter = 0;
+  int _currentPageIndex = 0;
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-  }
+  final List<Widget> _screens = [
+    const HomePage(),
+    const ServicesBottomNavScreen(),
+    const NotificationsBottomNavScreen(),
+    const ProfileBottomNavScreen(),
+  ];
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text("CitizenApp"),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
+      bottomNavigationBar: NavigationBar(
+        onDestinationSelected: (int index) {
+          setState(() {
+            _currentPageIndex = index;
+          });
+        },
+        selectedIndex: _currentPageIndex,
+        destinations: <Widget>[
+          NavigationDestination(
+            selectedIcon: Icon(
+              Icons.home,
+              color: Theme.of(context).colorScheme.primary,
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+            icon: const Icon(Icons.home_outlined),
+            label: 'Home',
+          ),
+          NavigationDestination(
+            selectedIcon: Icon(
+              Icons.apps,
+              color: Theme.of(context).colorScheme.primary,
             ),
-          ],
-        ),
+            icon: const Icon(Icons.apps_outlined),
+            label: 'Services',
+          ),
+          NavigationDestination(
+            selectedIcon: Badge(
+              child: Icon(
+                Icons.notifications,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ),
+            icon: const Badge(child: Icon(Icons.notifications_outlined)),
+            label: 'Notifications',
+          ),
+          NavigationDestination(
+            selectedIcon: Badge(
+              label: const Text("2"),
+              child: Icon(
+                Icons.account_circle,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ),
+            icon: const Badge(
+              label: Text('2'),
+              child: Icon(
+                Icons.account_circle_outlined,
+              ),
+            ),
+            label: 'Profile',
+          ),
+        ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      appBar: _handleAppBar(),
+      body: _screens[_currentPageIndex],
     );
+  }
+
+  AppBar _handleAppBar() {
+    switch (_currentPageIndex) {
+      case 0:
+        return AppBar(
+          backgroundColor: Theme.of(context).colorScheme.background,
+          leading: // User Avatar Icon
+              GestureDetector(
+            child: Container(
+              margin: const EdgeInsets.only(
+                left: 12.0,
+                top: 8.0,
+                bottom: 8.0,
+              ),
+              // decoration: BoxDecoration(
+              //   color: Colors.grey[300],
+              //   shape: BoxShape.circle,
+              // ),
+              child: Image.asset(
+                "assets/images/icon/sarawak_logo.png",
+                width: 50,
+                height: 50,
+                fit: BoxFit.contain,
+              ),
+            ),
+            onTap: () {
+              print("User avatar pressed");
+            },
+          ),
+          title: GestureDetector(
+            child: Text(
+              "Login Now to CitizenApp",
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.primary,
+                fontSize: 16.0,
+              ),
+            ),
+            onTap: () {
+              print("Login Now pressed");
+            },
+          ),
+          actions: [
+            Container(
+              // Set the background color of the IconButton
+              decoration: BoxDecoration(
+                color: Theme.of(context)
+                    .colorScheme
+                    .inversePrimary
+                    .withOpacity(0.2),
+                shape: BoxShape.circle,
+              ),
+              margin: const EdgeInsets.all(8.0),
+              child: IconButton(
+                color: Theme.of(context).colorScheme.primary,
+                onPressed: () {
+                  print("Sign in button pressed");
+                },
+                icon: const Icon(
+                  Icons.login,
+                  size: 20.0,
+                ),
+              ),
+            )
+          ],
+        );
+      case 1:
+        return AppBar(
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              const Text("Services"),
+              Text(
+                "Choose the services we offer",
+                style: TextStyle(
+                  color: Colors.grey[600],
+                  fontSize: Theme.of(context).textTheme.labelLarge!.fontSize,
+                ),
+              )
+            ],
+          ),
+        );
+      case 2:
+        return AppBar(
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              const Text("Notifications"),
+              Text(
+                "Get notified by the notifications",
+                style: TextStyle(
+                  color: Colors.grey[600],
+                  fontSize: Theme.of(context).textTheme.labelLarge!.fontSize,
+                ),
+              )
+            ],
+          ),
+        );
+      case 3:
+        return AppBar(
+            title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            const Text("Profile"),
+            Text(
+              "Select your profile settings",
+              style: TextStyle(
+                color: Colors.grey[600],
+                fontSize: Theme.of(context).textTheme.labelLarge!.fontSize,
+              ),
+            )
+          ],
+        ));
+      default:
+        return AppBar();
+    }
   }
 }

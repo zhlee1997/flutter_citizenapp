@@ -68,6 +68,10 @@ flutter:
     # video
     - assets/video/sioc.mp4
 
+    # images/icon
+    - assets/images/icon/sioc.png
+    - assets/images/icon/sarawak_logo.png
+
     #language
     - assets/language/en.json
     - assets/language/ms.json

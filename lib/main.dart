@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
         builder: (BuildContext context, dynamic languageData, Widget? child) {
           return MaterialApp(
             navigatorKey: NavigationService.instance.navigationKey,
-            title: 'SMA CitizenApp',
+            title: 'CitizenApp',
             routes: routes,
             onUnknownRoute: (_) => MaterialPageRoute(
               builder: (_) => HomeScreen(),
@@ -82,14 +82,6 @@ class MyApp extends StatelessWidget {
                 secondary: Colors.purple[50],
                 background: Colors.white,
               ),
-              textTheme: ThemeData.light().textTheme.copyWith(
-                    displayLarge: TextStyle(
-                      fontSize: Platform.isIOS ? 18.0 : 16.0,
-                    ),
-                    titleMedium: TextStyle(
-                      fontSize: Platform.isIOS ? 14.0 : 12.0,
-                    ),
-                  ),
             ),
             home: child,
           );
