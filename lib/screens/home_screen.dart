@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_citizenapp/screens/home_page.dart';
 import 'package:flutter_citizenapp/screens/notifications/notifications_bottom_nav_screen.dart';
 import 'package:flutter_citizenapp/screens/profile/profile_bottom_nav_screen.dart';
+import 'package:flutter_citizenapp/screens/sarawakid/sarawakid_screen.dart';
 import 'package:flutter_citizenapp/screens/services/services_bottom_nav_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -22,6 +23,9 @@ class _HomeScreenState extends State<HomeScreen> {
     const NotificationsBottomNavScreen(),
     const ProfileBottomNavScreen(),
   ];
+
+  void handleNavigateSarawakIDScreen() =>
+      Navigator.of(context).pushNamed(SarawakIDScreen.routeName);
 
   @override
   Widget build(BuildContext context) {
@@ -89,27 +93,22 @@ class _HomeScreenState extends State<HomeScreen> {
         return AppBar(
           backgroundColor: Theme.of(context).colorScheme.background,
           leading: // User Avatar Icon
-              GestureDetector(
-            child: Container(
-              margin: const EdgeInsets.only(
-                left: 12.0,
-                top: 8.0,
-                bottom: 8.0,
-              ),
-              // decoration: BoxDecoration(
-              //   color: Colors.grey[300],
-              //   shape: BoxShape.circle,
-              // ),
-              child: Image.asset(
-                "assets/images/icon/sarawak_logo.png",
-                width: 50,
-                height: 50,
-                fit: BoxFit.contain,
-              ),
+              Container(
+            margin: const EdgeInsets.only(
+              left: 12.0,
+              top: 8.0,
+              bottom: 8.0,
             ),
-            onTap: () {
-              print("User avatar pressed");
-            },
+            // decoration: BoxDecoration(
+            //   color: Colors.grey[300],
+            //   shape: BoxShape.circle,
+            // ),
+            child: Image.asset(
+              "assets/images/icon/sarawak_logo.png",
+              width: 50,
+              height: 50,
+              fit: BoxFit.contain,
+            ),
           ),
           title: GestureDetector(
             child: Text(
@@ -120,7 +119,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             onTap: () {
-              print("Login Now pressed");
+              handleNavigateSarawakIDScreen();
             },
           ),
           actions: [
@@ -137,7 +136,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: IconButton(
                 color: Theme.of(context).colorScheme.primary,
                 onPressed: () {
-                  print("Sign in button pressed");
+                  handleNavigateSarawakIDScreen();
                 },
                 icon: const Icon(
                   Icons.login,

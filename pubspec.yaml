@@ -41,6 +41,12 @@ dependencies:
   path_provider: ^2.1.1
   month_year_picker: ^0.3.0+1
   flutter_vlc_player: ^7.4.1
+  webview_flutter: ^4.4.4
+  uuid: ^4.3.3
+  http: ^1.2.0
+  lottie: ^3.0.0
+  audioplayers: ^5.2.1
+  google_maps_flutter: ^2.5.3
 
 dev_dependencies:
   flutter_test:
@@ -71,6 +77,24 @@ flutter:
     # images/icon
     - assets/images/icon/sioc.png
     - assets/images/icon/sarawak_logo.png
+
+    # images/pictures
+    - assets/images/pictures/sos_image.jpg
+    - assets/images/pictures/payment_image.jpg
+
+    # images/pictures/emergency
+    - assets/images/pictures/emergency/voice_recording.jpg
+    - assets/images/pictures/emergency/harassment.jpg
+    - assets/images/pictures/emergency/fire.jpg
+    - assets/images/pictures/emergency/traffic_accident.jpg
+    - assets/images/pictures/emergency/theft.jpg
+    - assets/images/pictures/emergency/physical_violence.jpg
+    - assets/images/pictures/emergency/others.jpg
+
+    - assets/images/pictures/emergency/voice_illustration.jpeg
+
+    # images/pictures/emergency
+    - assets/animations/lottie_recorder.json
 
     #language
     - assets/language/en.json

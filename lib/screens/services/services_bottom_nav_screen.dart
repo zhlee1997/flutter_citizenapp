@@ -53,7 +53,11 @@ class ServicesBottomNavScreen extends StatelessWidget {
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10.0),
-                  color: Theme.of(context).colorScheme.primaryContainer,
+                  image: DecorationImage(
+                    image: AssetImage("assets/images/pictures/sos_image.jpg"),
+                    fit: BoxFit.cover,
+                    opacity: 0.15,
+                  ),
                 ),
                 child: Column(
                   children: <Widget>[
@@ -62,7 +66,7 @@ class ServicesBottomNavScreen extends StatelessWidget {
                         top: 35.0,
                       ),
                       child: Icon(
-                        Icons.notifications_active_outlined,
+                        Icons.sos_outlined,
                         size: 50.0,
                       ),
                     ),
@@ -143,7 +147,12 @@ class ServicesBottomNavScreen extends StatelessWidget {
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10.0),
-                  color: Theme.of(context).colorScheme.primaryContainer,
+                  image: DecorationImage(
+                    image:
+                        AssetImage("assets/images/pictures/payment_image.jpg"),
+                    fit: BoxFit.cover,
+                    opacity: 0.2,
+                  ),
                 ),
                 child: Column(
                   children: <Widget>[

@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_citizenapp/screens/emergency/emergency_screen.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
+
+  void handleNavigateToEmergency(BuildContext context) =>
+      Navigator.of(context).pushNamed(EmergencyScreen.routeName);
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +59,7 @@ class HomePage extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: <Widget>[
                               Icon(
-                                Icons.receipt_long_outlined,
+                                Icons.feedback_outlined,
                                 color: Theme.of(context).colorScheme.primary,
                                 size: 30.0,
                               ),
@@ -85,6 +89,52 @@ class HomePage extends StatelessWidget {
                       ),
                     ),
                   ),
+                  GestureDetector(
+                    onTap: () => handleNavigateToEmergency(context),
+                    child: Card(
+                      elevation: 5.0,
+                      child: Container(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Icon(
+                                  Icons.sos_outlined,
+                                  color: Theme.of(context).colorScheme.primary,
+                                  size: 30.0,
+                                ),
+                                const Text(
+                                  "Emergency",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 10.0,
+                            ),
+                            Container(
+                              margin: const EdgeInsets.only(
+                                left: 10.0,
+                              ),
+                              child: Text(
+                                "Rescue request",
+                                style: TextStyle(
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                   Card(
                     elevation: 5.0,
                     child: Container(
@@ -98,12 +148,12 @@ class HomePage extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: <Widget>[
                               Icon(
-                                Icons.receipt_long_outlined,
+                                Icons.subscriptions,
                                 color: Theme.of(context).colorScheme.primary,
                                 size: 30.0,
                               ),
                               const Text(
-                                "Talikhidmat",
+                                "Subscription",
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -118,7 +168,7 @@ class HomePage extends StatelessWidget {
                               left: 10.0,
                             ),
                             child: Text(
-                              "Submit a report",
+                              "Premium member",
                               style: TextStyle(
                                 color: Colors.grey[600],
                               ),
@@ -146,7 +196,7 @@ class HomePage extends StatelessWidget {
                                 size: 30.0,
                               ),
                               const Text(
-                                "Talikhidmat",
+                                "Bill Payment",
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -161,50 +211,7 @@ class HomePage extends StatelessWidget {
                               left: 10.0,
                             ),
                             child: Text(
-                              "Submit a report",
-                              style: TextStyle(
-                                color: Colors.grey[600],
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                  Card(
-                    elevation: 5.0,
-                    child: Container(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              Icon(
-                                Icons.receipt_long_outlined,
-                                color: Theme.of(context).colorScheme.primary,
-                                size: 30.0,
-                              ),
-                              const Text(
-                                "Talikhidmat",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 10.0,
-                          ),
-                          Container(
-                            margin: const EdgeInsets.only(
-                              left: 10.0,
-                            ),
-                            child: Text(
-                              "Submit a report",
+                              "Billing and taxes",
                               style: TextStyle(
                                 color: Colors.grey[600],
                               ),
