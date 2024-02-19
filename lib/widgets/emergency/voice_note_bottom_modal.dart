@@ -1,9 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_citizenapp/widgets/emergency/circular_progress_button.dart';
-import 'package:flutter_citizenapp/widgets/emergency/emergency_audio_player.dart';
 import 'package:lottie/lottie.dart';
+
+import '../../widgets/emergency/circular_progress_button.dart';
+import '../../widgets/emergency/emergency_audio_player.dart';
 
 class VoiceNoteBottomModal extends StatefulWidget {
   final Widget childWidget;
@@ -79,15 +80,17 @@ class _VoiceNoteBottomModalState extends State<VoiceNoteBottomModal> {
               ),
               if (_countdown == 10) ...returnIntro(screenSize),
               if (_countdown < 10 && !_isRecorded)
-                Column(children: <Widget>[
-                  Text("Recording In Progress"),
-                  Lottie.asset(
-                    'assets/animations/lottie_recorder.json',
-                    width: screenSize.height * 0.35,
-                    height: screenSize.height * 0.35,
-                    fit: BoxFit.fill,
-                  ),
-                ]),
+                Column(
+                  children: <Widget>[
+                    Text("Recording In Progress"),
+                    Lottie.asset(
+                      'assets/animations/lottie_recorder.json',
+                      width: screenSize.height * 0.35,
+                      height: screenSize.height * 0.35,
+                      fit: BoxFit.fill,
+                    ),
+                  ],
+                ),
               if (!_isRecorded)
                 Container(
                   margin: const EdgeInsets.only(

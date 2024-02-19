@@ -1,0 +1,90 @@
+{
+  "project_info": {
+    "project_number": "664335931229",
+    "project_id": "sioc2a",
+    "storage_bucket": "sioc2a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:664335931229:android:6a7dc365f6515eafbebab4",
+        "android_client_info": {
+          "package_name": "com.sioc.sma.flutter_citizenapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "664335931229-36p2g53f0mr1mft0046ponlmv98lu26d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDLLp-cs2czzDmxfZ5dj2ckU7xrdPAiPxI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "664335931229-36p2g53f0mr1mft0046ponlmv98lu26d.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "664335931229-m4besab9s8mdg4mlm8a58016gttcod43.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.sioc2a.sma.citizenMobile"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:664335931229:android:65461693a2e69b34bebab4",
+        "android_client_info": {
+          "package_name": "com.sioc2a.sma.citizen_mobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "664335931229-tnn7rs9rspp3g65ko493r91hf1oqj2ia.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sioc2a.sma.citizen_mobile",
+            "certificate_hash": "4c3f1296ac33217db4d7d7a9240c4424a71ee2df"
+          }
+        },
+        {
+          "client_id": "664335931229-36p2g53f0mr1mft0046ponlmv98lu26d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDLLp-cs2czzDmxfZ5dj2ckU7xrdPAiPxI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "664335931229-36p2g53f0mr1mft0046ponlmv98lu26d.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "664335931229-m4besab9s8mdg4mlm8a58016gttcod43.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.sioc2a.sma.citizenMobile"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

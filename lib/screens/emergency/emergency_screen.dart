@@ -67,7 +67,6 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Emergency Request"),
-        centerTitle: true,
       ),
       body: Theme(
         data: Theme.of(context).copyWith(

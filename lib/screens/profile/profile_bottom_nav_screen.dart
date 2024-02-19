@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_citizenapp/providers/auth_provider.dart';
+import 'package:provider/provider.dart';
 
 class ProfileBottomNavScreen extends StatefulWidget {
   static const String routeName = 'profile-bottom-nav-screen';
@@ -22,6 +24,8 @@ class _ProfileBottomNavScreenState extends State<ProfileBottomNavScreen> {
   ];
 
   int _selectedFruit = 0;
+  // TODO
+  late bool isLogin;
 
   // This shows a CupertinoModalPopup with a reasonable fixed height which hosts CupertinoPicker.
   void _showDialog(Widget child) {
@@ -46,37 +50,45 @@ class _ProfileBottomNavScreenState extends State<ProfileBottomNavScreen> {
   }
 
   @override
+  void didChangeDependencies() {
+    isLogin = Provider.of<AuthProvider>(context).isAuth;
+    super.didChangeDependencies();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       padding: EdgeInsets.all(10.0),
       child: Column(
         children: <Widget>[
-          GestureDetector(
-            onTap: () {
-              print("login now pressed");
-            },
-            child: Container(
-              padding: EdgeInsets.all(10.0),
-              child: Row(
-                children: <Widget>[
-                  CircleAvatar(
-                    child: Icon(Icons.person),
-                  ),
-                  SizedBox(
-                    width: 15.0,
-                  ),
-                  Text(
-                    "Login Now",
-                    style: Theme.of(context).textTheme.titleMedium,
-                  )
-                ],
+          if (!isLogin)
+            GestureDetector(
+              onTap: () {
+                print("login now pressed");
+              },
+              child: Container(
+                padding: EdgeInsets.all(10.0),
+                child: Row(
+                  children: <Widget>[
+                    CircleAvatar(
+                      child: Icon(Icons.person),
+                    ),
+                    SizedBox(
+                      width: 15.0,
+                    ),
+                    Text(
+                      "Login Now",
+                      style: Theme.of(context).textTheme.titleMedium,
+                    )
+                  ],
+                ),
               ),
             ),
-          ),
-          Divider(
-            thickness: 5.0,
-            color: Theme.of(context).dividerColor.withOpacity(0.05),
-          ),
+          if (!isLogin)
+            Divider(
+              thickness: 5.0,
+              color: Theme.of(context).dividerColor.withOpacity(0.05),
+            ),
           Container(
             padding: EdgeInsets.all(10.0),
             child: Column(

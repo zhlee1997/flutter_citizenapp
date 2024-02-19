@@ -2,20 +2,85 @@ import 'dart:io';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import './app_exception.dart';
+import '../config/app_config.dart';
 
 class ApiBaseHelper {
-  final String _baseUrl = "http://api.themoviedb.org/3/";
+  final String _baseUrl = AppConfig().baseUrl;
 
-  Future<dynamic> get(String url) async {
+  Future<dynamic> get(
+    String url, {
+    Map<String, dynamic>? queryParameters,
+  }) async {
+    final storage = new FlutterSecureStorage();
+    final prefs = await SharedPreferences.getInstance();
+
+    var siocToken = await storage.read(key: 'siocToken');
+    var sarawakToken = await storage.read(key: 'sarawakToken');
+
     var responseJson;
+    var uri = Uri.https(
+      _baseUrl,
+      "/mobile/api/" + url,
+      queryParameters,
+    );
     try {
-      final response = await http.get((_baseUrl + url) as Uri);
+      print("baseurl: ${uri.toString()}");
+      final response = await http.get(
+        uri,
+        headers: {
+          'Authorization': siocToken ?? '',
+          'sarawakToken': sarawakToken ?? '',
+        },
+      );
+
       responseJson = _returnResponse(response);
-    } on SocketException {
-      throw FetchDataException('No Internet connection');
+    } on Exception catch (e) {
+      print('getError: $e');
+      // make it explicit that this function can throw exceptions
+      rethrow;
     }
+    // _checkResponse(responseJson);
+    return responseJson;
+  }
+
+  Future<dynamic> post(
+    String url, {
+    dynamic data,
+    Function(int, int)? onSendProgress,
+  }) async {
+    final storage = new FlutterSecureStorage();
+    final prefs = await SharedPreferences.getInstance();
+
+    var siocToken = await storage.read(key: 'siocToken');
+    var sarawakToken = await storage.read(key: 'sarawakToken');
+
+    var responseJson;
+    var uri = Uri.https(
+      _baseUrl,
+      "/mobile/api/" + url,
+    );
+    try {
+      print("baseurl: ${uri.toString()}");
+      final response = await http.post(
+        uri,
+        headers: {
+          'Authorization': siocToken ?? '',
+          'sarawakToken': sarawakToken ?? '',
+        },
+        body: data,
+        // onSendProgress: onSendProgress,
+      );
+      responseJson = _returnResponse(response);
+    } on Exception catch (e) {
+      print('postError: ${e.toString()}');
+      // make it explicit that this function can throw exceptions
+      rethrow;
+    }
+    // _checkResponse(responseJson);
     return responseJson;
   }
 
@@ -35,5 +100,17 @@ class ApiBaseHelper {
         throw FetchDataException(
             'Error occured while Communication with Server with StatusCode : ${response.statusCode}');
     }
+  }
+
+  void _checkResponse(http.Response response) {
+    var responseJson = json.decode(response.body.toString());
+    if (responseJson['status'] == 40101 || responseJson['status'] == 40301) {
+      _deleteLocalData();
+    }
+  }
+
+  Future<void> _deleteLocalData() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setInt('expire', -1);
   }
 }

@@ -9,6 +9,7 @@ import './screens/notifications/notifications_bottom_nav_screen.dart';
 import './screens/services/services_bottom_nav_screen.dart';
 
 import './screens/profile/profile_bottom_nav_screen.dart';
+import './screens/profile/profile_details_screen.dart';
 
 import './screens/emergency/emergency_screen.dart';
 
@@ -21,6 +22,7 @@ final Map<String, WidgetBuilder> routes = <String, WidgetBuilder>{
       const NotificationsBottomNavScreen(),
   ServicesBottomNavScreen.routeName: (ctx) => const ServicesBottomNavScreen(),
   ProfileBottomNavScreen.routeName: (ctx) => const ProfileBottomNavScreen(),
+  ProfileDetailsScreen.routeName: (ctx) => const ProfileDetailsScreen(),
   SarawakIDScreen.routeName: (ctx) => const SarawakIDScreen(),
   EmergencyScreen.routeName: (ctx) => const EmergencyScreen(),
 };

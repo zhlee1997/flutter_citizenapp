@@ -41,12 +41,18 @@ dependencies:
   path_provider: ^2.1.1
   month_year_picker: ^0.3.0+1
   flutter_vlc_player: ^7.4.1
-  webview_flutter: ^4.4.4
   uuid: ^4.3.3
   http: ^1.2.0
   lottie: ^3.0.0
   audioplayers: ^5.2.1
   google_maps_flutter: ^2.5.3
+  fluttertoast: ^8.2.4
+  flutter_inappwebview: ^6.0.0
+  flutter_secure_storage: ^9.0.0
+  flutter_local_notifications: ^16.3.2
+  firebase_messaging: ^14.7.15
+  firebase_core: ^2.25.4
+  url_launcher: ^6.2.4
 
 dev_dependencies:
   flutter_test:
@@ -77,10 +83,13 @@ flutter:
     # images/icon
     - assets/images/icon/sioc.png
     - assets/images/icon/sarawak_logo.png
+    - assets/images/icon/app_logo.png
+    - assets/images/icon/sarawakid_logo.png
 
     # images/pictures
     - assets/images/pictures/sos_image.jpg
     - assets/images/pictures/payment_image.jpg
+    - assets/images/pictures/kuching_city.jpeg
 
     # images/pictures/emergency
     - assets/images/pictures/emergency/voice_recording.jpg
@@ -90,11 +99,11 @@ flutter:
     - assets/images/pictures/emergency/theft.jpg
     - assets/images/pictures/emergency/physical_violence.jpg
     - assets/images/pictures/emergency/others.jpg
-
     - assets/images/pictures/emergency/voice_illustration.jpeg
 
-    # images/pictures/emergency
+    # images/pictures/emergency (animation)
     - assets/animations/lottie_recorder.json
+    - assets/animations/lottie_profile.json
 
     #language
     - assets/language/en.json

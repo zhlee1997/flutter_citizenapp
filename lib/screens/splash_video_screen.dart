@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
-// import 'package:better_player/better_player.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_vlc_player/flutter_vlc_player.dart';
 
 // import '../providers/settings_provider.dart';
-import '../providers/language_provider.dart';
-// import '../providers/auth_provider.dart';
+// import '../providers/language_provider.dart';
+import '../providers/auth_provider.dart';
 // import '../providers/location_provider.dart';
 // import '../providers/bus_provider.dart';
 // import '../providers/inbox_provider.dart';
 
 import './home_screen.dart';
-import '../utils/general_helper.dart';
+// import '../utils/general_helper.dart';
 import '../utils/app_constant.dart';
 // import '../utils/notification/push_notification.dart';
 
@@ -39,6 +38,8 @@ class _SplashVideoScreenState extends State<SplashVideoScreen> {
         Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
       }
     });
+
+    Provider.of<AuthProvider>(context, listen: false).checkIsAuth(context);
   }
 
   @override

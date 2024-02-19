@@ -46,46 +46,76 @@ class HomePage extends StatelessWidget {
                   childAspectRatio: 1.6 / 1,
                 ),
                 children: <Widget>[
-                  Card(
-                    elevation: 5.0,
-                    child: Container(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              Icon(
-                                Icons.feedback_outlined,
-                                color: Theme.of(context).colorScheme.primary,
-                                size: 30.0,
+                  GestureDetector(
+                    onTap: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Container(
+                            padding: EdgeInsets.all(10.0),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .primaryContainer,
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(10.0),
                               ),
-                              const Text(
-                                "Talikhidmat",
+                            ),
+                            child: Center(
+                              child: Text(
+                                "You have login successfully",
                                 style: TextStyle(
-                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
                                 ),
                               ),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 10.0,
-                          ),
-                          Container(
-                            margin: const EdgeInsets.only(
-                              left: 10.0,
                             ),
-                            child: Text(
-                              "Submit a report",
-                              style: TextStyle(
-                                color: Colors.grey[600],
+                          ),
+                          behavior: SnackBarBehavior.floating,
+                          backgroundColor: Colors.transparent,
+                          elevation: 0,
+                        ),
+                      );
+                    },
+                    child: Card(
+                      elevation: 5.0,
+                      child: Container(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Icon(
+                                  Icons.feedback_outlined,
+                                  color: Theme.of(context).colorScheme.primary,
+                                  size: 30.0,
+                                ),
+                                const Text(
+                                  "Talikhidmat",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 10.0,
+                            ),
+                            Container(
+                              margin: const EdgeInsets.only(
+                                left: 10.0,
                               ),
-                            ),
-                          )
-                        ],
+                              child: Text(
+                                "Submit a report",
+                                style: TextStyle(
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   ),
