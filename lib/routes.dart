@@ -13,6 +13,8 @@ import './screens/profile/profile_details_screen.dart';
 
 import './screens/emergency/emergency_screen.dart';
 
+import './screens/bill_payment/bill_payment_screen.dart';
+
 import './screens/home_screen.dart';
 
 final Map<String, WidgetBuilder> routes = <String, WidgetBuilder>{
@@ -25,4 +27,5 @@ final Map<String, WidgetBuilder> routes = <String, WidgetBuilder>{
   ProfileDetailsScreen.routeName: (ctx) => const ProfileDetailsScreen(),
   SarawakIDScreen.routeName: (ctx) => const SarawakIDScreen(),
   EmergencyScreen.routeName: (ctx) => const EmergencyScreen(),
+  BillPaymentScreen.routeName: (ctx) => const BillPaymentScreen(),
 };

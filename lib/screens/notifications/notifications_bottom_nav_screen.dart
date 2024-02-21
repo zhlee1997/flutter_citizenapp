@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_citizenapp/providers/auth_provider.dart';
 import 'package:provider/provider.dart';
+
+import '../../providers/auth_provider.dart';
+import '../../widgets/sarawakid/login_full_bottom_modal.dart';
 
 class NotificationsBottomNavScreen extends StatefulWidget {
   static const String routeName = 'notifications-bottom-nav-screen';
@@ -20,6 +22,19 @@ class _NotificationsBottomNavScreenState
       List.generate(5, (index) => 'Major Item $index');
   final List<String> items_notification =
       List.generate(5, (index) => 'Notification Item $index');
+
+  Future<void> _handleFullScreenLoginBottomModal(BuildContext context) async {
+    await showModalBottomSheet(
+      barrierColor: Theme.of(context).colorScheme.onInverseSurface,
+      useSafeArea: true,
+      enableDrag: false,
+      isScrollControlled: true,
+      context: context,
+      builder: (BuildContext context) {
+        return const LoginFullBottomModal();
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -195,7 +210,7 @@ class _NotificationsBottomNavScreenState
                     height: 20.0,
                   ),
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () => _handleFullScreenLoginBottomModal(context),
                     child: Text("Login Now"),
                   )
                 ],

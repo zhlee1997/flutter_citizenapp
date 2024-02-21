@@ -19,221 +19,277 @@ class ServicesBottomNavScreen extends StatelessWidget {
             childAspectRatio: 0.7 / 1,
           ),
           children: <Widget>[
-            Card(
-              elevation: 5.0,
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10.0),
-                  color: Theme.of(context).colorScheme.primaryContainer,
-                ),
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                      margin: EdgeInsets.only(
-                        top: 35.0,
-                      ),
-                      child: Icon(
-                        Icons.feedback_outlined,
-                        size: 50.0,
-                      ),
+            GestureDetector(
+              onTap: () {
+                print("Talikhidmat pressed");
+              },
+              child: Card(
+                elevation: 5.0,
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.0),
+                    image: DecorationImage(
+                      image: AssetImage(
+                          "assets/images/pictures/talikhidmat_image.jpg"),
+                      fit: BoxFit.cover,
+                      opacity: 0.3,
                     ),
-                    SizedBox(
-                      height: 10.0,
-                    ),
-                    Text(
-                      "Talikhidmat",
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    )
-                  ],
-                ),
-              ),
-            ),
-            Card(
-              elevation: 5.0,
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10.0),
-                  image: DecorationImage(
-                    image: AssetImage("assets/images/pictures/sos_image.jpg"),
-                    fit: BoxFit.cover,
-                    opacity: 0.15,
+                  ),
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                        margin: EdgeInsets.only(
+                          top: 35.0,
+                        ),
+                        child: Icon(
+                          Icons.feedback_outlined,
+                          size: 50.0,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10.0,
+                      ),
+                      Text(
+                        "Talikhidmat",
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      )
+                    ],
                   ),
                 ),
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                      margin: EdgeInsets.only(
-                        top: 35.0,
-                      ),
-                      child: Icon(
-                        Icons.sos_outlined,
-                        size: 50.0,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 10.0,
-                    ),
-                    Text(
-                      "Emergency Button",
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    )
-                  ],
-                ),
               ),
             ),
-            Card(
-              elevation: 5.0,
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10.0),
-                  color: Theme.of(context).colorScheme.primaryContainer,
-                ),
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                      margin: EdgeInsets.only(
-                        top: 35.0,
-                      ),
-                      child: Icon(
-                        Icons.subscriptions_outlined,
-                        size: 50.0,
-                      ),
+            GestureDetector(
+              onTap: () {
+                print("Emergency button pressed");
+              },
+              child: Card(
+                elevation: 5.0,
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.0),
+                    image: DecorationImage(
+                      image: AssetImage("assets/images/pictures/sos_image.jpg"),
+                      fit: BoxFit.cover,
+                      opacity: 0.15,
                     ),
-                    SizedBox(
-                      height: 10.0,
-                    ),
-                    Text(
-                      "Premium Subscription",
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    )
-                  ],
-                ),
-              ),
-            ),
-            Card(
-              elevation: 5.0,
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10.0),
-                  color: Theme.of(context).colorScheme.primaryContainer,
-                ),
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                      margin: EdgeInsets.only(
-                        top: 35.0,
+                  ),
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                        margin: EdgeInsets.only(
+                          top: 35.0,
+                        ),
+                        child: Icon(
+                          Icons.sos_outlined,
+                          size: 50.0,
+                        ),
                       ),
-                      child: Icon(
-                        Icons.traffic_outlined,
-                        size: 50.0,
+                      SizedBox(
+                        height: 10.0,
                       ),
-                    ),
-                    SizedBox(
-                      height: 10.0,
-                    ),
-                    Text(
-                      "Traffic Images",
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    )
-                  ],
-                ),
-              ),
-            ),
-            Card(
-              elevation: 5.0,
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10.0),
-                  image: DecorationImage(
-                    image:
-                        AssetImage("assets/images/pictures/payment_image.jpg"),
-                    fit: BoxFit.cover,
-                    opacity: 0.2,
+                      Text(
+                        "Emergency Button",
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      )
+                    ],
                   ),
                 ),
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                      margin: EdgeInsets.only(
-                        top: 35.0,
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                print("Premium Subscription pressed");
+              },
+              child: Card(
+                elevation: 5.0,
+                child: Container(
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                      image: DecorationImage(
+                        image: AssetImage(
+                            "assets/images/pictures/subscription_image.jpg"),
+                        fit: BoxFit.cover,
+                        opacity: 0.2,
+                      )),
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                        margin: EdgeInsets.only(
+                          top: 35.0,
+                        ),
+                        child: Icon(
+                          Icons.subscriptions_outlined,
+                          size: 50.0,
+                        ),
                       ),
-                      child: Icon(
-                        Icons.wallet_outlined,
-                        size: 50.0,
+                      SizedBox(
+                        height: 10.0,
                       ),
-                    ),
-                    SizedBox(
-                      height: 10.0,
-                    ),
-                    Text(
-                      "Bill Payment",
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    )
-                  ],
+                      Text(
+                        "Premium Subscription",
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),
-            Card(
-              elevation: 5.0,
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10.0),
-                  color: Theme.of(context).colorScheme.primaryContainer,
-                ),
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                      margin: EdgeInsets.only(
-                        top: 35.0,
+            GestureDetector(
+              onTap: () {
+                print("Traffic images pressed");
+              },
+              child: Card(
+                elevation: 5.0,
+                child: Container(
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                      image: DecorationImage(
+                        image: AssetImage(
+                            "assets/images/pictures/traffic_image.jpg"),
+                        fit: BoxFit.cover,
+                        opacity: 0.2,
+                      )),
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                        margin: EdgeInsets.only(
+                          top: 35.0,
+                        ),
+                        child: Icon(
+                          Icons.traffic_outlined,
+                          size: 50.0,
+                        ),
                       ),
-                      child: Icon(
-                        Icons.tour_outlined,
-                        size: 50.0,
+                      SizedBox(
+                        height: 10.0,
                       ),
-                    ),
-                    SizedBox(
-                      height: 10.0,
-                    ),
-                    Text(
-                      "Tourism News",
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    )
-                  ],
+                      Text(
+                        "Traffic Images",
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),
-            Card(
-              elevation: 5.0,
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10.0),
-                  color: Theme.of(context).colorScheme.primaryContainer,
+            GestureDetector(
+              onTap: () {
+                print("Bill Payment pressed");
+              },
+              child: Card(
+                elevation: 5.0,
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.0),
+                    image: DecorationImage(
+                      image: AssetImage(
+                          "assets/images/pictures/payment_image.jpg"),
+                      fit: BoxFit.cover,
+                      opacity: 0.2,
+                    ),
+                  ),
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                        margin: EdgeInsets.only(
+                          top: 35.0,
+                        ),
+                        child: Icon(
+                          Icons.wallet_outlined,
+                          size: 50.0,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10.0,
+                      ),
+                      Text(
+                        "Bill Payment",
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      )
+                    ],
+                  ),
                 ),
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                      margin: EdgeInsets.only(
-                        top: 35.0,
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                print("Tourism News");
+              },
+              child: Card(
+                elevation: 5.0,
+                child: Container(
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                      image: DecorationImage(
+                        image: AssetImage(
+                            "assets/images/pictures/tourism_image.jpg"),
+                        fit: BoxFit.cover,
+                        opacity: 0.3,
+                      )),
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                        margin: EdgeInsets.only(
+                          top: 35.0,
+                        ),
+                        child: Icon(
+                          Icons.luggage_outlined,
+                          size: 50.0,
+                        ),
                       ),
-                      child: Icon(
-                        Icons.bus_alert_outlined,
-                        size: 50.0,
+                      SizedBox(
+                        height: 10.0,
                       ),
-                    ),
-                    SizedBox(
-                      height: 10.0,
-                    ),
-                    Text(
-                      "Bus Schedule",
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    )
-                  ],
+                      Text(
+                        "Tourism News",
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                print("Bus Schedule pressed");
+              },
+              child: Card(
+                elevation: 5.0,
+                child: Container(
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                      image: DecorationImage(
+                        image:
+                            AssetImage("assets/images/pictures/bus_image.jpg"),
+                        fit: BoxFit.cover,
+                        opacity: 0.2,
+                      )),
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                        margin: EdgeInsets.only(
+                          top: 35.0,
+                        ),
+                        child: Icon(
+                          Icons.bus_alert_outlined,
+                          size: 50.0,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10.0,
+                      ),
+                      Text(
+                        "Bus Schedule",
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      )
+                    ],
+                  ),
                 ),
               ),
             )

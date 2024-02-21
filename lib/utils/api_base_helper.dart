@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
@@ -16,8 +15,6 @@ class ApiBaseHelper {
     Map<String, dynamic>? queryParameters,
   }) async {
     final storage = new FlutterSecureStorage();
-    final prefs = await SharedPreferences.getInstance();
-
     var siocToken = await storage.read(key: 'siocToken');
     var sarawakToken = await storage.read(key: 'sarawakToken');
 
@@ -53,29 +50,33 @@ class ApiBaseHelper {
     Function(int, int)? onSendProgress,
   }) async {
     final storage = new FlutterSecureStorage();
-    final prefs = await SharedPreferences.getInstance();
-
     var siocToken = await storage.read(key: 'siocToken');
     var sarawakToken = await storage.read(key: 'sarawakToken');
 
     var responseJson;
-    var uri = Uri.https(
-      _baseUrl,
-      "/mobile/api/" + url,
+    // TODO
+    // var uri = Uri.https(
+    //   _baseUrl,
+    //   "/mobile/api/" + url,
+    // );
+    var uri = Uri.http(
+      "172.20.10.6:3000",
+      url,
     );
+
     try {
       print("baseurl: ${uri.toString()}");
-      final response = await http.post(
-        uri,
-        headers: {
-          'Authorization': siocToken ?? '',
-          'sarawakToken': sarawakToken ?? '',
-        },
-        body: data,
-        // onSendProgress: onSendProgress,
-      );
+      final response = await http.post(uri,
+          headers: {
+            'Authorization': siocToken ?? '',
+            'sarawakToken': sarawakToken ?? '',
+          },
+          body: data
+          // onSendProgress: onSendProgress,
+          );
+
       responseJson = _returnResponse(response);
-    } on Exception catch (e) {
+    } catch (e) {
       print('postError: ${e.toString()}');
       // make it explicit that this function can throw exceptions
       rethrow;
@@ -88,7 +89,10 @@ class ApiBaseHelper {
     switch (response.statusCode) {
       case 200:
         var responseJson = json.decode(response.body.toString());
-        print(responseJson);
+        return responseJson;
+      // TODO: temp added for JSON Server
+      case 201:
+        var responseJson = json.decode(response.body.toString());
         return responseJson;
       case 400:
         throw BadRequestException(response.body.toString());

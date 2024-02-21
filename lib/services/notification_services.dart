@@ -1,11 +1,8 @@
 import 'dart:convert';
 
-import 'package:http/http.dart';
-
 import '../utils/api_base_helper.dart';
 
 class NotificationServices {
-  // Response? response;
   ApiBaseHelper _apiBaseHelper = ApiBaseHelper();
 
   /// Send FCM Token using POST method
@@ -21,7 +18,7 @@ class NotificationServices {
         "member/save/firebase/token",
         data: json.encode(data),
       );
-      print('saveToken success: $response');
+      print('saveToken API success: $response');
       return response;
     } catch (e) {
       print(e.toString());
@@ -42,7 +39,7 @@ class NotificationServices {
         "member/remove/firebase/token",
       );
       // TODO: Error handling for JDBC issue
-      print('deleteToken success: $response');
+      print('deleteToken API success: $response');
       return response;
     } catch (e) {
       print('deleteToken error');

@@ -17,7 +17,7 @@ class AuthServices {
           "memberId": memberId,
         },
       );
-      print("queryUserInfo success: $response");
+      print("queryUserInfo API success: $response");
       return response;
     } catch (e) {
       print(e.toString());
@@ -41,11 +41,13 @@ class AuthServices {
       'loginMode': '1',
     };
     try {
+      // TODO: JSON Server API for signout
       var response = await _apiBaseHelper.post(
-        'login/invalid/token',
+        "signout",
+        // 'login/invalid/token',
         data: json.encode(map),
       );
-      print('signOut success: $response');
+      print('signOut API success: $response');
       return response;
     } catch (e) {
       print('signOut error: ${e.toString()}');

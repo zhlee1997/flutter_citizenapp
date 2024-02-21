@@ -31,14 +31,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _handleFullScreenLoginBottomModal() async {
     await showModalBottomSheet(
-        barrierColor: Theme.of(context).colorScheme.onInverseSurface,
-        useSafeArea: true,
-        enableDrag: false,
-        isScrollControlled: true,
-        context: context,
-        builder: (BuildContext context) {
-          return const LoginFullBottomModal();
-        });
+      barrierColor: Theme.of(context).colorScheme.onInverseSurface,
+      useSafeArea: true,
+      enableDrag: false,
+      isScrollControlled: true,
+      context: context,
+      builder: (BuildContext context) {
+        return const LoginFullBottomModal();
+      },
+    );
   }
 
   @override

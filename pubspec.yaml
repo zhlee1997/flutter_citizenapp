@@ -53,6 +53,11 @@ dependencies:
   firebase_messaging: ^14.7.15
   firebase_core: ^2.25.4
   url_launcher: ^6.2.4
+  image_picker: ^1.0.7
+  flutter_image_compress: ^2.1.0
+  dotted_border: ^2.1.0
+  shimmer: ^3.0.0
+  flutter_svg: ^2.0.10+1
 
 dev_dependencies:
   flutter_test:
@@ -89,6 +94,11 @@ flutter:
     # images/pictures
     - assets/images/pictures/sos_image.jpg
     - assets/images/pictures/payment_image.jpg
+    - assets/images/pictures/talikhidmat_image.jpg
+    - assets/images/pictures/subscription_image.jpg
+    - assets/images/pictures/traffic_image.jpg
+    - assets/images/pictures/tourism_image.jpg
+    - assets/images/pictures/bus_image.jpg
     - assets/images/pictures/kuching_city.jpeg
 
     # images/pictures/emergency
@@ -101,9 +111,15 @@ flutter:
     - assets/images/pictures/emergency/others.jpg
     - assets/images/pictures/emergency/voice_illustration.jpeg
 
-    # images/pictures/emergency (animation)
+    # images/pictures/talikhidmat
+    - assets/images/pictures/talikhidmat/talikhidmat_banner.jpg
+
+    # images/animation
     - assets/animations/lottie_recorder.json
     - assets/animations/lottie_profile.json
+
+    # images/svg
+    - assets/images/svg/no_data.svg
 
     #language
     - assets/language/en.json

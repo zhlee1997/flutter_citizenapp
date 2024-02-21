@@ -537,15 +537,42 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                               message: AppLocalization.of(context)!
                                   .translate('logging_out')!,
                             );
-                            authProvider
-                                .signOut(context)
-                                .then((_) => Navigator.of(context).pop());
+                            authProvider.signOutProvider(context).then((_) {
+                              Navigator.of(context).popUntil(
+                                  ModalRoute.withName('home-page-screen'));
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Container(
+                                    padding: EdgeInsets.all(10.0),
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .primaryContainer,
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(10.0),
+                                      ),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        "You have logout successfully",
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  behavior: SnackBarBehavior.floating,
+                                  backgroundColor: Colors.transparent,
+                                  elevation: 0,
+                                ),
+                              );
+                            });
                           });
                         },
                       );
                     },
                     child: Text(
-                      "Log out",
+                      "Log Out",
                       style: TextStyle(
                         fontSize: 18.0,
                       ),

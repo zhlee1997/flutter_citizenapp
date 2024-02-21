@@ -1,11 +1,131 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_citizenapp/screens/emergency/emergency_screen.dart';
+import 'package:provider/provider.dart';
 
-class HomePage extends StatelessWidget {
+import '../screens/emergency/emergency_screen.dart';
+import '../screens/talikhidmat/new_case_screen.dart';
+import '../screens/bill_payment/bill_payment_screen.dart';
+import '../widgets/sarawakid/login_full_bottom_modal.dart';
+import '../widgets/subscription/subscription_preview_dialog.dart';
+import '../widgets/homepage/homepage_citizen_announcement.dart';
+
+import '../providers/auth_provider.dart';
+import '../services/announcement_services.dart';
+import "../models/announcement_model.dart";
+
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
-  void handleNavigateToEmergency(BuildContext context) =>
-      Navigator.of(context).pushNamed(EmergencyScreen.routeName);
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  bool citizenShimmer = false;
+  bool tourismShimmer = false;
+  List<AnnouncementModel> citizenAnnouncements = [];
+  List<AnnouncementModel> tourismAnnouncements = [];
+
+  final AnnouncementServices _announcementServices = AnnouncementServices();
+
+  Future<void> getCitizenAnn() async {
+    setState(() {
+      citizenShimmer = true;
+    });
+    var response = await _announcementServices.queryPageList(
+      '1',
+      pageSize: '6',
+      annType: '1',
+    );
+
+    if (response['status'] == '200') {
+      var data = response['data']['list'] as List;
+      setState(() {
+        citizenShimmer = false;
+        // Cast to AnnouncementModel type to use AnnouncementModel object
+        citizenAnnouncements =
+            data.map((e) => AnnouncementModel.fromJson(e)).toList();
+      });
+    }
+  }
+
+  Future<void> getTourismAnn() async {
+    var response = await _announcementServices.queryPageList(
+      '1',
+      pageSize: '3',
+      annType: '2',
+    );
+
+    if (response['status'] == '200') {
+      var data = response['data']['list'] as List;
+      setState(() {
+        tourismShimmer = false;
+        var list = data.map((e) => AnnouncementModel.fromJson(e)).toList();
+        for (var element in list) {
+          if (element.attachmentDtoList.length > 0) {
+            for (var dto in element.attachmentDtoList) {
+              if (dto.attFileType == '2') {
+                tourismAnnouncements.add(element);
+                break;
+              }
+            }
+          }
+        }
+      });
+      print("getTourismAnn: $tourismAnnouncements");
+      print(tourismAnnouncements.length);
+    }
+  }
+
+  Future<void> _handleFullScreenLoginBottomModal(BuildContext context) async {
+    await showModalBottomSheet(
+      barrierColor: Theme.of(context).colorScheme.onInverseSurface,
+      useSafeArea: true,
+      enableDrag: false,
+      isScrollControlled: true,
+      context: context,
+      builder: (BuildContext context) {
+        return const LoginFullBottomModal();
+      },
+    );
+  }
+
+  Future<void> _showSubscriptionIntroDialog(BuildContext context) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return const SubscriptionPreviewDialog();
+      },
+    );
+  }
+
+  void _handleNavigateToEmergency(BuildContext context) =>
+      Provider.of<AuthProvider>(context, listen: false).isAuth
+          ? Navigator.of(context).pushNamed(EmergencyScreen.routeName)
+          : _handleFullScreenLoginBottomModal(context);
+
+  void _handleNavigateToTalikhidmat(BuildContext context) =>
+      Provider.of<AuthProvider>(context, listen: false).isAuth
+          ? Navigator.of(context).pushNamed(NewCaseScreen.routeName)
+          : _handleFullScreenLoginBottomModal(context);
+
+  void _handleNavigateToSubscription(BuildContext context) =>
+      Provider.of<AuthProvider>(context, listen: false).isAuth
+          ? _showSubscriptionIntroDialog(context)
+          : _handleFullScreenLoginBottomModal(context);
+
+  void _handleNavigateToPayment(BuildContext context) =>
+      Provider.of<AuthProvider>(context, listen: false).isAuth
+          ? Navigator.of(context).pushNamed(BillPaymentScreen.routeName)
+          : _handleFullScreenLoginBottomModal(context);
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    getCitizenAnn();
+    getTourismAnn();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,34 +167,7 @@ class HomePage extends StatelessWidget {
                 ),
                 children: <Widget>[
                   GestureDetector(
-                    onTap: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Container(
-                            padding: EdgeInsets.all(10.0),
-                            decoration: BoxDecoration(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .primaryContainer,
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(10.0),
-                              ),
-                            ),
-                            child: Center(
-                              child: Text(
-                                "You have login successfully",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ),
-                          ),
-                          behavior: SnackBarBehavior.floating,
-                          backgroundColor: Colors.transparent,
-                          elevation: 0,
-                        ),
-                      );
-                    },
+                    onTap: () => _handleNavigateToTalikhidmat(context),
                     child: Card(
                       elevation: 5.0,
                       child: Container(
@@ -120,7 +213,7 @@ class HomePage extends StatelessWidget {
                     ),
                   ),
                   GestureDetector(
-                    onTap: () => handleNavigateToEmergency(context),
+                    onTap: () => _handleNavigateToEmergency(context),
                     child: Card(
                       elevation: 5.0,
                       child: Container(
@@ -165,89 +258,95 @@ class HomePage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Card(
-                    elevation: 5.0,
-                    child: Container(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              Icon(
-                                Icons.subscriptions,
-                                color: Theme.of(context).colorScheme.primary,
-                                size: 30.0,
+                  GestureDetector(
+                    onTap: () => _handleNavigateToSubscription(context),
+                    child: Card(
+                      elevation: 5.0,
+                      child: Container(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Icon(
+                                  Icons.subscriptions,
+                                  color: Theme.of(context).colorScheme.primary,
+                                  size: 30.0,
+                                ),
+                                const Text(
+                                  "Subscription",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 10.0,
+                            ),
+                            Container(
+                              margin: const EdgeInsets.only(
+                                left: 10.0,
                               ),
-                              const Text(
-                                "Subscription",
+                              child: Text(
+                                "Premium member",
                                 style: TextStyle(
-                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey[600],
                                 ),
                               ),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 10.0,
-                          ),
-                          Container(
-                            margin: const EdgeInsets.only(
-                              left: 10.0,
-                            ),
-                            child: Text(
-                              "Premium member",
-                              style: TextStyle(
-                                color: Colors.grey[600],
-                              ),
-                            ),
-                          )
-                        ],
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                  Card(
-                    elevation: 5.0,
-                    child: Container(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              Icon(
-                                Icons.receipt_long_outlined,
-                                color: Theme.of(context).colorScheme.primary,
-                                size: 30.0,
+                  GestureDetector(
+                    onTap: () => _handleNavigateToPayment(context),
+                    child: Card(
+                      elevation: 5.0,
+                      child: Container(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Icon(
+                                  Icons.receipt_long_outlined,
+                                  color: Theme.of(context).colorScheme.primary,
+                                  size: 30.0,
+                                ),
+                                const Text(
+                                  "Bill Payment",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 10.0,
+                            ),
+                            Container(
+                              margin: const EdgeInsets.only(
+                                left: 10.0,
                               ),
-                              const Text(
-                                "Bill Payment",
+                              child: Text(
+                                "Billing and taxes",
                                 style: TextStyle(
-                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey[600],
                                 ),
                               ),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 10.0,
-                          ),
-                          Container(
-                            margin: const EdgeInsets.only(
-                              left: 10.0,
-                            ),
-                            child: Text(
-                              "Billing and taxes",
-                              style: TextStyle(
-                                color: Colors.grey[600],
-                              ),
-                            ),
-                          )
-                        ],
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -291,161 +390,9 @@ class HomePage extends StatelessWidget {
               margin: const EdgeInsets.symmetric(
                 vertical: 20.0,
               ),
-              child: GridView(
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 5.0,
-                  mainAxisSpacing: 5.0,
-                  childAspectRatio: 0.75 / 1,
-                ),
-                children: <Widget>[
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(10.0),
-                          child: Image.asset(
-                            "assets/images/icon/sioc.png",
-                            height: 120,
-                            width: double.infinity,
-                            fit: BoxFit.contain,
-                          ),
-                        ),
-                        Container(
-                          margin: const EdgeInsets.only(
-                            top: 7.5,
-                            bottom: 5.0,
-                          ),
-                          child: const Text(
-                            "Netflix on Unifi Home",
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        const Text(
-                          "Get Unifi Home 300Mbps + Netflix, only for RM 139/mth",
-                          maxLines: 3,
-                        )
-                      ],
-                    ),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(10.0),
-                          child: Image.asset(
-                            "assets/images/icon/sioc.png",
-                            height: 120,
-                            width: double.infinity,
-                            fit: BoxFit.contain,
-                          ),
-                        ),
-                        Container(
-                          margin: const EdgeInsets.only(
-                            top: 7.5,
-                            bottom: 5.0,
-                          ),
-                          child: const Text(
-                            "Netflix on Unifi Home",
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        const Text(
-                          "Get Unifi Home 300Mbps + Netflix, only for RM 139/mth",
-                          maxLines: 3,
-                        )
-                      ],
-                    ),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(10.0),
-                          child: Image.asset(
-                            "assets/images/icon/sioc.png",
-                            height: 120,
-                            width: double.infinity,
-                            fit: BoxFit.contain,
-                          ),
-                        ),
-                        Container(
-                          margin: const EdgeInsets.only(
-                            top: 7.5,
-                            bottom: 5.0,
-                          ),
-                          child: const Text(
-                            "Netflix on Unifi Home",
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        const Text(
-                          "Get Unifi Home 300Mbps + Netflix, only for RM 139/mth",
-                          maxLines: 3,
-                        )
-                      ],
-                    ),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(10.0),
-                          child: Image.asset(
-                            "assets/images/icon/sioc.png",
-                            height: 120,
-                            width: double.infinity,
-                            fit: BoxFit.contain,
-                          ),
-                        ),
-                        Container(
-                          margin: const EdgeInsets.only(
-                            top: 7.5,
-                            bottom: 5.0,
-                          ),
-                          child: const Text(
-                            "Netflix on Unifi Home",
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        const Text(
-                          "Get Unifi Home 300Mbps + Netflix, only for RM 139/mth",
-                          maxLines: 3,
-                        )
-                      ],
-                    ),
-                  ),
-                ],
+              child: HomepageCitizenAnnouncement(
+                citizenShimmer: citizenShimmer,
+                citizenAnnouncements: citizenAnnouncements,
               ),
             ),
             const SizedBox(
@@ -501,42 +448,47 @@ class HomePage extends StatelessWidget {
                     ),
                     child: Row(
                       children: <Widget>[
-                        ClipRRect(
-                          borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(10.0),
-                            bottomLeft: Radius.circular(10.0),
-                          ),
-                          child: Image.asset(
-                            "assets/images/icon/sioc.png",
-                            width: 70,
-                            height: 90,
-                            fit: BoxFit.cover,
+                        Flexible(
+                          flex: 1,
+                          child: ClipRRect(
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(10.0),
+                              bottomLeft: Radius.circular(10.0),
+                            ),
+                            child: Image.asset(
+                              "assets/images/icon/sioc.png",
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
-                        Container(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              const Text(
-                                "Unifi TV",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
+                        Flexible(
+                          flex: 2,
+                          child: Container(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                const Text(
+                                  "Unifi TV",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(
-                                height: 5.0,
-                              ),
-                              SizedBox(
-                                width: screenSize.width * 0.67,
-                                child: Text(
-                                  "Subcribers get to enjoy 3 streaming apps on us",
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 2,
-                                  style: Theme.of(context).textTheme.labelSmall,
+                                const SizedBox(
+                                  height: 5.0,
                                 ),
-                              )
-                            ],
+                                SizedBox(
+                                  width: screenSize.width * 0.67,
+                                  child: Text(
+                                    "Subcribers get to enjoy 3 streaming apps on us",
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 2,
+                                    style:
+                                        Theme.of(context).textTheme.labelSmall,
+                                  ),
+                                )
+                              ],
+                            ),
                           ),
                         )
                       ],
@@ -556,42 +508,49 @@ class HomePage extends StatelessWidget {
                     ),
                     child: Row(
                       children: <Widget>[
-                        ClipRRect(
-                          borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(10.0),
-                            bottomLeft: Radius.circular(10.0),
-                          ),
-                          child: Image.asset(
-                            "assets/images/icon/sioc.png",
-                            width: 70,
-                            height: 90,
-                            fit: BoxFit.cover,
+                        Flexible(
+                          flex: 1,
+                          child: ClipRRect(
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(10.0),
+                              bottomLeft: Radius.circular(10.0),
+                            ),
+                            child: Image.asset(
+                              "assets/images/icon/sioc.png",
+                              // width: 70,
+                              // height: 90,
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
-                        Container(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              const Text(
-                                "Unifi TV",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
+                        Flexible(
+                          flex: 2,
+                          child: Container(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                const Text(
+                                  "Unifi TV",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(
-                                height: 5.0,
-                              ),
-                              SizedBox(
-                                width: screenSize.width * 0.67,
-                                child: Text(
-                                  "Subcribers get to enjoy 3 streaming apps on us",
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 2,
-                                  style: Theme.of(context).textTheme.labelSmall,
+                                const SizedBox(
+                                  height: 5.0,
                                 ),
-                              )
-                            ],
+                                SizedBox(
+                                  width: screenSize.width * 0.67,
+                                  child: Text(
+                                    "Subcribers get to enjoy 3 streaming apps on us",
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 2,
+                                    style:
+                                        Theme.of(context).textTheme.labelSmall,
+                                  ),
+                                )
+                              ],
+                            ),
                           ),
                         )
                       ],
@@ -611,42 +570,49 @@ class HomePage extends StatelessWidget {
                     ),
                     child: Row(
                       children: <Widget>[
-                        ClipRRect(
-                          borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(10.0),
-                            bottomLeft: Radius.circular(10.0),
-                          ),
-                          child: Image.asset(
-                            "assets/images/icon/sioc.png",
-                            width: 70,
-                            height: 90,
-                            fit: BoxFit.cover,
+                        Flexible(
+                          flex: 1,
+                          child: ClipRRect(
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(10.0),
+                              bottomLeft: Radius.circular(10.0),
+                            ),
+                            child: Image.asset(
+                              "assets/images/icon/sioc.png",
+                              // width: 70,
+                              // height: 90,
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
-                        Container(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              const Text(
-                                "Unifi TV",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
+                        Flexible(
+                          flex: 2,
+                          child: Container(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                const Text(
+                                  "Unifi TV",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(
-                                height: 5.0,
-                              ),
-                              SizedBox(
-                                width: screenSize.width * 0.67,
-                                child: Text(
-                                  "Subcribers get to enjoy 3 streaming apps on us",
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 2,
-                                  style: Theme.of(context).textTheme.labelSmall,
+                                const SizedBox(
+                                  height: 5.0,
                                 ),
-                              )
-                            ],
+                                SizedBox(
+                                  width: screenSize.width * 0.67,
+                                  child: Text(
+                                    "Subcribers get to enjoy 3 streaming apps on us",
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 2,
+                                    style:
+                                        Theme.of(context).textTheme.labelSmall,
+                                  ),
+                                )
+                              ],
+                            ),
                           ),
                         )
                       ],

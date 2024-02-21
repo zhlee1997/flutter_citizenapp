@@ -90,7 +90,7 @@ class AuthProvider with ChangeNotifier {
   ///
   /// Return 'true' if sign out is successful.
   /// Return 'false' if sign out is failed.
-  Future<bool> signOut(BuildContext context) async {
+  Future<bool> signOutProvider(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
     final storage = new FlutterSecureStorage();
 
@@ -98,12 +98,15 @@ class AuthProvider with ChangeNotifier {
     String? sarawakToken = await storage.read(key: 'sarawakToken');
 
     try {
+      // TODO: deleteToken
       // await _notificationServices.deleteToken();
       var response = await _authServices.signOut(
         sarawakToken: sarawakToken,
         siocToken: siocToken,
       );
-      if (response['status'] == '200') {
+      // if (response['status'] == '200') {
+      // TODO: temp added
+      if (response['loginMode'] == '1') {
         // Provider.of<InboxProvider>(context, listen: false).resetMessageCount();
         prefs.clear();
         storage.deleteAll();

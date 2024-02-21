@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_citizenapp/providers/auth_provider.dart';
 import 'package:provider/provider.dart';
+
+import '../../providers/auth_provider.dart';
+import '../../widgets/sarawakid/login_full_bottom_modal.dart';
 
 class ProfileBottomNavScreen extends StatefulWidget {
   static const String routeName = 'profile-bottom-nav-screen';
@@ -26,6 +28,19 @@ class _ProfileBottomNavScreenState extends State<ProfileBottomNavScreen> {
   int _selectedFruit = 0;
   // TODO
   late bool isLogin;
+
+  Future<void> _handleFullScreenLoginBottomModal(BuildContext context) async {
+    await showModalBottomSheet(
+      barrierColor: Theme.of(context).colorScheme.onInverseSurface,
+      useSafeArea: true,
+      enableDrag: false,
+      isScrollControlled: true,
+      context: context,
+      builder: (BuildContext context) {
+        return const LoginFullBottomModal();
+      },
+    );
+  }
 
   // This shows a CupertinoModalPopup with a reasonable fixed height which hosts CupertinoPicker.
   void _showDialog(Widget child) {
@@ -63,9 +78,7 @@ class _ProfileBottomNavScreenState extends State<ProfileBottomNavScreen> {
         children: <Widget>[
           if (!isLogin)
             GestureDetector(
-              onTap: () {
-                print("login now pressed");
-              },
+              onTap: () => _handleFullScreenLoginBottomModal(context),
               child: Container(
                 padding: EdgeInsets.all(10.0),
                 child: Row(

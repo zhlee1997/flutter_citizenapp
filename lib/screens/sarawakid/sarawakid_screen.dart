@@ -23,13 +23,8 @@ class _SarawakIDScreenState extends State<SarawakIDScreen> {
 
   var uuid = const Uuid();
   var loadingPercentage = 0;
-  late InAppWebViewController _webViewController;
 
-  InAppWebViewSettings settings = InAppWebViewSettings(
-    cacheEnabled: false,
-    clearCache: true,
-    useHybridComposition: true,
-  );
+  late InAppWebViewController _webViewController;
 
   /// Sign in upon Sarawak ID authentication callback.
   /// Save user information into local storage.
@@ -92,6 +87,12 @@ class _SarawakIDScreenState extends State<SarawakIDScreen> {
   }
 
   @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -125,7 +126,9 @@ class _SarawakIDScreenState extends State<SarawakIDScreen> {
         swkid_login_form_submit();
     });
 </script>"""),
-        initialSettings: settings,
+        initialSettings: InAppWebViewSettings(
+          incognito: true,
+        ),
         onWebViewCreated: (InAppWebViewController controller) {
           _webViewController = controller;
         },
