@@ -24,10 +24,7 @@ class BillPaymentScreen extends StatelessWidget {
               margin: const EdgeInsets.all(20.0),
               child: Text(
                 AppLocalization.of(context)!.translate('assessment_rate')!,
-                style: TextStyle(
-                  fontSize: 25.0,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: Theme.of(context).textTheme.headlineSmall,
               ),
             ),
             Container(
@@ -47,17 +44,17 @@ class BillPaymentScreen extends StatelessWidget {
                   PaymentLogo(
                     AppLocalization.of(context)!.translate('assessment_rate')!,
                     'MPP',
-                    'assets/icons/mpp.png',
+                    'assets/images/icon/mpp.png',
                   ),
                   PaymentLogo(
                     AppLocalization.of(context)!.translate('assessment_rate')!,
                     'MBKS',
-                    'assets/icons/mbks.png',
+                    'assets/images/icon/mbks.png',
                   ),
                   PaymentLogo(
                     AppLocalization.of(context)!.translate('assessment_rate')!,
                     'DBKU',
-                    'assets/icons/dbku.png',
+                    'assets/images/icon/dbku.png',
                   ),
                 ],
               ),
@@ -67,10 +64,7 @@ class BillPaymentScreen extends StatelessWidget {
               margin: const EdgeInsets.all(20.0),
               child: Text(
                 "Utilities",
-                style: TextStyle(
-                  fontSize: 25.0,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: Theme.of(context).textTheme.headlineSmall,
               ),
             ),
             Container(
@@ -90,12 +84,12 @@ class BillPaymentScreen extends StatelessWidget {
                   PaymentLogo(
                     "Utilities",
                     'KWB',
-                    'assets/icons/kwb.png',
+                    'assets/images/icon/kwb.png',
                   ),
                   PaymentLogo(
                     "Utilities",
                     'SESCO',
-                    'assets/icons/sarawak-energy.png',
+                    'assets/images/icon/sarawak-energy.png',
                   ),
                 ],
               ),

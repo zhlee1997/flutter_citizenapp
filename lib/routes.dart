@@ -15,6 +15,12 @@ import './screens/emergency/emergency_screen.dart';
 
 import './screens/bill_payment/bill_payment_screen.dart';
 
+import './screens/announcement/announcement_detail_screen.dart';
+
+import './screens/support/privacy_policy_screen.dart';
+import './screens/support/terms_and_conditions_screen.dart';
+import './screens/support/send_feedback_screen.dart';
+
 import './screens/home_screen.dart';
 
 final Map<String, WidgetBuilder> routes = <String, WidgetBuilder>{
@@ -28,4 +34,8 @@ final Map<String, WidgetBuilder> routes = <String, WidgetBuilder>{
   SarawakIDScreen.routeName: (ctx) => const SarawakIDScreen(),
   EmergencyScreen.routeName: (ctx) => const EmergencyScreen(),
   BillPaymentScreen.routeName: (ctx) => const BillPaymentScreen(),
+  AnnouncementDetailScreen.routeName: (ctx) => const AnnouncementDetailScreen(),
+  PrivacyPolicyScreen.routeName: (ctx) => const PrivacyPolicyScreen(),
+  TermsAndConditionsScreen.routeName: (ctx) => const TermsAndConditionsScreen(),
+  SendFeedbackScreen.routeName: (ctx) => const SendFeedbackScreen(),
 };

@@ -1,9 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../providers/auth_provider.dart';
 import '../../widgets/sarawakid/login_full_bottom_modal.dart';
+import '../../screens/support/privacy_policy_screen.dart';
+import '../../screens/support/terms_and_conditions_screen.dart';
+import '../../screens/support/send_feedback_screen.dart';
 
 class ProfileBottomNavScreen extends StatefulWidget {
   static const String routeName = 'profile-bottom-nav-screen';
@@ -26,8 +30,21 @@ class _ProfileBottomNavScreenState extends State<ProfileBottomNavScreen> {
   ];
 
   int _selectedFruit = 0;
-  // TODO
   late bool isLogin;
+  String appVersion = "";
+
+  // return app version in drawer
+  Future<void> _getAppVersion() async {
+    try {
+      final packageInfo = await PackageInfo.fromPlatform();
+      setState(() {
+        appVersion = packageInfo.version;
+      });
+    } catch (e) {
+      print('checkAppVersion error');
+      throw e;
+    }
+  }
 
   Future<void> _handleFullScreenLoginBottomModal(BuildContext context) async {
     await showModalBottomSheet(
@@ -62,6 +79,13 @@ class _ProfileBottomNavScreenState extends State<ProfileBottomNavScreen> {
         ),
       ),
     );
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _getAppVersion();
   }
 
   @override
@@ -256,7 +280,7 @@ class _ProfileBottomNavScreenState extends State<ProfileBottomNavScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Container(
-                  margin: EdgeInsets.symmetric(
+                  margin: const EdgeInsets.symmetric(
                     vertical: 10.0,
                   ),
                   child: Text(
@@ -268,86 +292,115 @@ class _ProfileBottomNavScreenState extends State<ProfileBottomNavScreen> {
                     ),
                   ),
                 ),
-                Container(
-                  margin: EdgeInsets.symmetric(
-                    vertical: 10.0,
-                  ),
-                  child: Row(
-                    children: <Widget>[
-                      Icon(
-                        Icons.star_border_outlined,
-                        size: 30.0,
-                      ),
-                      SizedBox(
-                        width: 15.0,
-                      ),
-                      Text("Send Feedback")
-                    ],
-                  ),
-                ),
-                Divider(),
-                Container(
-                  margin: EdgeInsets.symmetric(
-                    vertical: 10.0,
-                  ),
-                  child: Row(
-                    children: <Widget>[
-                      Icon(
-                        Icons.description_outlined,
-                        size: 30.0,
-                      ),
-                      SizedBox(
-                        width: 15.0,
-                      ),
-                      Text("Terms and Conditions")
-                    ],
+                GestureDetector(
+                  onTap: () => Navigator.of(context)
+                      .pushNamed(SendFeedbackScreen.routeName),
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(
+                      vertical: 10.0,
+                    ),
+                    child: const Row(
+                      children: <Widget>[
+                        Icon(
+                          Icons.star_border_outlined,
+                          size: 30.0,
+                        ),
+                        SizedBox(
+                          width: 15.0,
+                        ),
+                        Text("Send Feedback")
+                      ],
+                    ),
                   ),
                 ),
-                Divider(),
-                Container(
-                  margin: EdgeInsets.symmetric(
-                    vertical: 10.0,
-                  ),
-                  child: Row(
-                    children: <Widget>[
-                      Icon(
-                        Icons.remove_red_eye_outlined,
-                        size: 30.0,
-                      ),
-                      SizedBox(
-                        width: 15.0,
-                      ),
-                      Text("Privacy Policy")
-                    ],
-                  ),
-                ),
-                Divider(),
-                Container(
-                  margin: EdgeInsets.symmetric(
-                    vertical: 10.0,
-                  ),
-                  child: Row(
-                    children: <Widget>[
-                      Icon(
-                        Icons.info_outline,
-                        size: 30.0,
-                      ),
-                      SizedBox(
-                        width: 15.0,
-                      ),
-                      Text("About CitizenApp")
-                    ],
+                const Divider(),
+                GestureDetector(
+                  onTap: () => Navigator.of(context)
+                      .pushNamed(TermsAndConditionsScreen.routeName),
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(
+                      vertical: 10.0,
+                    ),
+                    child: const Row(
+                      children: <Widget>[
+                        Icon(
+                          Icons.description_outlined,
+                          size: 30.0,
+                        ),
+                        SizedBox(
+                          width: 15.0,
+                        ),
+                        Text("Terms and Conditions")
+                      ],
+                    ),
                   ),
                 ),
-                Divider(),
+                const Divider(),
+                GestureDetector(
+                  onTap: () => Navigator.of(context)
+                      .pushNamed(PrivacyPolicyScreen.routeName),
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(
+                      vertical: 10.0,
+                    ),
+                    child: const Row(
+                      children: <Widget>[
+                        Icon(
+                          Icons.remove_red_eye_outlined,
+                          size: 30.0,
+                        ),
+                        SizedBox(
+                          width: 15.0,
+                        ),
+                        Text("Privacy Policy")
+                      ],
+                    ),
+                  ),
+                ),
+                const Divider(),
+                GestureDetector(
+                  onTap: () {
+                    showAboutDialog(
+                      context: context,
+                      applicationVersion: appVersion,
+                      applicationIcon: SizedBox(
+                        width: 60,
+                        height: 60,
+                        child: Image.asset(
+                          'assets/images/icon/app_logo.png',
+                        ),
+                      ),
+                      applicationLegalese:
+                          "CitizenApp is powered by Sarawak Integrated Operation Centre (SIOC).",
+                    );
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(
+                      vertical: 10.0,
+                    ),
+                    child: const Row(
+                      children: <Widget>[
+                        Icon(
+                          Icons.info_outline,
+                          size: 30.0,
+                        ),
+                        SizedBox(
+                          width: 15.0,
+                        ),
+                        Text("About CitizenApp")
+                      ],
+                    ),
+                  ),
+                ),
+                const Divider(),
                 Container(
-                  margin: EdgeInsets.symmetric(
+                  margin: const EdgeInsets.symmetric(
                     vertical: 10.0,
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      Row(
+                      const Row(
                         children: <Widget>[
                           Icon(
                             Icons.copy,
@@ -359,14 +412,12 @@ class _ProfileBottomNavScreenState extends State<ProfileBottomNavScreen> {
                           Text("App Version")
                         ],
                       ),
-                      Container(
-                        child: Text(
-                          "v3.3.1",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
+                      Text(
+                        appVersion,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
                         ),
-                      )
+                      ),
                     ],
                   ),
                 ),

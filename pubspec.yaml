@@ -58,6 +58,11 @@ dependencies:
   dotted_border: ^2.1.0
   shimmer: ^3.0.0
   flutter_svg: ^2.0.10+1
+  cached_network_image: ^3.3.1
+  flutter_linkify: ^6.0.0
+  package_info_plus: ^5.0.1
+  flutter_markdown: ^0.6.20
+  flutter_rating_bar: ^4.0.1
 
 dev_dependencies:
   flutter_test:
@@ -89,7 +94,11 @@ flutter:
     - assets/images/icon/sioc.png
     - assets/images/icon/sarawak_logo.png
     - assets/images/icon/app_logo.png
-    - assets/images/icon/sarawakid_logo.png
+    - assets/images/icon/dbku.png
+    - assets/images/icon/mbks.png
+    - assets/images/icon/mpp.png
+    - assets/images/icon/kwb.png
+    - assets/images/icon/sarawak-energy.png
 
     # images/pictures
     - assets/images/pictures/sos_image.jpg
@@ -121,10 +130,23 @@ flutter:
     # images/svg
     - assets/images/svg/no_data.svg
 
+    # images/gif
+    - assets/gif/app_live_video.gif
+
     #language
     - assets/language/en.json
     - assets/language/ms.json
     - assets/language/zh.json
+
+      #privacy
+    - assets/privacy/privacy_en.md
+    - assets/privacy/privacy_ms.md
+    - assets/privacy/privacy_zh.md
+
+    #t&c
+    - assets/t&c/t&c_en.md
+    - assets/t&c/t&c_ms.md
+    - assets/t&c/t&c_zh.md
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

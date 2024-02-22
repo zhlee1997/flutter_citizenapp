@@ -4,8 +4,9 @@ import 'package:shimmer/shimmer.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../models/announcement_model.dart';
-import "../../providers/language_provider.dart";
+import '../../providers/language_provider.dart';
 import './homepage_citizen_card.dart';
+import '../../screens/announcement/announcement_detail_screen.dart';
 
 class HomepageCitizenAnnouncement extends StatelessWidget {
   final bool citizenShimmer;
@@ -37,58 +38,6 @@ class HomepageCitizenAnnouncement extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
-
-    // if (citizenShimmer) {
-    //   return Container(
-    //     padding: const EdgeInsets.only(
-    //       left: 15.0,
-    //       right: 15.0,
-    //     ),
-    //     child: Shimmer.fromColors(
-    //       child: ListView.separated(
-    //         itemBuilder: (ctx, i) => ListTile(
-    //           title: Container(
-    //             height: 25,
-    //             color: Colors.white,
-    //           ),
-    //           subtitle: Container(
-    //             color: Colors.white,
-    //             height: 15,
-    //           ),
-    //         ),
-    //         shrinkWrap: true,
-    //         itemCount: 3,
-    //         separatorBuilder: (ctx, i) => Padding(
-    //           padding: const EdgeInsets.all(4.0),
-    //         ),
-    //       ),
-    //       baseColor: Theme.of(context).colorScheme.secondary,
-    //       highlightColor: Theme.of(context).colorScheme.background,
-    //     ),
-    //   );
-    // }
-
-    // if (citizenAnnouncements.length == 0) {
-    //   return Container(
-    //     padding: const EdgeInsets.only(
-    //       left: 15.0,
-    //       right: 15.0,
-    //     ),
-    //     child: ListView.separated(
-    //       physics: const NeverScrollableScrollPhysics(),
-    //       shrinkWrap: true,
-    //       itemBuilder: (ctx, i) => HomeAnnouncementCard(
-    //         title: '',
-    //         dateTime: '',
-    //         onClickCard: () {},
-    //       ),
-    //       separatorBuilder: (ctx, i) => Padding(
-    //         padding: const EdgeInsets.all(4.0),
-    //       ),
-    //       itemCount: 3,
-    //     ),
-    //   );
-    // }
 
     if (citizenAnnouncements.isEmpty) {
       return Container(
@@ -129,12 +78,12 @@ class HomepageCitizenAnnouncement extends StatelessWidget {
           return Shimmer.fromColors(
             baseColor: Colors.white,
             highlightColor: Colors.transparent,
-            child: HomepageCitizenCard(
+            child: const HomepageCitizenCard(
               useDefaultImage: true,
               imageUrl: "assets/images/icon/sioc.png",
               title: "Loading...",
               subtitle: "Loading...",
-              onTap: () {},
+              onTap: null,
             ),
           );
         }
@@ -144,30 +93,26 @@ class HomepageCitizenAnnouncement extends StatelessWidget {
                 imageUrl: "assets/images/icon/sioc.png",
                 title: getAnnouncementTitle(i, context),
                 subtitle: citizenAnnouncements[i].annStartDate,
-                onTap: () {
-                  // Navigator.of(context).pushNamed(
-                  //   AnnouncementDetailScreen.routeName,
-                  //   arguments: {
-                  //     'id': citizenAnnouncements[i].annId,
-                  //     'isMajor': false
-                  //   },
-                  // );
-                },
+                onTap: () => Navigator.of(context).pushNamed(
+                  AnnouncementDetailScreen.routeName,
+                  arguments: {
+                    'id': citizenAnnouncements[i].annId,
+                    'isMajor': false
+                  },
+                ),
               )
             : HomepageCitizenCard(
                 imageUrl:
                     citizenAnnouncements[i].attachmentDtoList[0].attFilePath,
                 title: getAnnouncementTitle(i, context),
                 subtitle: citizenAnnouncements[i].annStartDate,
-                onTap: () {
-                  // Navigator.of(context).pushNamed(
-                  //   AnnouncementDetailScreen.routeName,
-                  //   arguments: {
-                  //     'id': citizenAnnouncements[i].annId,
-                  //     'isMajor': false
-                  //   },
-                  // );
-                },
+                onTap: () => Navigator.of(context).pushNamed(
+                  AnnouncementDetailScreen.routeName,
+                  arguments: {
+                    'id': citizenAnnouncements[i].annId,
+                    'isMajor': false
+                  },
+                ),
               );
       },
     );

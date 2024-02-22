@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../screens/emergency/emergency_screen.dart';
 import '../screens/talikhidmat/new_case_screen.dart';
@@ -7,6 +9,7 @@ import '../screens/bill_payment/bill_payment_screen.dart';
 import '../widgets/sarawakid/login_full_bottom_modal.dart';
 import '../widgets/subscription/subscription_preview_dialog.dart';
 import '../widgets/homepage/homepage_citizen_announcement.dart';
+import '../widgets/homepage/homepage_tourism_card.dart';
 
 import '../providers/auth_provider.dart';
 import '../services/announcement_services.dart';
@@ -39,16 +42,22 @@ class _HomePageState extends State<HomePage> {
 
     if (response['status'] == '200') {
       var data = response['data']['list'] as List;
-      setState(() {
-        citizenShimmer = false;
-        // Cast to AnnouncementModel type to use AnnouncementModel object
-        citizenAnnouncements =
-            data.map((e) => AnnouncementModel.fromJson(e)).toList();
-      });
+      if (mounted) {
+        // Check if the widget is still mounted
+        setState(() {
+          citizenShimmer = false;
+          // Cast to AnnouncementModel type to use AnnouncementModel object
+          citizenAnnouncements =
+              data.map((e) => AnnouncementModel.fromJson(e)).toList();
+        });
+      }
     }
   }
 
   Future<void> getTourismAnn() async {
+    setState(() {
+      tourismShimmer = true;
+    });
     var response = await _announcementServices.queryPageList(
       '1',
       pageSize: '3',
@@ -57,22 +66,23 @@ class _HomePageState extends State<HomePage> {
 
     if (response['status'] == '200') {
       var data = response['data']['list'] as List;
-      setState(() {
-        tourismShimmer = false;
-        var list = data.map((e) => AnnouncementModel.fromJson(e)).toList();
-        for (var element in list) {
-          if (element.attachmentDtoList.length > 0) {
-            for (var dto in element.attachmentDtoList) {
-              if (dto.attFileType == '2') {
-                tourismAnnouncements.add(element);
-                break;
+      if (mounted) {
+        // Check if the widget is still mounted
+        setState(() {
+          tourismShimmer = false;
+          var list = data.map((e) => AnnouncementModel.fromJson(e)).toList();
+          for (var element in list) {
+            if (element.attachmentDtoList.length > 0) {
+              for (var dto in element.attachmentDtoList) {
+                if (dto.attFileType == '2') {
+                  tourismAnnouncements.add(element);
+                  break;
+                }
               }
             }
           }
-        }
-      });
-      print("getTourismAnn: $tourismAnnouncements");
-      print(tourismAnnouncements.length);
+        });
+      }
     }
   }
 
@@ -432,194 +442,60 @@ class _HomePageState extends State<HomePage> {
               margin: const EdgeInsets.symmetric(
                 vertical: 20.0,
               ),
-              child: Column(
-                children: <Widget>[
-                  Container(
-                    margin: const EdgeInsets.only(
-                      bottom: 10.0,
-                    ),
-                    decoration: BoxDecoration(
-                      borderRadius:
-                          BorderRadius.circular(10.0), // Set the border radius
-                      border: Border.all(
-                        color: Colors.grey, // Set the border color
-                        width: 0.5, // Set the border width
+              child: tourismAnnouncements.isEmpty
+                  ? Container(
+                      margin: EdgeInsets.symmetric(
+                        vertical: 10.0,
                       ),
-                    ),
-                    child: Row(
-                      children: <Widget>[
-                        Flexible(
-                          flex: 1,
-                          child: ClipRRect(
-                            borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(10.0),
-                              bottomLeft: Radius.circular(10.0),
+                      child: Center(
+                        child: Column(
+                          children: <Widget>[
+                            SvgPicture.asset(
+                              "assets/images/svg/no_data.svg",
+                              width: screenSize.width * 0.25,
+                              height: screenSize.width * 0.25,
+                              semanticsLabel: 'No Data Logo',
                             ),
-                            child: Image.asset(
-                              "assets/images/icon/sioc.png",
-                              fit: BoxFit.cover,
+                            SizedBox(
+                              height: 10.0,
                             ),
-                          ),
+                            Text("No news"),
+                          ],
                         ),
-                        Flexible(
-                          flex: 2,
-                          child: Container(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                const Text(
-                                  "Unifi TV",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 5.0,
-                                ),
-                                SizedBox(
-                                  width: screenSize.width * 0.67,
-                                  child: Text(
-                                    "Subcribers get to enjoy 3 streaming apps on us",
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 2,
-                                    style:
-                                        Theme.of(context).textTheme.labelSmall,
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  Container(
-                    margin: const EdgeInsets.only(
-                      bottom: 10.0,
-                    ),
-                    decoration: BoxDecoration(
-                      borderRadius:
-                          BorderRadius.circular(10.0), // Set the border radius
-                      border: Border.all(
-                        color: Colors.grey, // Set the border color
-                        width: 0.5, // Set the border width
                       ),
+                    )
+                  : Column(
+                      children: tourismShimmer
+                          ? List.generate(
+                              3,
+                              (index) => Shimmer.fromColors(
+                                    baseColor: Colors.white,
+                                    highlightColor: Colors.transparent,
+                                    child: const HomepageTourismCard(
+                                      useDefault: true,
+                                      imageUrl: "assets/images/icon/sioc.png",
+                                      title: "Loading...",
+                                      subtitle: "Loading...",
+                                    ),
+                                  ))
+                          : tourismAnnouncements
+                              .map((e) => e.attachmentDtoList.isEmpty
+                                  ? HomepageTourismCard(
+                                      useDefault: true,
+                                      annId: e.annId,
+                                      imageUrl: "assets/images/icon/sioc.png",
+                                      title: e.annTitleEn,
+                                      subtitle: e.annMessageEn,
+                                    )
+                                  : HomepageTourismCard(
+                                      annId: e.annId,
+                                      imageUrl:
+                                          e.attachmentDtoList[0].attFilePath,
+                                      title: e.annTitleEn,
+                                      subtitle: e.annMessageEn,
+                                    ))
+                              .toList(),
                     ),
-                    child: Row(
-                      children: <Widget>[
-                        Flexible(
-                          flex: 1,
-                          child: ClipRRect(
-                            borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(10.0),
-                              bottomLeft: Radius.circular(10.0),
-                            ),
-                            child: Image.asset(
-                              "assets/images/icon/sioc.png",
-                              // width: 70,
-                              // height: 90,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                        Flexible(
-                          flex: 2,
-                          child: Container(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                const Text(
-                                  "Unifi TV",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 5.0,
-                                ),
-                                SizedBox(
-                                  width: screenSize.width * 0.67,
-                                  child: Text(
-                                    "Subcribers get to enjoy 3 streaming apps on us",
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 2,
-                                    style:
-                                        Theme.of(context).textTheme.labelSmall,
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  Container(
-                    margin: const EdgeInsets.only(
-                      bottom: 10.0,
-                    ),
-                    decoration: BoxDecoration(
-                      borderRadius:
-                          BorderRadius.circular(10.0), // Set the border radius
-                      border: Border.all(
-                        color: Colors.grey, // Set the border color
-                        width: 0.5, // Set the border width
-                      ),
-                    ),
-                    child: Row(
-                      children: <Widget>[
-                        Flexible(
-                          flex: 1,
-                          child: ClipRRect(
-                            borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(10.0),
-                              bottomLeft: Radius.circular(10.0),
-                            ),
-                            child: Image.asset(
-                              "assets/images/icon/sioc.png",
-                              // width: 70,
-                              // height: 90,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                        Flexible(
-                          flex: 2,
-                          child: Container(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                const Text(
-                                  "Unifi TV",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 5.0,
-                                ),
-                                SizedBox(
-                                  width: screenSize.width * 0.67,
-                                  child: Text(
-                                    "Subcribers get to enjoy 3 streaming apps on us",
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 2,
-                                    style:
-                                        Theme.of(context).textTheme.labelSmall,
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ],
-              ),
             ),
             Container(
               margin: const EdgeInsets.only(

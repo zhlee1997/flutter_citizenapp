@@ -26,7 +26,7 @@ class SubscriptionPreviewDialog extends StatelessWidget {
                   ),
                 ),
                 child: Image.asset(
-                  'assets/images/app_live_video.gif', // Replace with your image path
+                  'assets/gif/app_live_video.gif', // Replace with your image path
                   height: 300.0,
                   width: double.infinity,
                   fit: BoxFit.contain,
