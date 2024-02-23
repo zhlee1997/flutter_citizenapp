@@ -93,7 +93,7 @@ class ApiBaseHelper {
       // TODO: temp added for JSON Server
       case 201:
         var responseJson = json.decode(response.body.toString());
-        return responseJson;
+        return response.statusCode.toString();
       case 400:
         throw BadRequestException(response.body.toString());
       case 401:

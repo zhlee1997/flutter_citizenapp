@@ -3,6 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:lottie/lottie.dart';
+
+import '../../services/feedback_services.dart';
 
 class SendFeedbackScreen extends StatefulWidget {
   static const String routeName = 'send-feedback-screen';
@@ -15,6 +18,8 @@ class SendFeedbackScreen extends StatefulWidget {
 
 class _SendFeedbackScreenState extends State<SendFeedbackScreen> {
   late double _feedbackValue;
+
+  final FeedbackServices _feedbackServices = FeedbackServices();
 
   void _handleFeedbackWord(double rating, double customRating) {
     if ((rating >= 4.5) && (rating <= 5.0)) {
@@ -42,9 +47,9 @@ class _SendFeedbackScreenState extends State<SendFeedbackScreen> {
   }
 
   @override
-  void didChangeDependencies() {
+  void initState() {
     _feedbackValue = 5.0;
-    super.didChangeDependencies();
+    super.initState();
   }
 
   final FocusNode _focusNode = FocusNode();
@@ -85,19 +90,68 @@ class _SendFeedbackScreenState extends State<SendFeedbackScreen> {
     }
   }
 
+  Future<void> _showDoneDialog() async {
+    final screenSize = MediaQuery.of(context).size;
+
+    showDialog(
+        context: context,
+        builder: (_) {
+          return Dialog(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                ClipRect(
+                  child: Align(
+                    heightFactor: 0.6,
+                    child: Lottie.asset(
+                      'assets/animations/lottie_done.json',
+                      width: screenSize.width * 0.5,
+                      height: screenSize.width * 0.5,
+                      repeat: false,
+                    ),
+                  ),
+                ),
+                const Text('Thank you for your feedback'),
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: screenSize.width * 0.6,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      // Close the dialog
+                      Navigator.of(context).pop();
+                      // Pop the current screen
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('Done'),
+                  ),
+                ),
+                const SizedBox(height: 16),
+              ],
+            ),
+          );
+        });
+  }
+
   // TODO: API POST => rate, indexes, text
   Future<void> _handleSubmitFeedback(String text) async {
     try {
-      print('Entered Text: $text');
-
       // Hide the keyboard
+
+      print(_feedbackValue.toInt());
+
       _focusNode.unfocus();
-      Navigator.of(context).pop();
+      var response = await _feedbackServices.postFeedback(
+        rating: _feedbackValue.toInt(),
+        services: selectedIndexes,
+        comment: text,
+      );
+      if (response == "201") _showDoneDialog();
+    } catch (e) {
       Fluttertoast.showToast(
-        msg: "Thank you for your feedback",
+        msg: "Error in sending feedback. Please try again",
         toastLength: Toast.LENGTH_SHORT,
       );
-    } catch (e) {}
+    }
   }
 
   @override
@@ -192,7 +246,7 @@ class _SendFeedbackScreenState extends State<SendFeedbackScreen> {
                   child: const Text(
                     "Send Feedback",
                     style: TextStyle(
-                      fontSize: 18,
+                      fontSize: 16.0,
                     ),
                   ),
                 ),

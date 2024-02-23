@@ -92,7 +92,7 @@ class HomepageCitizenAnnouncement extends StatelessWidget {
                 useDefaultImage: true,
                 imageUrl: "assets/images/icon/sioc.png",
                 title: getAnnouncementTitle(i, context),
-                subtitle: citizenAnnouncements[i].annStartDate,
+                subtitle: citizenAnnouncements[i].annMessageEn,
                 onTap: () => Navigator.of(context).pushNamed(
                   AnnouncementDetailScreen.routeName,
                   arguments: {
@@ -105,7 +105,7 @@ class HomepageCitizenAnnouncement extends StatelessWidget {
                 imageUrl:
                     citizenAnnouncements[i].attachmentDtoList[0].attFilePath,
                 title: getAnnouncementTitle(i, context),
-                subtitle: citizenAnnouncements[i].annStartDate,
+                subtitle: citizenAnnouncements[i].annMessageEn,
                 onTap: () => Navigator.of(context).pushNamed(
                   AnnouncementDetailScreen.routeName,
                   arguments: {

@@ -9,7 +9,7 @@ class PaymentLogo extends StatelessWidget {
   final String text;
   final String imageUrl;
 
-  PaymentLogo(this.title, this.text, this.imageUrl);
+  const PaymentLogo(this.title, this.text, this.imageUrl);
 
   @override
   Widget build(BuildContext context) {
@@ -28,8 +28,6 @@ class PaymentLogo extends StatelessWidget {
       },
       child: Container(
         margin: const EdgeInsets.all(10),
-        // width: Platform.isIOS ? 120 : screenSize.width * 0.2,
-        // height: Platform.isIOS ? 140 : screenSize.width * 0.3,
         child: Column(
           children: <Widget>[
             ClipRRect(
@@ -40,12 +38,10 @@ class PaymentLogo extends StatelessWidget {
                 height: Platform.isIOS ? 90 : screenSize.width * 0.24,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(100),
-                  border: Border.all(
-                    width: 1,
-                  ),
+                  border: Border.all(width: 0.5),
                 ),
                 child: Image.asset(
-                  '$imageUrl',
+                  imageUrl,
                   fit: BoxFit.contain,
                 ),
               ),
@@ -55,11 +51,8 @@ class PaymentLogo extends StatelessWidget {
                 top: 10.0,
               ),
               child: Text(
-                '$text',
+                text,
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 16,
-                ),
               ),
             )
           ],

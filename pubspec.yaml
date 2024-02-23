@@ -63,6 +63,7 @@ dependencies:
   package_info_plus: ^5.0.1
   flutter_markdown: ^0.6.20
   flutter_rating_bar: ^4.0.1
+  slide_to_act: ^2.0.2
 
 dev_dependencies:
   flutter_test:
@@ -99,6 +100,7 @@ flutter:
     - assets/images/icon/mpp.png
     - assets/images/icon/kwb.png
     - assets/images/icon/sarawak-energy.png
+    - assets/images/icon/spay-global.png
 
     # images/pictures
     - assets/images/pictures/sos_image.jpg
@@ -123,9 +125,14 @@ flutter:
     # images/pictures/talikhidmat
     - assets/images/pictures/talikhidmat/talikhidmat_banner.jpg
 
+      # images/pictures/premium
+    - assets/images/pictures/premium/premium_image.png
+    - assets/images/pictures/premium/premium_image_bg.png
+
     # images/animation
     - assets/animations/lottie_recorder.json
     - assets/animations/lottie_profile.json
+    - assets/animations/lottie_done.json
 
     # images/svg
     - assets/images/svg/no_data.svg
@@ -147,6 +154,9 @@ flutter:
     - assets/t&c/t&c_en.md
     - assets/t&c/t&c_ms.md
     - assets/t&c/t&c_zh.md
+
+    #disclaimer
+    - assets/disclaimer/security_disclaimer.md
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

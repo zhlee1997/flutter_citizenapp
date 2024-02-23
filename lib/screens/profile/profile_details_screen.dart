@@ -100,7 +100,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
           )
         ],
       ),
-      backgroundColor: Theme.of(context).backgroundColor,
+      backgroundColor: Theme.of(context).colorScheme.background,
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(10.0),
         child: Column(
@@ -237,7 +237,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                     : null,
                                 child: _profileImage != null
                                     ? null
-                                    : CircleAvatar(
+                                    : const CircleAvatar(
                                         radius: 30,
                                         child: Icon(
                                           Icons.person,
@@ -246,12 +246,12 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                       ),
                               ),
                               Container(
-                                padding: EdgeInsets.all(4),
-                                decoration: BoxDecoration(
+                                padding: const EdgeInsets.all(4),
+                                decoration: const BoxDecoration(
                                   color: Colors.green,
                                   shape: BoxShape.circle,
                                 ),
-                                child: Icon(
+                                child: const Icon(
                                   Icons.star,
                                   color: Colors.white,
                                   size: 12.5,

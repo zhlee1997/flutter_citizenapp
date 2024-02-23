@@ -17,6 +17,9 @@ import './screens/bill_payment/bill_payment_screen.dart';
 
 import './screens/announcement/announcement_detail_screen.dart';
 
+import './screens/subscription/subsription_package_screen.dart';
+import './screens/subscription/subscription_checkout_screen.dart';
+
 import './screens/support/privacy_policy_screen.dart';
 import './screens/support/terms_and_conditions_screen.dart';
 import './screens/support/send_feedback_screen.dart';
@@ -38,4 +41,8 @@ final Map<String, WidgetBuilder> routes = <String, WidgetBuilder>{
   PrivacyPolicyScreen.routeName: (ctx) => const PrivacyPolicyScreen(),
   TermsAndConditionsScreen.routeName: (ctx) => const TermsAndConditionsScreen(),
   SendFeedbackScreen.routeName: (ctx) => const SendFeedbackScreen(),
+  SubscriptionPackageScreen.routeName: (ctx) =>
+      const SubscriptionPackageScreen(),
+  SubscriptionCheckoutScreen.routeName: (ctx) =>
+      const SubscriptionCheckoutScreen(),
 };

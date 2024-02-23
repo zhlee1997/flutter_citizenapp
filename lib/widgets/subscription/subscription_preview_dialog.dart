@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../screens/subscription/subsription_package_screen.dart';
+
 class SubscriptionPreviewDialog extends StatelessWidget {
   const SubscriptionPreviewDialog({super.key});
 
@@ -55,6 +57,11 @@ class SubscriptionPreviewDialog extends StatelessWidget {
               right: 10.0,
             ),
             child: Container(
+              padding: const EdgeInsets.all(4.0),
+              decoration: BoxDecoration(
+                color: Colors.yellow[100],
+                borderRadius: const BorderRadius.all(Radius.circular(5.0)),
+              ),
               child: Text(
                 "Premium",
                 style: TextStyle(
@@ -62,11 +69,6 @@ class SubscriptionPreviewDialog extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                   color: Colors.yellow[800],
                 ),
-              ),
-              padding: const EdgeInsets.all(4.0),
-              decoration: BoxDecoration(
-                color: Colors.yellow[100],
-                borderRadius: BorderRadius.all(Radius.circular(5.0)),
               ),
             ),
           ),
@@ -108,7 +110,8 @@ class SubscriptionPreviewDialog extends StatelessWidget {
                 // Close the dialog and navigate to the subscription module
                 Navigator.of(context).pop();
                 // TODO
-                // Navigator.of(context).pushNamed(SubscribeScreen.routeName);
+                Navigator.of(context)
+                    .pushNamed(SubscriptionPackageScreen.routeName);
               },
               style: ButtonStyle(
                 side: MaterialStateProperty.all(
@@ -122,7 +125,7 @@ class SubscriptionPreviewDialog extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    'Go subscribe',
+                    'Subscribe Now',
                     style: TextStyle(
                       fontSize: 18.0,
                     ),

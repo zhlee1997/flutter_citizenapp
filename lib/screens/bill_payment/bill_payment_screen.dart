@@ -20,79 +20,77 @@ class BillPaymentScreen extends StatelessWidget {
         child: Column(
           children: <Widget>[
             Container(
-              alignment: Alignment.centerLeft,
-              margin: const EdgeInsets.all(20.0),
+              margin: const EdgeInsets.all(10.0),
               child: Text(
                 AppLocalization.of(context)!.translate('assessment_rate')!,
-                style: Theme.of(context).textTheme.headlineSmall,
+                style: Theme.of(context).textTheme.titleMedium,
               ),
             ),
-            Container(
-              child: GridView(
-                physics: NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                padding: EdgeInsets.symmetric(
-                  horizontal: Platform.isIOS ? 15.0 : 10.0,
-                ),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  childAspectRatio: 1.5 / 2,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                ),
-                children: <Widget>[
-                  PaymentLogo(
-                    AppLocalization.of(context)!.translate('assessment_rate')!,
-                    'MPP',
-                    'assets/images/icon/mpp.png',
-                  ),
-                  PaymentLogo(
-                    AppLocalization.of(context)!.translate('assessment_rate')!,
-                    'MBKS',
-                    'assets/images/icon/mbks.png',
-                  ),
-                  PaymentLogo(
-                    AppLocalization.of(context)!.translate('assessment_rate')!,
-                    'DBKU',
-                    'assets/images/icon/dbku.png',
-                  ),
-                ],
+            GridView(
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              padding: EdgeInsets.symmetric(
+                horizontal: Platform.isIOS ? 15.0 : 10.0,
               ),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                childAspectRatio: 1 / 2,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
+              ),
+              children: <Widget>[
+                PaymentLogo(
+                  AppLocalization.of(context)!.translate('assessment_rate')!,
+                  'Majlis Perbandaran Padawan',
+                  'assets/images/icon/mpp.png',
+                ),
+                PaymentLogo(
+                  AppLocalization.of(context)!.translate('assessment_rate')!,
+                  'Majlis Bandaraya Kuching Selatan',
+                  'assets/images/icon/mbks.png',
+                ),
+                PaymentLogo(
+                  AppLocalization.of(context)!.translate('assessment_rate')!,
+                  'Dewan Bandaraya Kuching Utara',
+                  'assets/images/icon/dbku.png',
+                ),
+              ],
+            ),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 8.0),
+              child: Divider(),
             ),
             Container(
-              alignment: Alignment.centerLeft,
-              margin: const EdgeInsets.all(20.0),
+              margin: const EdgeInsets.all(10.0),
               child: Text(
                 "Utilities",
-                style: Theme.of(context).textTheme.headlineSmall,
+                style: Theme.of(context).textTheme.titleMedium,
               ),
             ),
-            Container(
-              child: GridView(
-                physics: NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                padding: EdgeInsets.symmetric(
-                  horizontal: Platform.isIOS ? 15.0 : 10.0,
-                ),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  childAspectRatio: 1.5 / 2,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                ),
-                children: <Widget>[
-                  PaymentLogo(
-                    "Utilities",
-                    'KWB',
-                    'assets/images/icon/kwb.png',
-                  ),
-                  PaymentLogo(
-                    "Utilities",
-                    'SESCO',
-                    'assets/images/icon/sarawak-energy.png',
-                  ),
-                ],
+            GridView(
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              padding: EdgeInsets.symmetric(
+                horizontal: Platform.isIOS ? 15.0 : 10.0,
               ),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                childAspectRatio: 1 / 2,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
+              ),
+              children: const <Widget>[
+                PaymentLogo(
+                  "Utilities",
+                  'Kuching Water Board',
+                  'assets/images/icon/kwb.png',
+                ),
+                PaymentLogo(
+                  "Utilities",
+                  'Sarawak Energy',
+                  'assets/images/icon/sarawak-energy.png',
+                ),
+              ],
             ),
           ],
         ),

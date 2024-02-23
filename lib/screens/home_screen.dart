@@ -274,36 +274,62 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: <Widget>[
                         Consumer<AuthProvider>(
                           builder: (_, AuthProvider authProvider, __) {
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text(
-                                  authProvider.auth.fullName,
-                                  style: Theme.of(context).textTheme.bodyLarge,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                Text(
-                                  authProvider.auth.mobile ?? "Mobile Number",
-                                  style: TextStyle(
-                                    color: Colors.grey,
-                                    fontSize: Theme.of(context)
-                                        .textTheme
-                                        .bodyMedium!
-                                        .fontSize,
+                            return Container(
+                              padding: EdgeInsets.only(left: 10.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text(
+                                    authProvider.auth.fullName,
+                                    style:
+                                        Theme.of(context).textTheme.bodyLarge,
                                     overflow: TextOverflow.ellipsis,
                                   ),
-                                ),
-                              ],
+                                  Text(
+                                    authProvider.auth.mobile ?? "",
+                                    style: TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium!
+                                          .fontSize,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             );
                           },
                         ),
-                        CircleAvatar(
-                          radius: 28.0,
-                          child: Lottie.asset(
-                            'assets/animations/lottie_profile.json',
-                            width: MediaQuery.of(context).size.width * 0.11,
-                            height: MediaQuery.of(context).size.width * 0.11,
-                            fit: BoxFit.fill,
+                        Container(
+                          padding: const EdgeInsets.only(right: 10.0),
+                          child: Stack(
+                            alignment: Alignment.bottomRight,
+                            children: [
+                              CircleAvatar(
+                                radius: 25.0,
+                                child: Lottie.asset(
+                                  'assets/animations/lottie_profile.json',
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.11,
+                                  height:
+                                      MediaQuery.of(context).size.width * 0.11,
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
+                              Container(
+                                padding: const EdgeInsets.all(3),
+                                decoration: const BoxDecoration(
+                                  color: Colors.green,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(
+                                  Icons.star,
+                                  color: Colors.white,
+                                  size: 10.5,
+                                ),
+                              )
+                            ],
                           ),
                         ),
                       ],
@@ -312,7 +338,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     GestureDetector(
                       onTap: handleNavigateToProfileDetailsScreen,
                       child: Container(
-                        margin: EdgeInsets.only(
+                        margin: const EdgeInsets.only(
                           top: 5.0,
                         ),
                         child: Center(

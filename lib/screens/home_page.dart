@@ -33,57 +33,61 @@ class _HomePageState extends State<HomePage> {
   Future<void> getCitizenAnn() async {
     setState(() {
       citizenShimmer = true;
+      // TODO: to remove
+      citizenAnnouncements = [];
     });
-    var response = await _announcementServices.queryPageList(
-      '1',
-      pageSize: '6',
-      annType: '1',
-    );
+    // var response = await _announcementServices.queryPageList(
+    //   '1',
+    //   pageSize: '6',
+    //   annType: '1',
+    // );
 
-    if (response['status'] == '200') {
-      var data = response['data']['list'] as List;
-      if (mounted) {
-        // Check if the widget is still mounted
-        setState(() {
-          citizenShimmer = false;
-          // Cast to AnnouncementModel type to use AnnouncementModel object
-          citizenAnnouncements =
-              data.map((e) => AnnouncementModel.fromJson(e)).toList();
-        });
-      }
-    }
+    // if (response['status'] == '200') {
+    //   var data = response['data']['list'] as List;
+    //   if (mounted) {
+    //     // Check if the widget is still mounted
+    //     setState(() {
+    //       citizenShimmer = false;
+    //       // Cast to AnnouncementModel type to use AnnouncementModel object
+    //       citizenAnnouncements =
+    //           data.map((e) => AnnouncementModel.fromJson(e)).toList();
+    //     });
+    //   }
+    // }
   }
 
   Future<void> getTourismAnn() async {
     setState(() {
       tourismShimmer = true;
+      // TODO: to remove
+      tourismAnnouncements = [];
     });
-    var response = await _announcementServices.queryPageList(
-      '1',
-      pageSize: '3',
-      annType: '2',
-    );
+    // var response = await _announcementServices.queryPageList(
+    //   '1',
+    //   pageSize: '3',
+    //   annType: '2',
+    // );
 
-    if (response['status'] == '200') {
-      var data = response['data']['list'] as List;
-      if (mounted) {
-        // Check if the widget is still mounted
-        setState(() {
-          tourismShimmer = false;
-          var list = data.map((e) => AnnouncementModel.fromJson(e)).toList();
-          for (var element in list) {
-            if (element.attachmentDtoList.length > 0) {
-              for (var dto in element.attachmentDtoList) {
-                if (dto.attFileType == '2') {
-                  tourismAnnouncements.add(element);
-                  break;
-                }
-              }
-            }
-          }
-        });
-      }
-    }
+    // if (response['status'] == '200') {
+    //   var data = response['data']['list'] as List;
+    //   if (mounted) {
+    //     // Check if the widget is still mounted
+    //     setState(() {
+    //       tourismShimmer = false;
+    //       var list = data.map((e) => AnnouncementModel.fromJson(e)).toList();
+    //       for (var element in list) {
+    //         if (element.attachmentDtoList.length > 0) {
+    //           for (var dto in element.attachmentDtoList) {
+    //             if (dto.attFileType == '2') {
+    //               tourismAnnouncements.add(element);
+    //               break;
+    //             }
+    //           }
+    //         }
+    //       }
+    //     });
+    //   }
+    // }
   }
 
   Future<void> _handleFullScreenLoginBottomModal(BuildContext context) async {
@@ -151,6 +155,69 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
+            Container(
+              margin: const EdgeInsets.only(bottom: 15.0, top: 5.0),
+              width: double.infinity,
+              height: screenSize.height * 0.125,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10.0),
+                border: Border.all(
+                  width: 2.0,
+                  color: Colors.grey.shade300,
+                ),
+              ),
+              child: Stack(
+                children: <Widget>[
+                  SizedBox(
+                    width: double.infinity,
+                    child: Image.asset(
+                      "assets/images/pictures/premium/premium_image.png",
+                      opacity: const AlwaysStoppedAnimation(0.15),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  Container(
+                    alignment: Alignment.centerRight,
+                    width: double.infinity,
+                    child: Image.asset(
+                      "assets/images/pictures/premium/premium_image_bg.png",
+                      width: screenSize.width * 0.2,
+                      height: screenSize.width * 0.2,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        const Text(
+                          "4 days left!",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.red,
+                          ),
+                        ),
+                        Text(
+                          "You are subscribed",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: Theme.of(context)
+                                .textTheme
+                                .titleLarge!
+                                .fontSize,
+                          ),
+                        ),
+                        SizedBox(height: 3.0),
+                        Text("Premium access: 22 Feb - 21 Mac"),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ),
             Text(
               'Quick Services',
               style: Theme.of(context).textTheme.titleMedium,

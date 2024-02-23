@@ -38,7 +38,9 @@ class AnnouncementServices {
       return response;
     } catch (e) {
       print('get announcement page list fail');
-      throw e;
+      // TODO: Error handling
+      // throw e;
+      rethrow;
     }
   }
 
