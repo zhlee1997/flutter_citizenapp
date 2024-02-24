@@ -124,15 +124,96 @@ class _ProfileBottomNavScreenState extends State<ProfileBottomNavScreen> {
           if (!isLogin)
             Divider(
               thickness: 5.0,
-              color: Theme.of(context).dividerColor.withOpacity(0.05),
+              color: Theme.of(context).dividerColor.withOpacity(0.1),
+            ),
+          if (isLogin)
+            Container(
+              padding: const EdgeInsets.all(10.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Container(
+                    margin: const EdgeInsets.symmetric(
+                      vertical: 10.0,
+                    ),
+                    child: Text(
+                      "App Services",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize:
+                            Theme.of(context).textTheme.titleMedium!.fontSize,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 5.0,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Row(
+                        children: <Widget>[
+                          const Icon(
+                            Icons.info_outline_rounded,
+                            size: 30.0,
+                          ),
+                          const SizedBox(
+                            width: 15.0,
+                          ),
+                          Text(
+                            "Reported Cases",
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                        ],
+                      ),
+                      Icon(
+                        Icons.arrow_right_alt_outlined,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 15.0,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Row(
+                        children: <Widget>[
+                          const Icon(
+                            Icons.wallet_outlined,
+                            size: 30.0,
+                          ),
+                          const SizedBox(
+                            width: 15.0,
+                          ),
+                          Text(
+                            "Transaction History",
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                        ],
+                      ),
+                      Icon(
+                        Icons.arrow_right_alt_outlined,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          if (isLogin)
+            Divider(
+              thickness: 5.0,
+              color: Theme.of(context).dividerColor.withOpacity(0.1),
             ),
           Container(
-            padding: EdgeInsets.all(10.0),
+            padding: const EdgeInsets.all(10.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Container(
-                  margin: EdgeInsets.symmetric(
+                  margin: const EdgeInsets.symmetric(
                     vertical: 10.0,
                   ),
                   child: Text(
@@ -149,11 +230,11 @@ class _ProfileBottomNavScreenState extends State<ProfileBottomNavScreen> {
                   children: <Widget>[
                     Row(
                       children: <Widget>[
-                        Icon(
+                        const Icon(
                           Icons.notifications_outlined,
                           size: 30.0,
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 15.0,
                         ),
                         Text(
@@ -180,11 +261,11 @@ class _ProfileBottomNavScreenState extends State<ProfileBottomNavScreen> {
                   children: <Widget>[
                     Row(
                       children: <Widget>[
-                        Icon(
+                        const Icon(
                           Icons.music_note_outlined,
                           size: 30.0,
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 15.0,
                         ),
                         Text(
@@ -206,19 +287,16 @@ class _ProfileBottomNavScreenState extends State<ProfileBottomNavScreen> {
                     ),
                   ],
                 ),
-                // SizedBox(
-                // height: 5.0,
-                // ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Row(
                       children: <Widget>[
-                        Icon(
+                        const Icon(
                           Icons.translate_outlined,
                           size: 30.0,
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 15.0,
                         ),
                         Text(
@@ -254,15 +332,8 @@ class _ProfileBottomNavScreenState extends State<ProfileBottomNavScreen> {
                           ),
                           child: Text(
                             _fruitNames[_selectedFruit],
-                            // style: TextStyle(
-                            // fontWeight: FontWeight.bold,
-                            // ),
                           ),
                         ),
-                        // Icon(
-                        //   Icons.arrow_right_outlined,
-                        //   size: 25.0,
-                        // )
                       ],
                     ),
                   ],
@@ -272,10 +343,10 @@ class _ProfileBottomNavScreenState extends State<ProfileBottomNavScreen> {
           ),
           Divider(
             thickness: 5.0,
-            color: Theme.of(context).dividerColor.withOpacity(0.05),
+            color: Theme.of(context).dividerColor.withOpacity(0.1),
           ),
           Container(
-            padding: EdgeInsets.all(10.0),
+            padding: const EdgeInsets.all(10.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -426,7 +497,7 @@ class _ProfileBottomNavScreenState extends State<ProfileBottomNavScreen> {
           ),
           Divider(
             thickness: 5.0,
-            color: Theme.of(context).dividerColor.withOpacity(0.05),
+            color: Theme.of(context).dividerColor.withOpacity(0.1),
           ),
         ],
       ),

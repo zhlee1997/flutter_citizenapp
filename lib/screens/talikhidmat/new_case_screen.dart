@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:geolocator/geolocator.dart';
 
 import './report_screen.dart';
 import './location_screen.dart';
 import './confirm_screen.dart';
+import '../../providers/location_provider.dart';
 
 class NewCaseScreen extends StatefulWidget {
   static const routeName = 'new-case-screen';
@@ -15,6 +18,19 @@ class NewCaseScreen extends StatefulWidget {
 
 class _NewCaseScreenState extends State<NewCaseScreen> {
   int currentStep = 0;
+
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+
+    final Position? position =
+        Provider.of<LocationProvider>(context).currentLocation;
+    if (position != null) {
+      print('latitude: ${position.latitude}');
+      print('longitude: ${position.longitude}');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

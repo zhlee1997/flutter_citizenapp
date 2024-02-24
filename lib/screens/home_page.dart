@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_citizenapp/screens/announcement/tourism_news_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -6,6 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../screens/emergency/emergency_screen.dart';
 import '../screens/talikhidmat/new_case_screen.dart';
 import '../screens/bill_payment/bill_payment_screen.dart';
+import '../screens/announcement/citizen_announcements_screen.dart';
 import '../widgets/sarawakid/login_full_bottom_modal.dart';
 import '../widgets/subscription/subscription_preview_dialog.dart';
 import '../widgets/homepage/homepage_citizen_announcement.dart';
@@ -130,6 +132,17 @@ class _HomePageState extends State<HomePage> {
   void _handleNavigateToPayment(BuildContext context) =>
       Provider.of<AuthProvider>(context, listen: false).isAuth
           ? Navigator.of(context).pushNamed(BillPaymentScreen.routeName)
+          : _handleFullScreenLoginBottomModal(context);
+
+  void _handleNavigateToCitizenAnnouncements(BuildContext context) =>
+      Provider.of<AuthProvider>(context, listen: false).isAuth
+          ? Navigator.of(context)
+              .pushNamed(CitizenAnnouncementsScreen.routeName)
+          : _handleFullScreenLoginBottomModal(context);
+
+  void _handleNavigateToTourismNews(BuildContext context) =>
+      Provider.of<AuthProvider>(context, listen: false).isAuth
+          ? Navigator.of(context).pushNamed(TourismNewsScreen.routeName)
           : _handleFullScreenLoginBottomModal(context);
 
   @override
@@ -441,9 +454,7 @@ class _HomePageState extends State<HomePage> {
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 GestureDetector(
-                  onTap: () {
-                    print("view all pressed");
-                  },
+                  onTap: () => _handleNavigateToCitizenAnnouncements(context),
                   child: Text(
                     'VIEW ALL',
                     style: TextStyle(
@@ -483,9 +494,7 @@ class _HomePageState extends State<HomePage> {
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 GestureDetector(
-                  onTap: () {
-                    print("view all pressed");
-                  },
+                  onTap: () => _handleNavigateToTourismNews(context),
                   child: Text(
                     'VIEW ALL',
                     style: TextStyle(
@@ -511,7 +520,7 @@ class _HomePageState extends State<HomePage> {
               ),
               child: tourismAnnouncements.isEmpty
                   ? Container(
-                      margin: EdgeInsets.symmetric(
+                      margin: const EdgeInsets.symmetric(
                         vertical: 10.0,
                       ),
                       child: Center(
@@ -523,10 +532,10 @@ class _HomePageState extends State<HomePage> {
                               height: screenSize.width * 0.25,
                               semanticsLabel: 'No Data Logo',
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 10.0,
                             ),
-                            Text("No news"),
+                            const Text("No news"),
                           ],
                         ),
                       ),

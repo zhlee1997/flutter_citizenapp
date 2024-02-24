@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_vlc_player/flutter_vlc_player.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // import '../providers/settings_provider.dart';
 // import '../providers/language_provider.dart';
 import '../providers/auth_provider.dart';
-// import '../providers/location_provider.dart';
+import '../providers/location_provider.dart';
 // import '../providers/bus_provider.dart';
 // import '../providers/inbox_provider.dart';
 
 import './home_screen.dart';
+import './onboarding_screen.dart';
 // import '../utils/general_helper.dart';
 import '../utils/app_constant.dart';
 // import '../utils/notification/push_notification.dart';
@@ -35,7 +37,17 @@ class _SplashVideoScreenState extends State<SplashVideoScreen> {
     );
     _videoPlayerController.addListener(() {
       if (_videoPlayerController.value.playingState == PlayingState.ended) {
-        Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
+        Provider.of<LocationProvider>(context, listen: false)
+            .getCurrentLocation();
+        Navigator.of(context).pushReplacementNamed(OnboardingScreen.routeName);
+
+        // TODO: shared preferences => isAppFirstStart: true
+        // TODO: if true, no need to get auth, location, inbox, language, music
+        // TODO: need to get bus route
+
+        // TODO: if false, need to get auth, location, inbox, language, music, bus route
+        // TODO: can show a loading spinner in end of video, after complete then navigate to HomeScreen
+        // Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
       }
     });
 

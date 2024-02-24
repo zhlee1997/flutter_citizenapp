@@ -16,6 +16,8 @@ import './screens/emergency/emergency_screen.dart';
 import './screens/bill_payment/bill_payment_screen.dart';
 
 import './screens/announcement/announcement_detail_screen.dart';
+import './screens/announcement/citizen_announcements_screen.dart';
+import './screens/announcement/tourism_news_screen.dart';
 
 import './screens/subscription/subsription_package_screen.dart';
 import './screens/subscription/subscription_checkout_screen.dart';
@@ -25,6 +27,7 @@ import './screens/support/terms_and_conditions_screen.dart';
 import './screens/support/send_feedback_screen.dart';
 
 import './screens/home_screen.dart';
+import './screens/onboarding_screen.dart';
 
 final Map<String, WidgetBuilder> routes = <String, WidgetBuilder>{
   NewCaseScreen.routeName: (ctx) => const NewCaseScreen(),
@@ -45,4 +48,8 @@ final Map<String, WidgetBuilder> routes = <String, WidgetBuilder>{
       const SubscriptionPackageScreen(),
   SubscriptionCheckoutScreen.routeName: (ctx) =>
       const SubscriptionCheckoutScreen(),
+  CitizenAnnouncementsScreen.routeName: (ctx) =>
+      const CitizenAnnouncementsScreen(),
+  TourismNewsScreen.routeName: (ctx) => const TourismNewsScreen(),
+  OnboardingScreen.routeName: (ctx) => const OnboardingScreen(),
 };

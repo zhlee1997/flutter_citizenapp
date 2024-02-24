@@ -14,6 +14,7 @@ import './screens/splash_video_screen.dart';
 // providers
 import './providers/language_provider.dart';
 import './providers/auth_provider.dart';
+import './providers/location_provider.dart';
 
 // language settings
 import './utils/app_localization.dart';
@@ -47,6 +48,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (ctx) => AuthProvider(),
         ),
+        ChangeNotifierProvider(
+          create: (ctx) => LocationProvider(),
+        ),
       ],
       child: Consumer<LanguageProvider>(
         child: const SplashVideoScreen(),
@@ -56,7 +60,7 @@ class MyApp extends StatelessWidget {
             title: 'CitizenApp',
             routes: routes,
             onUnknownRoute: (_) => MaterialPageRoute(
-              builder: (_) => HomeScreen(),
+              builder: (_) => const HomeScreen(),
             ),
             locale: languageData.locale,
             supportedLocales: const [

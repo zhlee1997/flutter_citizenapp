@@ -64,6 +64,10 @@ dependencies:
   flutter_markdown: ^0.6.20
   flutter_rating_bar: ^4.0.1
   slide_to_act: ^2.0.2
+  flutter_native_splash: ^2.3.10
+  introduction_screen: ^3.1.12
+  permission_handler: ^11.3.0
+  geolocator: ^11.0.0
 
 dev_dependencies:
   flutter_test:
@@ -125,9 +129,13 @@ flutter:
     # images/pictures/talikhidmat
     - assets/images/pictures/talikhidmat/talikhidmat_banner.jpg
 
-      # images/pictures/premium
+    # images/pictures/premium
     - assets/images/pictures/premium/premium_image.png
     - assets/images/pictures/premium/premium_image_bg.png
+
+    # images/pictures/announcement
+    - assets/images/pictures/announcement/citizen_announcement.jpg
+    - assets/images/pictures/announcement/tourism_news.jpg
 
     # images/animation
     - assets/animations/lottie_recorder.json
@@ -136,6 +144,9 @@ flutter:
 
     # images/svg
     - assets/images/svg/no_data.svg
+
+    # images/svg/onboarding
+    - assets/images/svg/onboarding/
 
     # images/gif
     - assets/gif/app_live_video.gif
