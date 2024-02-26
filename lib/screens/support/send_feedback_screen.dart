@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lottie/lottie.dart';
 
 import '../../services/feedback_services.dart';
+import '../../utils/global_dialog_helper.dart';
 
 class SendFeedbackScreen extends StatefulWidget {
   static const String routeName = 'send-feedback-screen';
@@ -20,6 +21,7 @@ class _SendFeedbackScreenState extends State<SendFeedbackScreen> {
   late double _feedbackValue;
 
   final FeedbackServices _feedbackServices = FeedbackServices();
+  final GlobalDialogHelper _globalDialogHelper = GlobalDialogHelper();
 
   void _handleFeedbackWord(double rating, double customRating) {
     if ((rating >= 4.5) && (rating <= 5.0)) {
@@ -53,7 +55,10 @@ class _SendFeedbackScreenState extends State<SendFeedbackScreen> {
   }
 
   final FocusNode _focusNode = FocusNode();
+  // final FocusNode _otherFocusNode = FocusNode();
   final TextEditingController _textEditingController = TextEditingController();
+  // final TextEditingController _otherTextEditingController =
+  //     TextEditingController();
 
   String _handleGridText(int index) {
     switch (index) {
@@ -136,17 +141,89 @@ class _SendFeedbackScreenState extends State<SendFeedbackScreen> {
   Future<void> _handleSubmitFeedback(String text) async {
     try {
       // Hide the keyboard
-
-      print(_feedbackValue.toInt());
-
       _focusNode.unfocus();
+      // other => showModalBottomSheet
+      // if (selectedIndexes.contains(7)) {
+      //   await showModalBottomSheet(
+      //     context: context,
+      //     isScrollControlled: true,
+      //     builder: (_) {
+      //       return Padding(
+      //         padding: EdgeInsets.only(
+      //           bottom: MediaQuery.of(context).viewInsets.bottom,
+      //         ),
+      //         child: Container(
+      //           padding: const EdgeInsets.all(10.0),
+      //           width: double.infinity,
+      //           child: Column(
+      //             crossAxisAlignment: CrossAxisAlignment.start,
+      //             mainAxisSize: MainAxisSize.min,
+      //             children: <Widget>[
+      //               Container(
+      //                 padding: const EdgeInsets.symmetric(vertical: 10.0),
+      //                 child: Text(
+      //                   'Let us know the "Others"',
+      //                   style: Theme.of(context).textTheme.titleLarge,
+      //                 ),
+      //               ),
+      //               Container(
+      //                 margin: const EdgeInsets.symmetric(vertical: 10.0),
+      //                 child: TextField(
+      //                   controller: _otherTextEditingController,
+      //                   maxLines: 3,
+      //                   keyboardType: TextInputType.multiline,
+      //                   textInputAction: TextInputAction.done,
+      //                   focusNode: _otherFocusNode,
+      //                   // onChanged callback will be called whenever the user types in the text field
+      //                   onChanged: (String value) {
+      //                     print("Typed: $value");
+      //                   },
+      //                   style: const TextStyle(
+      //                     fontSize: 15.0,
+      //                   ),
+      //                   decoration: const InputDecoration(
+      //                     hintText:
+      //                         'Briefly describe about "Others" so we can understand it better',
+      //                     border: OutlineInputBorder(),
+      //                   ),
+      //                 ),
+      //               ),
+      //               const Divider(),
+      //               TextButton.icon(
+      //                 onPressed: () {},
+      //                 icon: const Icon(
+      //                   Icons.send_outlined,
+      //                   size: 25.0,
+      //                 ),
+      //                 label: const Text(
+      //                   "Submit Anyway",
+      //                   style: TextStyle(
+      //                     fontSize: 16.0,
+      //                     fontWeight: FontWeight.bold,
+      //                   ),
+      //                 ),
+      //               )
+      //             ],
+      //           ),
+      //         ),
+      //       );
+      //     },
+      //   );
+      //   return;
+      // }
+      _globalDialogHelper.buildCircularProgressWithTextCenter(
+          context: context, message: "Submitting");
       var response = await _feedbackServices.postFeedback(
         rating: _feedbackValue.toInt(),
         services: selectedIndexes,
         comment: text,
       );
-      if (response == "201") _showDoneDialog();
+      if (response == "201") {
+        Navigator.of(context).pop();
+        _showDoneDialog();
+      }
     } catch (e) {
+      Navigator.of(context).pop();
       Fluttertoast.showToast(
         msg: "Error in sending feedback. Please try again",
         toastLength: Toast.LENGTH_SHORT,
@@ -213,6 +290,7 @@ class _SendFeedbackScreenState extends State<SendFeedbackScreen> {
                   controller: _textEditingController,
                   maxLines: 3,
                   keyboardType: TextInputType.multiline,
+                  textInputAction: TextInputAction.done,
                   focusNode: _focusNode,
                   // onChanged callback will be called whenever the user types in the text field
                   onChanged: (String value) {

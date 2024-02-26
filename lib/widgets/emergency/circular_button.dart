@@ -53,25 +53,25 @@ class _CircularButtonState extends State<CircularButton> {
               child: Icon(
                 _isDone ? Icons.check_circle : getIcon,
                 size: iconSize,
-                color: Color(0xffE6E8FD),
+                color: const Color(0xffE6E8FD),
               ),
             ),
             AnimatedContainer(
-              margin: EdgeInsets.symmetric(
+              margin: const EdgeInsets.symmetric(
                 vertical: 40,
               ),
               alignment: Alignment.center,
-              duration: Duration(
+              duration: const Duration(
                 milliseconds: 200,
               ),
               height: _height,
               width: 200,
               child: SingleChildScrollView(
-                physics: NeverScrollableScrollPhysics(),
+                physics: const NeverScrollableScrollPhysics(),
                 child: Icon(
                   Icons.fingerprint,
                   size: iconSize,
-                  color: Color(0xffE6E8FD),
+                  color: const Color(0xffE6E8FD),
                 ),
               ),
             ),

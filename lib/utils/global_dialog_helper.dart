@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -62,49 +61,43 @@ class GlobalDialogHelper {
     required BuildContext context,
     required String message,
   }) async {
-    showDialog(
+    await showDialog(
       context: context,
       barrierDismissible: false,
       builder: (_) => WillPopScope(
         child: Dialog(
-          child: Container(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Expanded(
-                        flex: 1,
-                        child: Container(
-                          child: Center(
-                            child: CircularProgressIndicator(),
-                          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(20.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Expanded(
+                      flex: 1,
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Expanded(
+                      flex: 3,
+                      child: Text(
+                        message,
+                        softWrap: true,
+                        style: const TextStyle(
+                          fontSize: 16,
                         ),
                       ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Expanded(
-                        flex: 3,
-                        child: Container(
-                          child: Text(
-                            '$message',
-                            softWrap: true,
-                            style: TextStyle(
-                              fontSize: 16,
-                            ),
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                )
-              ],
-            ),
+                    )
+                  ],
+                ),
+              )
+            ],
           ),
         ),
         onWillPop: () async => false,

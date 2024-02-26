@@ -126,43 +126,41 @@ class _ReportScreenState extends State<ReportScreen> {
     await showModalBottomSheet(
       context: context,
       builder: (BuildContext ctx) => SafeArea(
-        child: Container(
-          child: Wrap(
-            children: <Widget>[
-              ListTile(
-                leading: Icon(
-                  Icons.photo_library,
-                  size: 30,
-                ),
-                title: Text(
-                  AppLocalization.of(context)!.translate('photo_library')!,
-                  style: TextStyle(
-                    fontSize: 18.0,
-                  ),
-                ),
-                onTap: () {
-                  _getPhotoLibrary();
-                  Navigator.of(context).pop();
-                },
+        child: Wrap(
+          children: <Widget>[
+            ListTile(
+              leading: Icon(
+                Icons.photo_library,
+                size: 30,
               ),
-              ListTile(
-                leading: Icon(
-                  Icons.photo_camera,
-                  size: 30,
+              title: Text(
+                AppLocalization.of(context)!.translate('photo_library')!,
+                style: TextStyle(
+                  fontSize: 18.0,
                 ),
-                title: Text(
-                  AppLocalization.of(context)!.translate('camera')!,
-                  style: TextStyle(
-                    fontSize: 18.0,
-                  ),
-                ),
-                onTap: () {
-                  _getPhotoCamera();
-                  Navigator.of(context).pop();
-                },
               ),
-            ],
-          ),
+              onTap: () {
+                _getPhotoLibrary();
+                Navigator.of(context).pop();
+              },
+            ),
+            ListTile(
+              leading: Icon(
+                Icons.photo_camera,
+                size: 30,
+              ),
+              title: Text(
+                AppLocalization.of(context)!.translate('camera')!,
+                style: TextStyle(
+                  fontSize: 18.0,
+                ),
+              ),
+              onTap: () {
+                _getPhotoCamera();
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
         ),
       ),
     );

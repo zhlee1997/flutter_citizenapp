@@ -5,6 +5,7 @@ import 'package:lottie/lottie.dart';
 
 import '../../widgets/emergency/circular_progress_button.dart';
 import '../../widgets/emergency/emergency_audio_player.dart';
+import '../../screens/emergency/recording_screen.dart';
 
 class VoiceNoteBottomModal extends StatefulWidget {
   final Widget childWidget;
@@ -48,11 +49,63 @@ class _VoiceNoteBottomModalState extends State<VoiceNoteBottomModal> {
     }
   }
 
-  void saveRecording() {
+  Future<void> saveRecording() async {
     _timerCountDown?.cancel(); // Stop the timer
-    setState(() {
-      _isRecorded = true;
-    });
+    // setState(() {
+    //   _isRecorded = true;
+    // });
+    Navigator.of(context).pop();
+
+    await showDialog(
+        context: context,
+        builder: (context) {
+          Future.delayed(Duration(seconds: 3), () {
+            Navigator.of(context).pop(true);
+            showModalBottomSheet(
+                context: context,
+                builder: (ctx) {
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[],
+                  );
+                });
+          });
+          return Dialog(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(20.0),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Expanded(
+                        flex: 1,
+                        child: Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Expanded(
+                        flex: 3,
+                        child: Text(
+                          "Uploading audio...",
+                          softWrap: true,
+                          style: TextStyle(
+                            fontSize: 16,
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
+          );
+        });
   }
 
   @override
@@ -91,25 +144,50 @@ class _VoiceNoteBottomModalState extends State<VoiceNoteBottomModal> {
                     ),
                   ],
                 ),
-              if (!_isRecorded)
-                Container(
-                  margin: const EdgeInsets.only(
-                    bottom: 10.0,
+              SizedBox(
+                width: screenSize.width * 0.9,
+                child: ElevatedButton(
+                  onPressed: () {
+                    // Dismiss bottom modal sheet
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pushNamed(
+                      RecordingScreen.routeName,
+                      arguments: {
+                        'handleNextProceed': widget.handleNextProceed,
+                      },
+                    );
+                  },
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                        Theme.of(context).colorScheme.secondary),
                   ),
-                  child: Text(
-                    "$_countdown SECONDS",
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
+                  child: const Text(
+                    "I understand",
+                    style: TextStyle(
+                      fontSize: 18.0,
                     ),
                   ),
                 ),
-              if (!_isRecorded)
-                CircularProgressButton(
-                  startCountdown: () => startCountdown(),
-                  resetCountdown: () => resetCountdown(),
-                  saveRecording: () => saveRecording(),
+              ),
+              // if (!_isRecorded)
+              Container(
+                margin: const EdgeInsets.symmetric(
+                  vertical: 10.0,
                 ),
-              if (_countdown < 10 && _isRecorded) ...returnAudioPlayer(),
+                child: const Text(
+                  "Each recording session has 10 seconds.",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              // if (!_isRecorded)
+              //   CircularProgressButton(
+              //     startCountdown: () => startCountdown(),
+              //     resetCountdown: () => resetCountdown(),
+              //     saveRecording: () => saveRecording(),
+              //   ),
+              // if (_countdown < 10 && _isRecorded) ...returnAudioPlayer(),
             ],
           ),
           Positioned.fill(
@@ -130,7 +208,7 @@ class _VoiceNoteBottomModalState extends State<VoiceNoteBottomModal> {
     );
   }
 
-  List<Widget> returnAudioPlayer() => [
+  List<Widget> returnAudioPlayer(context) => [
         Text(
           "Please check your recording before you submit",
           textAlign: TextAlign.center,
@@ -232,7 +310,7 @@ class _VoiceNoteBottomModalState extends State<VoiceNoteBottomModal> {
             bottom: 5.0,
           ),
           child: const Text(
-            "HOLD TO RECORD",
+            "VOICE RECORDING",
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 18,
@@ -243,83 +321,11 @@ class _VoiceNoteBottomModalState extends State<VoiceNoteBottomModal> {
           margin: const EdgeInsets.only(
             bottom: 15.0,
           ),
+          padding: const EdgeInsets.all(8.0),
           child: const Text(
-            "Activate Emergency SOS by holding down the designated button to record audio, capture location, and initiate assistance in case of an emergency.",
+            "Request and activate Emergency SOS by recording audio, capture location, and initiate assistance in case of an emergency.",
             textAlign: TextAlign.center,
           ),
         ),
       ];
 }
-
-     // Load a Lottie file from your assets
-              // isRecorded
-              //     ? widget.childWidget
-              //     : Lottie.asset('assets/animations/lottie_recorder.json'),
-
-// CircularProgressButton(),
-
-// GestureDetector(
-              //   onTap: () {
-              //     print("tap");
-              //   },
-              //   onTapUp: (_) {
-              //     setState(() {
-              //       _position = 6;
-              //     });
-              //   },
-              //   onTapDown: (_) {
-              //     setState(() {
-              //       _position = 0;
-              //     });
-              //   },
-              //   onTapCancel: () {
-              //     setState(() {
-              //       _position = 6;
-              //     });
-              //   },
-              //   child: SizedBox(
-              //     height: _height + _shadowHeight,
-              //     width: 250,
-              //     child: Stack(
-              //       children: [
-              //         Positioned(
-              //           bottom: 0,
-              //           child: Container(
-              //             height: _height,
-              //             width: 250,
-              //             decoration: const BoxDecoration(
-              //               color: Colors.grey,
-              //               borderRadius: BorderRadius.all(
-              //                 Radius.circular(16),
-              //               ),
-              //             ),
-              //           ),
-              //         ),
-              //         AnimatedPositioned(
-              //           curve: Curves.easeIn,
-              //           bottom: _position,
-              //           duration: const Duration(milliseconds: 70),
-              //           child: Container(
-              //             height: _height,
-              //             width: 250,
-              //             decoration: const BoxDecoration(
-              //               color: Colors.red,
-              //               borderRadius: BorderRadius.all(
-              //                 Radius.circular(16),
-              //               ),
-              //             ),
-              //             child: const Center(
-              //               child: Text(
-              //                 'HOLD TO TALK',
-              //                 style: TextStyle(
-              //                   color: Colors.white,
-              //                   fontSize: 22,
-              //                 ),
-              //               ),
-              //             ),
-              //           ),
-              //         ),
-              //       ],
-              //     ),
-              //   ),
-              // ),

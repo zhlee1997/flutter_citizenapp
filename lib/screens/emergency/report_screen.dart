@@ -24,37 +24,9 @@ class ReportScreen extends StatelessWidget {
           ),
           alignment: Alignment.centerLeft,
           child: const Text(
-            "Select any for emergency request",
+            "Method 1: Select one for emergency request",
             style: TextStyle(
               fontWeight: FontWeight.w500,
-            ),
-          ),
-        ),
-        GestureDetector(
-          onTap: () => handleVoiceNoteBottomModal(),
-          child: Container(
-            width: double.infinity,
-            height: screenSize.height * 0.175,
-            margin: const EdgeInsets.only(
-              bottom: 8.0,
-            ),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10.0),
-              image: const DecorationImage(
-                image: AssetImage(
-                    "assets/images/pictures/emergency/voice_recording.jpg"),
-                fit: BoxFit.cover,
-                opacity: 0.3,
-              ),
-            ),
-            child: const Center(
-              child: Text(
-                "Voice Recording",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16.0,
-                ),
-              ),
             ),
           ),
         ),
@@ -80,12 +52,14 @@ class ReportScreen extends StatelessWidget {
                     opacity: 0.3,
                   ),
                 ),
+                padding: const EdgeInsets.all(8.0),
                 child: const Center(
                   child: Text(
-                    "Harassment",
+                    "HARASSMENT",
+                    textAlign: TextAlign.center,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 16.0,
+                      // fontSize: 14.0,
                     ),
                   ),
                 ),
@@ -103,12 +77,14 @@ class ReportScreen extends StatelessWidget {
                     opacity: 0.3,
                   ),
                 ),
+                padding: const EdgeInsets.all(8.0),
                 child: const Center(
                   child: Text(
-                    "Fire/Rescue",
+                    "FIRE/RESCUE",
+                    textAlign: TextAlign.center,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 16.0,
+                      // fontSize: 16.0,
                     ),
                   ),
                 ),
@@ -117,69 +93,74 @@ class ReportScreen extends StatelessWidget {
             GestureDetector(
               onTap: handleEmergencyBottomModal,
               child: Container(
-                child: Center(
-                  child: Text(
-                    "Traffic Accident/Injuries",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16.0,
-                    ),
-                  ),
-                ),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10.0),
-                  image: DecorationImage(
+                  image: const DecorationImage(
                     image: AssetImage(
                         "assets/images/pictures/emergency/traffic_accident.jpg"),
                     fit: BoxFit.cover,
                     opacity: 0.3,
                   ),
                 ),
+                padding: const EdgeInsets.all(8.0),
+                child: const Center(
+                  child: Text(
+                    "TRAFFIC ACCIDENT/INJURIES",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      // fontSize: 16.0,
+                    ),
+                  ),
+                ),
               ),
             ),
             GestureDetector(
               onTap: handleEmergencyBottomModal,
               child: Container(
-                child: Center(
-                  child: Text(
-                    "Theft/Robbery",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16.0,
-                    ),
-                  ),
-                ),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10.0),
-                  image: DecorationImage(
+                  image: const DecorationImage(
                     image: AssetImage(
                         "assets/images/pictures/emergency/theft.jpg"),
                     fit: BoxFit.cover,
                     opacity: 0.3,
                   ),
                 ),
+                padding: const EdgeInsets.all(8.0),
+                child: const Center(
+                  child: Text(
+                    "THEFT/ROBBERY",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      // fontSize: 16.0,
+                    ),
+                  ),
+                ),
               ),
             ),
             GestureDetector(
               onTap: handleEmergencyBottomModal,
               child: Container(
-                child: Center(
-                  child: Text(
-                    "Physical Violence",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16.0,
-                    ),
-                  ),
-                ),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10.0),
-                  image: DecorationImage(
+                  image: const DecorationImage(
                     image: AssetImage(
                         "assets/images/pictures/emergency/physical_violence.jpg"),
                     fit: BoxFit.cover,
                     opacity: 0.3,
+                  ),
+                ),
+                padding: const EdgeInsets.all(8.0),
+                child: const Center(
+                  child: Text(
+                    "PHYSICAL VIOLENCE",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      // fontSize: 16.0,
+                    ),
                   ),
                 ),
               ),
@@ -187,22 +168,24 @@ class ReportScreen extends StatelessWidget {
             GestureDetector(
               onTap: handleOtherEmergencyBottomModal,
               child: Container(
-                child: Center(
-                  child: Text(
-                    "Others",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16.0,
-                    ),
-                  ),
-                ),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10.0),
-                  image: DecorationImage(
+                  image: const DecorationImage(
                     image: AssetImage(
                         "assets/images/pictures/emergency/others.jpg"),
                     fit: BoxFit.cover,
                     opacity: 0.3,
+                  ),
+                ),
+                padding: const EdgeInsets.all(8.0),
+                child: const Center(
+                  child: Text(
+                    "OTHERS",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      // fontSize: 16.0,
+                    ),
                   ),
                 ),
               ),
@@ -210,10 +193,52 @@ class ReportScreen extends StatelessWidget {
           ],
         ),
         Container(
-          margin: EdgeInsets.only(
+          margin: const EdgeInsets.symmetric(
+            vertical: 10.0,
+          ),
+          alignment: Alignment.centerLeft,
+          child: const Text(
+            "Method 2: Record your voice for help",
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+        GestureDetector(
+          onTap: () => handleVoiceNoteBottomModal(),
+          child: Container(
+            width: double.infinity,
+            height: screenSize.height * 0.15,
+            margin: const EdgeInsets.only(
+              bottom: 8.0,
+            ),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10.0),
+              image: const DecorationImage(
+                image: AssetImage(
+                    "assets/images/pictures/emergency/voice_recording.jpg"),
+                fit: BoxFit.cover,
+                opacity: 0.3,
+              ),
+            ),
+            padding: const EdgeInsets.all(8.0),
+            child: const Center(
+              child: Text(
+                "VOICE RECORDING",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16.0,
+                ),
+              ),
+            ),
+          ),
+        ),
+        Container(
+          margin: const EdgeInsets.only(
             top: 10.0,
           ),
-          child: Text(
+          child: const Text(
             "You have 2 requests left per day",
             style: TextStyle(
               fontWeight: FontWeight.w500,

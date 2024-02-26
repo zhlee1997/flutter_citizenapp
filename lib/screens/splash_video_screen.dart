@@ -35,19 +35,25 @@ class _SplashVideoScreenState extends State<SplashVideoScreen> {
       autoPlay: true,
       options: VlcPlayerOptions(),
     );
-    _videoPlayerController.addListener(() {
+    _videoPlayerController.addListener(() async {
+      final prefs = await SharedPreferences.getInstance();
       if (_videoPlayerController.value.playingState == PlayingState.ended) {
-        Provider.of<LocationProvider>(context, listen: false)
-            .getCurrentLocation();
-        Navigator.of(context).pushReplacementNamed(OnboardingScreen.routeName);
-
-        // TODO: shared preferences => isAppFirstStart: true
-        // TODO: if true, no need to get auth, location, inbox, language, music
-        // TODO: need to get bus route
-
-        // TODO: if false, need to get auth, location, inbox, language, music, bus route
-        // TODO: can show a loading spinner in end of video, after complete then navigate to HomeScreen
-        // Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
+        final bool? isAppFirstStart = prefs.getBool('isAppFirstStart');
+        if (isAppFirstStart != null && isAppFirstStart) {
+          // TODO: shared preferences => isAppFirstStart: true
+          // TODO: if true, no need to get auth, location (no permission), inbox, language, music
+          // TODO: need to get bus route
+          Provider.of<LocationProvider>(context, listen: false)
+              .getCurrentLocation();
+          Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
+          return;
+        } else {
+          // TODO: if false, need to get auth, location, inbox, language, music, bus route
+          // TODO: can show a loading spinner in end of video, after complete then navigate to HomeScreen
+          Navigator.of(context)
+              .pushReplacementNamed(OnboardingScreen.routeName);
+          return;
+        }
       }
     });
 
@@ -64,11 +70,27 @@ class _SplashVideoScreenState extends State<SplashVideoScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+
     return Center(
-      child: VlcPlayer(
-        controller: _videoPlayerController,
-        aspectRatio: 16 / 9,
-        placeholder: const Center(child: CircularProgressIndicator()),
+      child: Stack(
+        children: [
+          Align(
+            alignment: Alignment.center,
+            child: VlcPlayer(
+              controller: _videoPlayerController,
+              aspectRatio: 16 / 9,
+              placeholder: const Center(child: CircularProgressIndicator()),
+            ),
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Container(
+              margin: EdgeInsets.only(bottom: screenSize.width * 0.2),
+              child: const CircularProgressIndicator(),
+            ),
+          )
+        ],
       ),
     );
   }

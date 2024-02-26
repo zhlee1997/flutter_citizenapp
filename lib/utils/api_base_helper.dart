@@ -60,7 +60,7 @@ class ApiBaseHelper {
     //   "/mobile/api/" + url,
     // );
     var uri = Uri.http(
-      "172.20.10.6:3000",
+      "192.168.50.250:3000",
       url,
     );
 

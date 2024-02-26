@@ -68,6 +68,7 @@ dependencies:
   introduction_screen: ^3.1.12
   permission_handler: ^11.3.0
   geolocator: ^11.0.0
+  record: ^5.0.4
 
 dev_dependencies:
   flutter_test:
@@ -168,6 +169,9 @@ flutter:
 
     #disclaimer
     - assets/disclaimer/security_disclaimer.md
+
+    #audio
+    - assets/audio/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

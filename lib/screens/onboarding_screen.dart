@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import './home_screen.dart';
 
@@ -15,8 +16,10 @@ class OnboardingScreen extends StatelessWidget {
     // You can request multiple permissions at once.
     Map<Permission, PermissionStatus> statuses = await [
       Permission.location,
+      Permission.microphone,
     ].request();
-    print(statuses[Permission.location]);
+    print("Location permission: ${statuses[Permission.location]}");
+    print("Microphone permission: ${statuses[Permission.microphone]}");
     Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
   }
 
@@ -28,9 +31,13 @@ class OnboardingScreen extends StatelessWidget {
       pages: listPagesViewModel(screenSize),
       showNextButton: false,
       done: const Text("Done"),
-      onDone: () {
+      onDone: () async {
+        final prefs = await SharedPreferences.getInstance();
+
         // Permission handler and navigate to homescreen
         _handlePermissions(context);
+        // TODO: shared preferences => isAppFirstStart: true
+        prefs.setBool('isAppFirstStart', true);
       },
     );
   }
@@ -80,8 +87,6 @@ class OnboardingScreen extends StatelessWidget {
             semanticsLabel: 'Bill Payment Onboarding Logo',
           ),
         ),
-
-        // TODO: another screen for permission request, press "done" to accept the request
         PageViewModel(
           title: "Unlock the full experience.",
           body:

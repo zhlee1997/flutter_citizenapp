@@ -12,6 +12,7 @@ import './screens/profile/profile_bottom_nav_screen.dart';
 import './screens/profile/profile_details_screen.dart';
 
 import './screens/emergency/emergency_screen.dart';
+import './screens/emergency/recording_screen.dart';
 
 import './screens/bill_payment/bill_payment_screen.dart';
 
@@ -52,4 +53,5 @@ final Map<String, WidgetBuilder> routes = <String, WidgetBuilder>{
       const CitizenAnnouncementsScreen(),
   TourismNewsScreen.routeName: (ctx) => const TourismNewsScreen(),
   OnboardingScreen.routeName: (ctx) => const OnboardingScreen(),
+  RecordingScreen.routeName: (ctx) => const RecordingScreen(),
 };
