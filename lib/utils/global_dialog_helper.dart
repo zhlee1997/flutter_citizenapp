@@ -20,33 +20,64 @@ class GlobalDialogHelper {
       context: context,
       builder: (_) {
         return AlertDialog(
-          title: Text('$title'),
-          content: Text('$message'),
+          title: Text(title),
+          content: Text(message),
           actions: [
             TextButton(
-              onPressed: yesButtonFunc as void Function()?,
-              child: Text(
-                'Yes',
-                style: TextStyle(
-                  color: Colors.red,
-                  fontSize: 18,
+                onPressed: yesButtonFunc as void Function()?,
+                style: ButtonStyle(
+                  overlayColor: MaterialStateProperty.all<Color>(
+                      Colors.red.withOpacity(0.1)),
                 ),
-              ),
-              style: ButtonStyle(
-                overlayColor: MaterialStateProperty.all<Color>(
-                    Colors.red.withOpacity(0.1)),
-              ),
-            ),
+                child: const Text(
+                  'YES',
+                  style: TextStyle(
+                    color: Colors.red,
+                  ),
+                )),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text(
-                'No',
-                style: TextStyle(
-                  fontSize: 18,
-                ),
-              ),
+              child: const Text('NO'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  /// Displays alert dialog with single button
+  ///
+  /// Receives [title] as the dialog title
+  /// [message] as the dialog message
+  Future<void> showAlertDialogWithSingleButton({
+    required BuildContext context,
+    required String title,
+    required String message,
+  }) async {
+    await showDialog(
+      context: context,
+      builder: (_) {
+        return AlertDialog(
+          title: Text(
+            title,
+            style: const TextStyle(
+              fontSize: 20,
+            ),
+          ),
+          content: Text(
+            message,
+            style: const TextStyle(
+              fontSize: 17,
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('OK'),
             ),
           ],
         );

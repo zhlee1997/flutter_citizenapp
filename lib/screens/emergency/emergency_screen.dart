@@ -33,12 +33,13 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
     );
   }
 
-  Future<void> _handleEmergencyBottomModal() async {
+  Future<void> _handleEmergencyBottomModal(int index) async {
     await showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
         return EmergencyBottomModal(
           handleProceedNext: handleProceedNext,
+          category: index,
         );
       },
     );
@@ -47,6 +48,7 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
   Future<void> _handleOtherEmergencyBottomModal() async {
     await showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       builder: (BuildContext context) {
         return OtherEmergencyBottomModal(
           handleProceedNext: handleProceedNext,
@@ -59,6 +61,20 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
     Navigator.of(context).pop();
     setState(() => currentStep += 1);
   }
+
+  // callback
+  // void handleProceedNextWOPop({
+  //   required String address,
+  //   required double latitude,
+  //   required double longitude,
+  // }) {
+  //   Provider.of<EmergencyProvider>(context).setAddressAndLocation(
+  //     address: address,
+  //     latitide: latitude,
+  //     longitude: longitude,
+  //   );
+  //   setState(() => currentStep += 1);
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -165,7 +181,9 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
               fontSize: Theme.of(context).textTheme.labelSmall!.fontSize,
             ),
           ),
-          content: const LocationScreen(),
+          content: const LocationScreen(
+              // handleProceedNextWOPop: handleProceedNextWOPop,
+              ),
         ),
         Step(
           isActive: currentStep >= 2,

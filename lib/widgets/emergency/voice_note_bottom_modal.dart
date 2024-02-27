@@ -59,12 +59,12 @@ class _VoiceNoteBottomModalState extends State<VoiceNoteBottomModal> {
     await showDialog(
         context: context,
         builder: (context) {
-          Future.delayed(Duration(seconds: 3), () {
+          Future.delayed(const Duration(seconds: 3), () {
             Navigator.of(context).pop(true);
             showModalBottomSheet(
                 context: context,
                 builder: (ctx) {
-                  return Column(
+                  return const Column(
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[],
                   );

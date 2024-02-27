@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class ReportScreen extends StatelessWidget {
   final VoidCallback handleVoiceNoteBottomModal;
-  final VoidCallback handleEmergencyBottomModal;
+  final void Function(int) handleEmergencyBottomModal;
   final VoidCallback handleOtherEmergencyBottomModal;
 
   const ReportScreen({
@@ -41,7 +41,7 @@ class ReportScreen extends StatelessWidget {
           ),
           children: <Widget>[
             GestureDetector(
-              onTap: handleEmergencyBottomModal,
+              onTap: () => handleEmergencyBottomModal(0),
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10.0),
@@ -66,7 +66,7 @@ class ReportScreen extends StatelessWidget {
               ),
             ),
             GestureDetector(
-              onTap: handleEmergencyBottomModal,
+              onTap: () => handleEmergencyBottomModal(1),
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10.0),
@@ -91,7 +91,7 @@ class ReportScreen extends StatelessWidget {
               ),
             ),
             GestureDetector(
-              onTap: handleEmergencyBottomModal,
+              onTap: () => handleEmergencyBottomModal(2),
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10.0),
@@ -116,7 +116,7 @@ class ReportScreen extends StatelessWidget {
               ),
             ),
             GestureDetector(
-              onTap: handleEmergencyBottomModal,
+              onTap: () => handleEmergencyBottomModal(3),
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10.0),
@@ -141,7 +141,7 @@ class ReportScreen extends StatelessWidget {
               ),
             ),
             GestureDetector(
-              onTap: handleEmergencyBottomModal,
+              onTap: () => handleEmergencyBottomModal(4),
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10.0),
@@ -234,17 +234,6 @@ class ReportScreen extends StatelessWidget {
             ),
           ),
         ),
-        Container(
-          margin: const EdgeInsets.only(
-            top: 10.0,
-          ),
-          child: const Text(
-            "You have 2 requests left per day",
-            style: TextStyle(
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        )
       ],
     );
   }

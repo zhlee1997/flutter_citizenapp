@@ -69,6 +69,9 @@ dependencies:
   permission_handler: ^11.3.0
   geolocator: ^11.0.0
   record: ^5.0.4
+  stop_watch_timer: ^3.1.0+4
+  geocoding: ^2.2.0
+  http_parser: ^4.0.2
 
 dev_dependencies:
   flutter_test:

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_citizenapp/screens/announcement/tourism_news_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -12,10 +11,12 @@ import '../widgets/sarawakid/login_full_bottom_modal.dart';
 import '../widgets/subscription/subscription_preview_dialog.dart';
 import '../widgets/homepage/homepage_citizen_announcement.dart';
 import '../widgets/homepage/homepage_tourism_card.dart';
+import '../screens/announcement/tourism_news_screen.dart';
 
 import '../providers/auth_provider.dart';
 import '../services/announcement_services.dart';
 import "../models/announcement_model.dart";
+import "../utils/global_dialog_helper.dart";
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -29,8 +30,10 @@ class _HomePageState extends State<HomePage> {
   bool tourismShimmer = false;
   List<AnnouncementModel> citizenAnnouncements = [];
   List<AnnouncementModel> tourismAnnouncements = [];
+  late int numberOfRequestLeft;
 
   final AnnouncementServices _announcementServices = AnnouncementServices();
+  final GlobalDialogHelper _globalDialogHelper = GlobalDialogHelper();
 
   Future<void> getCitizenAnn() async {
     setState(() {
@@ -114,9 +117,34 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Future<void> _showEmergencyRequestLeftDialog(BuildContext context) async {
+    // TODO: Emergency service to check location permission is given
+    // TODO: If denied, ask again
+    // TODO: If foreverDenied, need navigate to app settings
+
+    if (numberOfRequestLeft != 0) {
+      await _globalDialogHelper.showAlertDialog(
+        context: context,
+        yesButtonFunc: () {
+          Navigator.of(context).pop();
+          Navigator.of(context).pushNamed(EmergencyScreen.routeName);
+        },
+        title: "Remaining requests",
+        message:
+            "You have $numberOfRequestLeft requests left per day. Are you sure to proceed?",
+      );
+    } else {
+      await _globalDialogHelper.showAlertDialogWithSingleButton(
+        context: context,
+        title: "No more requests",
+        message: "There is no more requests. Please try again tomorrow",
+      );
+    }
+  }
+
   void _handleNavigateToEmergency(BuildContext context) =>
       Provider.of<AuthProvider>(context, listen: false).isAuth
-          ? Navigator.of(context).pushNamed(EmergencyScreen.routeName)
+          ? _showEmergencyRequestLeftDialog(context)
           : _handleFullScreenLoginBottomModal(context);
 
   void _handleNavigateToTalikhidmat(BuildContext context) =>
@@ -152,6 +180,7 @@ class _HomePageState extends State<HomePage> {
 
     getCitizenAnn();
     getTourismAnn();
+    numberOfRequestLeft = 2;
   }
 
   @override

@@ -15,6 +15,7 @@ import './screens/splash_video_screen.dart';
 import './providers/language_provider.dart';
 import './providers/auth_provider.dart';
 import './providers/location_provider.dart';
+import './providers/emergency_provider.dart';
 
 // language settings
 import './utils/app_localization.dart';
@@ -51,6 +52,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (ctx) => LocationProvider(),
         ),
+        ChangeNotifierProvider(
+          create: (ctx) => EmergencyProvider(),
+        )
       ],
       child: Consumer<LanguageProvider>(
         child: const SplashVideoScreen(),
