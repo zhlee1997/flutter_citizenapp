@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:slide_to_act/slide_to_act.dart';
 
-import '../../utils/app_localization.dart';
+import '../../arguments/subscription_checkout_screen.dart';
 
 class SubscriptionCheckoutScreen extends StatelessWidget {
   static const String routeName = 'subscription-checkout-screen';
@@ -12,6 +12,21 @@ class SubscriptionCheckoutScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
+    final args = ModalRoute.of(context)!.settings.arguments
+        as SubscriptionCheckoutScreenArguments;
+
+    String returnPackageName(int selectedPackage) {
+      switch (selectedPackage) {
+        case 0:
+          return "1-month Premium Subscripion";
+        case 1:
+          return "3-month Premium Subscripion";
+        case 2:
+          return "12-month Premium Subscripion";
+        default:
+          return "";
+      }
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -57,19 +72,17 @@ class SubscriptionCheckoutScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Container(
-                      child: const Text(
-                        "Person Name",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 17.0,
-                        ),
+                    const Text(
+                      "Person Name",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 17.0,
                       ),
                     ),
                     const SizedBox(
                       height: 5,
                     ),
-                    const Text(
+                    Text(
                       "Steven Bong",
                       textAlign: TextAlign.center,
                       style: TextStyle(
@@ -89,8 +102,8 @@ class SubscriptionCheckoutScreen extends StatelessWidget {
                     const SizedBox(
                       height: 5,
                     ),
-                    const Text(
-                      "12322398938",
+                    Text(
+                      "S1238938",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 17.0,
@@ -109,9 +122,9 @@ class SubscriptionCheckoutScreen extends StatelessWidget {
                     const SizedBox(
                       height: 5,
                     ),
-                    const Text(
-                      "3-month Premium Subscription",
-                      style: TextStyle(
+                    Text(
+                      returnPackageName(args.selectedPackage),
+                      style: const TextStyle(
                         fontSize: 17.0,
                       ),
                     ),
@@ -128,9 +141,9 @@ class SubscriptionCheckoutScreen extends StatelessWidget {
                     const SizedBox(
                       height: 5,
                     ),
-                    const Text(
-                      "RM 8.97",
-                      style: TextStyle(
+                    Text(
+                      "RM ${args.selectedPrice}",
+                      style: const TextStyle(
                         fontSize: 17.0,
                       ),
                     ),
@@ -179,7 +192,10 @@ class SubscriptionCheckoutScreen extends StatelessWidget {
                 ),
                 sliderRotate: true,
                 onSubmit: () {
-                  // deeplink to S Pay Global for payment
+                  print("submit payment");
+                  // TODO: call subscription create/confirm API
+                  // TODO: deeplink to S Pay Global for payment
+                  // TODO: Android & iOS S PAY GLOBAL SDK
                 },
               ),
             ),

@@ -22,6 +22,10 @@ import './screens/announcement/tourism_news_screen.dart';
 
 import './screens/subscription/subsription_package_screen.dart';
 import './screens/subscription/subscription_checkout_screen.dart';
+import './screens/subscription/subscription_choose_screen.dart';
+import './screens/subscription/subscription_map_screen.dart';
+import './screens/subscription/subscription_video_screen.dart';
+import './screens/subscription/subscription_list_screen.dart';
 
 import './screens/support/privacy_policy_screen.dart';
 import './screens/support/terms_and_conditions_screen.dart';
@@ -54,4 +58,8 @@ final Map<String, WidgetBuilder> routes = <String, WidgetBuilder>{
   TourismNewsScreen.routeName: (ctx) => const TourismNewsScreen(),
   OnboardingScreen.routeName: (ctx) => const OnboardingScreen(),
   RecordingScreen.routeName: (ctx) => const RecordingScreen(),
+  SubscriptionChooseScreen.routeName: (ctx) => const SubscriptionChooseScreen(),
+  SubscriptionMapScreen.routeName: (ctx) => const SubscriptionMapScreen(),
+  SubscriptionVideoScreen.routeName: (ctx) => const SubscriptionVideoScreen(),
+  SubscriptionListScreen.routeName: (ctx) => const SubscriptionListScreen(),
 };

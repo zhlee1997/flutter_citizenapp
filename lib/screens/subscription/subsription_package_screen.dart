@@ -8,6 +8,7 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import '../../widgets/subscription/subscription_benefit_card.dart';
 import '../../widgets/subscription/subscription_price_card.dart';
 import '../../screens/subscription/subscription_checkout_screen.dart';
+import '../../arguments/subscription_checkout_screen.dart';
 
 class SubscriptionPackageScreen extends StatefulWidget {
   static const String routeName = 'subscription-package-screen';
@@ -23,17 +24,41 @@ class _SubscriptionPackageScreenState extends State<SubscriptionPackageScreen> {
   bool isChecked = false;
   String _url = "";
 
+  double oneMonthPrice = 0.00;
+  double threeMonthPrice = 0.00;
+  double twelveMonthPrice = 0.00;
+  int selectedPackage = 0;
+  double selectedPrice = 0.00;
+
   void _handleNavigateToPaymentCheckoutScreen() =>
-      Navigator.of(context).pushNamed(SubscriptionCheckoutScreen.routeName);
+      Navigator.of(context).pushNamed(
+        SubscriptionCheckoutScreen.routeName,
+        arguments:
+            SubscriptionCheckoutScreenArguments(selectedPackage, selectedPrice),
+      );
+
+  void handleSelectPackage(int index, double price) {
+    setState(() {
+      selectedPackage = index;
+      selectedPrice = price;
+    });
+  }
 
   // TODO: GET PACKAGE PRICE API
-  Future<void> _getPackagePrice() async {}
+  Future<void> _getPackagePrice() async {
+    oneMonthPrice = 2.99;
+    threeMonthPrice = 7.97;
+    twelveMonthPrice = 30.88;
+    // First render set price
+    selectedPrice = oneMonthPrice;
+  }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _url = "assets/disclaimer/security_disclaimer.md";
+    _getPackagePrice();
   }
 
   @override
@@ -80,7 +105,12 @@ class _SubscriptionPackageScreenState extends State<SubscriptionPackageScreen> {
               "Guaranteed privacy protection"
             ],
           ),
-          const SubscriptionPriceCard(),
+          SubscriptionPriceCard(
+            oneMonthPrice: oneMonthPrice,
+            threeMonthPrice: threeMonthPrice,
+            twelveMonthPrice: twelveMonthPrice,
+            handleSelectPackage: handleSelectPackage,
+          ),
           const SizedBox(
             height: 15,
           ),
@@ -93,7 +123,7 @@ class _SubscriptionPackageScreenState extends State<SubscriptionPackageScreen> {
               onPressed: isChecked
                   ? () => _handleNavigateToPaymentCheckoutScreen()
                   : null,
-              child: Text(
+              child: const Text(
                 "Continue",
                 style: TextStyle(
                   letterSpacing: 1.0,
@@ -102,7 +132,7 @@ class _SubscriptionPackageScreenState extends State<SubscriptionPackageScreen> {
               ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           Container(
@@ -129,7 +159,7 @@ class _SubscriptionPackageScreenState extends State<SubscriptionPackageScreen> {
                   child: RichText(
                       text: TextSpan(
                     text: "By accepting this, I agree to the ",
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.black,
                     ),
                     children: <TextSpan>[
@@ -172,9 +202,7 @@ class _SubscriptionPackageScreenState extends State<SubscriptionPackageScreen> {
                                       ));
                             }))
                     ],
-                  )
-                      // overflow: TextOverflow.ellipsis,
-                      ),
+                  )),
                 ),
               ],
             ),

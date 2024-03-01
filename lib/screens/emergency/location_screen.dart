@@ -25,8 +25,8 @@ class _LocationScreenState extends State<LocationScreen> {
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
   String _address = "";
-  late double _latitude;
-  late double _longitude;
+  double _latitude = 0;
+  double _longitude = 0;
   CameraPosition _cameraPosition = const CameraPosition(
     target: LatLng(1.576472, 110.345828),
     zoom: 14.4746,

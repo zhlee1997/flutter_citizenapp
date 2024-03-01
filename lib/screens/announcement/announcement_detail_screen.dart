@@ -100,6 +100,7 @@ class _AnnouncementDetailScreenState extends State<AnnouncementDetailScreen> {
     super.initState();
 
     SchedulerBinding.instance.addPostFrameCallback((_) {
+      // Accessing the arguments passed to the modal route
       arguments = ModalRoute.of(context)!.settings.arguments;
       getAnnouncementDetail();
     });
@@ -107,7 +108,6 @@ class _AnnouncementDetailScreenState extends State<AnnouncementDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Accessing the arguments passed to the modal route
     final screenSize = MediaQuery.of(context).size;
     final totalNumber = photoCarousel.length;
 

@@ -43,7 +43,7 @@ class _LocationScreenState extends State<LocationScreen> {
                 child: Icon(
                   Icons.location_pin,
                   size: 45,
-                  color: Colors.redAccent,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
               )
             ],

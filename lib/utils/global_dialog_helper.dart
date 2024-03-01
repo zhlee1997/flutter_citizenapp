@@ -3,6 +3,8 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 
 import '../utils/app_localization.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:photo_view/photo_view.dart';
 
 class GlobalDialogHelper {
   /// Displays alert dialog
@@ -132,6 +134,77 @@ class GlobalDialogHelper {
           ),
         ),
         onWillPop: () async => false,
+      ),
+    );
+  }
+
+  /// Displays loading spinner dialog
+  Widget showLoadingSpinner() {
+    return Center(
+      child: SpinKitCubeGrid(
+        color: Colors.purple.shade300,
+        size: 50.0,
+      ),
+    );
+  }
+
+  /// Displays single memory image dialog
+  ///
+  /// Receives [imageByte] as the image byte data
+  Future<void> showMemoryPhotoGallery(
+    BuildContext ctx,
+    Uint8List imageByte,
+  ) async {
+    await showGeneralDialog(
+      context: ctx,
+      pageBuilder: (_, animation, secondaryAnimation) {
+        return SafeArea(
+          child: Builder(
+            builder: (context) {
+              return Material(
+                color: Colors.black54,
+                child: Stack(
+                  children: <Widget>[
+                    PhotoView(
+                      imageProvider: MemoryImage(imageByte),
+                      loadingBuilder: (context, progress) => const Center(
+                        child: SizedBox(
+                          width: 30.0,
+                          height: 30.0,
+                          child: CircularProgressIndicator(),
+                        ),
+                      ),
+                      initialScale: PhotoViewComputedScale.contained,
+                      minScale: PhotoViewComputedScale.contained,
+                      maxScale: PhotoViewComputedScale.covered * 1.8,
+                    ),
+                    Positioned(
+                      top: 10,
+                      right: 10,
+                      child: IconButton(
+                        iconSize: 35.0,
+                        splashRadius: 20.0,
+                        splashColor: Colors.white,
+                        icon: const Icon(
+                          Icons.cancel,
+                          color: Colors.white,
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    )
+                  ],
+                ),
+              );
+            },
+          ),
+        );
+      },
+      barrierDismissible: true,
+      barrierLabel: MaterialLocalizations.of(ctx).modalBarrierDismissLabel,
+      transitionDuration: const Duration(
+        milliseconds: 300,
       ),
     );
   }

@@ -135,7 +135,7 @@ class _VoiceNoteBottomModalState extends State<VoiceNoteBottomModal> {
               if (_countdown < 10 && !_isRecorded)
                 Column(
                   children: <Widget>[
-                    Text("Recording In Progress"),
+                    const Text("Recording In Progress"),
                     Lottie.asset(
                       'assets/animations/lottie_recorder.json',
                       width: screenSize.height * 0.35,

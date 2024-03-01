@@ -72,6 +72,9 @@ dependencies:
   stop_watch_timer: ^3.1.0+4
   geocoding: ^2.2.0
   http_parser: ^4.0.2
+  flutter_spinkit: ^5.2.0
+  photo_view: ^0.14.0
+  fijkplayer: ^0.11.0
 
 dev_dependencies:
   flutter_test:
@@ -109,6 +112,8 @@ flutter:
     - assets/images/icon/kwb.png
     - assets/images/icon/sarawak-energy.png
     - assets/images/icon/spay-global.png
+    - assets/images/icon/cctv.png
+    - assets/images/icon/camera.png
 
     # images/pictures
     - assets/images/pictures/sos_image.jpg
@@ -141,6 +146,9 @@ flutter:
     - assets/images/pictures/announcement/citizen_announcement.jpg
     - assets/images/pictures/announcement/tourism_news.jpg
 
+    # images/pictures/subscription
+    - assets/images/pictures/subscription/
+
     # images/animation
     - assets/animations/lottie_recorder.json
     - assets/animations/lottie_profile.json
@@ -172,9 +180,6 @@ flutter:
 
     #disclaimer
     - assets/disclaimer/security_disclaimer.md
-
-    #audio
-    - assets/audio/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

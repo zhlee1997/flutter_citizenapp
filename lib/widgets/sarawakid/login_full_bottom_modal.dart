@@ -62,7 +62,7 @@ class LoginFullBottomModal extends StatelessWidget {
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  stops: [0.15, 0.55],
+                  stops: const [0.15, 0.55],
                   colors: [
                     Theme.of(context).colorScheme.error,
                     Theme.of(context).colorScheme.primary,
@@ -95,21 +95,21 @@ class LoginFullBottomModal extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 20.0,
             ),
-            Container(
-              width: screenSize.width * 0.8,
-              child: Divider(),
-            ),
             SizedBox(
+              width: screenSize.width * 0.8,
+              child: const Divider(),
+            ),
+            const SizedBox(
               height: 10.0,
             ),
             Text(
               "Already have an account?",
               style: Theme.of(context).textTheme.titleSmall,
             ),
-            SizedBox(
+            const SizedBox(
               height: 20.0,
             ),
             SizedBox(

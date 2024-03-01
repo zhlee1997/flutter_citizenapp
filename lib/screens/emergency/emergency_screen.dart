@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import "package:flutter_citizenapp/screens/emergency/confirm_screen.dart";
+import "package:fluttertoast/fluttertoast.dart";
+import 'package:provider/provider.dart';
 
+import "./confirm_screen.dart";
 import "./location_screen.dart";
 import "./report_screen.dart";
 
@@ -8,6 +10,10 @@ import "../../widgets/emergency/voice_note_bottom_modal.dart";
 import "../../widgets/emergency/emergency_audio_player.dart";
 import "../../widgets/emergency/emergency_bottom_modal.dart";
 import "../../widgets/emergency/other_emergency_bottom_modal.dart";
+import "../../widgets/emergency/emergency_finish_full_bottom_modal.dart";
+import '../../services/event_services.dart';
+import '../../providers/emergency_provider.dart';
+import '../../utils/global_dialog_helper.dart';
 
 class EmergencyScreen extends StatefulWidget {
   static const routeName = 'emergency-screen';
@@ -20,6 +26,8 @@ class EmergencyScreen extends StatefulWidget {
 
 class _EmergencyScreenState extends State<EmergencyScreen> {
   int currentStep = 0;
+
+  final EventServices _eventServices = EventServices();
 
   Future<void> _handleVoiceNoteBottomModal() async {
     await showModalBottomSheet(
@@ -61,20 +69,6 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
     Navigator.of(context).pop();
     setState(() => currentStep += 1);
   }
-
-  // callback
-  // void handleProceedNextWOPop({
-  //   required String address,
-  //   required double latitude,
-  //   required double longitude,
-  // }) {
-  //   Provider.of<EmergencyProvider>(context).setAddressAndLocation(
-  //     address: address,
-  //     latitide: latitude,
-  //     longitude: longitude,
-  //   );
-  //   setState(() => currentStep += 1);
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -132,11 +126,57 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
               );
             }
           },
-          onStepContinue: () {
+          onStepContinue: () async {
             bool isLastStep =
                 currentStep == getSteps(context, screenSize).length - 1;
             if (isLastStep) {
-              print("Completed");
+              // API Lack of "Voice Recording" category
+              // eventLongitude, eventLatitude, eventLocation
+              // eventAudioURL
+              // eventYourself
+
+              final GlobalDialogHelper globalDialogHelper =
+                  GlobalDialogHelper();
+              final EmergencyProvider emergencyProvider =
+                  Provider.of<EmergencyProvider>(context, listen: false);
+              Map<String, dynamic> paramater = {
+                'eventUrgency': '2',
+                'eventType': '2',
+                'eventTargetUrgent': emergencyProvider.category.toString(),
+                'eventLatitude': emergencyProvider.latitude.toString(),
+                'eventLongitude': emergencyProvider.longitude.toString(),
+                'eventDesc': emergencyProvider.otherText ?? "No remarks"
+              };
+
+              try {
+                globalDialogHelper.buildCircularProgressWithTextCenter(
+                  context: context,
+                  message: "Submitting",
+                );
+                var response = await _eventServices.create(paramater);
+                if (response == "201") {
+                  // dismiss the dialog
+                  Navigator.of(context).pop();
+                  // TODO: showBottomModalDialog => success
+                  await showModalBottomSheet(
+                    barrierColor:
+                        Theme.of(context).colorScheme.onInverseSurface,
+                    useSafeArea: true,
+                    enableDrag: false,
+                    isScrollControlled: true,
+                    context: context,
+                    builder: (BuildContext context) {
+                      return const EmergencyFinishFullBottomModal();
+                    },
+                  );
+                  print("submit emergency success");
+                }
+              } catch (e) {
+                // dismiss the dialog
+                Navigator.of(context).pop();
+                Fluttertoast.showToast(msg: "Submit failed. Please try again");
+                print("submit emergency failed: ${e.toString()}");
+              }
             } else {
               setState(() => currentStep += 1);
             }
@@ -181,9 +221,7 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
               fontSize: Theme.of(context).textTheme.labelSmall!.fontSize,
             ),
           ),
-          content: const LocationScreen(
-              // handleProceedNextWOPop: handleProceedNextWOPop,
-              ),
+          content: const LocationScreen(),
         ),
         Step(
           isActive: currentStep >= 2,

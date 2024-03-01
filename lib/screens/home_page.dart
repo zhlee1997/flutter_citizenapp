@@ -12,6 +12,7 @@ import '../widgets/subscription/subscription_preview_dialog.dart';
 import '../widgets/homepage/homepage_citizen_announcement.dart';
 import '../widgets/homepage/homepage_tourism_card.dart';
 import '../screens/announcement/tourism_news_screen.dart';
+import '../screens/subscription/subscription_choose_screen.dart';
 
 import '../providers/auth_provider.dart';
 import '../services/announcement_services.dart';
@@ -26,6 +27,10 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  // TODO: To query subscription status API (in video splash screen), is isAuth => true
+  // TODO: add subscription status in provider
+  bool isSubscribed = true;
+
   bool citizenShimmer = false;
   bool tourismShimmer = false;
   List<AnnouncementModel> citizenAnnouncements = [];
@@ -154,7 +159,10 @@ class _HomePageState extends State<HomePage> {
 
   void _handleNavigateToSubscription(BuildContext context) =>
       Provider.of<AuthProvider>(context, listen: false).isAuth
-          ? _showSubscriptionIntroDialog(context)
+          ? isSubscribed
+              ? Navigator.of(context)
+                  .pushNamed(SubscriptionChooseScreen.routeName)
+              : _showSubscriptionIntroDialog(context)
           : _handleFullScreenLoginBottomModal(context);
 
   void _handleNavigateToPayment(BuildContext context) =>
@@ -197,69 +205,70 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Container(
-              margin: const EdgeInsets.only(bottom: 15.0, top: 5.0),
-              width: double.infinity,
-              height: screenSize.height * 0.125,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10.0),
-                border: Border.all(
-                  width: 2.0,
-                  color: Colors.grey.shade300,
+            if (isSubscribed)
+              Container(
+                margin: const EdgeInsets.only(bottom: 15.0, top: 5.0),
+                width: double.infinity,
+                height: screenSize.height * 0.125,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10.0),
+                  border: Border.all(
+                    width: 2.0,
+                    color: Colors.grey.shade300,
+                  ),
+                ),
+                child: Stack(
+                  children: <Widget>[
+                    SizedBox(
+                      width: double.infinity,
+                      child: Image.asset(
+                        "assets/images/pictures/premium/premium_image.png",
+                        opacity: const AlwaysStoppedAnimation(0.15),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    Container(
+                      alignment: Alignment.centerRight,
+                      width: double.infinity,
+                      child: Image.asset(
+                        "assets/images/pictures/premium/premium_image_bg.png",
+                        width: screenSize.width * 0.2,
+                        height: screenSize.width * 0.2,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          const Text(
+                            "4 days left!",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.red,
+                            ),
+                          ),
+                          Text(
+                            "You are subscribed",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge!
+                                  .fontSize,
+                            ),
+                          ),
+                          SizedBox(height: 3.0),
+                          Text("Premium access: 22 Feb - 21 Mac"),
+                        ],
+                      ),
+                    )
+                  ],
                 ),
               ),
-              child: Stack(
-                children: <Widget>[
-                  SizedBox(
-                    width: double.infinity,
-                    child: Image.asset(
-                      "assets/images/pictures/premium/premium_image.png",
-                      opacity: const AlwaysStoppedAnimation(0.15),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  Container(
-                    alignment: Alignment.centerRight,
-                    width: double.infinity,
-                    child: Image.asset(
-                      "assets/images/pictures/premium/premium_image_bg.png",
-                      width: screenSize.width * 0.2,
-                      height: screenSize.width * 0.2,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        const Text(
-                          "4 days left!",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.red,
-                          ),
-                        ),
-                        Text(
-                          "You are subscribed",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: Theme.of(context)
-                                .textTheme
-                                .titleLarge!
-                                .fontSize,
-                          ),
-                        ),
-                        SizedBox(height: 3.0),
-                        Text("Premium access: 22 Feb - 21 Mac"),
-                      ],
-                    ),
-                  )
-                ],
-              ),
-            ),
             Text(
               'Quick Services',
               style: Theme.of(context).textTheme.titleMedium,

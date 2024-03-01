@@ -47,4 +47,44 @@ class UploadServices {
       throw e;
     }
   }
+
+  /// Upload attachments using POST method
+  /// In FormData
+  ///
+  /// Receives [file] as the encoded file information
+  /// [type] as the file type
+  /// [fileName] as the file name
+  /// Returns API response object
+  Future<dynamic> uploadAudioFile(
+    Uint8List? file,
+    String type,
+    String fileName,
+  ) async {
+    try {
+      if (file != null) {
+        // FormData formData = new FormData.fromMap({
+        //   "file": MultipartFile.fromBytes(
+        //     file,
+        //     filename: fileName,
+        //     contentType: MediaType('image', type),
+        //   )
+        // });
+        var request = http.MultipartRequest(
+            'POST', Uri.parse('https://example.com/upload'));
+        request.files.add(http.MultipartFile.fromBytes(
+          "file",
+          file,
+          filename: fileName,
+          contentType: MediaType('audio', type),
+        ));
+
+        var response = await request.send();
+        print(response.statusCode);
+        return response;
+      }
+    } catch (e) {
+      print('uploadFile failed: ${e.toString()}');
+      throw e;
+    }
+  }
 }
