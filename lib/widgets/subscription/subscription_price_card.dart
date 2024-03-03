@@ -28,9 +28,9 @@ class _SubscriptionPriceCardState extends State<SubscriptionPriceCard> {
   }
 
   @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
+  Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+
     packageArray = [
       {
         "month": 1,
@@ -45,11 +45,6 @@ class _SubscriptionPriceCardState extends State<SubscriptionPriceCard> {
         "monthPrice": widget.twelveMonthPrice,
       },
     ];
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
 
     return Container(
       padding: EdgeInsets.all(screenSize.width * 0.03),

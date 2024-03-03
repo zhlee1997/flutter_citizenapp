@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import "../models/auth_model.dart";
 import "../services/auth_services.dart";
 import "../services/notification_services.dart";
+import "../services/subscription_services.dart";
 import '../../utils/app_localization.dart';
 
 class AuthProvider with ChangeNotifier {
@@ -43,7 +44,7 @@ class AuthProvider with ChangeNotifier {
   /// Such as full name and Sarawak ID.
   /// Return 'true' if sign in is successful.
   /// Return 'false' if sign in is failed.
-  Future<Map<String, String>?> signIn(Map<String, String> data) async {
+  Future<Map<String, String>?> signInProvider(Map<String, String> data) async {
     final prefs = await SharedPreferences.getInstance();
     final storage = new FlutterSecureStorage();
 
@@ -206,8 +207,9 @@ class AuthProvider with ChangeNotifier {
         print("refreshToken");
         // refreshToken();
         isTokenOk = true;
+        bool subscriptionStatus = await checkSubscribe();
 
-        if (await checkSubscribe()) {
+        if (subscriptionStatus) {
           _auth = AuthModel(
             address: prefs.getString('userResAddr1') ?? '',
             mobile: prefs.getString('userMobileNo') ?? '',
@@ -215,8 +217,12 @@ class AuthProvider with ChangeNotifier {
             sId: prefs.getString('userId') ?? '',
             userName: prefs.getString('userShortName') ?? '',
             fullName: prefs.getString('userFullName') ?? '',
+            // TODO: get latest data from querySubscription API
+            // TODO: use setBool
             isSubscribed: prefs.getBool('isSubscribed') ?? false,
           );
+          // TODO: get latest data from querySubscription API
+          // TODO: use setString
           _vipDueDate = prefs.getString('vipDueDate') ?? '';
         } else {
           _auth = AuthModel(
@@ -246,14 +252,27 @@ class AuthProvider with ChangeNotifier {
   ///
   /// Return 'true' if subscription is within due date.
   /// Return 'false' if subscription is out of due date.
+  // TODO: change to return Map<String, dynamic> => isSubscribe, vipDueDate
+  // TODO: current condition: vipDueDate is empty
   Future<bool> checkSubscribe() async {
     final prefs = await SharedPreferences.getInstance();
+    final SubscriptionServices subscriptionServices = SubscriptionServices();
 
     String vipDueDate = prefs.getString('vipDueDate') ?? '';
 
     if (vipDueDate == '') return false;
 
     if (DateTime.parse(vipDueDate).isAfter(DateTime.now())) {
+      try {
+        // TODO: NEW API => CHECK RESPONSE FROM BACKEND
+        var response = await subscriptionServices.querySubscriptionStatus();
+        if (response["status"] == "200") {
+          prefs.setBool("isSubscribed", true);
+          // prefs.setString("vipDueDate", '');
+        }
+      } catch (e) {
+        print("checkSubscribe fail: ${e.toString()}");
+      }
       return true;
     } else {
       return false;

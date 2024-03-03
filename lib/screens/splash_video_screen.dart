@@ -25,6 +25,7 @@ class SplashVideoScreen extends StatefulWidget {
 
 class _SplashVideoScreenState extends State<SplashVideoScreen> {
   late VlcPlayerController _videoPlayerController;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -40,24 +41,31 @@ class _SplashVideoScreenState extends State<SplashVideoScreen> {
       if (_videoPlayerController.value.playingState == PlayingState.ended) {
         final bool? isAppFirstStart = prefs.getBool('isAppFirstStart');
         if (isAppFirstStart != null && isAppFirstStart) {
+          setState(() {
+            _isLoading = true;
+          });
+          // TODO: if false, need to get auth (init, check local storage and check subscribe) , location, inbox, language, music, bus route
+          // TODO: can show a loading spinner in end of video, after complete then navigate to HomeScreen
+          Provider.of<AuthProvider>(context, listen: false)
+              .checkIsAuth(context)
+              .then((bool isAuth) {
+            if (isAuth) {
+              Provider.of<LocationProvider>(context, listen: false)
+                  .getCurrentLocation();
+            }
+            Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
+          });
+          return;
+        } else {
           // TODO: shared preferences => isAppFirstStart: true
           // TODO: if true, no need to get auth, location (no permission), inbox, language, music
           // TODO: need to get bus route
-          Provider.of<LocationProvider>(context, listen: false)
-              .getCurrentLocation();
-          Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
-          return;
-        } else {
-          // TODO: if false, need to get auth, location, inbox, language, music, bus route
-          // TODO: can show a loading spinner in end of video, after complete then navigate to HomeScreen
           Navigator.of(context)
               .pushReplacementNamed(OnboardingScreen.routeName);
           return;
         }
       }
     });
-
-    Provider.of<AuthProvider>(context, listen: false).checkIsAuth(context);
   }
 
   @override
@@ -83,13 +91,14 @@ class _SplashVideoScreenState extends State<SplashVideoScreen> {
               placeholder: const Center(child: CircularProgressIndicator()),
             ),
           ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Container(
-              margin: EdgeInsets.only(bottom: screenSize.width * 0.2),
-              child: const CircularProgressIndicator(),
-            ),
-          )
+          if (_isLoading)
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                margin: EdgeInsets.only(bottom: screenSize.width * 0.2),
+                child: const CircularProgressIndicator(),
+              ),
+            )
         ],
       ),
     );

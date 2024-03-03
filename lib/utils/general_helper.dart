@@ -1,9 +1,9 @@
 import 'dart:io';
 
-// import 'package:intl/intl.dart';
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
-// import 'package:device_apps/device_apps.dart';
-// import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:installed_apps/installed_apps.dart';
 import 'package:path_provider/path_provider.dart';
 // import 'package:flutter/services.dart';
 // import 'package:dio/dio.dart';
@@ -58,20 +58,26 @@ class GeneralHelper {
   /// [data] as the URL string for iOS package name
   /// Returns 'true' if application is installed
   /// Returns 'false' if application is not installed
-  // static Future<bool> checkAppInstalled(
-  //   String iOSPackageName,
-  //   String androidPackageName, {
-  //   String data = '',
-  // }) async {
-  //   if (Platform.isIOS) {
-  //     bool iosAppInstalled = await canLaunch('$iOSPackageName?$data');
-  //     return iosAppInstalled;
-  //   } else {
-  //     bool androidAppInstalled =
-  //         await DeviceApps.isAppInstalled(androidPackageName);
-  //     return androidAppInstalled;
-  //   }
-  // }
+  static Future<bool> checkAppInstalled({
+    required String iOSPackageName,
+    required String androidPackageName,
+    String data = '',
+  }) async {
+    try {
+      if (Platform.isIOS) {
+        Uri iOSUri = Uri.parse('$iOSPackageName?$data');
+        bool iosAppInstalled = await canLaunchUrl(iOSUri);
+        return iosAppInstalled;
+      } else {
+        bool? androidAppInstalled =
+            await InstalledApps.isAppInstalled(androidPackageName);
+        return androidAppInstalled ?? false;
+      }
+    } catch (e) {
+      print("checkAppInstalled fail: ${e.toString()}");
+      return false;
+    }
+  }
 
   // return file url based on application documents directory
   static Future<String> getFileUrl(String fileName) async {

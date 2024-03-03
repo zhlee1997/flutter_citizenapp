@@ -4,15 +4,11 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../utils/global_dialog_helper.dart';
 import '../../models/cctv_model.dart';
-import '../../providers/cctv_provider.dart';
-import '../../providers/location_provider.dart';
 import '../../utils/app_localization.dart';
 import '../../widgets/subscription/map_bottom_sheet_widget.dart';
 
@@ -20,11 +16,6 @@ class SubscriptionMapScreen extends StatefulWidget {
   static const String routeName = "subscription-map-screen";
 
   const SubscriptionMapScreen({super.key});
-
-  static const CameraPosition _kGooglePlex = CameraPosition(
-    target: LatLng(1.576472, 110.345828),
-    zoom: 14.4746,
-  );
 
   @override
   State<SubscriptionMapScreen> createState() => _SubscriptionMapScreenState();
@@ -40,7 +31,6 @@ class _SubscriptionMapScreenState extends State<SubscriptionMapScreen> {
 
   bool _isError = false;
   late bool _isLoading;
-  Position? _currentLocation;
   late double _latitude;
   late double _longitude;
   late CameraPosition _initialLocation;
@@ -164,24 +154,79 @@ class _SubscriptionMapScreenState extends State<SubscriptionMapScreen> {
     });
   }
 
+  Future<void> _showBottomModalSheetFirstNote() async {
+    await showModalBottomSheet(
+        context: context,
+        builder: (_) {
+          return Container(
+              // Define padding for the container.
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 15,
+              ),
+              // Create a Wrap widget to display the sheet contents.
+              child: Wrap(
+                spacing: 60, // Add spacing between the child widgets.
+                children: <Widget>[
+                  // Add a container with height to create some space.
+                  Container(height: 10),
+                  // Add a text widget with a title for the sheet.
+                  Text(
+                    "Note",
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  Container(height: 10), // Add some more space.
+                  // Add a text widget with a long description for the sheet.
+                  Text(
+                    'Currently, the location of cameras focuses around city of Kuching. It will be updated from time to time.',
+                    style: TextStyle(
+                        color: Colors.grey[600], // Set the text color.
+                        fontSize: 16.0 // Set the text size.
+                        ),
+                  ),
+                  Container(height: 10), // Add some more space.
+                  // Add a row widget to display buttons for closing and reading more.
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment
+                        .end, // Align the buttons to the right.
+                    children: <Widget>[
+                      // Add an elevated button to read more.
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primary,
+                        ), // Set the button background color.
+                        onPressed: () {
+                          Navigator.pop(context); // Close the sheet.
+                        },
+                        child: Text("Okay",
+                            style: TextStyle(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .inversePrimary)), // Add the button text.
+                      )
+                    ],
+                  )
+                ],
+              ));
+        });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    // TODO: if location denied, cant access
     _isLoading = true;
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      _currentLocation =
-          Provider.of<LocationProvider>(context, listen: false).currentLocation;
-      if (_currentLocation != null) {
-        _latitude = _currentLocation!.latitude;
-        _longitude = _currentLocation!.longitude;
-        _initialLocation = CameraPosition(
-          target: LatLng(_latitude, _longitude),
-          zoom: 14.4746,
-        );
-        _renderMarker();
-      }
+      // default location: Kuching Waterfront
+      _latitude = 1.558497;
+      _longitude = 110.344320;
+      _initialLocation = CameraPosition(
+        target: LatLng(_latitude, _longitude),
+        zoom: 14.4746,
+      );
+      _renderMarker();
+      _showBottomModalSheetFirstNote();
     });
   }
 

@@ -27,9 +27,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  // TODO: To query subscription status API (in video splash screen), is isAuth => true
+  // TODO: To query subscription status API (in video splash screen), if isAuth => true
   // TODO: add subscription status in provider
-  bool isSubscribed = true;
+  bool isSubscribed = false;
 
   bool citizenShimmer = false;
   bool tourismShimmer = false;

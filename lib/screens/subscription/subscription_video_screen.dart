@@ -81,14 +81,16 @@ class _SubscriptionVideoScreenState extends State<SubscriptionVideoScreen>
     }
   }
 
+  // TODO: Open Google Maps
+  void _launchGoogleMaps() {}
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-
     tabController = TabController(length: 2, vsync: this);
-
     SchedulerBinding.instance.addPostFrameCallback((_) {
+      // TODO: API => load other cameras
       // Accessing the arguments passed to the modal route
       args = ModalRoute.of(context)!.settings.arguments
           as SubscriptionVideoScreenArguments;
@@ -143,8 +145,6 @@ class _SubscriptionVideoScreenState extends State<SubscriptionVideoScreen>
               ),
             ),
             TabBar(
-              // unselectedLabelColor: Colors.black,
-              // labelColor: Colors.red,
               tabs: const [
                 Tab(
                   icon: Icon(Icons.details_outlined),
@@ -161,7 +161,6 @@ class _SubscriptionVideoScreenState extends State<SubscriptionVideoScreen>
             Expanded(
               child: TabBarView(
                 controller: tabController,
-                // physics: AlwaysScrollableScrollPhysics(),
                 children: [
                   Padding(
                     padding: const EdgeInsets.symmetric(
@@ -183,8 +182,7 @@ class _SubscriptionVideoScreenState extends State<SubscriptionVideoScreen>
                                 ),
                                 Text(
                                   args.address,
-                                  style:
-                                      Theme.of(context).textTheme.titleMedium,
+                                  style: Theme.of(context).textTheme.bodyLarge,
                                 ),
                               ],
                             ),
@@ -199,8 +197,7 @@ class _SubscriptionVideoScreenState extends State<SubscriptionVideoScreen>
                                 ),
                                 Text(
                                   args.name,
-                                  style:
-                                      Theme.of(context).textTheme.titleMedium,
+                                  style: Theme.of(context).textTheme.bodyLarge,
                                 ),
                               ],
                             ),
@@ -215,8 +212,7 @@ class _SubscriptionVideoScreenState extends State<SubscriptionVideoScreen>
                                 ),
                                 Text(
                                   "5 KM",
-                                  style:
-                                      Theme.of(context).textTheme.titleMedium,
+                                  style: Theme.of(context).textTheme.bodyLarge,
                                 ),
                               ],
                             ),
@@ -254,7 +250,7 @@ class _SubscriptionVideoScreenState extends State<SubscriptionVideoScreen>
                     ),
                   ),
                   ListView.builder(
-                    padding: EdgeInsets.symmetric(
+                    padding: const EdgeInsets.symmetric(
                       horizontal: 5.0,
                       vertical: 5.0,
                     ),

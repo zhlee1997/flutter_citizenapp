@@ -9,6 +9,7 @@ import '../../widgets/subscription/subscription_benefit_card.dart';
 import '../../widgets/subscription/subscription_price_card.dart';
 import '../../screens/subscription/subscription_checkout_screen.dart';
 import '../../arguments/subscription_checkout_screen.dart';
+import '../../services/subscription_services.dart';
 
 class SubscriptionPackageScreen extends StatefulWidget {
   static const String routeName = 'subscription-package-screen';
@@ -30,6 +31,8 @@ class _SubscriptionPackageScreenState extends State<SubscriptionPackageScreen> {
   int selectedPackage = 0;
   double selectedPrice = 0.00;
 
+  final SubscriptionServices _subscriptionServices = SubscriptionServices();
+
   void _handleNavigateToPaymentCheckoutScreen() =>
       Navigator.of(context).pushNamed(
         SubscriptionCheckoutScreen.routeName,
@@ -46,11 +49,22 @@ class _SubscriptionPackageScreenState extends State<SubscriptionPackageScreen> {
 
   // TODO: GET PACKAGE PRICE API
   Future<void> _getPackagePrice() async {
-    oneMonthPrice = 2.99;
-    threeMonthPrice = 7.97;
-    twelveMonthPrice = 30.88;
-    // First render set price
-    selectedPrice = oneMonthPrice;
+    try {
+      var response = await _subscriptionServices.querySubscriptionPackage();
+      if (response["status"] == "200") {
+        print("success");
+      }
+    } catch (e) {
+      print("getPackagePrice fail: ${e.toString()}");
+      // TODO: current condition is error 502
+      setState(() {
+        oneMonthPrice = 2.99;
+        threeMonthPrice = 7.97;
+        twelveMonthPrice = 30.88;
+        // First render set price
+        selectedPrice = oneMonthPrice;
+      });
+    }
   }
 
   @override

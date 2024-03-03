@@ -160,28 +160,4 @@ class PushNotification {
       // rethrow;
     }
   }
-
-  // Future<void> showAlertFcmToken(BuildContext context) async {
-  //   String? _fcmToken = await _firebaseMessaging.getToken();
-  //   await showDialog(
-  //       context: context,
-  //       builder: (_) => AlertDialog(
-  //             title: Text('FCM Token'),
-  //             content: Text(_fcmToken!),
-  //             actions: [
-  //               TextButton(
-  //                 onPressed: () {
-  //                   Clipboard.setData(ClipboardData(text: _fcmToken));
-  //                 },
-  //                 child: Text('Copy'),
-  //               ),
-  //               TextButton(
-  //                 onPressed: () {
-  //                   Navigator.of(context).pop();
-  //                 },
-  //                 child: Text(AppLocalization.of(context)!.translate('ok')!),
-  //               )
-  //             ],
-  //           ));
-  // }
 }

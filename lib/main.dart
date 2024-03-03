@@ -17,6 +17,7 @@ import './providers/auth_provider.dart';
 import './providers/location_provider.dart';
 import './providers/emergency_provider.dart';
 import './providers/cctv_provider.dart';
+import './providers/subscription_provider.dart';
 
 // language settings
 import './utils/app_localization.dart';
@@ -59,6 +60,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (ctx) => CCTVProvider(),
         ),
+        ChangeNotifierProvider(
+          create: (ctx) => SubscriptionProvider(),
+        ),
       ],
       child: Consumer<LanguageProvider>(
         child: const SplashVideoScreen(),
@@ -97,7 +101,6 @@ class MyApp extends StatelessWidget {
                   return supportedLocale;
                 }
               }
-
               // If the locale of the device is not supported, use the first one
               // from the list (English, in this case).
               return supportedLocales.first;
@@ -125,7 +128,8 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
       FlutterLocalNotificationsPlugin();
 
   ShowNotification _showNotification = ShowNotification(
-      flutterLocalNotificationsPlugin: _flutterLocalNotificationsPlugin);
+    flutterLocalNotificationsPlugin: _flutterLocalNotificationsPlugin,
+  );
 
   if (Platform.isIOS) {
     String messageId = message.data['msgId'];

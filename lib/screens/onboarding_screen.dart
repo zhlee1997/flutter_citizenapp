@@ -14,6 +14,9 @@ class OnboardingScreen extends StatelessWidget {
 
   Future<void> _handlePermissions(BuildContext context) async {
     // You can request multiple permissions at once.
+    // TODO: Push Notification permission
+    // TODO: Open Camera permission
+    // TODO: Access to photo gallery permission
     Map<Permission, PermissionStatus> statuses = await [
       Permission.location,
       Permission.microphone,

@@ -34,7 +34,7 @@ class _SarawakIDScreenState extends State<SarawakIDScreen> {
     try {
       Map<String, String>? response =
           await Provider.of<AuthProvider>(context, listen: false)
-              .signIn(userData);
+              .signInProvider(userData);
 
       if (response != null) {
         await Provider.of<AuthProvider>(context, listen: false)
@@ -46,19 +46,20 @@ class _SarawakIDScreenState extends State<SarawakIDScreen> {
               if (mounted) {
                 Navigator.of(context)
                     .popUntil(ModalRoute.withName('home-page-screen'));
+                // show snackbar after successful login
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Container(
-                      padding: EdgeInsets.all(10.0),
+                      padding: const EdgeInsets.all(10.0),
                       decoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.primaryContainer,
-                        borderRadius: BorderRadius.all(
+                        borderRadius: const BorderRadius.all(
                           Radius.circular(10.0),
                         ),
                       ),
-                      child: Center(
+                      child: const Center(
                         child: Text(
-                          "You have login successfully",
+                          "Login successfully!",
                           style: TextStyle(
                             color: Colors.black,
                           ),
@@ -146,7 +147,7 @@ class _SarawakIDScreenState extends State<SarawakIDScreen> {
         onLoadStop: (InAppWebViewController controller, Uri? url) async {
           if (url.toString().contains('citizen.sioc.sma.gov.my/loading.html')) {
             print("loginUrl: $url");
-
+            // detect "userId" redirect by backend
             if (url!.queryParameters["userId"] != null) {
               await signIn(url.queryParameters);
             } else {
