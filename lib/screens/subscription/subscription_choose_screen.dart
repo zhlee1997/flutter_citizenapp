@@ -27,10 +27,8 @@ class SubscriptionChooseScreen extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            SizedBox(
-              height: screenSize.width * 0.05,
-            ),
             GestureDetector(
               onTap: () {
                 _handleNavigateToSubscriptionMapScreen(context);
@@ -115,7 +113,7 @@ class SubscriptionChooseScreen extends StatelessWidget {
               ),
             ),
             SizedBox(
-              height: screenSize.height * 0.015,
+              height: screenSize.height * 0.04,
             ),
             GestureDetector(
               onTap: () {

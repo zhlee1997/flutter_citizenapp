@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../models/cctv_model.dart';
+import '../services/cctv_services.dart';
+import '../utils/app_constant.dart';
 
 class CCTVProvider with ChangeNotifier {
   late List<CCTVModel> _cctvModel;
@@ -12,55 +15,56 @@ class CCTVProvider with ChangeNotifier {
   late String _imageUrl;
   String get imageUrl => _imageUrl;
 
+  late List<Map<String, dynamic>> _nearCameraList;
+  List<Map<String, dynamic>> get nearCameraList => _nearCameraList;
+
   /// Get the cctv coordinates when rendering Google Map
   /// Using getCctvCoordinates API
   ///
   /// Return 'true' if getCctvCoordinates API is successful.
   /// Return 'false' if getCctvCoordinates API is failed.
-  // Future<bool> getCctvCoordinatesProvider() async {
-  //   try {
-  //     Map<String, dynamic> data = {"channel": "02"};
-  //     _response = await CctvService().getCctvCoordinates(data);
-  //     if (_response!.data['status'] == 200) {
-  //       var cctvData = _response!.data['obj'] as List;
-  //       _cctvCoordinates =
-  //           cctvData.map((e) => CctvCoordinate.fromJson(e)).toList();
-  //       return true;
-  //     }
-  //     return false;
-  //   } catch (e) {
-  //     throw e;
-  //   }
-  // }
+  Future<bool> getCctvCoordinatesProvider() async {
+    try {
+      Map<String, dynamic> data = {"channel": "02"};
+      var response = await CCTVServices().getCctvCoordinates(data);
+      if (response['status'] == 200) {
+        var cctvData = response['obj'] as List;
+        _cctvModel = cctvData.map((e) => CCTVModel.fromJson(e)).toList();
+        return true;
+      }
+      return false;
+    } catch (e) {
+      throw e;
+    }
+  }
 
   /// Get the CCTV detail and live URL when selecting on a CCTV
   /// Using getCctvDetail API
   ///
   /// Receives [data] as the CCTV information
-  // Future<void> getCctvDetailProvider(CctvCoordinate data) async {
-  //   try {
-  //     Map<String, dynamic> map = {
-  //       "channel": data.channel,
-  //       "thridDeviceId": data.cctvId,
-  //       "urlType": AppConstant
-  //           .urlType, //video type：1.rtsp、2.hls、3.rtmp、4.flv-http、5.dash
-  //     };
-  //     _response = await CctvService().getCctvDetail(map);
-  //     if (_response!.data['status'] == 200) {
-  //       _cctvDetail = CctvDetail(
-  //         id: data.cctvId,
-  //         name: data.deviceName,
-  //         location: data.location,
-  //         image: '',
-  //         updateTime: '',
-  //         liveUrl: _response!.data['obj']['liveUrl'],
-  //       );
-  //       // _cctvDetail = CctvDetail.fromJson(_response!.data['results']);
-  //     }
-  //   } catch (e) {
-  //     throw e;
-  //   }
-  // }
+  Future<void> getCctvDetailProvider(CCTVModel data) async {
+    try {
+      Map<String, dynamic> map = {
+        "channel": data.channel,
+        "thridDeviceId": data.cctvId,
+        "urlType": AppConstant
+            .urlType, // video type：1.rtsp、2.hls、3.rtmp、4.flv-http、5.dash
+      };
+      var response = await CCTVServices().getCctvDetail(map);
+      if (response['status'] == 200) {
+        _cctvModelDetail = CCTVModelDetail(
+          id: data.cctvId,
+          name: data.deviceName,
+          location: data.location,
+          image: '',
+          updateTime: '',
+          liveUrl: response['obj']['liveUrl'],
+        );
+      }
+    } catch (e) {
+      throw e;
+    }
+  }
 
   /// Get the CCTV capture image when displaying CCTV Detail
   /// Using getCameraShortCutUrl API
@@ -68,21 +72,71 @@ class CCTVProvider with ChangeNotifier {
   /// Receives [data] as the CCTV information
   /// Return 'true' if getCameraShortCutUrl API is successful.
   /// Return 'false' if getCameraShortCutUrl API is failed.
-  // Future<bool> getCameraShortCutUrlProvider(Map<String, dynamic> data) async {
-  //   try {
-  //     _response = await CctvService().getCameraShortCutUrl(data);
-  //     if (_response!.data['status'] == 200) {
-  //       _imageUrl = _response!.data['obj']['picUrl'] ?? '';
-  //       return true;
+  Future<bool> getCameraShortCutUrlProvider(Map<String, dynamic> data) async {
+    try {
+      var response = await CCTVServices().getCameraShortCutUrl(data);
+      if (response['status'] == 200) {
+        _imageUrl = response['obj']['picUrl'] ?? '';
+        return true;
+      }
+      return false;
+    } catch (e) {
+      print('getCameraShortCutUrlProvider failed');
+      throw e;
+    }
+  }
 
-  //       // if (_cctvDetail != null) {
-  //       //   _cctvDetail!.image = _response!.data['obj']['picUrl'] ?? '';
-  //       // }
-  //     }
-  //     return false;
-  //   } catch (e) {
-  //     print('getCameraShortCutUrlProvider failed');
-  //     throw e;
+  // Provider - obtain 5 nearby CCTV
+  Future<bool> queryNearbyDevicesListProvider(Map<String, dynamic> data) async {
+    try {
+      var response = await CCTVServices().queryNearbyDevicesList(data);
+      if (response['status'] == 200) {
+        _nearCameraList = [];
+        if (response['obj'].length > 0) {
+          response['obj'].forEach((e) {
+            Map<String, dynamic> item = {
+              "cctvId": e['thridDeviceId'],
+              "coodinates": LatLng(
+                  double.parse(e['latitude']), double.parse(e['longitude'])),
+              "name": e['thirdDeviceName'] ?? "No Device Name",
+              "address": e['location'] ?? "No Address",
+              "imageURL": ''
+            };
+            _nearCameraList.add(item);
+          });
+          // TODO: 5 Cameras => API
+          // List<dynamic> images = await getImages(_nearCameraList);
+          List<dynamic> images = [];
+          if (images.length == _nearCameraList.length) {
+            return true;
+          } else {
+            return false;
+          }
+        }
+        return true;
+      }
+      return false;
+    } catch (e) {
+      print('queryNearbyDevicesListProvider fail');
+      return false;
+    }
+  }
+
+  // return list of CCTV capture image for nearby CCTV
+  // Future getImages(List<Map<String, dynamic>> cameraList) {
+  //   int counter = 0;
+  //   int sum = cameraList.length;
+  //   if (counter == sum) {
+  //     return Future(() {
+  //       return [];
+  //     });
   //   }
+
+  //   List<Future> list = [];
+  //   cameraList.forEach((e) {
+  //     list.add(getImageUrl(e['cctvId']));
+  //   });
+  //   Future future = Future.wait(list);
+  //   return future;
   // }
 }

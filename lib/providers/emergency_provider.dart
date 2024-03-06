@@ -16,7 +16,9 @@ class EmergencyProvider with ChangeNotifier {
   double _longitude = 0;
   double get longitude => _longitude;
 
-  int _category = 0;
+  // default => -1 (not yet set anything)
+  // then setCategory => <0,1,2,3,4,5,6 - others,7 - voice recording>
+  int _category = -1;
   int get category => _category;
 
   bool _yourself = true;
@@ -54,5 +56,16 @@ class EmergencyProvider with ChangeNotifier {
 
   void setAudioPath(String audioPath) {
     _audioPath = audioPath;
+  }
+
+  void resetProvider() {
+    _address = "";
+    _latitude = 0;
+    _longitude = 0;
+    _category = -1;
+    _yourself = true;
+    _audioPath = "";
+    _otherText = null;
+    notifyListeners();
   }
 }

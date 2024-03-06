@@ -127,7 +127,7 @@ class SubscriptionResultScreen extends StatelessWidget {
               elevation: 5.0,
               leading: Icon(Icons.wallet_membership_outlined),
               content: Text(
-                "You are now a Premium member!",
+                "You are now a Premium member! Would you like to?",
                 style: Theme.of(context).textTheme.bodyLarge,
               ),
               actions: [

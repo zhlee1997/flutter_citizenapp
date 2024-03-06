@@ -38,26 +38,6 @@ class ConfirmScreen extends StatelessWidget {
         const SizedBox(
           height: 20.0,
         ),
-        const Text("NAME"),
-        Text(
-          "Steven Bong",
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(
-          height: 10.0,
-        ),
-        const Text("SARAWAK ID"),
-        Text(
-          "S127354",
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(
-          height: 10.0,
-        ),
         const Text("ADDRESS"),
         Text(
           Provider.of<EmergencyProvider>(context).address,

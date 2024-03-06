@@ -11,8 +11,10 @@ import '../widgets/sarawakid/login_full_bottom_modal.dart';
 import '../widgets/subscription/subscription_preview_dialog.dart';
 import '../widgets/homepage/homepage_citizen_announcement.dart';
 import '../widgets/homepage/homepage_tourism_card.dart';
+import '../widgets/subscription/subscription_whitelist_bottom_modal.dart';
 import '../screens/announcement/tourism_news_screen.dart';
 import '../screens/subscription/subscription_choose_screen.dart';
+import '../screens/traffic/traffic_images_list_screen.dart';
 
 import '../providers/auth_provider.dart';
 import '../services/announcement_services.dart';
@@ -113,6 +115,19 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Future<void> _handleSubscriptionWhitelistBottomModal(
+      BuildContext context) async {
+    await showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return SubscriptionWhitelistBottomModal(
+          handleNavigateToChooseScreen: () => Navigator.of(context)
+              .pushNamed(SubscriptionChooseScreen.routeName),
+        );
+      },
+    );
+  }
+
   Future<void> _showSubscriptionIntroDialog(BuildContext context) async {
     await showDialog(
       context: context,
@@ -153,16 +168,36 @@ class _HomePageState extends State<HomePage> {
           : _handleFullScreenLoginBottomModal(context);
 
   void _handleNavigateToTalikhidmat(BuildContext context) =>
-      Provider.of<AuthProvider>(context, listen: false).isAuth
+      !Provider.of<AuthProvider>(context, listen: false).isAuth
           ? Navigator.of(context).pushNamed(NewCaseScreen.routeName)
           : _handleFullScreenLoginBottomModal(context);
 
-  void _handleNavigateToSubscription(BuildContext context) =>
+  // first => check subscription enabled (already done)
+  // second => check is it whitelisted (if yes, show bottom modal)
+  // first => check is it subsrcibed
+  void _handleNavigateToSubscription(BuildContext context) {
+    final AuthProvider authProvider =
+        Provider.of<AuthProvider>(context, listen: false);
+
+    if (authProvider.isAuth) {
+      if (authProvider.isWhitelisted) {
+        // show bottom modal
+        _handleSubscriptionWhitelistBottomModal(context);
+      } else {
+        if (isSubscribed) {
+          Navigator.of(context).pushNamed(SubscriptionChooseScreen.routeName);
+        } else {
+          _showSubscriptionIntroDialog(context);
+        }
+      }
+    } else {
+      _handleFullScreenLoginBottomModal(context);
+    }
+  }
+
+  void _handleNavigateToTrafficImages(BuildContext context) =>
       Provider.of<AuthProvider>(context, listen: false).isAuth
-          ? isSubscribed
-              ? Navigator.of(context)
-                  .pushNamed(SubscriptionChooseScreen.routeName)
-              : _showSubscriptionIntroDialog(context)
+          ? Navigator.of(context).pushNamed(TrafficImagesListScreen.routeName)
           : _handleFullScreenLoginBottomModal(context);
 
   void _handleNavigateToPayment(BuildContext context) =>
@@ -341,6 +376,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   GestureDetector(
+                    // TODO: check for location permission
                     onTap: () => _handleNavigateToEmergency(context),
                     child: Card(
                       elevation: 5.0,
@@ -386,51 +422,73 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                   ),
-                  GestureDetector(
-                    onTap: () => _handleNavigateToSubscription(context),
-                    child: Card(
-                      elevation: 5.0,
-                      child: Container(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              crossAxisAlignment: CrossAxisAlignment.center,
+                  Consumer<AuthProvider>(
+                    builder:
+                        (BuildContext ctx, AuthProvider authProvider, child) {
+                      return GestureDetector(
+                        onTap: () => authProvider.isSubscriptionEnabled
+                            ? _handleNavigateToSubscription(context)
+                            : _handleNavigateToTrafficImages(context),
+                        child: Card(
+                          elevation: 5.0,
+                          child: Container(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
-                                Icon(
-                                  Icons.subscriptions,
-                                  color: Theme.of(context).colorScheme.primary,
-                                  size: 30.0,
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    authProvider.isSubscriptionEnabled
+                                        ? Icon(
+                                            Icons.subscriptions,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary,
+                                            size: 30.0,
+                                          )
+                                        : Icon(
+                                            Icons.traffic_outlined,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary,
+                                            size: 30.0,
+                                          ),
+                                    Text(
+                                      authProvider.isSubscriptionEnabled
+                                          ? "Subscription"
+                                          : "Traffic images",
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                const Text(
-                                  "Subscription",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
+                                const SizedBox(
+                                  height: 10.0,
+                                ),
+                                Container(
+                                  margin: const EdgeInsets.only(
+                                    left: 10.0,
                                   ),
-                                ),
+                                  child: Text(
+                                    authProvider.isSubscriptionEnabled
+                                        ? "Premium member"
+                                        : "Live road images",
+                                    style: TextStyle(
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                )
                               ],
                             ),
-                            const SizedBox(
-                              height: 10.0,
-                            ),
-                            Container(
-                              margin: const EdgeInsets.only(
-                                left: 10.0,
-                              ),
-                              child: Text(
-                                "Premium member",
-                                style: TextStyle(
-                                  color: Colors.grey[600],
-                                ),
-                              ),
-                            )
-                          ],
+                          ),
                         ),
-                      ),
-                    ),
+                      );
+                    },
                   ),
                   GestureDetector(
                     onTap: () => _handleNavigateToPayment(context),

@@ -6,11 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 
 import '../../utils/global_dialog_helper.dart';
 import '../../models/cctv_model.dart';
 import '../../utils/app_localization.dart';
 import '../../widgets/subscription/map_bottom_sheet_widget.dart';
+import '../../providers/cctv_provider.dart';
+import '../../models/cctv_model.dart';
 
 class SubscriptionMapScreen extends StatefulWidget {
   static const String routeName = "subscription-map-screen";
@@ -54,27 +57,27 @@ class _SubscriptionMapScreenState extends State<SubscriptionMapScreen> {
 
   Future<void> onPressCctvIcon(CCTVModel cctv) async {
     Future<void> handleFuture() async {
-      //   try {
-      //     await Provider.of<CctvProvider>(context, listen: false)
-      //         .getCctvDetailProvider(cctv);
-      //   } catch (e) {
-      //     setState(() {
-      //       _isError = true;
-      //     });
-      //   }
+      // try {
+      //   await Provider.of<CCTVProvider>(context, listen: false)
+      //       .getCctvDetailProvider(cctv);
+      // } catch (e) {
+      //   setState(() {
+      //     _isError = true;
+      //   });
+      // }
 
-      //   Map<String, dynamic> data = {
-      //     "channel": "02",
-      //     "thridDeviceId": cctv.cctvId,
-      //   };
-      //   try {
-      //     await Provider.of<CctvProvider>(context, listen: false)
-      //         .getCameraShortCutUrlProvider(data);
-      //   } catch (e) {
-      //     setState(() {
-      //       _isError = true;
-      //     });
-      //   }
+      // Map<String, dynamic> data = {
+      //   "channel": "02",
+      //   "thridDeviceId": cctv.cctvId,
+      // };
+      // try {
+      //   await Provider.of<CCTVProvider>(context, listen: false)
+      //       .getCameraShortCutUrlProvider(data);
+      // } catch (e) {
+      //   setState(() {
+      //     _isError = true;
+      //   });
+      // }
     }
 
     await showModalBottomSheet(
@@ -117,16 +120,56 @@ class _SubscriptionMapScreenState extends State<SubscriptionMapScreen> {
 
   /// Displays the markers of CCTV on Google Map when screen first renders
   Future<void> _renderMarker() async {
+    // TODO: vms/getCameraList => API
+    // bool success = await Provider.of<CCTVProvider>(context, listen: false)
+    //     .getCctvCoordinatesProvider();
+    // if (success) {
+    //   List<CCTVModel> cctvModel =
+    //       Provider.of<CCTVProvider>(context, listen: false).cctvModel;
+
     List<CCTVModel> cctvModel = [
       CCTVModel(
-        cctvId: "cctvId1",
+        cctvId: "1",
         latitude: "1.553110",
         longitude: "110.345032",
         channel: "02",
-        deviceName: "SIOC CCTV",
-        location: "SIOC Kuching",
+        deviceName: "SIOC CCTV 1",
+        location: "SIOC Kuching 1",
+      ),
+      CCTVModel(
+        cctvId: "2",
+        latitude: "1.556512",
+        longitude: "110.353659",
+        channel: "02",
+        deviceName: "SIOC CCTV 2",
+        location: "SIOC Kuching 2",
+      ),
+      CCTVModel(
+        cctvId: "3",
+        latitude: "1.565435",
+        longitude: "110.353659",
+        channel: "02",
+        deviceName: "SIOC CCTV 3",
+        location: "SIOC Kuching 3",
+      ),
+      CCTVModel(
+        cctvId: "4",
+        latitude: "1.566808",
+        longitude: "110.339917",
+        channel: "02",
+        deviceName: "SIOC CCTV 4",
+        location: "SIOC Kuching 4",
+      ),
+      CCTVModel(
+        cctvId: "5",
+        latitude: "1.556340",
+        longitude: "110.333046",
+        channel: "02",
+        deviceName: "SIOC CCTV 5",
+        location: "SIOC Kuching 5",
       ),
     ];
+
     final Uint8List markerIcon =
         await getBytesFromAsset('assets/images/icon/cctv.png', 80);
     cctvModel.forEach((cctv) {
@@ -152,6 +195,7 @@ class _SubscriptionMapScreenState extends State<SubscriptionMapScreen> {
     setState(() {
       _isLoading = false;
     });
+    // }
   }
 
   Future<void> _showBottomModalSheetFirstNote() async {

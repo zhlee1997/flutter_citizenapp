@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/emergency_provider.dart';
+import '../../utils/app_localization.dart';
 
 class OtherEmergencyBottomModal extends StatelessWidget {
   final VoidCallback handleProceedNext;
+  final GlobalKey<FormState> formKey;
 
   OtherEmergencyBottomModal({
     required this.handleProceedNext,
+    required this.formKey,
     super.key,
   });
 
@@ -46,12 +49,21 @@ class OtherEmergencyBottomModal extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(
                   horizontal: 5.0,
                 ),
-                child: TextField(
-                  controller: textEditingController,
-                  decoration: const InputDecoration(
-                    labelText: 'Enter here to tell us more',
-                  ),
-                  textInputAction: TextInputAction.done,
+                child: Form(
+                  key: formKey,
+                  child: TextFormField(
+                      controller: textEditingController,
+                      decoration: const InputDecoration(
+                        labelText: 'Enter here to tell us more',
+                      ),
+                      textInputAction: TextInputAction.done,
+                      validator: (String? v) {
+                        if (v == null || v.isEmpty) {
+                          return AppLocalization.of(context)!
+                              .translate('Please enter some text')!;
+                        }
+                        return null;
+                      }),
                 ),
               ),
               Container(
@@ -84,6 +96,9 @@ class OtherEmergencyBottomModal extends StatelessWidget {
                       backgroundColor: Colors.red,
                     ),
                     onPressed: () {
+                      if (!formKey.currentState!.validate()) {
+                        return;
+                      }
                       Provider.of<EmergencyProvider>(context, listen: false)
                           .setOtherText(textEditingController.text);
                       // others category => 6
@@ -116,6 +131,9 @@ class OtherEmergencyBottomModal extends StatelessWidget {
                   child: OutlinedButton(
                     style: OutlinedButton.styleFrom(),
                     onPressed: () {
+                      if (!formKey.currentState!.validate()) {
+                        return;
+                      }
                       Provider.of<EmergencyProvider>(context, listen: false)
                           .setOtherText(textEditingController.text);
                       // others category => 6

@@ -188,8 +188,6 @@ class _SubscriptionPackageScreenState extends State<SubscriptionPackageScreen> {
                               showDialog(
                                   context: context,
                                   builder: (context) => AlertDialog(
-                                        title:
-                                            const Text('Security Disclaimer'),
                                         content: FutureBuilder(
                                             future: rootBundle.loadString(_url),
                                             builder: (BuildContext context,

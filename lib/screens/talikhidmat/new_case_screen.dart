@@ -58,7 +58,7 @@ class _NewCaseScreenState extends State<NewCaseScreen> {
                     ),
                   ),
                   onPressed: details.onStepCancel,
-                  child: const Text('CANCEL'),
+                  child: const Text('BACK'),
                 ),
               ),
               SizedBox(

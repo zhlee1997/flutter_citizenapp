@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:async';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
@@ -67,6 +66,9 @@ class _MapBottomSheetWidgetState extends State<MapBottomSheetWidget> {
     }
   }
 
+  // TODO: use geolocator service to calculate the distance
+  Future<void> getDistanceFromCoordinates() async {}
+
   @override
   void didChangeDependencies() async {
     cctvProvider = Provider.of<CCTVProvider>(context, listen: false);
@@ -80,12 +82,12 @@ class _MapBottomSheetWidgetState extends State<MapBottomSheetWidget> {
     //     Provider.of<CCTVProvider>(context, listen: false).cctvModelDetail;
 
     final CCTVModelDetail? cctvDetail = CCTVModelDetail(
-      id: "id1",
-      name: "SIOC CCTV",
-      location: "Bangunan Baitulmakmur",
+      id: "1",
+      name: "SIOC CCTV 1",
+      location: "Bangunan Baitulmakmur 1",
       image:
           "https://images.lifestyleasia.com/wp-content/uploads/sites/5/2022/07/15175110/Hero_Sarawak_River-1600x900.jpg",
-      updateTime: "updateTime",
+      updateTime: "updateTime1",
       liveUrl:
           "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
     );

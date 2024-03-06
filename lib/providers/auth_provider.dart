@@ -18,8 +18,11 @@ class AuthProvider with ChangeNotifier {
   bool _isAuth = false;
   bool get isAuth => _isAuth;
 
-  // bool _isShow = true;
-  // bool get isShow => _isShow;
+  bool _isSubscriptionEnabled = true;
+  bool get isSubscriptionEnabled => _isSubscriptionEnabled;
+
+  bool _isWhitelisted = false;
+  bool get isWhitelisted => _isWhitelisted;
 
   String? _vipDueDate;
   String? get vipDueDate => _vipDueDate;
@@ -209,6 +212,13 @@ class AuthProvider with ChangeNotifier {
         isTokenOk = true;
         bool subscriptionStatus = await checkSubscribe();
 
+        // TODO: FIRST => check _isSubscriptionEnabled
+        _isSubscriptionEnabled = true;
+
+        // TODO: SECOND => check _isWhitelisted
+        _isWhitelisted = true;
+
+        // THIRD => check subscription date
         if (subscriptionStatus) {
           _auth = AuthModel(
             address: prefs.getString('userResAddr1') ?? '',

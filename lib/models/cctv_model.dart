@@ -54,3 +54,29 @@ class CCTVModelDetail {
     updateTime = json["updateTime"];
   }
 }
+
+class CCTVSnapshotModel {
+  late String cctvId;
+  late String imageUrl;
+  late String channel;
+  late String deviceName;
+  late String location;
+
+  // model constructor
+  CCTVSnapshotModel({
+    required this.cctvId,
+    required this.imageUrl,
+    required this.channel,
+    required this.deviceName,
+    required this.location,
+  });
+
+  // serialize from json
+  CCTVSnapshotModel.fromJson(Map<String, dynamic> json) {
+    cctvId = json["deviceCode"];
+    channel = json["channel"];
+    deviceName = json["deviceName"];
+    imageUrl = json["imageUrl"];
+    location = json["location"];
+  }
+}

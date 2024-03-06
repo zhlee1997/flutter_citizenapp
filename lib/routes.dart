@@ -28,6 +28,8 @@ import './screens/subscription/subscription_video_screen.dart';
 import './screens/subscription/subscription_list_screen.dart';
 import './screens/subscription/subscription_result_screen.dart';
 
+import './screens/traffic/traffic_images_list_screen.dart';
+
 import './screens/support/privacy_policy_screen.dart';
 import './screens/support/terms_and_conditions_screen.dart';
 import './screens/support/send_feedback_screen.dart';
@@ -64,4 +66,5 @@ final Map<String, WidgetBuilder> routes = <String, WidgetBuilder>{
   SubscriptionVideoScreen.routeName: (ctx) => const SubscriptionVideoScreen(),
   SubscriptionListScreen.routeName: (ctx) => const SubscriptionListScreen(),
   SubscriptionResultScreen.routeName: (ctx) => const SubscriptionResultScreen(),
+  TrafficImagesListScreen.routeName: (ctx) => const TrafficImagesListScreen(),
 };

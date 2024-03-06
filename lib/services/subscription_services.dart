@@ -46,8 +46,7 @@ class SubscriptionServices {
         data: json.encode(data),
       );
       print('createSubcriptionOrder API success: $response');
-      if (response!.statusCode == 200) return response;
-      return null;
+      return response;
     } catch (e) {
       print('createSubcriptionOrder error: ${e.toString()}');
       throw e;
@@ -65,10 +64,27 @@ class SubscriptionServices {
         data: json.encode(data),
       );
       print('confirmSubscriptionOrder API success: $response');
-      if (response!.statusCode == 200) return response;
-      return null;
+      return response;
     } catch (e) {
       print('confirmSubscriptionOrder error: ${e.toString()}');
+      throw e;
+    }
+  }
+
+  /// Obtain decrypted payment status after payment using POST method
+  ///
+  /// Receives [data] as the transaction result which is retrieved from SPay SDK
+  /// Returns API Response object
+  Future<dynamic> decryptData(Map<String, dynamic> data) async {
+    try {
+      var response = await _apiBaseHelper.post(
+        'payment/orderForm/decryptData',
+        data: json.encode(data),
+      );
+      print('decryptData API success: $response');
+      return response;
+    } catch (e) {
+      print('decryptData error: ${e.toString()}');
       throw e;
     }
   }

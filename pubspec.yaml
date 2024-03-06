@@ -115,6 +115,7 @@ flutter:
     - assets/images/icon/spay-global.png
     - assets/images/icon/cctv.png
     - assets/images/icon/camera.png
+    - assets/images/icon/sarawakid_logo.png
 
     # images/pictures
     - assets/images/pictures/sos_image.jpg

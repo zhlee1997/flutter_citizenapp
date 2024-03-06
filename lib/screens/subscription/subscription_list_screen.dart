@@ -4,6 +4,7 @@ import '../../models/cctv_model.dart';
 import '../../utils/global_dialog_helper.dart';
 import './subscription_video_screen.dart';
 import '../../arguments/subscription_video_screen_arguments.dart';
+import '../../services/cctv_services.dart';
 
 class SubscriptionListScreen extends StatefulWidget {
   static const String routeName = "subscription-list-screen";
@@ -36,13 +37,28 @@ class _SubscriptionListScreenState extends State<SubscriptionListScreen> {
     );
   }
 
+  // TODO: Get Snapshots API
+  // TODO: infinite scrolling
+  // TODO: show total number of CCTVs in the bottom of list
+  Future<void> getSnapshotList(Map<String, dynamic> data) async {
+    final CCTVServices cctvServices = CCTVServices();
+
+    try {
+      var response = await cctvServices.queryCCTVSnapshotList(data);
+      if (response["status"] == "200") {
+        setState(() {
+          _cctvModelDetailList = response["obj"];
+        });
+      }
+    } catch (e) {
+      print("getSnapshotList fail: ${e.toString()}");
+    }
+  }
+
   Future<void> _initCCTVList() async {
     setState(() {
       _isLoading = true;
     });
-    // TODO: Get API
-    // TODO: infinite scrolling
-    // TODO: show total number of CCTVs in the bottom of list
     setState(() {
       _cctvModelDetailList = [
         CCTVModelDetail(
@@ -116,7 +132,7 @@ class _SubscriptionListScreenState extends State<SubscriptionListScreen> {
     // TODO: NO data condition => list empty
     return Scaffold(
       appBar: AppBar(
-        title: Text("List Display"),
+        title: const Text("List Display"),
       ),
       body: _isLoading
           ? _globalDialogHelper.showLoadingSpinner()
