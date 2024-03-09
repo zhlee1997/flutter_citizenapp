@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
-class EmergencyFinishFullBottomModal extends StatelessWidget {
-  const EmergencyFinishFullBottomModal({super.key});
+class TalikhidmatFinishFullBottomModal extends StatelessWidget {
+  const TalikhidmatFinishFullBottomModal({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -26,16 +26,16 @@ class EmergencyFinishFullBottomModal extends StatelessWidget {
             const Padding(
                 padding: EdgeInsets.all(8.0),
                 child: Text(
-                  "Your emergency request is submitted successfully.",
+                  "Your Talikhidmat feedback is submitted successfully.",
                   textAlign: TextAlign.center,
                 )),
-            const Text("The SIOC Team will contact you shortly."),
+            const Text("The SIOC Team will process your feedback soon."),
             SizedBox(
               height: screenSize.height * 0.1,
             ),
             ElevatedButton(
               onPressed: () {
-                // TODO: Navigate to Reported Cases - Emergency List Screen
+                // TODO: Navigate to Reported Cases - Talikhidmat List Screen
               },
               child: const Text("View details"),
             ),

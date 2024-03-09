@@ -27,10 +27,7 @@ class _LocationScreenState extends State<LocationScreen> {
   String _address = "";
   double _latitude = 0;
   double _longitude = 0;
-  CameraPosition _cameraPosition = const CameraPosition(
-    target: LatLng(1.576472, 110.345828),
-    zoom: 14.4746,
-  );
+  late CameraPosition _cameraPosition;
 
   /// Perform geocoding from coordinates to get address
   ///
@@ -67,8 +64,6 @@ class _LocationScreenState extends State<LocationScreen> {
 
   @override
   void initState() {
-    // _category = '1';
-
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await Provider.of<LocationProvider>(context, listen: false)
           .getCurrentLocation();
@@ -85,6 +80,16 @@ class _LocationScreenState extends State<LocationScreen> {
     if (locationProvider.currentLocation != null) {
       _latitude = locationProvider.currentLocation!.latitude;
       _longitude = locationProvider.currentLocation!.longitude;
+      _cameraPosition = CameraPosition(
+        target: LatLng(_latitude, _longitude),
+        zoom: 14.4746,
+      );
+      _geocodeAddress(_latitude, _longitude);
+    } else {
+      // no location permission (just in case)
+      // because emergency cannot access if no location permission
+      _latitude = 1.576472;
+      _longitude = 110.345828;
       _cameraPosition = CameraPosition(
         target: LatLng(_latitude, _longitude),
         zoom: 14.4746,

@@ -68,6 +68,7 @@ class LocationProvider with ChangeNotifier {
     } else {
       _currentLocation = null;
     }
+    notifyListeners();
     return _currentLocation;
   }
 }

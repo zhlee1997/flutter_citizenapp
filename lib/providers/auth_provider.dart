@@ -175,6 +175,44 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
+  /// Get user information after subscription payment.
+  /// Using queryUserInfo API.
+  ///
+  /// Return 'true' if query API is successful.
+  /// Return 'false' if query API is failed.
+  Future<bool> queryUserInfoAfterSubscriptionProvider() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+
+      String memberId = prefs.getString('userId') ?? '';
+      var response = await _authServices.queryUserInfo(memberId);
+      if (response!.data['status'] == '200') {
+        _auth = AuthModel(
+          address: prefs.getString('userResAddr1') ?? '',
+          mobile: prefs.getString('userMobileNo') ?? '',
+          email: prefs.getString('userEmail') ?? '',
+          sId: prefs.getString('userId') ?? '',
+          userName: prefs.getString('userShortName') ?? '',
+          fullName: prefs.getString('userFullName') ?? '',
+          isSubscribed: response.data['data']['vipStatus'] == "1",
+        );
+        prefs.setBool(
+            "isSubscribed", response.data['data']['vipStatus'] == "1");
+        if (response.data['data']['vipStatus'] == "1") {
+          _vipDueDate = response.data['data']['vipDueDate'] ?? '';
+          prefs.setString(
+              "vipDueDate", response.data['data']['vipDueDate'] ?? '');
+        }
+
+        return true;
+      }
+      return false;
+    } catch (e) {
+      print('queryUserInfoAfterSubscriptionProvider fail: ${e.toString()}');
+      throw e;
+    }
+  }
+
   /// Check expiry of token when app is opened.
   ///
   /// Return 'true' if does not exceeds valid refresh period.

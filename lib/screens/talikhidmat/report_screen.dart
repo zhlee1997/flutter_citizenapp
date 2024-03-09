@@ -1,29 +1,43 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:dotted_border/dotted_border.dart';
+import 'package:provider/provider.dart';
 
 import '../../utils/app_localization.dart';
 import '../../utils/global_dialog_helper.dart';
+import '../../services/upload_services.dart';
+import '../../providers/talikhidmat_provider.dart';
 
 class ReportScreen extends StatefulWidget {
-  const ReportScreen({super.key});
+  final String category;
+  final Function(String?) categoryCallback;
+  final Function(String) messageCallback;
+  final GlobalKey<FormState> formKey;
+
+  const ReportScreen({
+    required this.category,
+    required this.categoryCallback,
+    required this.messageCallback,
+    required this.formKey,
+    super.key,
+  });
 
   @override
   State<ReportScreen> createState() => _ReportScreenState();
 }
 
 class _ReportScreenState extends State<ReportScreen> {
-  final _formKey = GlobalKey<FormState>();
   final _messageController = TextEditingController();
   final picker = ImagePicker();
 
   List<Map> _images = [];
 
-  late String _category;
+  // late String _category;
 
   /// Delete images
   ///
@@ -32,6 +46,10 @@ class _ReportScreenState extends State<ReportScreen> {
     setState(() {
       _images.removeWhere((img) => img['file'].path == imagePath);
     });
+    // TODO: new added provider for images
+    Provider.of<TalikhidmatProvider>(context).removeAttachement(
+      attachment: imagePath,
+    );
   }
 
   /// Get image using camera
@@ -76,23 +94,28 @@ class _ReportScreenState extends State<ReportScreen> {
     );
 
     FlutterImageCompress.compressWithFile(path, quality: 75)
-        .then((value) async {
+        .then((Uint8List? value) async {
       try {
-        // TODO: Upload Service
-        // Response? response = await UploadFileService().uploadFile(
-        //   value,
-        //   type,
-        //   name,
-        // );
-        // if (response!.data["status"] == '200') {
-        //   Navigator.of(context).pop(true);
-        //   setState(() {
-        //     _images.insert(0, {
-        //       "file": selectedImage,
-        //       "imgUrl": response.data["data"],
-        //     });
-        //   });
-        // }
+        // TODO: Upload image service
+        var response = await UploadServices().uploadFile(
+          value,
+          type,
+          name,
+        );
+        if (response["status"] == '200') {
+          Navigator.of(context).pop(true);
+          setState(() {
+            _images.insert(0, {
+              "file": selectedImage,
+              "imgUrl": response["data"],
+            });
+          });
+          // TODO: new added provider for images
+          Provider.of<TalikhidmatProvider>(context).setAttachement(
+            // imageUrl
+            attachment: response["data"],
+          );
+        }
       } catch (e) {
         Navigator.of(context).pop(true);
         Fluttertoast.showToast(
@@ -129,13 +152,13 @@ class _ReportScreenState extends State<ReportScreen> {
         child: Wrap(
           children: <Widget>[
             ListTile(
-              leading: Icon(
+              leading: const Icon(
                 Icons.photo_library,
                 size: 30,
               ),
               title: Text(
                 AppLocalization.of(context)!.translate('photo_library')!,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 18.0,
                 ),
               ),
@@ -145,13 +168,13 @@ class _ReportScreenState extends State<ReportScreen> {
               },
             ),
             ListTile(
-              leading: Icon(
+              leading: const Icon(
                 Icons.photo_camera,
                 size: 30,
               ),
               title: Text(
                 AppLocalization.of(context)!.translate('camera')!,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 18.0,
                 ),
               ),
@@ -167,118 +190,109 @@ class _ReportScreenState extends State<ReportScreen> {
   }
 
   @override
-  void initState() {
-    _category = '1';
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
 
-    return Form(
-      key: _formKey,
-      child: GestureDetector(
-        onTap: () {
-          FocusScopeNode currentFocus = FocusScope.of(context);
+    return GestureDetector(
+      onTap: () {
+        FocusScopeNode currentFocus = FocusScope.of(context);
 
-          if (!currentFocus.hasPrimaryFocus) {
-            currentFocus.unfocus();
-          }
-        },
-        child: ListView(
-          shrinkWrap: true,
-          children: <Widget>[
-            Image.asset(
-                "assets/images/pictures/talikhidmat/talikhidmat_banner.jpg"),
-            Container(
-              margin: EdgeInsets.only(top: 5.0),
-              child: Text(
-                "Your feedback makes a difference",
-                style: TextStyle(
-                  fontStyle: FontStyle.italic,
-                ),
+        if (!currentFocus.hasPrimaryFocus) {
+          currentFocus.unfocus();
+        }
+      },
+      child: ListView(
+        shrinkWrap: true,
+        children: <Widget>[
+          Image.asset(
+              "assets/images/pictures/talikhidmat/talikhidmat_banner.jpg"),
+          Container(
+            margin: const EdgeInsets.only(top: 5.0),
+            child: const Text(
+              "Your feedback makes a difference",
+              style: TextStyle(
+                fontStyle: FontStyle.italic,
               ),
             ),
-            Divider(),
-            Container(
-              margin: EdgeInsets.only(
-                top: 15.0,
-              ),
-              child: DropdownButtonFormField<String>(
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText:
-                      AppLocalization.of(context)!.translate('category')! + "*",
-                  labelStyle: TextStyle(
-                    fontSize: 18.0,
-                  ),
+          ),
+          const Divider(),
+          Container(
+            margin: const EdgeInsets.only(
+              top: 15.0,
+            ),
+            child: DropdownButtonFormField<String>(
+              decoration: InputDecoration(
+                border: const OutlineInputBorder(),
+                labelText:
+                    "${AppLocalization.of(context)!.translate('category')!}*",
+                labelStyle: const TextStyle(
+                  fontSize: 18.0,
                 ),
-                focusColor: Theme.of(context).primaryColor,
-                isExpanded: true,
-                value: _category,
-                iconSize: 35.0,
-                items: [
-                  DropdownMenuItem(
+              ),
+              focusColor: Theme.of(context).primaryColor,
+              isExpanded: true,
+              value: widget.category,
+              iconSize: 35.0,
+              items: [
+                DropdownMenuItem(
+                    value: '1',
                     child: Text(
                       AppLocalization.of(context)!.translate('complaint')!,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 18.0,
                       ),
+                    )),
+                DropdownMenuItem(
+                  value: '2',
+                  child: Text(
+                    AppLocalization.of(context)!
+                        .translate('request_for_service')!,
+                    style: const TextStyle(
+                      fontSize: 18.0,
                     ),
-                    value: '1',
                   ),
-                  DropdownMenuItem(
-                    child: Text(
-                      AppLocalization.of(context)!.translate('compliment')!,
-                      style: TextStyle(
-                        fontSize: 18.0,
-                      ),
+                ),
+                DropdownMenuItem(
+                  value: '3',
+                  child: Text(
+                    AppLocalization.of(context)!.translate('compliment')!,
+                    style: const TextStyle(
+                      fontSize: 18.0,
                     ),
-                    value: '3',
                   ),
-                  DropdownMenuItem(
-                    child: Text(
-                      AppLocalization.of(context)!.translate('enquiry')!,
-                      style: TextStyle(
-                        fontSize: 18.0,
-                      ),
+                ),
+                DropdownMenuItem(
+                  value: '4',
+                  child: Text(
+                    AppLocalization.of(context)!.translate('enquiry')!,
+                    style: const TextStyle(
+                      fontSize: 18.0,
                     ),
-                    value: '4',
                   ),
-                  DropdownMenuItem(
-                    child: Text(
-                      AppLocalization.of(context)!
-                          .translate('request_for_service')!,
-                      style: TextStyle(
-                        fontSize: 18.0,
-                      ),
+                ),
+                DropdownMenuItem(
+                  value: '5',
+                  child: Text(
+                    AppLocalization.of(context)!.translate('suggestion')!,
+                    style: const TextStyle(
+                      fontSize: 18.0,
                     ),
-                    value: '2',
                   ),
-                  DropdownMenuItem(
-                    child: Text(
-                      AppLocalization.of(context)!.translate('suggestion')!,
-                      style: TextStyle(
-                        fontSize: 18.0,
-                      ),
-                    ),
-                    value: '5',
-                  ),
-                ],
-                onChanged: (value) {
-                  setState(() {
-                    _category = value!;
-                  });
-                },
-              ),
+                ),
+              ],
+              onChanged: (value) {
+                widget.categoryCallback(value);
+              },
             ),
-            Container(
-              margin: const EdgeInsets.only(
-                top: 10.0,
-              ),
+          ),
+          Container(
+            margin: const EdgeInsets.only(
+              top: 10.0,
+            ),
+            child: Form(
+              key: widget.formKey,
               child: TextFormField(
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 18.0,
                 ),
                 validator: (String? value) {
@@ -286,13 +300,17 @@ class _ReportScreenState extends State<ReportScreen> {
                     return AppLocalization.of(context)!
                         .translate('please_enter_messages')!;
                   }
+                  return null;
                 },
                 controller: _messageController,
+                onChanged: (value) {
+                  widget.messageCallback(value);
+                },
                 decoration: InputDecoration(
-                  border: OutlineInputBorder(),
+                  border: const OutlineInputBorder(),
                   labelText:
-                      AppLocalization.of(context)!.translate('message')! + "*",
-                  labelStyle: TextStyle(
+                      "${AppLocalization.of(context)!.translate('message')!}*",
+                  labelStyle: const TextStyle(
                     fontSize: 18.0,
                   ),
                 ),
@@ -301,81 +319,80 @@ class _ReportScreenState extends State<ReportScreen> {
                 // keyboardType: TextInputType.multiline,
               ),
             ),
-            SizedBox(
-              height: 15.0,
+          ),
+          const SizedBox(
+            height: 15.0,
+          ),
+          const Text("Attachments:"),
+          Container(
+            margin: const EdgeInsets.only(
+              top: 15.0,
             ),
-            Text("Attachments:"),
-            Container(
-              margin: const EdgeInsets.only(
-                top: 15.0,
-              ),
-              height: screenSize.height * 0.13,
-              child: _images.length == 0
-                  ? GestureDetector(
-                      onTap: _showPhotoModal,
-                      child: DottedBorder(
-                        color: Colors.grey,
-                        radius: Radius.circular(5.0),
-                        strokeWidth: 1,
-                        borderType: BorderType.RRect,
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Icon(
-                                Icons.add_a_photo,
-                                size: 30,
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Text('${_images.length} / 5'),
-                            ],
-                          ),
+            height: screenSize.height * 0.13,
+            child: _images.length == 0
+                ? GestureDetector(
+                    onTap: _showPhotoModal,
+                    child: DottedBorder(
+                      color: Colors.grey,
+                      radius: const Radius.circular(5.0),
+                      strokeWidth: 1,
+                      borderType: BorderType.RRect,
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            const Icon(
+                              Icons.add_a_photo,
+                              size: 30,
+                            ),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            Text('${_images.length} / 5'),
+                          ],
                         ),
                       ),
-                    )
-                  : ListView(
-                      scrollDirection: Axis.horizontal,
-                      children: <Widget>[
-                        ..._returnImageWidget(),
-                        _images.length == 5
-                            ? Container()
-                            : GestureDetector(
-                                onTap: _showPhotoModal,
-                                child: Container(
-                                  height: screenSize.height * 0.15,
-                                  width: screenSize.width * 0.25,
-                                  margin: const EdgeInsets.symmetric(
-                                    horizontal: 8.0,
-                                  ),
-                                  child: Center(
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: <Widget>[
-                                        Icon(
-                                          Icons.add_a_photo,
-                                          size: 25,
-                                          color: Colors.grey.shade700,
-                                        ),
-                                        SizedBox(
-                                          height: 5,
-                                        ),
-                                        Text('${_images.length} / 5'),
-                                      ],
-                                    ),
+                    ),
+                  )
+                : ListView(
+                    scrollDirection: Axis.horizontal,
+                    children: <Widget>[
+                      ..._returnImageWidget(),
+                      _images.length == 5
+                          ? Container()
+                          : GestureDetector(
+                              onTap: _showPhotoModal,
+                              child: Container(
+                                height: screenSize.height * 0.15,
+                                width: screenSize.width * 0.25,
+                                margin: const EdgeInsets.symmetric(
+                                  horizontal: 8.0,
+                                ),
+                                child: Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      Icon(
+                                        Icons.add_a_photo,
+                                        size: 25,
+                                        color: Colors.grey.shade700,
+                                      ),
+                                      const SizedBox(
+                                        height: 5,
+                                      ),
+                                      Text('${_images.length} / 5'),
+                                    ],
                                   ),
                                 ),
                               ),
-                      ],
-                    ),
-            ),
-            SizedBox(
-              height: screenSize.width * 0.05,
-            ),
-          ],
-        ),
+                            ),
+                    ],
+                  ),
+          ),
+          SizedBox(
+            height: screenSize.width * 0.05,
+          ),
+        ],
       ),
     );
   }
@@ -406,7 +423,6 @@ class _ReportScreenState extends State<ReportScreen> {
                 ),
               ),
               Positioned(
-                // top: 4,
                 right: 0,
                 child: GestureDetector(
                   onTap: () {
@@ -418,7 +434,7 @@ class _ReportScreenState extends State<ReportScreen> {
                       width: 20,
                       height: 20,
                       color: Theme.of(context).colorScheme.secondary,
-                      child: Icon(
+                      child: const Icon(
                         Icons.close,
                         color: Colors.black,
                         size: 12.5,

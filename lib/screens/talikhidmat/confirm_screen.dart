@@ -1,10 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../../providers/talikhidmat_provider.dart';
 
 class ConfirmScreen extends StatelessWidget {
   const ConfirmScreen({super.key});
 
+  String returnCategoryInText(String category) {
+    switch (category) {
+      case "1":
+        return "COMPLAINT";
+      case "2":
+        return "REQUEST FOR SERVICE";
+      case "3":
+        return "COMPLIMENT";
+      case "4":
+        return "ENQUIRY";
+      default:
+        return "SUGGESTION";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -12,47 +32,85 @@ class ConfirmScreen extends StatelessWidget {
           "Note: Please verify and check the information below before submission",
           style: Theme.of(context).textTheme.titleSmall,
         ),
-        SizedBox(
+        const SizedBox(
           height: 20.0,
         ),
-        Text("NAME"),
+        const Text("TALIKHIDMAT REQUEST"),
         Text(
-          "Steven Bong",
-          style: TextStyle(
+          returnCategoryInText(
+              Provider.of<TalikhidmatProvider>(context).category),
+          style: const TextStyle(
             fontWeight: FontWeight.bold,
           ),
         ),
-        SizedBox(
+        const SizedBox(
           height: 10.0,
         ),
-        Text("SARAWAK ID"),
+        const Text("MESSAGE"),
         Text(
-          "S127354",
-          style: TextStyle(
+          Provider.of<TalikhidmatProvider>(context).message,
+          style: const TextStyle(
             fontWeight: FontWeight.bold,
           ),
         ),
-        SizedBox(
+        const SizedBox(
           height: 10.0,
         ),
-        Text("ADDRESS"),
+        const Text("ADDRESS"),
         Text(
-          "26, Jalan SS 2/103, SS 2, 47300 Petaling Jaya, Selangor",
-          style: TextStyle(
+          Provider.of<TalikhidmatProvider>(context).address,
+          style: const TextStyle(
             fontWeight: FontWeight.bold,
           ),
         ),
-        SizedBox(
+        const SizedBox(
           height: 10.0,
         ),
-        Text("LOCATION"),
+        const Text("LOCATION"),
         Text(
-          "3.126971, 101.625321",
-          style: TextStyle(
+          "${Provider.of<TalikhidmatProvider>(context).latitude}, ${Provider.of<TalikhidmatProvider>(context).longitude}",
+          style: const TextStyle(
             fontWeight: FontWeight.bold,
           ),
         ),
-        SizedBox(
+        const SizedBox(
+          height: 10.0,
+        ),
+        const Text("ATTACHMENTS"),
+        // TODO: Attachments (eg: 5 images)
+        Provider.of<TalikhidmatProvider>(context).attachments.isEmpty
+            ? const Text(
+                "No attachments",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              )
+            : Wrap(
+                children: <Widget>[
+                  ...Provider.of<TalikhidmatProvider>(context).attachments.map(
+                        (e) => Container(
+                          height: screenSize.height * 0.14,
+                          width: screenSize.width * 0.25,
+                          margin: const EdgeInsets.only(
+                            left: 8.0,
+                            right: 8.0,
+                            top: 8.0,
+                          ),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Theme.of(context).primaryColor,
+                              width: 0.5,
+                            ),
+                          ),
+                          child: Image.network(
+                            e["filePath"],
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                      )
+                ],
+              ),
+        const SizedBox(
           height: 20.0,
         ),
       ],

@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import './report_screen.dart';
 import './location_screen.dart';
 import './confirm_screen.dart';
 import '../../providers/location_provider.dart';
+import '../../providers/talikhidmat_provider.dart';
+import '../../utils/global_dialog_helper.dart';
+import '../../utils/app_localization.dart';
+import '../../services/event_services.dart';
+import '../../widgets/talikhidmat/talikhidmat_finish_full_bottom_modal.dart';
 
 class NewCaseScreen extends StatefulWidget {
   static const routeName = 'new-case-screen';
@@ -18,84 +24,212 @@ class NewCaseScreen extends StatefulWidget {
 
 class _NewCaseScreenState extends State<NewCaseScreen> {
   int currentStep = 0;
+  String _category = "1";
+  String _message = "";
+  // To submit attachments => API
+  List<Map> _imagesAttachCreate = [];
+
+  final EventServices _eventServices = EventServices();
+  static final _formKey = GlobalKey<FormState>();
+
+  void handleSetCategoryCallback(String? value) {
+    setState(() {
+      _category = value!;
+    });
+    print(_category);
+  }
+
+  void handleSetMessageCallback(String value) {
+    setState(() {
+      _message = value;
+    });
+    print(_message);
+  }
+
+  Future<void> submitCase() async {
+    // API Lack of "Voice Recording" category
+    // eventLongitude, eventLatitude, eventLocation
+    // eventAudioURL
+    // eventYourself
+
+    final GlobalDialogHelper globalDialogHelper = GlobalDialogHelper();
+    final TalikhidmatProvider talikhidmatProvider =
+        Provider.of<TalikhidmatProvider>(context, listen: false);
+    Map<String, dynamic> paramater = {
+      'eventUrgency': '1',
+      'eventType': talikhidmatProvider.category,
+      'eventLatitude': talikhidmatProvider.latitude,
+      'eventLongitude': talikhidmatProvider.longitude,
+      'eventLocation': talikhidmatProvider.address,
+      'eventDesc': talikhidmatProvider.message,
+    };
+
+    try {
+      globalDialogHelper.buildCircularProgressWithTextCenter(
+        context: context,
+        message: "Submitting",
+      );
+      var response = await _eventServices.create(paramater);
+      if (response == "201") {
+        // TODO: after submit case, submit images => API
+        String? eventId = response["data"];
+
+        if (eventId != null) {
+          if (talikhidmatProvider.attachments.isNotEmpty) {
+            // Upload Attachment => API
+            talikhidmatProvider.attachments.forEach((element) {
+              _imagesAttachCreate.insert(0, {
+                "eventId": eventId,
+                "attFileName": element['fileName'],
+                "attFileType": '1',
+                "attFileSuffix": element['fileSuffix'],
+                "attFilePath": element['filePath']
+              });
+            });
+            await _eventServices.attachmentCreate(_imagesAttachCreate);
+          }
+          // dismiss the dialog
+          Navigator.of(context).pop();
+          // TODO: showBottomModalDialog => success
+          await showModalBottomSheet(
+            barrierColor: Theme.of(context).colorScheme.onInverseSurface,
+            useSafeArea: true,
+            enableDrag: false,
+            isScrollControlled: true,
+            context: context,
+            builder: (BuildContext context) {
+              return const TalikhidmatFinishFullBottomModal();
+            },
+          );
+        }
+      }
+    } catch (e) {
+      // dismiss the dialog
+      Navigator.of(context).pop();
+      Fluttertoast.showToast(msg: "Submit failed. Please try again");
+      print("submit emergency failed: ${e.toString()}");
+    }
+  }
 
   @override
   void didChangeDependencies() {
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
 
-    final Position? position =
-        Provider.of<LocationProvider>(context).currentLocation;
-    if (position != null) {
-      print('latitude: ${position.latitude}');
-      print('longitude: ${position.longitude}');
-    }
+    // final Position? position =
+    //     Provider.of<LocationProvider>(context).currentLocation;
+    // if (position != null) {
+    //   print('latitude: ${position.latitude}');
+    //   print('longitude: ${position.longitude}');
+    // }
   }
 
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
+    final TalikhidmatProvider talikhidmatProvider =
+        Provider.of<TalikhidmatProvider>(context, listen: false);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Submit Feedback'),
-      ),
-      body: Stepper(
-        physics: const NeverScrollableScrollPhysics(),
-        type: StepperType.horizontal,
-        steps: getSteps(context, screenSize),
-        currentStep: currentStep,
-        controlsBuilder: (BuildContext ctx, ControlsDetails details) {
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              SizedBox(
-                width: screenSize.width * 0.4,
-                child: OutlinedButton(
-                  style: OutlinedButton.styleFrom(
-                    side: BorderSide(
-                      color: Theme.of(context).colorScheme.primary,
+    return PopScope(
+      canPop: !(_message.isNotEmpty || talikhidmatProvider.message.isNotEmpty),
+      onPopInvoked: (bool didPop) async {
+        if (didPop) {
+          return;
+        }
+        await GlobalDialogHelper().showAlertDialog(
+          context: context,
+          yesButtonFunc: () {
+            talikhidmatProvider.resetProvider();
+            Navigator.of(context)
+                .popUntil(ModalRoute.withName('home-page-screen'));
+          },
+          title: AppLocalization.of(context)!.translate('warning')!,
+          message: AppLocalization.of(context)!.translate('do_you_discard')!,
+        );
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Submit Feedback'),
+        ),
+        body: Stepper(
+          physics: const NeverScrollableScrollPhysics(),
+          type: StepperType.horizontal,
+          steps: getSteps(context, screenSize),
+          currentStep: currentStep,
+          controlsBuilder: (BuildContext ctx, ControlsDetails details) {
+            if (details.currentStep == 0) {
+              return OutlinedButton(
+                style: OutlinedButton.styleFrom(
+                  side: BorderSide(
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                ),
+                onPressed: details.onStepContinue,
+                child: const Text('PROCEED'),
+              );
+            } else {
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  SizedBox(
+                    width: screenSize.width * 0.4,
+                    child: OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        side: BorderSide(
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                      onPressed: details.onStepCancel,
+                      child: const Text('BACK'),
                     ),
                   ),
-                  onPressed: details.onStepCancel,
-                  child: const Text('BACK'),
-                ),
-              ),
-              SizedBox(
-                width: screenSize.width * 0.4,
-                child: OutlinedButton(
-                  style: OutlinedButton.styleFrom(
-                    side: BorderSide(
-                      color: Theme.of(context).colorScheme.primary,
+                  SizedBox(
+                    width: screenSize.width * 0.4,
+                    child: OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        side: BorderSide(
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                      onPressed: details.onStepContinue,
+                      child: currentStep == 2
+                          ? const Text("SUBMIT")
+                          : const Text('PROCEED'),
                     ),
                   ),
-                  onPressed: details.onStepContinue,
-                  child: currentStep == 2
-                      ? const Text("SUBMIT")
-                      : const Text('PROCEED'),
-                ),
-              ),
-            ],
-          );
-        },
-        onStepContinue: () {
-          bool isLastStep =
-              currentStep == getSteps(context, screenSize).length - 1;
-          if (isLastStep) {
-            print("Completed");
-          } else {
-            setState(() => currentStep += 1);
-          }
-        },
-        onStepCancel: () {
-          bool isFirstStep = currentStep == 0;
-          if (isFirstStep) {
-            print("First");
-          } else {
-            setState(() => currentStep -= 1);
-          }
-        },
-        onStepTapped: null,
+                ],
+              );
+            }
+          },
+          onStepContinue: () {
+            bool isLastStep =
+                currentStep == getSteps(context, screenSize).length - 1;
+            if (isLastStep) {
+              // submit talikhidmat case
+              submitCase();
+            } else {
+              if (currentStep == 0) {
+                if (!_formKey.currentState!.validate()) {
+                  return;
+                }
+                talikhidmatProvider.setCategoryAndMessage(
+                  category: _category,
+                  message: _message,
+                );
+              }
+              setState(() => currentStep += 1);
+            }
+          },
+          onStepCancel: () {
+            bool isFirstStep = currentStep == 0;
+            if (isFirstStep) {
+              print("First");
+            } else {
+              setState(() => currentStep -= 1);
+            }
+          },
+          onStepTapped: null,
+        ),
       ),
     );
   }
@@ -113,7 +247,12 @@ class _NewCaseScreenState extends State<NewCaseScreen> {
               fontSize: Theme.of(context).textTheme.labelSmall!.fontSize,
             ),
           ),
-          content: const ReportScreen(),
+          content: ReportScreen(
+            category: _category,
+            categoryCallback: handleSetCategoryCallback,
+            messageCallback: handleSetMessageCallback,
+            formKey: _formKey,
+          ),
         ),
         Step(
           isActive: currentStep >= 1,

@@ -15,6 +15,7 @@ import './screens/emergency/emergency_screen.dart';
 import './screens/emergency/recording_screen.dart';
 
 import './screens/bill_payment/bill_payment_screen.dart';
+import './screens/bill_payment/bill_payment_detail_screen.dart';
 
 import './screens/announcement/announcement_detail_screen.dart';
 import './screens/announcement/citizen_announcements_screen.dart';
@@ -67,4 +68,5 @@ final Map<String, WidgetBuilder> routes = <String, WidgetBuilder>{
   SubscriptionListScreen.routeName: (ctx) => const SubscriptionListScreen(),
   SubscriptionResultScreen.routeName: (ctx) => const SubscriptionResultScreen(),
   TrafficImagesListScreen.routeName: (ctx) => const TrafficImagesListScreen(),
+  BillPaymentDetailScreen.routeName: (ctx) => const BillPaymentDetailScreen(),
 };

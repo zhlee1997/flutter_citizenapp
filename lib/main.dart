@@ -18,6 +18,7 @@ import './providers/location_provider.dart';
 import './providers/emergency_provider.dart';
 import './providers/cctv_provider.dart';
 import './providers/subscription_provider.dart';
+import './providers/talikhidmat_provider.dart';
 
 // language settings
 import './utils/app_localization.dart';
@@ -62,6 +63,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (ctx) => SubscriptionProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (ctx) => TalikhidmatProvider(),
         ),
       ],
       child: Consumer<LanguageProvider>(

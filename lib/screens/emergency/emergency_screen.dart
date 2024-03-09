@@ -73,29 +73,6 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
     setState(() => currentStep += 1);
   }
 
-  // display alert dialog to ask user whether to discard their information
-  Future<bool> onPopInvoked(bool didPop) async {
-    final EmergencyProvider emergencyProvider =
-        Provider.of<EmergencyProvider>(context, listen: false);
-
-    if (emergencyProvider.category != -1) {
-      await GlobalDialogHelper().showAlertDialog(
-        context: context,
-        yesButtonFunc: () {
-          emergencyProvider.resetProvider();
-          Navigator.of(context)
-              .popUntil(ModalRoute.withName('home-page-screen'));
-        },
-        title: AppLocalization.of(context)!.translate('warning')!,
-        message: AppLocalization.of(context)!.translate('do_you_discard')!,
-      );
-      return Future.value(false);
-    } else {
-      Navigator.of(context).pop();
-      return true;
-    }
-  }
-
   Future<void> submitCase() async {
     // API Lack of "Voice Recording" category
     // eventLongitude, eventLatitude, eventLocation
@@ -111,6 +88,8 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
       'eventTargetUrgent': emergencyProvider.category.toString(),
       'eventLatitude': emergencyProvider.latitude.toString(),
       'eventLongitude': emergencyProvider.longitude.toString(),
+      // TODO: New field for emergency (address) => API
+      'eventLocation': emergencyProvider.address.toString(),
       'eventDesc': emergencyProvider.otherText ?? "No remarks"
     };
 
@@ -147,10 +126,26 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
+    final EmergencyProvider emergencyProvider =
+        Provider.of<EmergencyProvider>(context, listen: false);
 
     return PopScope(
-      canPop: false,
-      onPopInvoked: onPopInvoked,
+      canPop: !(emergencyProvider.category != -1),
+      onPopInvoked: (bool didPop) async {
+        if (didPop) {
+          return;
+        }
+        await GlobalDialogHelper().showAlertDialog(
+          context: context,
+          yesButtonFunc: () {
+            emergencyProvider.resetProvider();
+            Navigator.of(context)
+                .popUntil(ModalRoute.withName('home-page-screen'));
+          },
+          title: AppLocalization.of(context)!.translate('warning')!,
+          message: AppLocalization.of(context)!.translate('do_you_discard')!,
+        );
+      },
       child: Scaffold(
         appBar: AppBar(
           title: const Text("Emergency Request"),

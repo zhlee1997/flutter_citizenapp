@@ -142,75 +142,6 @@ class _SendFeedbackScreenState extends State<SendFeedbackScreen> {
     try {
       // Hide the keyboard
       _focusNode.unfocus();
-      // other => showModalBottomSheet
-      // if (selectedIndexes.contains(7)) {
-      //   await showModalBottomSheet(
-      //     context: context,
-      //     isScrollControlled: true,
-      //     builder: (_) {
-      //       return Padding(
-      //         padding: EdgeInsets.only(
-      //           bottom: MediaQuery.of(context).viewInsets.bottom,
-      //         ),
-      //         child: Container(
-      //           padding: const EdgeInsets.all(10.0),
-      //           width: double.infinity,
-      //           child: Column(
-      //             crossAxisAlignment: CrossAxisAlignment.start,
-      //             mainAxisSize: MainAxisSize.min,
-      //             children: <Widget>[
-      //               Container(
-      //                 padding: const EdgeInsets.symmetric(vertical: 10.0),
-      //                 child: Text(
-      //                   'Let us know the "Others"',
-      //                   style: Theme.of(context).textTheme.titleLarge,
-      //                 ),
-      //               ),
-      //               Container(
-      //                 margin: const EdgeInsets.symmetric(vertical: 10.0),
-      //                 child: TextField(
-      //                   controller: _otherTextEditingController,
-      //                   maxLines: 3,
-      //                   keyboardType: TextInputType.multiline,
-      //                   textInputAction: TextInputAction.done,
-      //                   focusNode: _otherFocusNode,
-      //                   // onChanged callback will be called whenever the user types in the text field
-      //                   onChanged: (String value) {
-      //                     print("Typed: $value");
-      //                   },
-      //                   style: const TextStyle(
-      //                     fontSize: 15.0,
-      //                   ),
-      //                   decoration: const InputDecoration(
-      //                     hintText:
-      //                         'Briefly describe about "Others" so we can understand it better',
-      //                     border: OutlineInputBorder(),
-      //                   ),
-      //                 ),
-      //               ),
-      //               const Divider(),
-      //               TextButton.icon(
-      //                 onPressed: () {},
-      //                 icon: const Icon(
-      //                   Icons.send_outlined,
-      //                   size: 25.0,
-      //                 ),
-      //                 label: const Text(
-      //                   "Submit Anyway",
-      //                   style: TextStyle(
-      //                     fontSize: 16.0,
-      //                     fontWeight: FontWeight.bold,
-      //                   ),
-      //                 ),
-      //               )
-      //             ],
-      //           ),
-      //         ),
-      //       );
-      //     },
-      //   );
-      //   return;
-      // }
       _globalDialogHelper.buildCircularProgressWithTextCenter(
           context: context, message: "Submitting");
       var response = await _feedbackServices.postFeedback(
@@ -218,7 +149,7 @@ class _SendFeedbackScreenState extends State<SendFeedbackScreen> {
         services: selectedIndexes,
         comment: text,
       );
-      if (response == "201") {
+      if (response["status"] == "200") {
         Navigator.of(context).pop();
         _showDoneDialog();
       }
@@ -269,11 +200,17 @@ class _SendFeedbackScreenState extends State<SendFeedbackScreen> {
                       padding: const EdgeInsets.symmetric(
                         horizontal: 10.0,
                       ),
-                      child: const Row(
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text("Very Dissatisfied"),
-                          Text("Very Satisfied")
+                          Text(
+                            "Very Dissatisfied",
+                            style: Theme.of(context).textTheme.labelMedium,
+                          ),
+                          Text(
+                            "Very Satisfied",
+                            style: Theme.of(context).textTheme.labelMedium,
+                          )
                         ],
                       ),
                     )

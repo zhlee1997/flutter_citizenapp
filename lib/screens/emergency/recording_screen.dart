@@ -47,6 +47,7 @@ class _RecordingScreenState extends State<RecordingScreen> {
   }
 
   Future<void> _resetRecording() async {
+    audioPlayer.stop();
     String patho = "";
     try {
       Directory? appDir = await getExternalStorageDirectory();
@@ -278,7 +279,8 @@ class _RecordingScreenState extends State<RecordingScreen> {
   }
 
   Widget _returnStartRecordWidget() {
-    return ElevatedButton(
+    return ElevatedButton.icon(
+      icon: const Icon(Icons.play_arrow),
       style: ButtonStyle(
         backgroundColor: MaterialStateProperty.all<Color>(
             Theme.of(context).colorScheme.secondary),
@@ -287,7 +289,7 @@ class _RecordingScreenState extends State<RecordingScreen> {
         _stopWatchTimer.onStartTimer();
         setState(() {});
       },
-      child: const Text(
+      label: const Text(
         "Start Recording",
         style: TextStyle(
           fontSize: 18.0,
@@ -307,7 +309,8 @@ class _RecordingScreenState extends State<RecordingScreen> {
             height: screenSize.height * 0.35,
             fit: BoxFit.fill,
           ),
-          ElevatedButton(
+          ElevatedButton.icon(
+            icon: const Icon(Icons.stop),
             style: ButtonStyle(
               backgroundColor: MaterialStateProperty.all<Color>(
                   Theme.of(context).colorScheme.secondary),
@@ -316,7 +319,7 @@ class _RecordingScreenState extends State<RecordingScreen> {
               _stopRecording();
               _stopWatchRecordingTimer.onStopTimer();
             },
-            child: const Text(
+            label: const Text(
               "Stop Recording",
               style: TextStyle(
                 fontSize: 18.0,
@@ -342,14 +345,15 @@ class _RecordingScreenState extends State<RecordingScreen> {
           SizedBox(
             height: screenSize.width * 0.05,
           ),
-          ElevatedButton(
+          ElevatedButton.icon(
+            icon: const Icon(Icons.send),
             onPressed: _uploadRecording,
             style: ButtonStyle(
               backgroundColor: MaterialStateProperty.all<Color>(
                   Theme.of(context).colorScheme.secondary),
             ),
-            child: const Text(
-              "Upload & Continue",
+            label: const Text(
+              "Upload To Continue",
               style: TextStyle(
                 fontSize: 18.0,
               ),
@@ -358,9 +362,10 @@ class _RecordingScreenState extends State<RecordingScreen> {
           SizedBox(
             height: screenSize.width * 0.05,
           ),
-          ElevatedButton(
+          ElevatedButton.icon(
+            icon: const Icon(Icons.play_arrow),
             onPressed: _playRecording,
-            child: const Text(
+            label: const Text(
               "Play Recording",
               style: TextStyle(
                 fontSize: 18.0,
@@ -376,14 +381,15 @@ class _RecordingScreenState extends State<RecordingScreen> {
                 primary: Colors.red,
               ),
             ),
-            child: OutlinedButton(
+            child: OutlinedButton.icon(
+              icon: const Icon(Icons.replay_rounded),
               onPressed: _resetRecording,
-              style: ElevatedButton.styleFrom(
+              style: OutlinedButton.styleFrom(
                 side: const BorderSide(
                   color: Colors.red,
                 ),
               ),
-              child: const Text(
+              label: const Text(
                 "Reset Recording",
                 style: TextStyle(
                   fontSize: 18.0,

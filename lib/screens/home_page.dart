@@ -1,7 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../screens/emergency/emergency_screen.dart';
 import '../screens/talikhidmat/new_case_screen.dart';
@@ -14,10 +18,13 @@ import '../widgets/homepage/homepage_tourism_card.dart';
 import '../widgets/subscription/subscription_whitelist_bottom_modal.dart';
 import '../screens/announcement/tourism_news_screen.dart';
 import '../screens/subscription/subscription_choose_screen.dart';
+import '../screens/subscription/subscription_result_screen.dart';
 import '../screens/traffic/traffic_images_list_screen.dart';
 
 import '../providers/auth_provider.dart';
+import '../providers/subscription_provider.dart';
 import '../services/announcement_services.dart';
+import '../services/subscription_services.dart';
 import "../models/announcement_model.dart";
 import "../utils/global_dialog_helper.dart";
 
@@ -41,6 +48,64 @@ class _HomePageState extends State<HomePage> {
 
   final AnnouncementServices _announcementServices = AnnouncementServices();
   final GlobalDialogHelper _globalDialogHelper = GlobalDialogHelper();
+
+  // Payment EventChannel and StreamSubscription
+  static const EventChannel eventChannel =
+      EventChannel("com.sma.citizen_mobile/pay");
+  late StreamSubscription _paymentStreamSubscription;
+
+  // receive Object from activity (eventChannel)
+  // stream for listening to SPay SDK when payment is done
+  void _onData(Object? obj) async {
+    try {
+      if (Provider.of<SubscriptionProvider>(context, listen: false)
+          .isSubscription) {
+        Provider.of<AuthProvider>(context, listen: false)
+            .queryUserInfoAfterSubscriptionProvider();
+        Provider.of<SubscriptionProvider>(context, listen: false)
+            .changeIsSubscription(false);
+      }
+      String encryptedData = obj as String;
+      if (encryptedData.isEmpty) {
+        GlobalDialogHelper().showAlertDialogWithSingleButton(
+          context: context,
+          title: "Payment Error",
+          message:
+              "There was an error while processing your payment. Please contact support or try again later",
+        );
+        return;
+      }
+      print("encryptData: $encryptedData");
+      Map<String, dynamic> param = {"encryptData": encryptedData};
+      var response = await SubscriptionServices().decryptData(param);
+      Map<String, dynamic> payResult = {};
+      if (response!.data['status'] == '200') {
+        payResult = response.data['data'];
+        // Provider.of<InboxProvider>(context, listen: false).refreshCount();
+        Navigator.of(context).pop(true);
+
+        // when success, can look for extra data
+        // payResult['orderAmt'], payResult['orderDate']
+        // Navigate to transaction result page
+        jumpPayResult(payResult);
+      }
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  // receive error Object from activity (eventChannel) when error
+  void _onError(Object obj) {}
+
+  // display transaction result screen when a transaction is completed
+  void jumpPayResult(Map<String, dynamic> param) {
+    // for subscription, after payment
+    Navigator.of(context).pushNamed(
+      SubscriptionResultScreen.routeName,
+      arguments: param,
+    );
+    // TODO: screen navigation for bill payment
+  }
 
   Future<void> getCitizenAnn() async {
     setState(() {
@@ -141,25 +206,62 @@ class _HomePageState extends State<HomePage> {
     // TODO: Emergency service to check location permission is given
     // TODO: If denied, ask again
     // TODO: If foreverDenied, need navigate to app settings
-
-    if (numberOfRequestLeft != 0) {
-      await _globalDialogHelper.showAlertDialog(
-        context: context,
-        yesButtonFunc: () {
-          Navigator.of(context).pop();
-          Navigator.of(context).pushNamed(EmergencyScreen.routeName);
-        },
-        title: "Remaining requests",
-        message:
-            "You have $numberOfRequestLeft requests left per day. Are you sure to proceed?",
-      );
-    } else {
-      await _globalDialogHelper.showAlertDialogWithSingleButton(
-        context: context,
-        title: "No more requests",
-        message: "There is no more requests. Please try again tomorrow",
-      );
-    }
+    await Permission.location.onDeniedCallback(() {
+      // Your code
+    }).onGrantedCallback(() async {
+      if (numberOfRequestLeft != 0) {
+        await _globalDialogHelper.showAlertDialog(
+          context: context,
+          yesButtonFunc: () {
+            Navigator.of(context).pop();
+            Navigator.of(context).pushNamed(EmergencyScreen.routeName);
+          },
+          title: "Remaining requests",
+          message:
+              "You have $numberOfRequestLeft requests left per day. Are you sure to proceed?",
+        );
+      } else {
+        await _globalDialogHelper.showAlertDialogWithSingleButton(
+          context: context,
+          title: "No more requests",
+          message: "There is no more requests. Please try again tomorrow",
+        );
+      }
+    }).onPermanentlyDeniedCallback(() async {
+      // The user opted to never again see the permission request dialog for this
+      // app. The only way to change the permission's status now is to let the
+      // user manually enables it in the system settings.
+      await showDialog<bool>(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Permission Denied'),
+              content: const Text(
+                  "You have to manually enable the location permission's status in the system settings."),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('Open Settings'),
+                  onPressed: () {
+                    Navigator.pop(context, false);
+                    openAppSettings();
+                  },
+                ),
+                TextButton(
+                  child: const Text('Cancel'),
+                  onPressed: () {
+                    Navigator.pop(context, false);
+                  },
+                ),
+              ],
+            );
+          });
+    }).onRestrictedCallback(() {
+      // Your code
+    }).onLimitedCallback(() {
+      // Your code
+    }).onProvisionalCallback(() {
+      // Your code
+    }).request();
   }
 
   void _handleNavigateToEmergency(BuildContext context) =>
@@ -167,10 +269,19 @@ class _HomePageState extends State<HomePage> {
           ? _showEmergencyRequestLeftDialog(context)
           : _handleFullScreenLoginBottomModal(context);
 
-  void _handleNavigateToTalikhidmat(BuildContext context) =>
-      !Provider.of<AuthProvider>(context, listen: false).isAuth
-          ? Navigator.of(context).pushNamed(NewCaseScreen.routeName)
-          : _handleFullScreenLoginBottomModal(context);
+  // Permission: location, camera, gallery
+  // Location: no permission, still can access
+  void _handleNavigateToTalikhidmat(BuildContext context) async {
+    if (Provider.of<AuthProvider>(context, listen: false).isAuth) {
+      if (await Permission.location.request().isGranted) {
+        Navigator.of(context).pushNamed(NewCaseScreen.routeName);
+      } else {
+        Navigator.of(context).pushNamed(NewCaseScreen.routeName);
+      }
+    } else {
+      _handleFullScreenLoginBottomModal(context);
+    }
+  }
 
   // first => check subscription enabled (already done)
   // second => check is it whitelisted (if yes, show bottom modal)
@@ -179,7 +290,7 @@ class _HomePageState extends State<HomePage> {
     final AuthProvider authProvider =
         Provider.of<AuthProvider>(context, listen: false);
 
-    if (authProvider.isAuth) {
+    if (!authProvider.isAuth) {
       if (authProvider.isWhitelisted) {
         // show bottom modal
         _handleSubscriptionWhitelistBottomModal(context);
@@ -201,7 +312,7 @@ class _HomePageState extends State<HomePage> {
           : _handleFullScreenLoginBottomModal(context);
 
   void _handleNavigateToPayment(BuildContext context) =>
-      Provider.of<AuthProvider>(context, listen: false).isAuth
+      !Provider.of<AuthProvider>(context, listen: false).isAuth
           ? Navigator.of(context).pushNamed(BillPaymentScreen.routeName)
           : _handleFullScreenLoginBottomModal(context);
 
@@ -220,10 +331,23 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    _paymentStreamSubscription = eventChannel.receiveBroadcastStream().listen(
+          _onData,
+          onError: _onError,
+        );
 
     getCitizenAnn();
     getTourismAnn();
     numberOfRequestLeft = 2;
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    //      if (_paymentStreamSubscription != null) {
+    //    _paymentStreamSubscription.cancel();
+    //  }
   }
 
   @override

@@ -2,14 +2,14 @@ import 'dart:io' show Platform;
 
 import 'package:flutter/material.dart';
 
-// import '../../screens/payment/payment_detail_screen.dart';
+import '../../screens/bill_payment/bill_payment_detail_screen.dart';
 
 class PaymentLogo extends StatelessWidget {
   final String title;
   final String text;
   final String imageUrl;
 
-  const PaymentLogo(this.title, this.text, this.imageUrl);
+  const PaymentLogo(this.title, this.text, this.imageUrl, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -17,14 +17,14 @@ class PaymentLogo extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        // Navigator.of(context).pushNamed(
-        //   PaymentDetailScreen.routeName,
-        //   arguments: {
-        //     'title': title,
-        //     'imageUrl': imageUrl,
-        //     'text': text,
-        //   },
-        // );
+        Navigator.of(context).pushNamed(
+          BillPaymentDetailScreen.routeName,
+          arguments: {
+            'title': title,
+            'imageUrl': imageUrl,
+            'text': text,
+          },
+        );
       },
       child: Container(
         margin: const EdgeInsets.all(10),

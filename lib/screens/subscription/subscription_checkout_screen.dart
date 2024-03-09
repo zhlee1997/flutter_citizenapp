@@ -110,6 +110,7 @@ class _SubscriptionCheckoutScreenState
       Navigator.of(context).pop(true);
       // TODO: Invoke S Pay SDK (Android & iOS)
       if (Platform.isAndroid) {
+        // encrypted data from backend
         var sendMap = <String, dynamic>{'dataString': encryptionData};
         await platform.invokeMethod('spayPlaceOrder', sendMap);
       } else if (Platform.isIOS) {

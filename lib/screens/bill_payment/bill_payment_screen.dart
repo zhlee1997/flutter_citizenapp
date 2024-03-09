@@ -63,7 +63,7 @@ class BillPaymentScreen extends StatelessWidget {
             Container(
               margin: const EdgeInsets.all(10.0),
               child: Text(
-                "Utilities",
+                "Other Utilities",
                 style: Theme.of(context).textTheme.titleMedium,
               ),
             ),
@@ -81,12 +81,12 @@ class BillPaymentScreen extends StatelessWidget {
               ),
               children: const <Widget>[
                 PaymentLogo(
-                  "Utilities",
+                  "Other Utilities",
                   'Kuching Water Board',
                   'assets/images/icon/kwb.png',
                 ),
                 PaymentLogo(
-                  "Utilities",
+                  "Other Utilities",
                   'Sarawak Energy',
                   'assets/images/icon/sarawak-energy.png',
                 ),
