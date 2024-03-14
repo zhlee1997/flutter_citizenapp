@@ -8,6 +8,9 @@ import '../../widgets/sarawakid/login_full_bottom_modal.dart';
 import '../../screens/support/privacy_policy_screen.dart';
 import '../../screens/support/terms_and_conditions_screen.dart';
 import '../../screens/support/send_feedback_screen.dart';
+import '../../screens/reported_cases/emergency_cases_screen.dart';
+import '../../screens/reported_cases/talikhidmat_cases_screen.dart';
+import '../../screens/transaction/transaction_history_screen.dart';
 
 class ProfileBottomNavScreen extends StatefulWidget {
   static const String routeName = 'profile-bottom-nav-screen';
@@ -59,6 +62,65 @@ class _ProfileBottomNavScreenState extends State<ProfileBottomNavScreen> {
     );
   }
 
+  Future<void> _handleReportedCasesBottomModal() async {
+    await showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return SizedBox(
+          width: double.infinity,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              const SizedBox(
+                height: 10.0,
+              ),
+              Container(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  "Choose the reported cases",
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+              ),
+              ListTile(
+                onTap: () {
+                  Navigator.of(context).pop();
+                  Navigator.of(context)
+                      .pushNamed(TalikhidmatCasesScreen.routeName);
+                },
+                leading: const CircleAvatar(
+                  child: Icon(Icons.feedback_outlined),
+                ),
+                title: const Text("Talikhidmat Cases"),
+                trailing: Icon(
+                  Icons.arrow_circle_right_outlined,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+              ListTile(
+                onTap: () {
+                  Navigator.of(context).pop();
+                  Navigator.of(context)
+                      .pushNamed(EmergencyCasesScreen.routeName);
+                },
+                leading: const CircleAvatar(
+                  child: Icon(Icons.sos),
+                ),
+                title: const Text("Emergency Cases"),
+                trailing: Icon(
+                  Icons.arrow_circle_right_outlined,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+              const SizedBox(
+                height: 10.0,
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   // This shows a CupertinoModalPopup with a reasonable fixed height which hosts CupertinoPicker.
   void _showDialog(Widget child) {
     showCupertinoModalPopup<void>(
@@ -97,20 +159,20 @@ class _ProfileBottomNavScreenState extends State<ProfileBottomNavScreen> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: EdgeInsets.all(10.0),
+      padding: const EdgeInsets.all(10.0),
       child: Column(
         children: <Widget>[
           if (!isLogin)
             GestureDetector(
               onTap: () => _handleFullScreenLoginBottomModal(context),
               child: Container(
-                padding: EdgeInsets.all(10.0),
+                padding: const EdgeInsets.all(10.0),
                 child: Row(
                   children: <Widget>[
-                    CircleAvatar(
+                    const CircleAvatar(
                       child: Icon(Icons.person),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 15.0,
                     ),
                     Text(
@@ -148,56 +210,63 @@ class _ProfileBottomNavScreenState extends State<ProfileBottomNavScreen> {
                   const SizedBox(
                     height: 5.0,
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Row(
-                        children: <Widget>[
-                          const Icon(
-                            Icons.info_outline_rounded,
-                            size: 30.0,
-                          ),
-                          const SizedBox(
-                            width: 15.0,
-                          ),
-                          Text(
-                            "Reported Cases",
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                        ],
-                      ),
-                      Icon(
-                        Icons.arrow_right_alt_outlined,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                    ],
+                  GestureDetector(
+                    onTap: _handleReportedCasesBottomModal,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Row(
+                          children: <Widget>[
+                            const Icon(
+                              Icons.info_outline_rounded,
+                              size: 30.0,
+                            ),
+                            const SizedBox(
+                              width: 15.0,
+                            ),
+                            Text(
+                              "Reported Cases",
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                          ],
+                        ),
+                        Icon(
+                          Icons.arrow_right_alt_outlined,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ],
+                    ),
                   ),
                   const SizedBox(
                     height: 15.0,
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Row(
-                        children: <Widget>[
-                          const Icon(
-                            Icons.wallet_outlined,
-                            size: 30.0,
-                          ),
-                          const SizedBox(
-                            width: 15.0,
-                          ),
-                          Text(
-                            "Transaction History",
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                        ],
-                      ),
-                      Icon(
-                        Icons.arrow_right_alt_outlined,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                    ],
+                  GestureDetector(
+                    onTap: () => Navigator.of(context)
+                        .pushNamed(TransactionHistoryScreen.routeName),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Row(
+                          children: <Widget>[
+                            const Icon(
+                              Icons.wallet_outlined,
+                              size: 30.0,
+                            ),
+                            const SizedBox(
+                              width: 15.0,
+                            ),
+                            Text(
+                              "Transaction History",
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                          ],
+                        ),
+                        Icon(
+                          Icons.arrow_right_alt_outlined,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),

@@ -47,7 +47,7 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
               return Markdown(data: snapshot.data ?? "");
             }
 
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(),
             );
           }),

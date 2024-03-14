@@ -43,13 +43,15 @@ class _LocationScreenState extends State<LocationScreen> {
         : '';
     _address =
         '$name$thoroughfare$subLocal${placemarks[0].locality}, ${placemarks[0].administrativeArea}, ${placemarks[0].postalCode}';
-    Provider.of<EmergencyProvider>(context, listen: false)
-        .setAddressAndLocation(
-      address: _address,
-      latitide: latitude,
-      longitude: longitude,
-    );
-    setState(() {});
+    if (mounted) {
+      Provider.of<EmergencyProvider>(context, listen: false)
+          .setAddressAndLocation(
+        address: _address,
+        latitide: latitude,
+        longitude: longitude,
+      );
+      setState(() {});
+    }
   }
 
   /// Renders marker on Google Map when tapping on the map

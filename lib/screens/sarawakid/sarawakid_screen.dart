@@ -57,11 +57,11 @@ class _SarawakIDScreenState extends State<SarawakIDScreen> {
                           Radius.circular(10.0),
                         ),
                       ),
-                      child: const Center(
+                      child: Center(
                         child: Text(
                           "Login successfully!",
                           style: TextStyle(
-                            color: Colors.black,
+                            color: Theme.of(context).colorScheme.primary,
                           ),
                         ),
                       ),
@@ -85,12 +85,6 @@ class _SarawakIDScreenState extends State<SarawakIDScreen> {
         );
       }
     } catch (e) {}
-  }
-
-  @override
-  void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
-    super.didChangeDependencies();
   }
 
   @override
@@ -119,9 +113,9 @@ class _SarawakIDScreenState extends State<SarawakIDScreen> {
             client_id: 'citizenapp_mobile_dev',
             state: '${uuid.v4()}',
             response_type: 'code',
-            redirect_uri: 'https://citizen.sioc.sma.gov.my/mobile/api/login/auth/callback/',
-            logout_redirect_url: 'https://citizen.sioc.sma.gov.my/redirect/',
-            logout_uri: 'https://citizen.sioc.sma.gov.my/redirect/',
+            redirect_uri: 'http://124.70.29.113:28300/mobile/api/login/auth/callback/',
+            logout_redirect_url: 'http://124.70.29.113:28300/redirect/',
+            logout_uri: 'http://124.70.29.113:28300/redirect/',
             misc_param: '',/*this will pass to redirect_uri*/
         });
         swkid_login_form_submit();
@@ -134,7 +128,6 @@ class _SarawakIDScreenState extends State<SarawakIDScreen> {
           _webViewController = controller;
         },
         onLoadStart: (InAppWebViewController controller, Uri? url) {
-          print("load start");
           setState(() {
             loadingPercentage = 0;
           });
@@ -145,7 +138,8 @@ class _SarawakIDScreenState extends State<SarawakIDScreen> {
           });
         },
         onLoadStop: (InAppWebViewController controller, Uri? url) async {
-          if (url.toString().contains('citizen.sioc.sma.gov.my/loading.html')) {
+          // TODO: to change the IP Address when switch environment
+          if (url.toString().contains('124.70.29.113:28300/loading.html')) {
             print("loginUrl: $url");
             // detect "userId" redirect by backend
             if (url!.queryParameters["userId"] != null) {
@@ -161,12 +155,14 @@ class _SarawakIDScreenState extends State<SarawakIDScreen> {
             loadingPercentage = 100;
           });
         },
-        onReceivedError: (InAppWebViewController controller,
-            WebResourceRequest webResourceRequest,
-            WebResourceError webResourceError) {
+        onReceivedError: (
+          InAppWebViewController controller,
+          WebResourceRequest webResourceRequest,
+          WebResourceError webResourceError,
+        ) {
           _webViewController.loadData(
               data:
-                  """<h1>Unable to log in</h1><br/><h2>An unexpected error occured.</h2><h2>Please try logging in again.</h2>""");
+                  """<h1>Unable to log in</h1><br/><h2>An unexpected error occured: ${webResourceError.description}.</h2><h2>Please try logging in again.</h2>""");
           Fluttertoast.showToast(msg: "Unable to log in");
           setState(() {
             loadingPercentage = 100;

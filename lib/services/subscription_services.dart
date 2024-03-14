@@ -5,15 +5,42 @@ import '../utils/api_base_helper.dart';
 class SubscriptionServices {
   final ApiBaseHelper _apiBaseHelper = ApiBaseHelper();
 
-  // TODO: NEW API: querySubcriptionPackage
-  Future<dynamic> querySubscriptionPackage() async {
+  // TODO: NEW API: queryPackageAndSubscriptionEnable
+  Future<dynamic> queryPackageAndSubscriptionEnable() async {
     try {
-      var response =
-          await _apiBaseHelper.get('/subscription/querySubscriptionPackage');
-      print("querySubscriptionPackage API success: $response");
+      var response = await _apiBaseHelper.get(
+        'member/memberSubscribePackage/queryList',
+        requireToken: false,
+      );
+      print("queryPackageAndSubscriptionEnable API success: $response");
       return response;
     } catch (e) {
-      print('querySubscriptionPackage error: ${e.toString()}');
+      print('queryPackageAndSubscriptionEnable error: ${e.toString()}');
+      // TODO: Error handling
+      // throw e;
+      rethrow;
+    }
+  }
+
+  // TODO: NEW API: querySubscriptionWhitelisted
+  Future<dynamic> querySubscriptionWhitelisted({
+    required String subscribeId,
+    required String nickName,
+  }) async {
+    try {
+      Map<String, dynamic> queryParameters = {
+        "subscribeId": subscribeId,
+        "nickName": nickName,
+      };
+      var response = await _apiBaseHelper.get(
+        'member/subscribePackageMemberRlt/queryList',
+        queryParameters: queryParameters,
+        requireToken: true,
+      );
+      print("querySubscriptionWhitelisted API success: $response");
+      return response;
+    } catch (e) {
+      print('querySubscriptionWhitelisted error: ${e.toString()}');
       // TODO: Error handling
       // throw e;
       rethrow;
@@ -23,8 +50,10 @@ class SubscriptionServices {
   // TODO: NEW API: querySubscriptionStatus
   Future<dynamic> querySubscriptionStatus() async {
     try {
-      var response =
-          await _apiBaseHelper.get('/subscription/querySubscriptionStatus');
+      var response = await _apiBaseHelper.get(
+        '/subscription/querySubscriptionStatus',
+        requireToken: true,
+      );
       print("querySubscriptionStatus API success: $response");
       return response;
     } catch (e) {

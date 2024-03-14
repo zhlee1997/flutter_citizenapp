@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_citizenapp/providers/subscription_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_vlc_player/flutter_vlc_player.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -46,15 +47,21 @@ class _SplashVideoScreenState extends State<SplashVideoScreen> {
           });
           // TODO: if false, need to get auth (init, check local storage and check subscribe) , location, inbox, language, music, bus route
           // TODO: can show a loading spinner in end of video, after complete then navigate to HomeScreen
-          Provider.of<AuthProvider>(context, listen: false)
-              .checkIsAuth(context)
-              .then((bool isAuth) {
-            if (isAuth) {
-              Provider.of<LocationProvider>(context, listen: false)
-                  .getCurrentLocation();
-            }
-            Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
+          // TODO: check subscription package and whether enabled
+          Provider.of<SubscriptionProvider>(context, listen: false)
+              .queryAndSetIsSubscriptionEnabled()
+              .then((_) {
+            Provider.of<AuthProvider>(context, listen: false)
+                .checkIsAuthAndSubscribeOverdue(context)
+                .then((bool isAuth) {
+              if (isAuth) {
+                Provider.of<LocationProvider>(context, listen: false)
+                    .getCurrentLocation();
+              }
+              Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
+            });
           });
+
           return;
         } else {
           // TODO: shared preferences => isAppFirstStart: true

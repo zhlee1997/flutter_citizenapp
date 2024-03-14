@@ -30,10 +30,8 @@ class AnnouncementServices {
       if (nowTime != null) {
         parameters['nowTime'] = nowTime;
       }
-      var response = await _apiBaseHelper.get(
-        '/announcement/queryPageList',
-        queryParameters: parameters,
-      );
+      var response = await _apiBaseHelper.get('announcement/queryPageList',
+          queryParameters: parameters, requireToken: false);
       print("queryPageList API success: $response");
       return response;
     } catch (e) {
@@ -50,7 +48,10 @@ class AnnouncementServices {
   /// Returns API Response object
   Future<dynamic> queryAnnouncementDetail(String attId) async {
     try {
-      var response = await _apiBaseHelper.get('/announcement/getById/$attId');
+      var response = await _apiBaseHelper.get(
+        '/announcement/getById/$attId',
+        requireToken: false,
+      );
       print("queryAnnouncementDetail API success: $response");
       return response;
     } catch (e) {

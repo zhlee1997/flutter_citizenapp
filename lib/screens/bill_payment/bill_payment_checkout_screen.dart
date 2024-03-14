@@ -1,160 +1,57 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:dotted_border/dotted_border.dart';
-import 'package:flutter_citizenapp/screens/subscription/subscription_result_screen.dart';
-import 'package:slide_to_act/slide_to_act.dart';
-import 'package:provider/provider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:slide_to_act/slide_to_act.dart';
 
-import '../../arguments/subscription_checkout_screen.dart';
-import '../../services/subscription_services.dart';
-import '../../providers/subscription_provider.dart';
+import './bill_payment_result_screen.dart';
+import '../../arguments/bill_payment_checkout_screen_arguments.dart';
 import '../../utils/app_localization.dart';
 import '../../utils/global_dialog_helper.dart';
 import '../../utils/general_helper.dart';
 
-class SubscriptionCheckoutScreen extends StatefulWidget {
-  static const String routeName = 'subscription-checkout-screen';
+class BillPaymentCheckoutScreen extends StatefulWidget {
+  static const String routeName = 'bill-payment-checkout-screen';
 
-  const SubscriptionCheckoutScreen({super.key});
+  const BillPaymentCheckoutScreen({super.key});
 
   @override
-  State<SubscriptionCheckoutScreen> createState() =>
-      _SubscriptionCheckoutScreenState();
+  State<BillPaymentCheckoutScreen> createState() =>
+      _BillPaymentCheckoutScreenState();
 }
 
-class _SubscriptionCheckoutScreenState
-    extends State<SubscriptionCheckoutScreen> {
-  // TODO: Invoke S Pay SDK (Android & iOS)
-  static const platform = MethodChannel('com.sma.citizen_mobile/main');
+class _BillPaymentCheckoutScreenState extends State<BillPaymentCheckoutScreen> {
   bool isChecked = false;
-  String option = "";
-  final Map data = {};
 
-  final SubscriptionServices _subscriptionServices = SubscriptionServices();
-
-  /// Create and confirm order when paying through S Pay Global
-  /// To get encrypted data from SIOC Backend
-  /// Using createOrder and confirmOrder API
-  Future<void> orderRequest(
-      BuildContext context, double subscriptionPrice) async {
-    final subscriptionProvider =
-        Provider.of<SubscriptionProvider>(context, listen: false);
-    try {
-      // TODO: Subscription Provider (for onData in HomePage)
-      subscriptionProvider.changeIsSubscription(true);
-
-      data['goodsType'] = '2';
-      data['goodsName'] = 'Member';
-      data['goodsCode'] = 'V001';
-      data['goodsCnt'] = '1';
-      data['orderAmount'] = subscriptionPrice.toString();
-      data['orderDescription'] = 'Subscription Member';
-      data['option'] = option;
-      data['subscribeId'] = subscriptionProvider.subscribeId;
-
-      await _subscriptionServices
-          .createSubcriptionOrder(data)
-          .then((response) async {
-        if (response['status'] == '200') {
-          await _subscriptionServices.confirmSubscriptionOrder({
-            "orderCodes": response['data'],
-            "payType": "1"
-          }).then((res) async {
-            if (res['status'] == '200') {
-              await jumpPay(res['data'], context);
-            } else {
-              // TODO: Subscription Provider
-              subscriptionProvider.changeIsSubscription(false);
-              Navigator.of(context).pop(true);
-              Fluttertoast.showToast(
-                msg: AppLocalization.of(context)!.translate('payment_failed')!,
-              );
-              print('confirmOrder fail');
-            }
-          });
-        } else {
-          // TODO: Subscription Provider
-          subscriptionProvider.changeIsSubscription(false);
-          Navigator.of(context).pop(true);
-          Fluttertoast.showToast(
-            msg: AppLocalization.of(context)!.translate('payment_failed')!,
-          );
-          print('createOrder fail');
-        }
-      });
-    } catch (e) {
-      // TODO: Subscription Provider
-      subscriptionProvider.changeIsSubscription(false);
-      Navigator.of(context).pop(true);
-      Fluttertoast.showToast(
-        msg: AppLocalization.of(context)!.translate('payment_failed')!,
-      );
-      print('orderRequest fail');
-    }
-  }
-
-  /// Calls the native methods of SPay SDK when encryption data is received
-  /// And launch the SPay Mobile App for payment integration
-  ///
-  /// Receives [encryptionData] as the encrypted string from SIOC Backend
-  /// Which will be sent to SPay Mobile App for subsequent payment
-  Future<void> jumpPay(String encryptionData, BuildContext context) async {
-    final subscriptionProvider =
-        Provider.of<SubscriptionProvider>(context, listen: false);
-    try {
-      if (encryptionData.isEmpty) {
-        Fluttertoast.showToast(
-          msg: AppLocalization.of(context)!.translate('payment_failed')!,
-        );
-        return;
-      }
-      Navigator.of(context).pop(true);
-      // TODO: Invoke S Pay SDK (Android & iOS)
-      if (Platform.isAndroid) {
-        // encrypted data from backend
-        var sendMap = <String, dynamic>{'dataString': encryptionData};
-        await platform.invokeMethod('spayPlaceOrder', sendMap);
-      } else if (Platform.isIOS) {
-        var sendMap = <String, dynamic>{'dataString': encryptionData};
-        await platform.invokeMethod('spayPlaceOrder', sendMap);
-      }
-    } catch (e) {
-      // TODO
-      subscriptionProvider.changeIsSubscription(false);
-      Navigator.of(context).pop(true);
-      Fluttertoast.showToast(
-        msg: AppLocalization.of(context)!.translate('payment_failed')!,
-      );
-      print('jumpPay fail');
-    }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     final args = ModalRoute.of(context)!.settings.arguments
-        as SubscriptionCheckoutScreenArguments;
+        as BillPaymentCheckoutScreenArguments;
 
-    String returnPackageName(int selectedPackage) {
-      switch (selectedPackage) {
-        case 0:
-          option = "option_1";
-          return "1-month Premium Subscripion";
-        case 1:
-          option = "option_2";
-          return "3-month Premium Subscripion";
+    String returnBillName(String stateName) {
+      switch (stateName) {
+        case "1":
+          return "Assessment Rate - DBKU";
+        case "2":
+          return "Assessment Rate - MBKS";
+        case "3":
+          return "Assessment Rate - MPP";
+        case "4":
+          return "Other Utilities - KWB";
         default:
-          option = "option_3";
-          return "12-month Premium Subscripion";
+          return "Other Utilities - SESCO";
       }
     }
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Payment Checkout"),
+        title: Text("Payment Checkout"),
       ),
       backgroundColor: Theme.of(context).colorScheme.background,
       body: Container(
@@ -210,7 +107,26 @@ class _SubscriptionCheckoutScreenState
                           height: 5,
                         ),
                         Text(
-                          returnPackageName(args.selectedPackage),
+                          returnBillName(args.stateName!),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16.0,
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 20.0,
+                        ),
+                        const Text(
+                          "Payment Account",
+                          style: TextStyle(
+                            fontSize: 16.0,
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        Text(
+                          args.taxCode!,
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16.0,
@@ -229,7 +145,7 @@ class _SubscriptionCheckoutScreenState
                           height: 5,
                         ),
                         Text(
-                          "RM ${args.selectedPrice}",
+                          "RM ${args.orderAmount}",
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16.0,
@@ -288,7 +204,7 @@ class _SubscriptionCheckoutScreenState
                       ),
                     ],
                   ),
-                ),
+                )
               ],
             ),
             Column(
@@ -331,12 +247,12 @@ class _SubscriptionCheckoutScreenState
                               .translate('payment_in_progress')!,
                         );
                         // TODO: skip this for demo, navigate to Result screen
-                        orderRequest(context, args.selectedPrice);
+                        // orderRequest(context);
                         // TODO: temp navigation
-                        // Navigator.of(context).pushNamedAndRemoveUntil(
-                        //   SubscriptionResultScreen.routeName,
-                        //   (route) => route.isFirst,
-                        // ); // is used to keep only the first route (the HomeScreen));
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                          BillPaymentResultScreen.routeName,
+                          (route) => route.isFirst,
+                        ); // is used to keep only the first route (the HomeScreen));
                       } else {
                         Navigator.of(context).pop();
                         Fluttertoast.showToast(

@@ -18,14 +18,14 @@ class AuthProvider with ChangeNotifier {
   bool _isAuth = false;
   bool get isAuth => _isAuth;
 
-  bool _isSubscriptionEnabled = true;
-  bool get isSubscriptionEnabled => _isSubscriptionEnabled;
+  // bool _isSubscriptionEnabled = true;
+  // bool get isSubscriptionEnabled => _isSubscriptionEnabled;
 
-  bool _isWhitelisted = false;
-  bool get isWhitelisted => _isWhitelisted;
+  // bool _isWhitelisted = false;
+  // bool get isWhitelisted => _isWhitelisted;
 
-  String? _vipDueDate;
-  String? get vipDueDate => _vipDueDate;
+  // String? _vipDueDate;
+  // String? get vipDueDate => _vipDueDate;
 
   AuthModel? _auth;
   AuthModel get auth =>
@@ -37,7 +37,8 @@ class AuthProvider with ChangeNotifier {
         sId: '',
         userName: '',
         fullName: '',
-        isSubscribed: false,
+        vipStatus: false,
+        vipDueDate: '',
       );
 
   /// Sign in.
@@ -52,18 +53,18 @@ class AuthProvider with ChangeNotifier {
     final storage = new FlutterSecureStorage();
 
     try {
-      print(data);
       if (data['userId'] != null) {
-        prefs.setBool("isSubscribed", data['isSubscribed'] == 'true');
+        prefs.setBool("vipStatus", data['isSubscribed'] == 'true');
         prefs.setInt(
             "expire", int.parse(data['expire']!) * 1000 + currentMilliSec);
         prefs.setString("userId", data['userId'] ?? '');
 
         // VIP due date
+        // callback response URL will not have "vipDueDate" if "isSubscribed" is false
         if (data['isSubscribed'] == 'true') {
-          _vipDueDate = data['vipDueDate'] ?? '';
           prefs.setString("vipDueDate", data['vipDueDate'] ?? '');
         }
+
         storage.write(
           key: 'siocToken',
           value: data['siocToken'] ?? '',
@@ -108,11 +109,11 @@ class AuthProvider with ChangeNotifier {
         sarawakToken: sarawakToken,
         siocToken: siocToken,
       );
-      // if (response['status'] == '200') {
-      // TODO: temp added
-      if (response['loginMode'] == '1') {
+      if (response['status'] == '200') {
         // Provider.of<InboxProvider>(context, listen: false).resetMessageCount();
         prefs.clear();
+        // reset the isAppFirstStart after clear all
+        prefs.setBool('isAppFirstStart', true);
         storage.deleteAll();
         // _isShow = true;
         _isAuth = false;
@@ -144,15 +145,17 @@ class AuthProvider with ChangeNotifier {
           sId: response['data']['memberId'] ?? '',
           userName: response['data']['sarawakId'] ?? '',
           fullName: response['data']['nickName'] ?? '',
-          isSubscribed: isSubscribed,
+          vipStatus: isSubscribed,
+          vipDueDate: response['data']['vipDueDate'] ?? '',
         );
-
         prefs.setString("userEmail", response['data']['email'] ?? '');
         prefs.setString("userFullName", response['data']['nickName'] ?? '');
         prefs.setString("userId", response['data']['memberId'] ?? '');
         prefs.setString("userMobileNo", response['data']['mobile'] ?? '');
         prefs.setString("userShortName", response['data']['sarawakId'] ?? '');
         prefs.setString("userResAddr1", response['data']['address'] ?? '');
+        // double assure in case vipDueDate is not insert into prefs in "signInProvider" due to "isSubscribed" == false
+        prefs.setString("vipDueDate", response['data']['vipDueDate'] ?? '');
         notifyListeners();
         return true;
       } else {
@@ -163,7 +166,7 @@ class AuthProvider with ChangeNotifier {
           sId: '',
           userName: '',
           fullName: '',
-          isSubscribed: isSubscribed,
+          vipStatus: isSubscribed,
         );
         notifyListeners();
         return false;
@@ -186,7 +189,10 @@ class AuthProvider with ChangeNotifier {
 
       String memberId = prefs.getString('userId') ?? '';
       var response = await _authServices.queryUserInfo(memberId);
-      if (response!.data['status'] == '200') {
+      if (response['status'] == '200') {
+        prefs.setBool("vipStatus", response['data']['vipStatus'] == "1");
+        prefs.setString("vipDueDate", response['data']['vipDueDate'] ?? '');
+
         _auth = AuthModel(
           address: prefs.getString('userResAddr1') ?? '',
           mobile: prefs.getString('userMobileNo') ?? '',
@@ -194,16 +200,10 @@ class AuthProvider with ChangeNotifier {
           sId: prefs.getString('userId') ?? '',
           userName: prefs.getString('userShortName') ?? '',
           fullName: prefs.getString('userFullName') ?? '',
-          isSubscribed: response.data['data']['vipStatus'] == "1",
+          vipStatus: response['data']['vipStatus'] == "1",
+          vipDueDate: response['data']['vipDueDate'] ?? '',
         );
-        prefs.setBool(
-            "isSubscribed", response.data['data']['vipStatus'] == "1");
-        if (response.data['data']['vipStatus'] == "1") {
-          _vipDueDate = response.data['data']['vipDueDate'] ?? '';
-          prefs.setString(
-              "vipDueDate", response.data['data']['vipDueDate'] ?? '');
-        }
-
+        notifyListeners();
         return true;
       }
       return false;
@@ -219,7 +219,7 @@ class AuthProvider with ChangeNotifier {
   /// And refresh new token.
   /// Return 'false' if exceeds valid refresh period.
   /// And sign out.
-  Future<bool> checkIsAuth(BuildContext context) async {
+  Future<bool> checkIsAuthAndSubscribeOverdue(BuildContext context) async {
     bool isTokenOk = false;
     final prefs = await SharedPreferences.getInstance();
     final storage = new FlutterSecureStorage();
@@ -229,6 +229,7 @@ class AuthProvider with ChangeNotifier {
     int? expire = prefs.getInt('expire');
 
     print("siocTokenLocal: $siocToken");
+    print("sarawakTokenLocal: $sarawakToken");
     print("expireLocal: $expire");
 
     if (expire != null &&
@@ -237,42 +238,41 @@ class AuthProvider with ChangeNotifier {
         siocToken.isNotEmpty &&
         sarawakToken != null &&
         sarawakToken.isNotEmpty) {
-      // TODO: Setup signOut API
-      // Sign out if exceeds valid refresh period
       if (currentMilliSec > expire) {
+        // TODO: Setup signOut API
+        // Sign out if exceeds valid refresh period
         print("signOut");
         // signOut(context);
       } else {
         // TODO: Setup refreshToken API
-        // If within valid refresh period
+        // If within valid refresh period, then refresh token (everytime open app)
         print("refreshToken");
         // refreshToken();
         isTokenOk = true;
-        bool subscriptionStatus = await checkSubscribe();
+        bool subscriptionOverdueStatus = await checkSubscribeOverdue();
 
         // TODO: FIRST => check _isSubscriptionEnabled
-        _isSubscriptionEnabled = true;
+        // _isSubscriptionEnabled = true;
 
         // TODO: SECOND => check _isWhitelisted
-        _isWhitelisted = true;
+        // _isWhitelisted = true;
 
         // THIRD => check subscription date
-        if (subscriptionStatus) {
+        if (subscriptionOverdueStatus) {
+          // within due date
           _auth = AuthModel(
-            address: prefs.getString('userResAddr1') ?? '',
-            mobile: prefs.getString('userMobileNo') ?? '',
-            email: prefs.getString('userEmail') ?? '',
-            sId: prefs.getString('userId') ?? '',
-            userName: prefs.getString('userShortName') ?? '',
-            fullName: prefs.getString('userFullName') ?? '',
-            // TODO: get latest data from querySubscription API
-            // TODO: use setBool
-            isSubscribed: prefs.getBool('isSubscribed') ?? false,
-          );
-          // TODO: get latest data from querySubscription API
-          // TODO: use setString
-          _vipDueDate = prefs.getString('vipDueDate') ?? '';
+              address: prefs.getString('userResAddr1') ?? '',
+              mobile: prefs.getString('userMobileNo') ?? '',
+              email: prefs.getString('userEmail') ?? '',
+              sId: prefs.getString('userId') ?? '',
+              userName: prefs.getString('userShortName') ?? '',
+              fullName: prefs.getString('userFullName') ?? '',
+              vipStatus: prefs.getBool('vipStatus') ?? false,
+              vipDueDate: prefs.getString('vipDueDate') ?? '');
         } else {
+          // out of due date (expired)
+          prefs.setBool("vipStatus", false);
+          prefs.setString("vipDueDate", '');
           _auth = AuthModel(
             address: prefs.getString('userResAddr1') ?? '',
             mobile: prefs.getString('userMobileNo') ?? '',
@@ -280,11 +280,9 @@ class AuthProvider with ChangeNotifier {
             sId: prefs.getString('userId') ?? '',
             userName: prefs.getString('userShortName') ?? '',
             fullName: prefs.getString('userFullName') ?? '',
-            isSubscribed: false,
+            vipStatus: false,
+            vipDueDate: '',
           );
-          _vipDueDate = '';
-          prefs.setBool("isSubscribed", false);
-          prefs.setString("vipDueDate", '');
         }
       }
     }
@@ -300,27 +298,13 @@ class AuthProvider with ChangeNotifier {
   ///
   /// Return 'true' if subscription is within due date.
   /// Return 'false' if subscription is out of due date.
-  // TODO: change to return Map<String, dynamic> => isSubscribe, vipDueDate
-  // TODO: current condition: vipDueDate is empty
-  Future<bool> checkSubscribe() async {
+  Future<bool> checkSubscribeOverdue() async {
     final prefs = await SharedPreferences.getInstance();
-    final SubscriptionServices subscriptionServices = SubscriptionServices();
+    String? vipDueDate = prefs.getString('vipDueDate');
 
-    String vipDueDate = prefs.getString('vipDueDate') ?? '';
-
-    if (vipDueDate == '') return false;
+    if (vipDueDate == '' || vipDueDate!.isEmpty) return false;
 
     if (DateTime.parse(vipDueDate).isAfter(DateTime.now())) {
-      try {
-        // TODO: NEW API => CHECK RESPONSE FROM BACKEND
-        var response = await subscriptionServices.querySubscriptionStatus();
-        if (response["status"] == "200") {
-          prefs.setBool("isSubscribed", true);
-          // prefs.setString("vipDueDate", '');
-        }
-      } catch (e) {
-        print("checkSubscribe fail: ${e.toString()}");
-      }
       return true;
     } else {
       return false;

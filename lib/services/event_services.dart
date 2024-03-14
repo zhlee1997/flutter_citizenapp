@@ -42,4 +42,22 @@ class EventServices {
       throw e;
     }
   }
+
+  /// Get list of reported cases
+  ///
+  /// Receives [parameter] as the query parameters
+  /// Returns API response object
+  Future<dynamic> queryEventPageList(
+    Map<String, dynamic> parameter,
+  ) async {
+    try {
+      var response = await _apiBaseHelper.get("/eventManual/queryPageList",
+          queryParameters: parameter, requireToken: true);
+      print('queryPageList success: $response');
+      return response;
+    } catch (e) {
+      print('queryPageList fail: ${e.toString()}');
+      throw e;
+    }
+  }
 }

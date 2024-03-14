@@ -62,7 +62,7 @@ class _CitizenAnnouncementsScreenState
       body: CustomScrollView(
         slivers: <Widget>[
           SliverAppBar(
-            expandedHeight: screenSize.height * 0.3,
+            expandedHeight: screenSize.height * 0.25,
             backgroundColor: Theme.of(context).colorScheme.secondary,
             flexibleSpace: FlexibleSpaceBar(
               title: const Text("Citizen Announcements"),
@@ -77,8 +77,8 @@ class _CitizenAnnouncementsScreenState
               (context, index) => Card(
                 elevation: 3.0,
                 margin: EdgeInsets.only(
-                  top: index == 0 ? 10.0 : 5.0,
-                  bottom: index == 19 ? 30.0 : 5.0,
+                  top: index == 0 ? 10.0 : 7.5,
+                  bottom: index == 19 ? 30.0 : 7.5,
                   left: 10.0,
                   right: 10.0,
                 ),
@@ -96,7 +96,7 @@ class _CitizenAnnouncementsScreenState
                   ),
                   title: const Text(
                     'Storm causes tree to uproot in front of Kg Luak house',
-                    maxLines: 2,
+                    maxLines: 3,
                     overflow: TextOverflow.ellipsis,
                   ),
                   trailing: Icon(

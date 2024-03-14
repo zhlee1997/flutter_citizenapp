@@ -60,6 +60,7 @@ class _HomePageState extends State<HomePage> {
     try {
       if (Provider.of<SubscriptionProvider>(context, listen: false)
           .isSubscription) {
+        // TODO: Temp skip auth checking
         Provider.of<AuthProvider>(context, listen: false)
             .queryUserInfoAfterSubscriptionProvider();
         Provider.of<SubscriptionProvider>(context, listen: false)
@@ -79,8 +80,8 @@ class _HomePageState extends State<HomePage> {
       Map<String, dynamic> param = {"encryptData": encryptedData};
       var response = await SubscriptionServices().decryptData(param);
       Map<String, dynamic> payResult = {};
-      if (response!.data['status'] == '200') {
-        payResult = response.data['data'];
+      if (response['status'] == '200') {
+        payResult = response['data'];
         // Provider.of<InboxProvider>(context, listen: false).refreshCount();
         Navigator.of(context).pop(true);
 
@@ -113,24 +114,24 @@ class _HomePageState extends State<HomePage> {
       // TODO: to remove
       citizenAnnouncements = [];
     });
-    // var response = await _announcementServices.queryPageList(
-    //   '1',
-    //   pageSize: '6',
-    //   annType: '1',
-    // );
+    var response = await _announcementServices.queryPageList(
+      '1',
+      pageSize: '6',
+      annType: '1',
+    );
 
-    // if (response['status'] == '200') {
-    //   var data = response['data']['list'] as List;
-    //   if (mounted) {
-    //     // Check if the widget is still mounted
-    //     setState(() {
-    //       citizenShimmer = false;
-    //       // Cast to AnnouncementModel type to use AnnouncementModel object
-    //       citizenAnnouncements =
-    //           data.map((e) => AnnouncementModel.fromJson(e)).toList();
-    //     });
-    //   }
-    // }
+    if (response['status'] == '200') {
+      var data = response['data']['list'] as List;
+      if (mounted) {
+        // Check if the widget is still mounted
+        setState(() {
+          citizenShimmer = false;
+          // Cast to AnnouncementModel type to use AnnouncementModel object
+          citizenAnnouncements =
+              data.map((e) => AnnouncementModel.fromJson(e)).toList();
+        });
+      }
+    }
   }
 
   Future<void> getTourismAnn() async {
@@ -139,32 +140,32 @@ class _HomePageState extends State<HomePage> {
       // TODO: to remove
       tourismAnnouncements = [];
     });
-    // var response = await _announcementServices.queryPageList(
-    //   '1',
-    //   pageSize: '3',
-    //   annType: '2',
-    // );
+    var response = await _announcementServices.queryPageList(
+      '1',
+      pageSize: '3',
+      annType: '2',
+    );
 
-    // if (response['status'] == '200') {
-    //   var data = response['data']['list'] as List;
-    //   if (mounted) {
-    //     // Check if the widget is still mounted
-    //     setState(() {
-    //       tourismShimmer = false;
-    //       var list = data.map((e) => AnnouncementModel.fromJson(e)).toList();
-    //       for (var element in list) {
-    //         if (element.attachmentDtoList.length > 0) {
-    //           for (var dto in element.attachmentDtoList) {
-    //             if (dto.attFileType == '2') {
-    //               tourismAnnouncements.add(element);
-    //               break;
-    //             }
-    //           }
-    //         }
-    //       }
-    //     });
-    //   }
-    // }
+    if (response['status'] == '200') {
+      var data = response['data']['list'] as List;
+      if (mounted) {
+        // Check if the widget is still mounted
+        setState(() {
+          tourismShimmer = false;
+          var list = data.map((e) => AnnouncementModel.fromJson(e)).toList();
+          for (var element in list) {
+            if (element.attachmentDtoList.isNotEmpty) {
+              for (var dto in element.attachmentDtoList) {
+                if (dto.attFileType == '2') {
+                  tourismAnnouncements.add(element);
+                  break;
+                }
+              }
+            }
+          }
+        });
+      }
+    }
   }
 
   Future<void> _handleFullScreenLoginBottomModal(BuildContext context) async {
@@ -273,10 +274,11 @@ class _HomePageState extends State<HomePage> {
   // Location: no permission, still can access
   void _handleNavigateToTalikhidmat(BuildContext context) async {
     if (Provider.of<AuthProvider>(context, listen: false).isAuth) {
-      if (await Permission.location.request().isGranted) {
+      if (await Permission.location.isGranted) {
         Navigator.of(context).pushNamed(NewCaseScreen.routeName);
       } else {
-        Navigator.of(context).pushNamed(NewCaseScreen.routeName);
+        Permission.location.request().then(
+            (_) => Navigator.of(context).pushNamed(NewCaseScreen.routeName));
       }
     } else {
       _handleFullScreenLoginBottomModal(context);
@@ -285,13 +287,19 @@ class _HomePageState extends State<HomePage> {
 
   // first => check subscription enabled (already done)
   // second => check is it whitelisted (if yes, show bottom modal)
-  // first => check is it subsrcibed
-  void _handleNavigateToSubscription(BuildContext context) {
+  // third => check is it subsrcibed
+  void _handleNavigateToSubscription(BuildContext context) async {
     final AuthProvider authProvider =
         Provider.of<AuthProvider>(context, listen: false);
+    final SubscriptionProvider subscriptionProvider =
+        Provider.of<SubscriptionProvider>(context, listen: false);
 
-    if (!authProvider.isAuth) {
-      if (authProvider.isWhitelisted) {
+    if (authProvider.isAuth) {
+      GlobalDialogHelper().buildCircularProgressCenter(context: context);
+      bool isWhitelisted = await subscriptionProvider
+          .queryAndSetIsWhitelisted(authProvider.auth.fullName);
+      Navigator.of(context).pop();
+      if (isWhitelisted) {
         // show bottom modal
         _handleSubscriptionWhitelistBottomModal(context);
       } else {
@@ -312,20 +320,15 @@ class _HomePageState extends State<HomePage> {
           : _handleFullScreenLoginBottomModal(context);
 
   void _handleNavigateToPayment(BuildContext context) =>
-      !Provider.of<AuthProvider>(context, listen: false).isAuth
+      Provider.of<AuthProvider>(context, listen: false).isAuth
           ? Navigator.of(context).pushNamed(BillPaymentScreen.routeName)
           : _handleFullScreenLoginBottomModal(context);
 
   void _handleNavigateToCitizenAnnouncements(BuildContext context) =>
-      Provider.of<AuthProvider>(context, listen: false).isAuth
-          ? Navigator.of(context)
-              .pushNamed(CitizenAnnouncementsScreen.routeName)
-          : _handleFullScreenLoginBottomModal(context);
+      Navigator.of(context).pushNamed(CitizenAnnouncementsScreen.routeName);
 
   void _handleNavigateToTourismNews(BuildContext context) =>
-      Provider.of<AuthProvider>(context, listen: false).isAuth
-          ? Navigator.of(context).pushNamed(TourismNewsScreen.routeName)
-          : _handleFullScreenLoginBottomModal(context);
+      Navigator.of(context).pushNamed(TourismNewsScreen.routeName);
 
   @override
   void initState() {
@@ -339,6 +342,13 @@ class _HomePageState extends State<HomePage> {
     getCitizenAnn();
     getTourismAnn();
     numberOfRequestLeft = 2;
+  }
+
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    isSubscribed = Provider.of<AuthProvider>(context).auth.vipStatus;
   }
 
   @override
@@ -420,7 +430,7 @@ class _HomePageState extends State<HomePage> {
                                   .fontSize,
                             ),
                           ),
-                          SizedBox(height: 3.0),
+                          const SizedBox(height: 3.0),
                           Text("Premium access: 22 Feb - 21 Mac"),
                         ],
                       ),
@@ -546,11 +556,12 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                   ),
-                  Consumer<AuthProvider>(
-                    builder:
-                        (BuildContext ctx, AuthProvider authProvider, child) {
+                  Consumer<SubscriptionProvider>(
+                    builder: (BuildContext ctx,
+                        SubscriptionProvider subscriptionProvider, child) {
                       return GestureDetector(
-                        onTap: () => authProvider.isSubscriptionEnabled
+                        // TODO: temp
+                        onTap: () => !subscriptionProvider.isSubscriptionEnabled
                             ? _handleNavigateToSubscription(context)
                             : _handleNavigateToTrafficImages(context),
                         child: Card(
@@ -566,7 +577,8 @@ class _HomePageState extends State<HomePage> {
                                       MainAxisAlignment.spaceEvenly,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: <Widget>[
-                                    authProvider.isSubscriptionEnabled
+                                    // TODO: temp
+                                    !subscriptionProvider.isSubscriptionEnabled
                                         ? Icon(
                                             Icons.subscriptions,
                                             color: Theme.of(context)
@@ -582,7 +594,9 @@ class _HomePageState extends State<HomePage> {
                                             size: 30.0,
                                           ),
                                     Text(
-                                      authProvider.isSubscriptionEnabled
+                                      // TODO: temp
+                                      !subscriptionProvider
+                                              .isSubscriptionEnabled
                                           ? "Subscription"
                                           : "Traffic images",
                                       style: const TextStyle(
@@ -599,7 +613,8 @@ class _HomePageState extends State<HomePage> {
                                     left: 10.0,
                                   ),
                                   child: Text(
-                                    authProvider.isSubscriptionEnabled
+                                    // TODO: temp
+                                    !subscriptionProvider.isSubscriptionEnabled
                                         ? "Premium member"
                                         : "Live road images",
                                     style: TextStyle(

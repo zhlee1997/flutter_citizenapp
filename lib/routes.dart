@@ -16,6 +16,9 @@ import './screens/emergency/recording_screen.dart';
 
 import './screens/bill_payment/bill_payment_screen.dart';
 import './screens/bill_payment/bill_payment_detail_screen.dart';
+import './screens/bill_payment/bill_payment_checkout_screen.dart';
+import './screens/bill_payment/bill_payment_result_screen.dart';
+import './screens/bill_payment/bill_payment_scan_screen.dart';
 
 import './screens/announcement/announcement_detail_screen.dart';
 import './screens/announcement/citizen_announcements_screen.dart';
@@ -34,6 +37,11 @@ import './screens/traffic/traffic_images_list_screen.dart';
 import './screens/support/privacy_policy_screen.dart';
 import './screens/support/terms_and_conditions_screen.dart';
 import './screens/support/send_feedback_screen.dart';
+
+import './screens/transaction/transaction_history_screen.dart';
+
+import './screens/reported_cases/emergency_cases_screen.dart';
+import './screens/reported_cases/talikhidmat_cases_screen.dart';
 
 import './screens/home_screen.dart';
 import './screens/onboarding_screen.dart';
@@ -69,4 +77,11 @@ final Map<String, WidgetBuilder> routes = <String, WidgetBuilder>{
   SubscriptionResultScreen.routeName: (ctx) => const SubscriptionResultScreen(),
   TrafficImagesListScreen.routeName: (ctx) => const TrafficImagesListScreen(),
   BillPaymentDetailScreen.routeName: (ctx) => const BillPaymentDetailScreen(),
+  BillPaymentCheckoutScreen.routeName: (ctx) =>
+      const BillPaymentCheckoutScreen(),
+  BillPaymentResultScreen.routeName: (ctx) => const BillPaymentResultScreen(),
+  BillPaymentScanScreen.routeName: (ctx) => const BillPaymentScanScreen(),
+  TransactionHistoryScreen.routeName: (ctx) => const TransactionHistoryScreen(),
+  TalikhidmatCasesScreen.routeName: (ctx) => const TalikhidmatCasesScreen(),
+  EmergencyCasesScreen.routeName: (ctx) => const EmergencyCasesScreen(),
 };

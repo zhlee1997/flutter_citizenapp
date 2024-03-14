@@ -1,10 +1,11 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-
-import '../utils/app_localization.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:photo_view/photo_view.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
+import '../utils/app_localization.dart';
 
 class GlobalDialogHelper {
   /// Displays alert dialog
@@ -207,5 +208,91 @@ class GlobalDialogHelper {
         milliseconds: 300,
       ),
     );
+  }
+
+  /// Displays circular progress in transparent dialog
+  Future<void> buildCircularProgressCenter({
+    required BuildContext context,
+  }) async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const Dialog(
+        backgroundColor: Colors.transparent,
+        child: Center(
+          child: CircularProgressIndicator(),
+        ),
+      ),
+    );
+  }
+
+  /// Displays svg image when there is no data
+  ///
+  /// Receives [message] as the dialog message
+  Widget buildCenterNoData(BuildContext context, {String? message}) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(
+            height: 250,
+            width: 250,
+            child: SvgPicture.asset("assets/images/svg/no_data.svg"),
+          ),
+          SizedBox(
+            height: screenHeight * 0.03,
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 12.0),
+            child: Text(
+              message == null
+                  ? AppLocalization.of(context)!.translate('no_data')!
+                  : message,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+                color: Colors.black54,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Displays circular progress indicator and end of page with condition
+  Widget buildLinearProgressIndicator({
+    required BuildContext context,
+    required int currentLength,
+    required bool noMoreData,
+    required Function() handleLoadMore,
+  }) {
+    if (currentLength < 9 && !noMoreData) {
+      return TextButton(
+        onPressed: handleLoadMore,
+        child: Text(AppLocalization.of(context)!.translate('load_m')!),
+      );
+    }
+    if (noMoreData) {
+      return Center(
+        child: Container(
+          padding: const EdgeInsets.symmetric(
+            vertical: 20.0,
+          ),
+          child: Text(AppLocalization.of(context)!.translate('end_of')!),
+        ),
+      );
+    } else {
+      return Container(
+        padding: const EdgeInsets.all(20.0),
+        child: LinearProgressIndicator(
+          backgroundColor: Theme.of(context).colorScheme.secondary,
+          valueColor:
+              AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
+        ),
+      );
+    }
   }
 }

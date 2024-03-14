@@ -14,6 +14,7 @@ class ApiBaseHelper {
   Future<dynamic> get(
     String url, {
     Map<String, dynamic>? queryParameters,
+    required bool requireToken,
   }) async {
     final dio = Dio();
     final storage = new FlutterSecureStorage();
@@ -24,14 +25,17 @@ class ApiBaseHelper {
 
     try {
       print("getURL: $_baseUrl$url");
+      print("getParameters: $queryParameters");
       final response = await dio.get(
         "$_baseUrl$url",
-        options: Options(
-          headers: {
-            'Authorization': siocToken ?? '',
-            'sarawakToken': sarawakToken ?? '',
-          },
-        ),
+        options: requireToken
+            ? Options(
+                headers: {
+                  'Authorization': siocToken ?? '',
+                  'sarawakToken': sarawakToken ?? '',
+                },
+              )
+            : null,
         queryParameters: queryParameters,
       );
       responseJson = _returnResponse(response);
@@ -58,6 +62,7 @@ class ApiBaseHelper {
 
     try {
       print("postURL: $_baseUrl$url");
+      print("postData: $data");
       final response = await dio.post(
         "$_baseUrl$url",
         options: Options(

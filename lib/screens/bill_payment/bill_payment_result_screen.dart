@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 
-import '../../widgets/subscription/subscription_result_widget.dart';
-import './subscription_choose_screen.dart';
+import '../../widgets/bill_payment/bill_payment_result_widget.dart';
 
-class SubscriptionResultScreen extends StatelessWidget {
-  static const String routeName = 'subscribe-result-screen';
+class BillPaymentResultScreen extends StatelessWidget {
+  static const String routeName = "bill-payment-result-screen";
 
-  const SubscriptionResultScreen({super.key});
+  const BillPaymentResultScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -20,12 +19,12 @@ class SubscriptionResultScreen extends StatelessWidget {
       ),
       body: Container(
         width: double.infinity,
-        padding: const EdgeInsets.symmetric(horizontal: 15.0),
+        padding: EdgeInsets.symmetric(horizontal: 15.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const SubscriptionResultWidget(),
-            const Divider(),
+            const BillPaymentResultWidget(),
+            Divider(),
             SizedBox(
               height: screenSize.height * 0.01,
             ),
@@ -68,7 +67,7 @@ class SubscriptionResultScreen extends StatelessWidget {
               children: <Widget>[
                 Text("Payment Item"),
                 Text(
-                  "1-month Subscripion",
+                  "Assessment Rate - DBKU",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                   ),
@@ -123,42 +122,51 @@ class SubscriptionResultScreen extends StatelessWidget {
             SizedBox(
               height: screenSize.height * 0.03,
             ),
-            MaterialBanner(
-              elevation: 5.0,
-              leading: Icon(Icons.wallet_membership_outlined),
-              content: Text(
-                "You are now a Premium member! Would you like to?",
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context)
-                        .popUntil(ModalRoute.withName('home-page-screen'));
-                  },
-                  child: Text(
-                    "Back to home",
-                    style: TextStyle(
-                      fontSize: Theme.of(context).textTheme.bodyLarge!.fontSize,
-                    ),
-                  ),
-                ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                      SubscriptionChooseScreen.routeName,
-                      (route) => route.isFirst,
-                    );
-                  },
-                  child: Text(
-                    "Watch now",
-                    style: TextStyle(
-                      fontSize: Theme.of(context).textTheme.bodyLarge!.fontSize,
-                    ),
-                  ),
-                ),
-              ],
+            SizedBox(
+              height: screenSize.height * 0.025,
             ),
+            SizedBox(
+              width: screenSize.width * 0.7,
+              child: OutlinedButton(
+                onPressed: () {
+                  // Navigator.of(context).pushNamedAndRemoveUntil(
+                  //   SubscriptionChooseScreen.routeName,
+                  //   (route) => route.isFirst,
+                  // );
+                },
+                style: ButtonStyle(
+                  side: MaterialStateProperty.all(
+                    BorderSide(
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  ), // Set border color
+                ),
+                child: Text(
+                  "View transactions",
+                  style: TextStyle(
+                    fontSize: 18,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            SizedBox(
+              width: screenSize.width * 0.7,
+              child: OutlinedButton(
+                onPressed: () {
+                  Navigator.of(context)
+                      .popUntil(ModalRoute.withName('home-page-screen'));
+                },
+                child: const Text(
+                  "Back to home",
+                  style: TextStyle(
+                    fontSize: 18,
+                  ),
+                ),
+              ),
+            )
           ],
         ),
       ),

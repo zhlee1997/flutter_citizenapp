@@ -15,25 +15,25 @@ class GeneralHelper {
   ///
   /// Receives [value] as the input value
   /// Returns formatted price input
-  // static TextEditingValue formatCurrency({
-  //   required String value,
-  //   required TextEditingController controller,
-  //   required bool isFirst,
-  // }) {
-  //   String newValue = value.replaceAll(',', '').replaceAll('.', '');
-  //   if (value.isEmpty || newValue == '00') {
-  //     controller.clear();
-  //     isFirst = true;
-  //   }
-  //   double value1 = double.parse(newValue);
-  //   if (!isFirst) value1 = value1 * 100;
-  //   value =
-  //       NumberFormat.currency(customPattern: '###,###.##').format(value1 / 100);
-  //   return TextEditingValue(
-  //     text: value,
-  //     selection: TextSelection.collapsed(offset: value.length),
-  //   );
-  // }
+  static TextEditingValue formatCurrency({
+    required String value,
+    required TextEditingController controller,
+    required bool isFirst,
+  }) {
+    String newValue = value.replaceAll(',', '').replaceAll('.', '');
+    if (value.isEmpty || newValue == '00') {
+      controller.clear();
+      isFirst = true;
+    }
+    double value1 = double.parse(newValue);
+    if (!isFirst) value1 = value1 * 100;
+    value =
+        NumberFormat.currency(customPattern: '###,###.##').format(value1 / 100);
+    return TextEditingValue(
+      text: value,
+      selection: TextSelection.collapsed(offset: value.length),
+    );
+  }
 
   /// Perform formatting of datetime
   ///

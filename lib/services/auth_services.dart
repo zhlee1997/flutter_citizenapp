@@ -16,6 +16,7 @@ class AuthServices {
         queryParameters: {
           "memberId": memberId,
         },
+        requireToken: true,
       );
       print("queryUserInfo API success: $response");
       return response;
@@ -41,10 +42,8 @@ class AuthServices {
       'loginMode': '1',
     };
     try {
-      // TODO: JSON Server API for signout
       var response = await _apiBaseHelper.post(
-        "signout",
-        // 'login/invalid/token',
+        'login/invalid/token',
         data: json.encode(map),
       );
       print('signOut API success: $response');

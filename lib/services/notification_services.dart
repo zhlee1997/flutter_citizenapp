@@ -35,9 +35,8 @@ class NotificationServices {
   Future<dynamic> deleteToken() async {
     // Response? response;
     try {
-      var response = await _apiBaseHelper.get(
-        "member/remove/firebase/token",
-      );
+      var response = await _apiBaseHelper.get("member/remove/firebase/token",
+          requireToken: true);
       // TODO: Error handling for JDBC issue
       print('deleteToken API success: $response');
       return response;

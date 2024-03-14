@@ -7,7 +7,8 @@ class AuthModel {
   String? email;
   String? mobile;
   String? address;
-  late bool isSubscribed;
+  late bool vipStatus;
+  String? vipDueDate;
   String? profileImage;
   String? numberOfUnreadMessages;
 
@@ -20,7 +21,8 @@ class AuthModel {
     this.passportNumber,
     this.email,
     this.mobile,
-    required this.isSubscribed,
+    required this.vipStatus,
+    this.vipDueDate,
     this.profileImage,
     this.numberOfUnreadMessages,
     this.address,
@@ -35,7 +37,8 @@ class AuthModel {
     passportNumber = json['passportNumber'];
     email = json['email'];
     mobile = json['mobile'];
-    isSubscribed = json['isSubscribed'];
+    vipStatus = json['vipStatus'];
+    vipDueDate = json['vipDueDate'];
     profileImage = json['profileImage'];
     numberOfUnreadMessages = json['numberOfUnreadMessages'];
     address = json['address'];
@@ -51,7 +54,8 @@ class AuthModel {
     jsonData['passportNumber'] = passportNumber;
     jsonData['email'] = email;
     jsonData['mobile'] = mobile;
-    jsonData['isSubscribed'] = isSubscribed;
+    jsonData['vipStatus'] = vipStatus;
+    jsonData['vipDueDate'] = vipDueDate;
     jsonData['profileImage'] = profileImage;
     jsonData['numberOfUnreadMessages'] = numberOfUnreadMessages;
     jsonData['address'] = address;

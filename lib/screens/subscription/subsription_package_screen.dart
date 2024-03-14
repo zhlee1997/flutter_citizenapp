@@ -50,20 +50,23 @@ class _SubscriptionPackageScreenState extends State<SubscriptionPackageScreen> {
   // TODO: GET PACKAGE PRICE API
   Future<void> _getPackagePrice() async {
     try {
-      var response = await _subscriptionServices.querySubscriptionPackage();
+      var response =
+          await _subscriptionServices.queryPackageAndSubscriptionEnable();
       if (response["status"] == "200") {
-        print("success");
+        setState(() {
+          oneMonthPrice = response["data"][0]["option_1"];
+          threeMonthPrice = response["data"][0]["option_2"];
+          twelveMonthPrice = response["data"][0]["option_3"];
+          // First render set price
+          selectedPrice = oneMonthPrice;
+        });
+        // print(response["data"][0]["option_1"]);
+        // print(response["data"][0]["option_2"]);
+        // print(response["data"][0]["option_3"]);
       }
     } catch (e) {
       print("getPackagePrice fail: ${e.toString()}");
       // TODO: current condition is error 502
-      setState(() {
-        oneMonthPrice = 2.99;
-        threeMonthPrice = 7.97;
-        twelveMonthPrice = 30.88;
-        // First render set price
-        selectedPrice = oneMonthPrice;
-      });
     }
   }
 
@@ -195,7 +198,8 @@ class _SubscriptionPackageScreenState extends State<SubscriptionPackageScreen> {
                                                     snapshot) {
                                               if (snapshot.hasData) {
                                                 return Markdown(
-                                                    data: snapshot.data ?? "");
+                                                  data: snapshot.data ?? "",
+                                                );
                                               }
 
                                               return const Center(

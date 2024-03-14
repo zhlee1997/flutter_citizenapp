@@ -37,8 +37,8 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
 
   AuthServices _authServices = AuthServices();
 
-  DateTime startDate = DateTime.now();
-  DateTime endDate = DateTime.now().add(Duration(days: 30));
+  // DateTime startDate = DateTime.now();
+  // DateTime endDate = DateTime.now().add(Duration(days: 30));
 
   /// Launch Sarawak ID Website when tap on 'Sarawak ID' link
   void _handleLaunchWebsite() {
@@ -63,14 +63,10 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
   @override
   void didChangeDependencies() {
     _authData = Provider.of<AuthProvider>(context).auth;
-    _vipDueDate = Provider.of<AuthProvider>(context).vipDueDate ?? '---';
-
+    _vipDueDate = _authData.vipDueDate ?? '---';
     _username = _authData.userName;
     _fullName = _authData.fullName;
-    // _isSubscribe = _authData.isSubscribed;
-
-    // TODO: temporary true
-    _isSubscribe = true;
+    _isSubscribe = _authData.vipStatus;
     _emailAddress = _authData.email;
     _mobile = _authData.mobile;
     _address = _authData.address;
@@ -90,12 +86,11 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        // title: Text(AppLocalization.of(context)!.translate('my_profile')!),
         title: Text("Profile Details"),
         actions: <Widget>[
           IconButton(
             onPressed: _refreshProfile,
-            icon: Icon(Icons.refresh),
+            icon: const Icon(Icons.refresh),
             tooltip: "Refresh profile",
           )
         ],
@@ -105,104 +100,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
         padding: const EdgeInsets.all(10.0),
         child: Column(
           children: <Widget>[
-            // Container(
-            //   width: double.infinity,
-            //   margin: const EdgeInsets.only(
-            //     top: 10.0,
-            //     bottom: 10.0,
-            //   ),
-            //   child: ListTile(
-            //     // isThreeLine: true,
-            //     title: Container(
-            //       child: Text(
-            //         '$_fullName',
-            //         softWrap: true,
-            //         // style: TextStyle(
-            //         //   fontSize: Platform.isIOS ? 18 : 18,
-            //         // ),
-            //       ),
-            //     ),
-            //     subtitle: Container(
-            //       // margin: EdgeInsets.only(
-            //       //   top: screenSize.width * 0.015,
-            //       // ),
-            //       // child: Column(
-            //       //   crossAxisAlignment: CrossAxisAlignment.start,
-            //       //   children: [
-            //       //     Text('Sarawak ID: $_username'),
-            //       //     Container(
-            //       //       child: Text(
-            //       //         _isSubscribe
-            //       //             ? '${AppLocalization.of(context)!.translate('vip_m')!} $_vipDueDate'
-            //       //             : AppLocalization.of(context)!
-            //       //                 .translate('normal_mem')!,
-            //       //         style: TextStyle(
-            //       //           fontStyle: FontStyle.italic,
-            //       //         ),
-            //       //       ),
-            //       //     )
-            //       //   ],
-            //       // ),
-            //       child: Text('Sarawak ID: $_username'),
-            //     ),
-            //     leading: CircleAvatar(
-            //       radius: Platform.isIOS ? 30 : 25,
-            //       backgroundColor: Theme.of(context).primaryColor,
-            //       foregroundImage: _profileImage != null
-            //           ? NetworkImage("$_profileImage")
-            //           : null,
-            //       child: _profileImage != null
-            //           ? null
-            //           : CircleAvatar(
-            //               backgroundColor: Theme.of(context).accentColor,
-            //               radius: 26.5,
-            //               child: Icon(
-            //                 Icons.person,
-            //                 size: 35,
-            //               ),
-            //             ),
-            //     ),
-            //     trailing: _isSubscribe
-            //         ? Container(
-            //             padding:
-            //                 EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            //             decoration: BoxDecoration(
-            //               color: Colors.yellow,
-            //               borderRadius: BorderRadius.circular(16),
-            //             ),
-            //             child: Row(
-            //               mainAxisSize: MainAxisSize.min,
-            //               children: [
-            //                 Icon(
-            //                   Icons.star,
-            //                   color: Colors.black,
-            //                 ),
-            //                 SizedBox(width: 4),
-            //                 Text(
-            //                   'Premium',
-            //                   style: TextStyle(
-            //                     color: Colors.black,
-            //                     fontWeight: FontWeight.bold,
-            //                   ),
-            //                 ),
-            //               ],
-            //             ),
-            //           )
-            //         : TextButton(
-            //             child: Text(
-            //               "SUBSCRIBE",
-            //               style: TextStyle(
-            //                 fontSize: Platform.isIOS ? 15 : 13,
-            //               ),
-            //             ),
-            //             onPressed: () {
-            //               Navigator.of(context)
-            //                   .pushNamed(SubscriptionScreen.routeName);
-            //             },
-            //           ),
-            //   ),
-            // ),
-            Container(
+            SizedBox(
               height: 260,
               child: Stack(
                 children: <Widget>[
@@ -259,22 +157,22 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                               ),
                             ],
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                           Text(
-                            '$_fullName',
-                            style: TextStyle(
+                            _fullName,
+                            style: const TextStyle(
                               fontSize: 18.0,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                           _isSubscribe
                               ? Container(
-                                  padding: EdgeInsets.symmetric(
+                                  padding: const EdgeInsets.symmetric(
                                     horizontal: 12,
                                     vertical: 6,
                                   ),
@@ -282,7 +180,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                     color: Colors.yellow[300],
                                     borderRadius: BorderRadius.circular(16),
                                   ),
-                                  child: Row(
+                                  child: const Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Icon(
@@ -304,9 +202,6 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                   side: BorderSide(
                                     color: Theme.of(context).primaryColor,
                                   ),
-                                  // padding: EdgeInsets.symmetric(
-                                  //   horizontal: 5.0,
-                                  // ),
                                   avatar: Icon(
                                     Icons.verified_user,
                                     color: Theme.of(context).primaryColor,
@@ -318,7 +213,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                     ),
                                   ),
                                   backgroundColor:
-                                      Theme.of(context).backgroundColor,
+                                      Theme.of(context).colorScheme.background,
                                   onPressed: () {
                                     // Navigator.of(context)
                                     //     .pushNamed(SubscribeScreen.routeName);
@@ -331,37 +226,38 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                 ],
               ),
             ),
-            Container(
-              margin: const EdgeInsets.symmetric(
-                vertical: 5.0,
-                horizontal: 10.0,
-              ),
-              child: ListTile(
-                minVerticalPadding: 15.0,
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(
-                    color: Theme.of(context).primaryColor,
-                    width: 0.5,
-                  ),
-                  borderRadius: BorderRadius.circular(10.0),
+            if (_isSubscribe)
+              Container(
+                margin: const EdgeInsets.symmetric(
+                  vertical: 5.0,
+                  horizontal: 10.0,
                 ),
-                // tileColor: Theme.of(context).accentColor,
-                title: const Text(
-                  "Subscription Period:",
-                ),
-                subtitle: Container(
-                  margin: EdgeInsets.only(
-                    top: screenSize.width * 0.015,
+                child: ListTile(
+                  minVerticalPadding: 15.0,
+                  shape: RoundedRectangleBorder(
+                    side: BorderSide(
+                      color: Theme.of(context).primaryColor,
+                      width: 0.5,
+                    ),
+                    borderRadius: BorderRadius.circular(10.0),
                   ),
-                  child: Text(
-                    '${formatDate(startDate)} - ${formatDate(endDate)}',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
+                  title: const Text(
+                    "Subscription Period:",
+                  ),
+                  subtitle: Container(
+                    margin: EdgeInsets.only(
+                      top: screenSize.width * 0.015,
+                    ),
+                    child: Text(
+                      // '${formatDate(startDate)} - ${formatDate(endDate)}',
+                      '$_vipDueDate',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
             Container(
               margin: const EdgeInsets.symmetric(
                 vertical: 5.0,
@@ -376,8 +272,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                   ),
                   borderRadius: BorderRadius.circular(10.0),
                 ),
-                // tileColor: Theme.of(context).accentColor,
-                title: Text(
+                title: const Text(
                   "Sarawak ID:",
                 ),
                 subtitle: Container(
@@ -385,8 +280,8 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                     top: screenSize.width * 0.015,
                   ),
                   child: Text(
-                    '$_username',
-                    style: TextStyle(
+                    _username,
+                    style: const TextStyle(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -407,7 +302,6 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                   ),
                   borderRadius: BorderRadius.circular(10.0),
                 ),
-                // tileColor: Theme.of(context).accentColor,
                 title: Text(
                   AppLocalization.of(context)!.translate('email_add')! + ":",
                 ),
@@ -417,7 +311,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                   ),
                   child: Text(
                     '$_emailAddress',
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -431,7 +325,6 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
               ),
               child: ListTile(
                 minVerticalPadding: 15.0,
-                // tileColor: Theme.of(context).accentColor,
                 shape: RoundedRectangleBorder(
                   side: BorderSide(
                     color: Theme.of(context).primaryColor,
@@ -448,7 +341,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                   ),
                   child: Text(
                     '$_mobile',
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -469,7 +362,6 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                   ),
                   borderRadius: BorderRadius.circular(10.0),
                 ),
-                // tileColor: Theme.of(context).accentColor,
                 title: Text(
                   AppLocalization.of(context)!.translate('address')! + ":",
                 ),
@@ -480,14 +372,14 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                   child: Text(
                     '$_address',
                     softWrap: true,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             RichText(
@@ -512,7 +404,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                 ],
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             Consumer<AuthProvider>(
@@ -530,8 +422,8 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                             .translate('do_you_logout')!,
                         yesButtonFunc: () async {
                           Navigator.of(context).pop();
-                          Future.delayed(Duration.zero, () async {
-                            await GlobalDialogHelper()
+                          Future.delayed(Duration.zero, () {
+                            GlobalDialogHelper()
                                 .buildCircularProgressWithTextCenter(
                               context: context,
                               message: AppLocalization.of(context)!
@@ -543,20 +435,22 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Container(
-                                    padding: EdgeInsets.all(10.0),
+                                    padding: const EdgeInsets.all(10.0),
                                     decoration: BoxDecoration(
                                       color: Theme.of(context)
                                           .colorScheme
                                           .primaryContainer,
-                                      borderRadius: BorderRadius.all(
+                                      borderRadius: const BorderRadius.all(
                                         Radius.circular(10.0),
                                       ),
                                     ),
                                     child: Center(
                                       child: Text(
-                                        "You have logout successfully",
+                                        "Logout successfully",
                                         style: TextStyle(
-                                          color: Colors.black,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
                                         ),
                                       ),
                                     ),
@@ -571,10 +465,11 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                         },
                       );
                     },
-                    child: Text(
+                    child: const Text(
                       "Log Out",
                       style: TextStyle(
                         fontSize: 18.0,
+                        color: Colors.red,
                       ),
                     ),
                   );
@@ -583,7 +478,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                 }
               },
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
           ],

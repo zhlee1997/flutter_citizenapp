@@ -43,7 +43,9 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
           future: rootBundle.loadString(_url),
           builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
             if (snapshot.hasData) {
-              return Markdown(data: snapshot.data ?? "");
+              return Markdown(
+                data: snapshot.data ?? "",
+              );
             }
 
             return const Center(

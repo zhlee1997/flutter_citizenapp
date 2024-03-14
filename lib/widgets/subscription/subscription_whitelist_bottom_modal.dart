@@ -76,7 +76,8 @@ class _SubscriptionWhitelistBottomModalState
                                           AsyncSnapshot<String> snapshot) {
                                         if (snapshot.hasData) {
                                           return Markdown(
-                                              data: snapshot.data ?? "");
+                                            data: snapshot.data ?? "",
+                                          );
                                         }
 
                                         return const Center(
