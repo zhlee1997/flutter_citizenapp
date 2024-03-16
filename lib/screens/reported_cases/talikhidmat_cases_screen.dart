@@ -188,14 +188,6 @@ class _TalikhidmatCasesScreenState extends State<TalikhidmatCasesScreen> {
     }
   }
 
-  void reset() {
-    _page = 1;
-    _noMoreLoad = false;
-    _cases = [];
-    _pendingCases = [];
-    _resolvedCases = [];
-  }
-
   @override
   void initState() {
     // TODO: implement initState

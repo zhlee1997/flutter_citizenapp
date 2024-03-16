@@ -47,17 +47,26 @@ class SubscriptionServices {
     }
   }
 
-  // TODO: NEW API: querySubscriptionStatus
-  Future<dynamic> querySubscriptionStatus() async {
+  // check subscription package option
+  // TODO: NEW API: querySubscriptionPackageOption
+  Future<dynamic> querySubscriptionPackageOption({
+    required String subscribeId,
+    required String memberId,
+  }) async {
+    Map<String, dynamic> queryParameters = {
+      "subscribeId": subscribeId,
+      "memberId": memberId,
+    };
     try {
       var response = await _apiBaseHelper.get(
-        '/subscription/querySubscriptionStatus',
+        'member/queryList',
+        queryParameters: queryParameters,
         requireToken: true,
       );
-      print("querySubscriptionStatus API success: $response");
+      print("querySubscriptionPackageOption API success: $response");
       return response;
     } catch (e) {
-      print('querySubscriptionStatus error: ${e.toString()}');
+      print('querySubscriptionPackageOption error: ${e.toString()}');
       // TODO: Error handling
       // throw e;
       rethrow;

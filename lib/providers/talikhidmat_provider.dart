@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../models/case_model.dart';
+import '../services/event_services.dart';
+
 class TalikhidmatProvider with ChangeNotifier {
   // address
   // location (lat long)
@@ -36,6 +39,20 @@ class TalikhidmatProvider with ChangeNotifier {
 
   List<Map<String, dynamic>> _attachments = [];
   List<Map<String, dynamic>> get attachments => _attachments;
+
+  // Report Cases - Talikhidmat
+
+  List<AttachmentModel> _reportedCaseAttachmentList = [];
+  List<AttachmentModel> get reportCaseAttachmentList =>
+      _reportedCaseAttachmentList;
+
+  late String _reportedCaseDetailStatus;
+  String get reportedCaseDetailStatus => _reportedCaseDetailStatus;
+
+  String? _reportedCaseId;
+
+  CaseDetailModel? _reportedCaseDetail;
+  CaseDetailModel? get reportedCaseDetail => _reportedCaseDetail;
 
   void setAddressAndLocation({
     required String address,
@@ -74,5 +91,40 @@ class TalikhidmatProvider with ChangeNotifier {
     _category = "-1";
     _message = "";
     _attachments = [];
+  }
+
+  /// Get the detail of reported case when accessing each card in Reported Cases
+  /// Using getEventById API for detail
+  /// Using attachmentGetById API for attachments
+  ///
+  /// Receives [caseId] as the reported case ID
+  Future<void> setCaseDetail(
+    String caseId,
+    String caseDetailStatus,
+  ) async {
+    _reportedCaseAttachmentList = [];
+    try {
+      _reportedCaseDetailStatus = caseDetailStatus;
+      _reportedCaseId = caseId;
+      var res = await EventServices().getEventById(caseId);
+      if (res['data'] != null) {
+        var caseDetailData = res['data'];
+        _reportedCaseDetail = CaseDetailModel.fromJson(caseDetailData);
+
+        // get the attachments
+        var response = await EventServices().attachmentGetById(caseId);
+        if (response['data'] != null) {
+          List data = response['data'];
+          _reportedCaseAttachmentList = [];
+          data.forEach((element) {
+            AttachmentModel attachment = AttachmentModel.fromJson(element);
+            _reportedCaseAttachmentList.add(attachment);
+          });
+        }
+      }
+    } catch (e) {
+      print('setCaseDetail error');
+      throw e;
+    }
   }
 }

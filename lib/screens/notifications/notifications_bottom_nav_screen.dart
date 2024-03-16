@@ -135,7 +135,7 @@ class _NotificationsBottomNavScreenState
                               title: Text(
                                 items_major[index],
                                 overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),

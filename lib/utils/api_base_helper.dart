@@ -20,6 +20,7 @@ class ApiBaseHelper {
     final storage = new FlutterSecureStorage();
     var siocToken = await storage.read(key: 'siocToken');
     var sarawakToken = await storage.read(key: 'sarawakToken');
+    print("Authorization header: $siocToken");
 
     var responseJson;
 

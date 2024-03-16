@@ -142,13 +142,13 @@ class _SubscriptionCheckoutScreenState
       switch (selectedPackage) {
         case 0:
           option = "option_1";
-          return "1-month Premium Subscripion";
+          return "1-month Premium Subscription";
         case 1:
           option = "option_2";
-          return "3-month Premium Subscripion";
+          return "3-month Premium Subscription";
         default:
           option = "option_3";
-          return "12-month Premium Subscripion";
+          return "12-month Premium Subscription";
       }
     }
 

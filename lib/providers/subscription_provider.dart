@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../services/subscription_services.dart';
 
@@ -66,5 +67,24 @@ class SubscriptionProvider with ChangeNotifier {
       print("queryAndSetIsWhitelisted: ${e.toString()}");
     }
     return false;
+  }
+
+  Future<String> querySubscriptionPackageOptionProvider() async {
+    String packageId = "";
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      String memberId = prefs.getString('userId') ?? '';
+      var response = await _subscriptionServices.querySubscriptionPackageOption(
+        subscribeId: subscribeId,
+        memberId: memberId,
+      );
+      if (response["status"] == "200") {
+        // packageId: option_1, option_2, option_3
+        packageId = response["data"][0]["option"] ?? "";
+      }
+    } catch (e) {
+      print("querySubscriptionPackageOptionProvider: ${e.toString()}");
+    }
+    return packageId;
   }
 }

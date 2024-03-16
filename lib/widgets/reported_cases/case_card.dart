@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import './case_detail_bottom_modal.dart';
 import '../../utils/app_localization.dart';
 import '../../utils/global_dialog_helper.dart';
+import '../../providers/talikhidmat_provider.dart';
 
 class CaseCard extends StatelessWidget {
   final String caseId;
@@ -22,43 +25,36 @@ class CaseCard extends StatelessWidget {
   /// Displays details of Talikhidmat case when tapping on the card
   /// Using bottom modal
   void showCaseBottomModal(BuildContext ctx) {
-    // showModalBottomSheet(
-    //   shape: RoundedRectangleBorder(
-    //     borderRadius: BorderRadius.only(
-    //       topLeft: Radius.circular(20.0),
-    //       topRight: Radius.circular(20.0),
-    //     ),
-    //   ),
-    //   context: ctx,
-    //   builder: (_) => FutureBuilder(
-    //     future: Provider.of<CaseProvider>(ctx, listen: false).setCaseDetail(
-    //       caseId,
-    //       caseStatus,
-    //     ),
-    //     builder: (_, AsyncSnapshot snapshot) {
-    //       if (snapshot.connectionState == ConnectionState.waiting) {
-    //         return Container(
-    //           child: Center(
-    //             child: CircularProgressIndicator(),
-    //           ),
-    //         );
-    //       } else {
-    //         if (snapshot.hasError) {
-    //           return Container(
-    //             child: GlobalDialogHelper().buildCenterAPIError(
-    //               ctx,
-    //               message:
-    //                   AppLocalization.of(ctx)!.translate('could_not_network')!,
-    //             ),
-    //           );
-    //         }
-    //         return CaseDetailBottomModal(
-    //           caseStatus: caseStatus,
-    //         );
-    //       }
-    //     },
-    //   ),
-    // );
+    showModalBottomSheet(
+      context: ctx,
+      builder: (_) => FutureBuilder(
+        future:
+            Provider.of<TalikhidmatProvider>(ctx, listen: false).setCaseDetail(
+          caseId,
+          caseStatus,
+        ),
+        builder: (_, AsyncSnapshot snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          } else {
+            if (snapshot.hasError) {
+              return Container(
+                child: GlobalDialogHelper().buildCenterAPIError(
+                  ctx,
+                  message:
+                      AppLocalization.of(ctx)!.translate('could_not_network')!,
+                ),
+              );
+            }
+            return CaseDetailBottomModal(
+              caseStatus: caseStatus,
+            );
+          }
+        },
+      ),
+    );
   }
 
   /// Displays details of emergency case when tapping on the card

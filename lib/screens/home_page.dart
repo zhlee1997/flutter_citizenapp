@@ -39,6 +39,7 @@ class _HomePageState extends State<HomePage> {
   // TODO: To query subscription status API (in video splash screen), if isAuth => true
   // TODO: add subscription status in provider
   bool isSubscribed = false;
+  String? vipDueDate;
 
   bool citizenShimmer = false;
   bool tourismShimmer = false;
@@ -101,11 +102,56 @@ class _HomePageState extends State<HomePage> {
   // display transaction result screen when a transaction is completed
   void jumpPayResult(Map<String, dynamic> param) {
     // for subscription, after payment
-    Navigator.of(context).pushNamed(
+    Navigator.of(context).pushNamedAndRemoveUntil(
       SubscriptionResultScreen.routeName,
+      (route) => route.isFirst,
       arguments: param,
-    );
+    ); // is used to keep only the first route (the HomeScreen));
     // TODO: screen navigation for bill payment
+  }
+
+  String returnPackageName(String packageName) {
+    switch (packageName) {
+      case "option_1":
+        return "1-month Premium Subscription";
+      case "option_2":
+        return "3-month Premium Subscription";
+      default:
+        return "12-month Premium Subscription";
+    }
+  }
+
+  Future<void> getSubscriptionPackageOption() async {
+    GlobalDialogHelper().buildCircularProgressCenter(context: context);
+    try {
+      var response =
+          await Provider.of<SubscriptionProvider>(context, listen: false)
+              .querySubscriptionPackageOptionProvider();
+      if (response.isNotEmpty) {
+        Navigator.of(context).pop();
+        showDialog(
+          context: context,
+          builder: (_) {
+            return AlertDialog(
+              title: Text("Subscription Info"),
+              content: Text(
+                  "Your current subscription package is ${returnPackageName(response)}."),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      }
+    } catch (e) {
+      Navigator.of(context).pop();
+      print("getSubscriptionPackageOption: ${e.toString()}");
+    }
   }
 
   Future<void> getCitizenAnn() async {
@@ -349,6 +395,7 @@ class _HomePageState extends State<HomePage> {
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
     isSubscribed = Provider.of<AuthProvider>(context).auth.vipStatus;
+    vipDueDate = Provider.of<AuthProvider>(context).auth.vipDueDate;
   }
 
   @override
@@ -375,67 +422,71 @@ class _HomePageState extends State<HomePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             if (isSubscribed)
-              Container(
-                margin: const EdgeInsets.only(bottom: 15.0, top: 5.0),
-                width: double.infinity,
-                height: screenSize.height * 0.125,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10.0),
-                  border: Border.all(
-                    width: 2.0,
-                    color: Colors.grey.shade300,
+              GestureDetector(
+                onTap: getSubscriptionPackageOption,
+                child: Container(
+                  margin: const EdgeInsets.only(bottom: 15.0, top: 5.0),
+                  width: double.infinity,
+                  height: screenSize.height * 0.125,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.0),
+                    border: Border.all(
+                      width: 2.0,
+                      color: Colors.grey.shade300,
+                    ),
                   ),
-                ),
-                child: Stack(
-                  children: <Widget>[
-                    SizedBox(
-                      width: double.infinity,
-                      child: Image.asset(
-                        "assets/images/pictures/premium/premium_image.png",
-                        opacity: const AlwaysStoppedAnimation(0.15),
-                        fit: BoxFit.cover,
+                  child: Stack(
+                    children: <Widget>[
+                      SizedBox(
+                        width: double.infinity,
+                        child: Image.asset(
+                          "assets/images/pictures/premium/premium_image.png",
+                          opacity: const AlwaysStoppedAnimation(0.15),
+                          fit: BoxFit.cover,
+                        ),
                       ),
-                    ),
-                    Container(
-                      alignment: Alignment.centerRight,
-                      width: double.infinity,
-                      child: Image.asset(
-                        "assets/images/pictures/premium/premium_image_bg.png",
-                        width: screenSize.width * 0.2,
-                        height: screenSize.width * 0.2,
-                        fit: BoxFit.cover,
+                      Container(
+                        alignment: Alignment.centerRight,
+                        width: double.infinity,
+                        child: Image.asset(
+                          "assets/images/pictures/premium/premium_image_bg.png",
+                          width: screenSize.width * 0.2,
+                          height: screenSize.width * 0.2,
+                          fit: BoxFit.cover,
+                        ),
                       ),
-                    ),
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          const Text(
-                            "4 days left!",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.red,
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            // TODO: calculate remaining days, and show alert text when lower than 14 days
+                            const Text(
+                              "4 days left!",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.red,
+                              ),
                             ),
-                          ),
-                          Text(
-                            "You are subscribed",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: Theme.of(context)
-                                  .textTheme
-                                  .titleLarge!
-                                  .fontSize,
+                            Text(
+                              "You are subscribed",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: Theme.of(context)
+                                    .textTheme
+                                    .titleLarge!
+                                    .fontSize,
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 3.0),
-                          Text("Premium access: 22 Feb - 21 Mac"),
-                        ],
-                      ),
-                    )
-                  ],
+                            const SizedBox(height: 3.0),
+                            Text("Due date: ${vipDueDate ?? "---"}"),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               ),
             Text(

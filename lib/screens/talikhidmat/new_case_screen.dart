@@ -47,10 +47,10 @@ class _NewCaseScreenState extends State<NewCaseScreen> {
   }
 
   Future<void> submitCase() async {
-    // API Lack of "Voice Recording" category
+    // category
     // eventLongitude, eventLatitude, eventLocation
-    // eventAudioURL
-    // eventYourself
+    // message
+    // attachments (another api, in http link)
 
     final GlobalDialogHelper globalDialogHelper = GlobalDialogHelper();
     final TalikhidmatProvider talikhidmatProvider =
@@ -69,8 +69,9 @@ class _NewCaseScreenState extends State<NewCaseScreen> {
         context: context,
         message: "Submitting",
       );
+      // Submit Case => API
       var response = await _eventServices.create(paramater);
-      if (response == "201") {
+      if (response["status"] == "200") {
         // TODO: after submit case, submit images => API
         String? eventId = response["data"];
 
@@ -90,7 +91,6 @@ class _NewCaseScreenState extends State<NewCaseScreen> {
           }
           // dismiss the dialog
           Navigator.of(context).pop();
-          // TODO: showBottomModalDialog => success
           await showModalBottomSheet(
             barrierColor: Theme.of(context).colorScheme.onInverseSurface,
             useSafeArea: true,

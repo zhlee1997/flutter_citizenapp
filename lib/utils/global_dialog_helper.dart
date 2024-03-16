@@ -142,9 +142,10 @@ class GlobalDialogHelper {
   /// Displays loading spinner dialog
   Widget showLoadingSpinner() {
     return Center(
-      child: SpinKitCubeGrid(
-        color: Colors.purple.shade300,
-        size: 50.0,
+      child: SpinKitWaveSpinner(
+        color: Colors.purple.shade700,
+        waveColor: Colors.purple.shade700,
+        size: 100.0,
       ),
     );
   }
@@ -244,13 +245,13 @@ class GlobalDialogHelper {
             height: screenHeight * 0.03,
           ),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 12.0),
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
             child: Text(
               message == null
                   ? AppLocalization.of(context)!.translate('no_data')!
                   : message,
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w500,
                 color: Colors.black54,
@@ -294,5 +295,101 @@ class GlobalDialogHelper {
         ),
       );
     }
+  }
+
+  /// Displays single image dialog
+  ///
+  /// Receives [imageUrl] as the image URL
+  Future<void> showPhotoGallery(BuildContext ctx, String imageUrl) async {
+    await showGeneralDialog(
+      context: ctx,
+      pageBuilder: (_, animation, secondaryAnimation) {
+        return SafeArea(
+          child: Builder(
+            builder: (context) {
+              return Material(
+                color: Colors.black54,
+                child: Stack(
+                  children: <Widget>[
+                    PhotoView(
+                      imageProvider: NetworkImage(imageUrl),
+                      loadingBuilder: (context, progress) => const Center(
+                        child: SizedBox(
+                          width: 30.0,
+                          height: 30.0,
+                          child: CircularProgressIndicator(),
+                        ),
+                      ),
+                      initialScale: PhotoViewComputedScale.contained,
+                      minScale: PhotoViewComputedScale.contained,
+                      maxScale: PhotoViewComputedScale.covered * 1.8,
+                    ),
+                    Positioned(
+                      top: 10,
+                      right: 10,
+                      child: IconButton(
+                        iconSize: 35.0,
+                        splashRadius: 20.0,
+                        splashColor: Colors.white,
+                        icon: const Icon(
+                          Icons.cancel,
+                          color: Colors.white,
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    )
+                  ],
+                ),
+              );
+            },
+          ),
+        );
+      },
+      barrierDismissible: true,
+      barrierLabel: MaterialLocalizations.of(ctx).modalBarrierDismissLabel,
+      transitionDuration: const Duration(
+        milliseconds: 300,
+      ),
+    );
+  }
+
+  /// Displays svg image when API Error
+  ///
+  /// Receives [message] as the dialog message
+  Widget buildCenterAPIError(
+    BuildContext context, {
+    String? message,
+  }) {
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(
+            height: 250,
+            width: 250,
+            child: SvgPicture.asset("assets/images/undraw_denied.svg"),
+          ),
+          SizedBox(
+            height: screenHeight * 0.03,
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
+            child: Text(
+              message == null ? 'Error happens' : message,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+                color: Colors.black54,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

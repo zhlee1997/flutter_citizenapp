@@ -12,9 +12,7 @@ class EventServices {
   Future<dynamic> create(Map parameter) async {
     try {
       var response = await _apiBaseHelper.post(
-        // TODO: temp for json server
-        // "/eventManual/createBySelective",
-        "/emergency",
+        "/eventManual/createBySelective",
         data: json.encode(parameter),
       );
       print('createCase success: $response');
@@ -51,12 +49,54 @@ class EventServices {
     Map<String, dynamic> parameter,
   ) async {
     try {
-      var response = await _apiBaseHelper.get("/eventManual/queryPageList",
-          queryParameters: parameter, requireToken: true);
+      var response = await _apiBaseHelper.get(
+        "/eventManual/queryPageList",
+        queryParameters: parameter,
+        requireToken: true,
+      );
       print('queryPageList success: $response');
       return response;
     } catch (e) {
       print('queryPageList fail: ${e.toString()}');
+      throw e;
+    }
+  }
+
+  /// Get details of a reported case
+  ///
+  /// Receives [id] as the case ID
+  /// Returns API response object
+  Future<dynamic> getEventById(String id) async {
+    try {
+      var response = await _apiBaseHelper.get(
+        "/eventManual/getById/$id",
+        requireToken: true,
+      );
+      print('getEventById success: $response');
+      return response;
+    } catch (e) {
+      print('getEventById fail: ${e.toString()}');
+      throw e;
+    }
+  }
+
+  /// Get attachments of reported cases
+  ///
+  /// Receives [id] as the case ID
+  /// Returns API response object
+  Future<dynamic> attachmentGetById(String id) async {
+    try {
+      var response = await _apiBaseHelper.get(
+        "/eventManualAttachment/queryList",
+        queryParameters: {
+          'eventId': id,
+        },
+        requireToken: true,
+      );
+      print('attachmentGetById success: $response');
+      return response;
+    } catch (e) {
+      print('attachmentGetById fail: ${e.toString()}');
       throw e;
     }
   }

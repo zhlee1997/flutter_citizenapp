@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 
@@ -22,23 +23,18 @@ class UploadServices {
   ) async {
     try {
       if (file != null) {
-        // FormData formData = new FormData.fromMap({
-        //   "file": MultipartFile.fromBytes(
-        //     file,
-        //     filename: fileName,
-        //     contentType: MediaType('image', type),
-        //   )
-        // });
-        var request = http.MultipartRequest(
-            'POST', Uri.parse('https://example.com/upload'));
-        request.files.add(http.MultipartFile.fromBytes(
-          "file",
-          file,
-          filename: fileName,
-          contentType: MediaType('image', type),
-        ));
+        FormData formData = FormData.fromMap({
+          "file": MultipartFile.fromBytes(
+            file,
+            filename: fileName,
+            contentType: MediaType('image', type),
+          )
+        });
 
-        var response = await request.send();
+        var response = await _apiBaseHelper.post(
+          "/file/uploadFile",
+          data: formData,
+        );
         print(response.statusCode);
         return response;
       }

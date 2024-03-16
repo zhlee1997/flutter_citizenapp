@@ -12,6 +12,7 @@ import '../../services/auth_services.dart';
 import '../../providers/auth_provider.dart';
 import '../../utils/app_localization.dart';
 import '../../utils/global_dialog_helper.dart';
+import '../../providers/subscription_provider.dart';
 
 class ProfileDetailsScreen extends StatefulWidget {
   static const String routeName = 'profile-details-screen';
@@ -47,10 +48,55 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
     launchUrl(_uri);
   }
 
+  // TODO: refresh profile
   Future<void> _refreshProfile() async {}
 
   String formatDate(DateTime date) {
     return DateFormat('MMM d, yyyy').format(date);
+  }
+
+  String returnPackageName(String packageName) {
+    switch (packageName) {
+      case "option_1":
+        return "1-month Premium Subscription";
+      case "option_2":
+        return "3-month Premium Subscription";
+      default:
+        return "12-month Premium Subscription";
+    }
+  }
+
+  Future<void> getSubscriptionPackageOption() async {
+    GlobalDialogHelper().buildCircularProgressCenter(context: context);
+    try {
+      var response =
+          await Provider.of<SubscriptionProvider>(context, listen: false)
+              .querySubscriptionPackageOptionProvider();
+      if (response.isNotEmpty) {
+        Navigator.of(context).pop();
+        showDialog(
+          context: context,
+          builder: (_) {
+            return AlertDialog(
+              title: Text("Subscription Info"),
+              content: Text(
+                  "Your current subscription package is ${returnPackageName(response)}."),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      }
+    } catch (e) {
+      Navigator.of(context).pop();
+      print("getSubscriptionPackageOption: ${e.toString()}");
+    }
   }
 
   @override
@@ -171,31 +217,35 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                             height: 10,
                           ),
                           _isSubscribe
-                              ? Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 6,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.yellow[300],
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                  child: const Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(
-                                        Icons.star,
-                                        color: Colors.black,
-                                      ),
-                                      SizedBox(width: 4),
-                                      Text(
-                                        'Premium',
-                                        style: TextStyle(
+                              ? GestureDetector(
+                                  onTap: getSubscriptionPackageOption,
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 6,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.yellow[300],
+                                      borderRadius: BorderRadius.circular(16),
+                                      border: Border.all(width: 0.5),
+                                    ),
+                                    child: const Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          Icons.star,
                                           color: Colors.black,
-                                          fontWeight: FontWeight.bold,
                                         ),
-                                      ),
-                                    ],
+                                        SizedBox(width: 4),
+                                        Text(
+                                          'Premium',
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 )
                               : ActionChip(
@@ -207,7 +257,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                     color: Theme.of(context).primaryColor,
                                   ),
                                   label: Text(
-                                    "Subscribe",
+                                    "Subcribe Premium",
                                     style: TextStyle(
                                       color: Theme.of(context).primaryColor,
                                     ),
@@ -242,7 +292,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                     borderRadius: BorderRadius.circular(10.0),
                   ),
                   title: const Text(
-                    "Subscription Period:",
+                    "Subscription Due Date:",
                   ),
                   subtitle: Container(
                     margin: EdgeInsets.only(

@@ -115,7 +115,7 @@ class SubscriptionChooseScreen extends StatelessWidget {
               ),
             ),
             SizedBox(
-              height: screenSize.height * 0.04,
+              height: screenSize.height * 0.03,
             ),
             GestureDetector(
               onTap: () {
@@ -157,18 +157,18 @@ class SubscriptionChooseScreen extends StatelessWidget {
                               ),
                             ),
                             Container(
-                              margin: EdgeInsets.only(
+                              margin: const EdgeInsets.only(
                                 top: 10.0,
                                 bottom: 25.0,
                               ),
-                              child: Text(
+                              child: const Text(
                                 "Access the service using list view",
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ),
-                            Row(
+                            const Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: <Widget>[
                                 Text("Take me there"),

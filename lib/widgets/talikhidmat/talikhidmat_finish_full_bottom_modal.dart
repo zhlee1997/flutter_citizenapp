@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_citizenapp/screens/reported_cases/talikhidmat_cases_screen.dart';
 import 'package:lottie/lottie.dart';
 
 class TalikhidmatFinishFullBottomModal extends StatelessWidget {
@@ -24,20 +25,23 @@ class TalikhidmatFinishFullBottomModal extends StatelessWidget {
               repeat: false,
             ),
             const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Text(
-                  "Your Talikhidmat feedback is submitted successfully.",
-                  textAlign: TextAlign.center,
-                )),
-            const Text("The SIOC Team will process your feedback soon."),
+              padding: EdgeInsets.all(8.0),
+              child: Text(
+                "Your Talikhidmat feedback is submitted successfully.\nThe SIOC Team will process your feedback soon.",
+                textAlign: TextAlign.center,
+              ),
+            ),
             SizedBox(
-              height: screenSize.height * 0.1,
+              height: screenSize.height * 0.075,
             ),
             ElevatedButton(
               onPressed: () {
-                // TODO: Navigate to Reported Cases - Talikhidmat List Screen
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  TalikhidmatCasesScreen.routeName,
+                  (route) => route.isFirst,
+                );
               },
-              child: const Text("View details"),
+              child: const Text("View reported cases"),
             ),
             // Navigate to homepage
             TextButton(

@@ -68,7 +68,7 @@ class SubscriptionResultScreen extends StatelessWidget {
               children: <Widget>[
                 Text("Payment Item"),
                 Text(
-                  "1-month Subscripion",
+                  "1-month Subscription",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                   ),

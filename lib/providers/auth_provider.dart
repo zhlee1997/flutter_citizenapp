@@ -190,9 +190,6 @@ class AuthProvider with ChangeNotifier {
       String memberId = prefs.getString('userId') ?? '';
       var response = await _authServices.queryUserInfo(memberId);
       if (response['status'] == '200') {
-        prefs.setBool("vipStatus", response['data']['vipStatus'] == "1");
-        prefs.setString("vipDueDate", response['data']['vipDueDate'] ?? '');
-
         _auth = AuthModel(
           address: prefs.getString('userResAddr1') ?? '',
           mobile: prefs.getString('userMobileNo') ?? '',
@@ -203,6 +200,8 @@ class AuthProvider with ChangeNotifier {
           vipStatus: response['data']['vipStatus'] == "1",
           vipDueDate: response['data']['vipDueDate'] ?? '',
         );
+        prefs.setBool("vipStatus", response['data']['vipStatus'] == "1");
+        prefs.setString("vipDueDate", response['data']['vipDueDate'] ?? '');
         notifyListeners();
         return true;
       }
