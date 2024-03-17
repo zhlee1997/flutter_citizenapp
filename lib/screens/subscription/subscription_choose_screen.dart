@@ -20,7 +20,7 @@ class SubscriptionChooseScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Choose Method"),
+        title: const Text("Choose Services"),
       ),
       body: Container(
         width: double.infinity,

@@ -17,8 +17,6 @@ class TalikhidmatCasesScreen extends StatefulWidget {
 }
 
 class _TalikhidmatCasesScreenState extends State<TalikhidmatCasesScreen> {
-  int _filterType = 0;
-
   int _page = 1;
   int _PendingPage = 1;
   int _ResolvedPage = 1;

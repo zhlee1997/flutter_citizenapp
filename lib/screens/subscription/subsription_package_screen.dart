@@ -94,10 +94,11 @@ class _SubscriptionPackageScreenState extends State<SubscriptionPackageScreen> {
               horizontal: screenSize.width * 0.05,
               vertical: screenSize.width * 0.02,
             ),
-            child: const Text(
+            child: Text(
               "Get Premium access to all features, including the live city view in Kuching",
               style: TextStyle(
-                fontSize: 20.0,
+                // fontSize: 20.0,
+                fontSize: screenSize.width * 0.045,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -107,10 +108,11 @@ class _SubscriptionPackageScreenState extends State<SubscriptionPackageScreen> {
               left: screenSize.width * 0.05,
               right: screenSize.width * 0.05,
             ),
-            child: const Text(
+            child: Text(
               "This subscription grant you special access to the in-depth experience of the Kuching city in your mobile. All the benefits of the Premium access are listed below:",
               style: TextStyle(
-                fontSize: 16.0,
+                fontSize: screenSize.width * 0.04,
+                // fontSize: 16.0,
                 height: 1.5,
               ),
             ),

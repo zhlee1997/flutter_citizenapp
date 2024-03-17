@@ -9,6 +9,7 @@ import '../../providers/language_provider.dart';
 import '../../providers/transaction_provider.dart';
 import '../../utils/app_localization.dart';
 import '../../utils/global_dialog_helper.dart';
+import '../../widgets/transaction/transaction_detail_bottom_modal.dart';
 
 class TransactionHistoryScreen extends StatefulWidget {
   static const String routeName = "transaction-history-screen";
@@ -29,6 +30,23 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
 
   // Define the date format
   DateFormat dateFormat = DateFormat('dd MMM yyyy HH:mm:ss');
+
+  Future<void> handleTransactionDetailBottomModal({
+    required String orderNo,
+    required String taxCode,
+    required String type,
+    required String date,
+  }) async {
+    await showModalBottomSheet(
+      context: context,
+      builder: (_) => TransactionDetailBottomModal(
+        orderNo: orderNo,
+        taxCode: taxCode,
+        type: type,
+        date: date,
+      ),
+    );
+  }
 
   /// Get the monthly transaction list when screen first renders
   /// Or when changing to different months
@@ -156,9 +174,13 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
             itemCount: transactionProvider.list.length,
             itemBuilder: (((_, index) {
               return ListTile(
-                onTap: () {
-                  // TODO: open bottom modal to show transaction details
-                },
+                onTap: () => handleTransactionDetailBottomModal(
+                  orderNo: transactionProvider.list[index]['orderNo'],
+                  taxCode: transactionProvider.list[index]['taxCode'],
+                  type: "2",
+                  date: dateFormat.format(DateTime.parse(
+                      transactionProvider.list[index]['createTime'])),
+                ),
                 title: Text(
                   transactionProvider.list[index]['description'],
                   style: Theme.of(context).textTheme.titleMedium,

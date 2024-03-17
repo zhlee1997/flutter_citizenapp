@@ -172,7 +172,8 @@ class _SubscriptionCheckoutScreenState
                   child: Text(
                     "Kindly check and verify the information below before proceed with payment",
                     style: TextStyle(
-                      fontSize: 15.0,
+                      // fontSize: 15.0,
+                      fontSize: screenSize.width * 0.03,
                       color: Colors.grey[600],
                     ),
                   ),
@@ -330,13 +331,7 @@ class _SubscriptionCheckoutScreenState
                           message: AppLocalization.of(context)!
                               .translate('payment_in_progress')!,
                         );
-                        // TODO: skip this for demo, navigate to Result screen
                         orderRequest(context, args.selectedPrice);
-                        // TODO: temp navigation
-                        // Navigator.of(context).pushNamedAndRemoveUntil(
-                        //   SubscriptionResultScreen.routeName,
-                        //   (route) => route.isFirst,
-                        // ); // is used to keep only the first route (the HomeScreen));
                       } else {
                         Navigator.of(context).pop();
                         Fluttertoast.showToast(

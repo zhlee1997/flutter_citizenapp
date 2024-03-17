@@ -33,20 +33,20 @@ class SubscriptionBenefitCard extends StatelessWidget {
                 ),
                 child: Row(
                   children: <Widget>[
-                    Container(
-                      child: Icon(
-                        Icons.check_circle,
-                        size: 25.0,
-                        color: Colors.green,
-                      ),
+                    Icon(
+                      Icons.check_circle,
+                      // size: 25.0,
+                      size: screenSize.width * 0.05,
+                      color: Colors.green,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 10,
                     ),
                     Text(
-                      '$e',
+                      e,
                       style: TextStyle(
-                        fontSize: 17,
+                        // fontSize: 17,
+                        fontSize: screenSize.width * 0.04,
                         color: Colors.black,
                         fontWeight: FontWeight.w500,
                       ),
