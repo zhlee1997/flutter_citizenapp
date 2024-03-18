@@ -23,7 +23,7 @@ class AnnouncementDetailScreen extends StatefulWidget {
 
 class _AnnouncementDetailScreenState extends State<AnnouncementDetailScreen> {
   AnnouncementModel? _announcement;
-  late String? iconPath;
+  String? iconPath;
   late var arguments;
 
   List<String> photoCarousel = [];
@@ -128,9 +128,10 @@ class _AnnouncementDetailScreenState extends State<AnnouncementDetailScreen> {
       ),
       body: SingleChildScrollView(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            if (photoCarousel.length > 0)
-              Container(
+            if (photoCarousel.isNotEmpty)
+              SizedBox(
                   height: screenSize.height * 0.3,
                   child: Stack(
                     children: <Widget>[
@@ -163,16 +164,13 @@ class _AnnouncementDetailScreenState extends State<AnnouncementDetailScreen> {
             Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(
-                horizontal: 15.0,
+                horizontal: 20.0,
                 vertical: 10.0,
               ),
               child: Text(
                 getAnnouncementTitle(),
                 textAlign: TextAlign.left,
-                style: TextStyle(
-                  fontSize: 25,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: Theme.of(context).textTheme.headlineSmall,
               ),
             ),
             arguments['isMajor']
@@ -190,8 +188,8 @@ class _AnnouncementDetailScreenState extends State<AnnouncementDetailScreen> {
                                 shape: BoxShape.circle,
                                 border: Border.all(width: 0.5),
                               ),
-                              child: Icon(
-                                Icons.person,
+                              child: const Icon(
+                                Icons.person_outline_rounded,
                                 color: Colors.black54,
                                 size: 25,
                               ),
@@ -214,9 +212,7 @@ class _AnnouncementDetailScreenState extends State<AnnouncementDetailScreen> {
                             ),
                       title: Text(
                         _announcement!.annAuthor,
-                        style: TextStyle(
-                          fontSize: 18.0,
-                        ),
+                        style: Theme.of(context).textTheme.bodyMedium,
                       ),
                       subtitle: Container(
                         margin: const EdgeInsets.only(top: 5.0),
@@ -226,7 +222,10 @@ class _AnnouncementDetailScreenState extends State<AnnouncementDetailScreen> {
                             Text(
                               _announcement!.annStartDate,
                               style: TextStyle(
-                                fontSize: 18.0,
+                                fontSize: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium!
+                                    .fontSize,
                                 color: Colors.black54,
                               ),
                             ),
@@ -237,8 +236,8 @@ class _AnnouncementDetailScreenState extends State<AnnouncementDetailScreen> {
                   ),
             Container(
               padding: const EdgeInsets.symmetric(
-                horizontal: 30.0,
-                vertical: 15.0,
+                horizontal: 20.0,
+                vertical: 10.0,
               ),
               child: Linkify(
                 onOpen: (link) async {
@@ -246,14 +245,14 @@ class _AnnouncementDetailScreenState extends State<AnnouncementDetailScreen> {
                   await launchUrl(uri);
                 },
                 text: getAnnouncementContent(),
-                textAlign: TextAlign.justify,
+                // textAlign: TextAlign.justify,
                 style: TextStyle(
                   fontSize: 18.0,
                   height: 1.7,
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 50,
             )
           ],

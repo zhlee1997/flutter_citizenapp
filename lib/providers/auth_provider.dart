@@ -131,6 +131,25 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
+  /// Refresh new token when app is opened.
+  /// Using refreshToken API.
+  Future<void> refreshTokenProvider() async {
+    final prefs = await SharedPreferences.getInstance();
+    final storage = new FlutterSecureStorage();
+
+    String? siocToken = await storage.read(key: 'siocToken');
+    String? sarawakToken = await storage.read(key: 'sarawakToken');
+
+    var response = await _authServices.refreshToken(
+      sarawakToken: sarawakToken,
+      siocToken: siocToken,
+    );
+    if (response['status'] == '200') {
+      prefs.setInt(
+          "expire", response['data']['expire'] * 1000 + currentMilliSec);
+    }
+  }
+
   Future<bool> queryLoginUserInfo(String userId, bool isSubscribed) async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -245,8 +264,7 @@ class AuthProvider with ChangeNotifier {
       } else {
         // TODO: Setup refreshToken API
         // If within valid refresh period, then refresh token (everytime open app)
-        print("refreshToken");
-        // refreshToken();
+        refreshTokenProvider();
         isTokenOk = true;
         bool subscriptionOverdueStatus = await checkSubscribeOverdue();
 

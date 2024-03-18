@@ -53,16 +53,17 @@ class _SubscriptionPackageScreenState extends State<SubscriptionPackageScreen> {
       var response =
           await _subscriptionServices.queryPackageAndSubscriptionEnable();
       if (response["status"] == "200") {
+        List subscribeList = response["data"] as List;
+        List filteredList = subscribeList
+            .where((element) => element["subscribeCode"] == "Default")
+            .toList();
         setState(() {
-          oneMonthPrice = response["data"][0]["option_1"];
-          threeMonthPrice = response["data"][0]["option_2"];
-          twelveMonthPrice = response["data"][0]["option_3"];
+          oneMonthPrice = filteredList[0]["option_1"];
+          threeMonthPrice = filteredList[0]["option_2"];
+          twelveMonthPrice = filteredList[0]["option_3"];
           // First render set price
           selectedPrice = oneMonthPrice;
         });
-        // print(response["data"][0]["option_1"]);
-        // print(response["data"][0]["option_2"]);
-        // print(response["data"][0]["option_3"]);
       }
     } catch (e) {
       print("getPackagePrice fail: ${e.toString()}");

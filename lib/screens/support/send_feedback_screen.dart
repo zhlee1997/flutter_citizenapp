@@ -99,6 +99,7 @@ class _SendFeedbackScreenState extends State<SendFeedbackScreen> {
     final screenSize = MediaQuery.of(context).size;
 
     showDialog(
+        barrierDismissible: false,
         context: context,
         builder: (_) {
           return Dialog(

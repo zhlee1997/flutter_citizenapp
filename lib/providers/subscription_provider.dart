@@ -32,8 +32,12 @@ class SubscriptionProvider with ChangeNotifier {
       var response =
           await _subscriptionServices.queryPackageAndSubscriptionEnable();
       if (response['status'] == '200') {
-        _subscribeId = response["data"][0]["subscribeId"];
-        if (response["data"][0]["subscriptionEnable"] == "0") {
+        List subscribeList = response["data"] as List;
+        List filteredList = subscribeList
+            .where((element) => element["subscribeCode"] == "Default")
+            .toList();
+        _subscribeId = filteredList[0]["subscribeId"];
+        if (filteredList[0]["subscriptionEnable"] == "0") {
           _isSubscriptionEnabled = false;
         } else {
           _isSubscriptionEnabled = true;
@@ -80,7 +84,11 @@ class SubscriptionProvider with ChangeNotifier {
       );
       if (response["status"] == "200") {
         // packageId: option_1, option_2, option_3
-        packageId = response["data"][0]["option"] ?? "";
+        List subscribeList = response["data"] as List;
+        List filteredList = subscribeList
+            .where((element) => element["subscribeCode"] == "Default")
+            .toList();
+        packageId = filteredList[0]["option"] ?? "";
       }
     } catch (e) {
       print("querySubscriptionPackageOptionProvider: ${e.toString()}");

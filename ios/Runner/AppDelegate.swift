@@ -1,5 +1,6 @@
 import UIKit
 import Flutter
+import GoogleMaps
 
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate {
@@ -24,7 +25,7 @@ import Flutter
 
     FlutterJlBluetoothPlugin.plugin.register(messenger: controller.binaryMessenger)
 
-
+    GMSServices.provideAPIKey("AIzaSyCa6Dcq2d37Loi05SOL4l_FPud_GNqnkP8")
     GeneratedPluginRegistrant.register(with: self)
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }

@@ -117,7 +117,10 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       appBar: _handleAppBar(),
-      body: _screens[_currentPageIndex],
+      body: IndexedStack(
+        index: _currentPageIndex,
+        children: _screens,
+      ),
     );
   }
 

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -21,12 +22,15 @@ import '../screens/subscription/subscription_choose_screen.dart';
 import '../screens/subscription/subscription_result_screen.dart';
 import '../screens/traffic/traffic_images_list_screen.dart';
 
+import '../providers/announcement_provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/subscription_provider.dart';
 import '../services/announcement_services.dart';
 import '../services/subscription_services.dart';
 import "../models/announcement_model.dart";
+import '../models/major_announcement_model.dart';
 import "../utils/global_dialog_helper.dart";
+import '../utils/major_dialog_helper.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -157,8 +161,6 @@ class _HomePageState extends State<HomePage> {
   Future<void> getCitizenAnn() async {
     setState(() {
       citizenShimmer = true;
-      // TODO: to remove
-      citizenAnnouncements = [];
     });
     var response = await _announcementServices.queryPageList(
       '1',
@@ -183,12 +185,10 @@ class _HomePageState extends State<HomePage> {
   Future<void> getTourismAnn() async {
     setState(() {
       tourismShimmer = true;
-      // TODO: to remove
-      tourismAnnouncements = [];
     });
     var response = await _announcementServices.queryPageList(
       '1',
-      pageSize: '3',
+      pageSize: '4',
       annType: '2',
     );
 
@@ -198,17 +198,18 @@ class _HomePageState extends State<HomePage> {
         // Check if the widget is still mounted
         setState(() {
           tourismShimmer = false;
-          var list = data.map((e) => AnnouncementModel.fromJson(e)).toList();
-          for (var element in list) {
-            if (element.attachmentDtoList.isNotEmpty) {
-              for (var dto in element.attachmentDtoList) {
-                if (dto.attFileType == '2') {
-                  tourismAnnouncements.add(element);
-                  break;
-                }
-              }
-            }
-          }
+          tourismAnnouncements =
+              data.map((e) => AnnouncementModel.fromJson(e)).toList();
+          // for (var element in list) {
+          //   if (element.attachmentDtoList.isNotEmpty) {
+          //     for (var dto in element.attachmentDtoList) {
+          //       if (dto.attFileType == '2') {
+          //         tourismAnnouncements.add(element);
+          //         break;
+          //       }
+          //     }
+          //   }
+          // }
         });
       }
     }
@@ -376,15 +377,69 @@ class _HomePageState extends State<HomePage> {
   void _handleNavigateToTourismNews(BuildContext context) =>
       Navigator.of(context).pushNamed(TourismNewsScreen.routeName);
 
+  // display major announcement popup
+  Future<void> getMajorAnn() async {
+    if (mounted) {
+      List<MajorAnnouncementModel> majorAnnList =
+          Provider.of<AnnouncementProvider>(context, listen: false)
+              .majorAnnouncementList;
+      if (majorAnnList.isNotEmpty) {
+        await showDialog(
+          context: context,
+          builder: (_) {
+            return BackdropFilter(
+              filter: ImageFilter.blur(
+                sigmaX: 10.0,
+                sigmaY: 10.0,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Dialog(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        MajorDialogHelper(
+                          majorAnnouncementList: majorAnnList,
+                        ),
+                      ],
+                    ),
+                  ),
+                  Material(
+                    shape: const CircleBorder(),
+                    color: Theme.of(context).colorScheme.secondary,
+                    child: IconButton(
+                      splashRadius: 25.0,
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      icon: const Icon(
+                        Icons.close,
+                        size: 28,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      }
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timestamp) async {
+      getMajorAnn();
+    });
     _paymentStreamSubscription = eventChannel.receiveBroadcastStream().listen(
           _onData,
           onError: _onError,
         );
-
     getCitizenAnn();
     getTourismAnn();
     numberOfRequestLeft = 2;
@@ -611,8 +666,7 @@ class _HomePageState extends State<HomePage> {
                     builder: (BuildContext ctx,
                         SubscriptionProvider subscriptionProvider, child) {
                       return GestureDetector(
-                        // TODO: temp
-                        onTap: () => !subscriptionProvider.isSubscriptionEnabled
+                        onTap: () => subscriptionProvider.isSubscriptionEnabled
                             ? _handleNavigateToSubscription(context)
                             : _handleNavigateToTrafficImages(context),
                         child: Card(
@@ -628,8 +682,7 @@ class _HomePageState extends State<HomePage> {
                                       MainAxisAlignment.spaceEvenly,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: <Widget>[
-                                    // TODO: temp
-                                    !subscriptionProvider.isSubscriptionEnabled
+                                    subscriptionProvider.isSubscriptionEnabled
                                         ? Icon(
                                             Icons.subscriptions,
                                             color: Theme.of(context)
@@ -645,9 +698,7 @@ class _HomePageState extends State<HomePage> {
                                             size: 30.0,
                                           ),
                                     Text(
-                                      // TODO: temp
-                                      !subscriptionProvider
-                                              .isSubscriptionEnabled
+                                      subscriptionProvider.isSubscriptionEnabled
                                           ? "Subscription"
                                           : "Traffic images",
                                       style: const TextStyle(
@@ -664,8 +715,7 @@ class _HomePageState extends State<HomePage> {
                                     left: 10.0,
                                   ),
                                   child: Text(
-                                    // TODO: temp
-                                    !subscriptionProvider.isSubscriptionEnabled
+                                    subscriptionProvider.isSubscriptionEnabled
                                         ? "Premium member"
                                         : "Live road images",
                                     style: TextStyle(

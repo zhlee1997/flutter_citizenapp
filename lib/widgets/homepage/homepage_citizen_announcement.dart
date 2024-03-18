@@ -41,7 +41,7 @@ class HomepageCitizenAnnouncement extends StatelessWidget {
 
     if (citizenAnnouncements.isEmpty) {
       return Container(
-        margin: EdgeInsets.symmetric(
+        margin: const EdgeInsets.symmetric(
           vertical: 10.0,
         ),
         child: Center(
@@ -53,10 +53,10 @@ class HomepageCitizenAnnouncement extends StatelessWidget {
                 height: screenSize.width * 0.25,
                 semanticsLabel: 'No Data Logo',
               ),
-              SizedBox(
+              const SizedBox(
                 height: 10.0,
               ),
-              Text("No announcement"),
+              const Text("No announcement"),
             ],
           ),
         ),
