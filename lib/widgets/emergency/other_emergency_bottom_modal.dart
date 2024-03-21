@@ -101,11 +101,11 @@ class OtherEmergencyBottomModal extends StatelessWidget {
                       }
                       Provider.of<EmergencyProvider>(context, listen: false)
                           .setOtherText(textEditingController.text);
-                      // others category => 6
+                      // others category => 5
                       // Emergency provider => yourself: true
                       Provider.of<EmergencyProvider>(context, listen: false)
                           .setCategoryAndYourself(
-                        category: 6,
+                        category: 5,
                         yourself: true,
                       );
                       handleProceedNext();
@@ -136,11 +136,11 @@ class OtherEmergencyBottomModal extends StatelessWidget {
                       }
                       Provider.of<EmergencyProvider>(context, listen: false)
                           .setOtherText(textEditingController.text);
-                      // others category => 6
+                      // others category => 5
                       // Emergency provider => yourself: false
                       Provider.of<EmergencyProvider>(context, listen: false)
                           .setCategoryAndYourself(
-                        category: 6,
+                        category: 5,
                         yourself: false,
                       );
                       handleProceedNext();

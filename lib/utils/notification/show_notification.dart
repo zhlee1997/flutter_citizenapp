@@ -9,7 +9,7 @@ class ShowNotification {
   ShowNotification({this.flutterLocalNotificationsPlugin});
 
   AndroidNotificationDetails androidPlatformChannelSpecifics =
-      AndroidNotificationDetails(
+      const AndroidNotificationDetails(
     'your channel id',
     'your channel name',
     channelDescription: 'your channel description',
@@ -21,7 +21,7 @@ class ShowNotification {
   );
 
   DarwinNotificationDetails iOSPlatformChannelSpecifics =
-      DarwinNotificationDetails();
+      const DarwinNotificationDetails();
 
   /// Displays local notification when receives push notification
   ///
@@ -40,8 +40,8 @@ class ShowNotification {
 
     await flutterLocalNotificationsPlugin!.show(
       Random().nextInt(100),
-      '$title',
-      '$body',
+      title,
+      body,
       platformChannelSpecifics,
       payload: messageId.toString(),
     );

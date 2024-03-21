@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../widgets/bill_payment/bill_payment_result_widget.dart';
+import '../transaction/transaction_history_screen.dart';
 
 class BillPaymentResultScreen extends StatelessWidget {
   static const String routeName = "bill-payment-result-screen";
@@ -13,7 +14,7 @@ class BillPaymentResultScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Receipt"),
+        title: Text("Bill Receipt"),
         automaticallyImplyLeading: false,
         centerTitle: true,
       ),
@@ -129,10 +130,10 @@ class BillPaymentResultScreen extends StatelessWidget {
               width: screenSize.width * 0.7,
               child: OutlinedButton(
                 onPressed: () {
-                  // Navigator.of(context).pushNamedAndRemoveUntil(
-                  //   SubscriptionChooseScreen.routeName,
-                  //   (route) => route.isFirst,
-                  // );
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    TransactionHistoryScreen.routeName,
+                    (route) => route.isFirst,
+                  );
                 },
                 style: ButtonStyle(
                   side: MaterialStateProperty.all(
@@ -141,7 +142,7 @@ class BillPaymentResultScreen extends StatelessWidget {
                     ),
                   ), // Set border color
                 ),
-                child: Text(
+                child: const Text(
                   "View transactions",
                   style: TextStyle(
                     fontSize: 18,

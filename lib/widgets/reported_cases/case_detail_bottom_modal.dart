@@ -7,6 +7,8 @@ import './case_detail_bottom_bar.dart';
 import './case_detail_attachments.dart';
 import '../../providers/talikhidmat_provider.dart';
 import '../../utils/app_localization.dart';
+import './talikhidmat_attachment_full_bottom_modal.dart';
+import '../../models/case_model.dart';
 
 class CaseDetailBottomModal extends StatefulWidget {
   final String caseStatus;
@@ -38,6 +40,25 @@ class _CaseDetailBottomModalState extends State<CaseDetailBottomModal> {
         status = '';
     }
     return status;
+  }
+
+  Future<void> handleTalikhidmatFullBottomModal(
+    int numberOfAttachment,
+    List<AttachmentModel> attachmentUrls,
+  ) async {
+    await showModalBottomSheet(
+      barrierColor: Theme.of(context).colorScheme.onInverseSurface,
+      useSafeArea: true,
+      enableDrag: false,
+      isScrollControlled: true,
+      context: context,
+      builder: (BuildContext context) {
+        return TalikhidmatAttachmentFullBottomModal(
+          numberOfAttachment: numberOfAttachment,
+          attachmentURLs: attachmentUrls,
+        );
+      },
+    );
   }
 
   @override
@@ -126,9 +147,28 @@ class _CaseDetailBottomModalState extends State<CaseDetailBottomModal> {
                     label: AppLocalization.of(context)!.translate('request_d')!,
                     value: caseData.reportedCaseDetail!.eventDesc ?? "",
                   ),
-                  CaseDetailAttachments(
-                    imageList: caseData.reportCaseAttachmentList,
+                  const SizedBox(
+                    height: 15.0,
                   ),
+                  // TODO: temp condition
+                  // TODO: Talikhidmat -> show attachement
+                  if (caseData.reportCaseAttachmentList.isNotEmpty)
+                    OutlinedButton.icon(
+                      onPressed: () => handleTalikhidmatFullBottomModal(
+                        caseData.reportCaseAttachmentList.length,
+                        caseData.reportCaseAttachmentList,
+                      ),
+                      icon: const Icon(Icons.file_present_outlined),
+                      label: Text("Attachment File"),
+                      style: OutlinedButton.styleFrom(
+                        side: BorderSide(
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                    ),
+                  // CaseDetailAttachments(
+                  //   imageList: caseData.reportCaseAttachmentList,
+                  // ),
                   const SizedBox(
                     height: 50,
                   )

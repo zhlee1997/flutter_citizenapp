@@ -1,4 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
 import 'package:dotted_border/dotted_border.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:slide_to_act/slide_to_act.dart';
@@ -8,6 +12,7 @@ import '../../arguments/bill_payment_checkout_screen_arguments.dart';
 import '../../utils/app_localization.dart';
 import '../../utils/global_dialog_helper.dart';
 import '../../utils/general_helper.dart';
+import '../../services/bill_services.dart';
 
 class BillPaymentCheckoutScreen extends StatefulWidget {
   static const String routeName = 'bill-payment-checkout-screen';
@@ -21,11 +26,114 @@ class BillPaymentCheckoutScreen extends StatefulWidget {
 
 class _BillPaymentCheckoutScreenState extends State<BillPaymentCheckoutScreen> {
   bool isChecked = false;
+  final Map data = {};
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
+  final BillServices _billServices = BillServices();
+
+  static const platform = MethodChannel('com.sma.citizen_mobile/main');
+
+  /// Create and confirm order when paying through S Pay Global
+  /// To get encrypted data from SIOC Backend
+  /// Using createOrder and confirmOrder API
+  Future<void> orderRequest(
+    BuildContext context,
+    BillPaymentCheckoutScreenArguments billPaymentCheckoutScreenArguments,
+  ) async {
+    try {
+      if (billPaymentCheckoutScreenArguments.stateName == "4" ||
+          billPaymentCheckoutScreenArguments.stateName == "5") {
+        data['goodsName'] = "Utilities";
+        // 3. 水电费
+        data['goodsType'] = "3";
+        // WE001. 水电 (Water&Elec)
+        data['goodsCode'] = "WE001";
+      }
+      data["stateName"] = billPaymentCheckoutScreenArguments.stateName;
+      data["orderAmount"] = billPaymentCheckoutScreenArguments.orderAmount;
+      data["taxCode"] = billPaymentCheckoutScreenArguments.taxCode;
+      data['goodsType'] = '1';
+      data['goodsName'] = 'Assessment Rate';
+      data['goodsCode'] = 'T001';
+      data['goodsCnt'] = '1';
+      data['orderDescription'] = 'Bill Payment';
+
+      await _billServices.createBillOrder(data).then((response) async {
+        if (response['status'] == '200') {
+          // obtain encrypted payment data API
+          await _billServices.confirmBillOrder({
+            "orderCodes": response['data'],
+            "payType": "1"
+          }).then((res) async {
+            if (res["status"] == '200') {
+              await jumpPay(res['data'], context);
+            } else {
+              Navigator.of(context).pop(true);
+              Fluttertoast.showToast(
+                msg: AppLocalization.of(context)!.translate('payment_failed')!,
+              );
+              print('confirmBillOrder fail');
+            }
+          });
+        } else {
+          Navigator.of(context).pop(true);
+          Fluttertoast.showToast(
+            msg: AppLocalization.of(context)!.translate('payment_failed')!,
+          );
+          print('createBillOrder fail');
+        }
+      });
+    } catch (e) {
+      Navigator.of(context).pop(true);
+      Fluttertoast.showToast(
+        msg: AppLocalization.of(context)!.translate('payment_failed')!,
+      );
+      print('orderRequest fail');
+    }
+  }
+
+  /// Calls the native methods of SPay SDK when encryption data is received
+  /// And launch the SPay Mobile App for payment integration
+  ///
+  /// Receives [encryptionData] as the encrypted string from SIOC Backend
+  /// Which will be sent to SPay Mobile App for subsequent payment
+  Future<void> jumpPay(String encryptionData, BuildContext context) async {
+    try {
+      if (encryptionData.isEmpty) {
+        Fluttertoast.showToast(
+          msg: AppLocalization.of(context)!.translate('payment_failed')!,
+        );
+        return;
+      }
+      Navigator.of(context).pop(true);
+      if (Platform.isAndroid) {
+        var sendMap = <String, dynamic>{'dataString': encryptionData};
+        await platform.invokeMethod('spayPlaceOrder', sendMap);
+      } else if (Platform.isIOS) {
+        var sendMap = <String, dynamic>{'dataString': encryptionData};
+        await platform.invokeMethod('spayPlaceOrder', sendMap);
+      }
+    } catch (e) {
+      Navigator.of(context).pop(true);
+      Fluttertoast.showToast(
+        msg: AppLocalization.of(context)!.translate('payment_failed')!,
+      );
+      print('jumpPay fail');
+    }
+  }
+
+  String returnBillName(String stateName) {
+    switch (stateName) {
+      case "1":
+        return "Assessment Rate - DBKU";
+      case "2":
+        return "Assessment Rate - MBKS";
+      case "3":
+        return "Assessment Rate - MPP";
+      case "4":
+        return "Other Utilities - KWB";
+      default:
+        return "Other Utilities - SESCO";
+    }
   }
 
   @override
@@ -33,21 +141,6 @@ class _BillPaymentCheckoutScreenState extends State<BillPaymentCheckoutScreen> {
     final screenSize = MediaQuery.of(context).size;
     final args = ModalRoute.of(context)!.settings.arguments
         as BillPaymentCheckoutScreenArguments;
-
-    String returnBillName(String stateName) {
-      switch (stateName) {
-        case "1":
-          return "Assessment Rate - DBKU";
-        case "2":
-          return "Assessment Rate - MBKS";
-        case "3":
-          return "Assessment Rate - MPP";
-        case "4":
-          return "Other Utilities - KWB";
-        default:
-          return "Other Utilities - SESCO";
-      }
-    }
 
     return Scaffold(
       appBar: AppBar(
@@ -247,12 +340,7 @@ class _BillPaymentCheckoutScreenState extends State<BillPaymentCheckoutScreen> {
                               .translate('payment_in_progress')!,
                         );
                         // TODO: skip this for demo, navigate to Result screen
-                        // orderRequest(context);
-                        // TODO: temp navigation
-                        Navigator.of(context).pushNamedAndRemoveUntil(
-                          BillPaymentResultScreen.routeName,
-                          (route) => route.isFirst,
-                        ); // is used to keep only the first route (the HomeScreen));
+                        orderRequest(context, args);
                       } else {
                         Navigator.of(context).pop();
                         Fluttertoast.showToast(

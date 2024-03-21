@@ -217,7 +217,9 @@ class _VoiceNoteBottomModalState extends State<VoiceNoteBottomModal> {
         SizedBox(
           height: 10.0,
         ),
-        const EmergencyAudioPlayer(),
+        const EmergencyAudioPlayer(
+          audioWavHttpURL: "",
+        ),
         SizedBox(
           height: 10.0,
         ),

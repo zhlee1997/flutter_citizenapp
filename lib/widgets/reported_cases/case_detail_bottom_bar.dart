@@ -21,24 +21,24 @@ class CaseDetailBottomBar extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(
-            '$label',
+            label,
             style: TextStyle(
               color: Colors.grey,
-              fontSize: Platform.isIOS ? 20.0 : 15.0,
+              fontSize: Platform.isIOS ? 18.0 : 15.0,
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10.0,
           ),
           Text(
-            '$value',
+            value,
             style: TextStyle(
-              fontSize: Platform.isIOS ? 25.0 : 20.0,
+              fontSize: Platform.isIOS ? 18.0 : 15.0,
             ),
           ),
-          Divider(
+          const Divider(
             color: Colors.grey,
-            thickness: 1.5,
+            thickness: 1,
           )
         ],
       ),

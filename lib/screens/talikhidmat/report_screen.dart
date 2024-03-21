@@ -103,7 +103,7 @@ class _ReportScreenState extends State<ReportScreen> {
           name,
         );
         if (response["status"] == '200') {
-          Navigator.of(context).pop(true);
+          Navigator.of(context).pop();
           setState(() {
             _images.insert(0, {
               "file": selectedImage,
@@ -111,13 +111,15 @@ class _ReportScreenState extends State<ReportScreen> {
             });
           });
           // TODO: new added provider for images
-          Provider.of<TalikhidmatProvider>(context).setAttachement(
+          Provider.of<TalikhidmatProvider>(context, listen: false)
+              .setAttachement(
             // imageUrl
             attachment: response["data"],
           );
         }
       } catch (e) {
-        Navigator.of(context).pop(true);
+        print("_uploadFile error: ${e.toString()}");
+        Navigator.of(context).pop();
         Fluttertoast.showToast(
           msg: AppLocalization.of(context)!.translate('upload_fail')!,
         );

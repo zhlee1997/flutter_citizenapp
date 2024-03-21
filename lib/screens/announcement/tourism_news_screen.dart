@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../models/announcement_model.dart';
+import '../../services/announcement_services.dart';
+import '../../providers/language_provider.dart';
+import './announcement_detail_screen.dart';
+import '../../utils/global_dialog_helper.dart';
 
 class TourismNewsScreen extends StatefulWidget {
   static const String routeName = "tourism-news-screen";
@@ -12,6 +17,10 @@ class TourismNewsScreen extends StatefulWidget {
 }
 
 class _TourismNewsScreenState extends State<TourismNewsScreen> {
+  var _showBackToTopButton = false;
+  var _isLoading = false;
+  late bool _isInitLoading;
+
   int _page = 1;
   bool _noMoreData = false;
   late ScrollController _scrollController;
@@ -19,14 +28,70 @@ class _TourismNewsScreenState extends State<TourismNewsScreen> {
   List<AnnouncementModel> _news = [];
 
   Future<void> _getTourismNews(int page) async {
-    try {} catch (e) {}
+    if (_isLoading) {
+      return;
+    }
+    _isLoading = true;
+    try {
+      var response =
+          await AnnouncementServices().queryPageList('$page', annType: '2');
+
+      if (response['status'] == '200') {
+        var data = response['data']['list'] as List;
+        setStateIfMounted(() {
+          if (data.length < 20) {
+            _noMoreData = true;
+          }
+
+          if (page == 1) {
+            _news = data.map((e) => AnnouncementModel.fromJson(e)).toList();
+          } else {
+            _news.addAll(
+                data.map((e) => AnnouncementModel.fromJson(e)).toList());
+          }
+        });
+      }
+      _isLoading = false;
+      _isInitLoading = false;
+    } catch (e) {
+      print("_getCitizenAnnouncements error: ${e.toString()}");
+      _isLoading = false;
+      _isInitLoading = false;
+    }
   }
 
-  void _handleNavigateToAnnouncementDetail(BuildContext context) {
-    // Navigator.of(context).pushNamed(
-    //   AnnouncementDetailScreen.routeName,
-    //   arguments: {'id': citizenAnnouncements[i].annId, 'isMajor': false},
-    // );
+  /// Determine the language of the announcement title based on current language code
+  ///
+  /// Receives [idx] as the index of announcement list
+  /// Returns the announcement title
+  String getAnnouncementTitle(int idx) {
+    String languageCode =
+        Provider.of<LanguageProvider>(context).locale.languageCode;
+    if (languageCode == 'en') {
+      return _news[idx].annTitleEn;
+    } else if (languageCode == 'zh') {
+      return _news[idx].annTitleZh != ''
+          ? _news[idx].annTitleZh
+          : _news[idx].annTitleEn;
+    } else {
+      return _news[idx].annTitleMs != ''
+          ? _news[idx].annTitleMs
+          : _news[idx].annTitleEn;
+    }
+  }
+
+  void setStateIfMounted(f) {
+    if (mounted) setState(f);
+  }
+
+  void _handleNavigateToAnnouncementDetail(BuildContext context, int index) {
+    Navigator.of(context).pushNamed(
+      AnnouncementDetailScreen.routeName,
+      arguments: {
+        'id': _news[index].annId,
+        'isMajor': false,
+      },
+    );
   }
 
   @override
@@ -37,6 +102,7 @@ class _TourismNewsScreenState extends State<TourismNewsScreen> {
     // TODO: GET CITIZEN ANN API
     // TODO: LOADING STATE
     // TODO: INFINITE SCROLL
+    _isInitLoading = true;
     _scrollController = ScrollController()
       ..addListener(() {
         setState(() {
@@ -50,6 +116,7 @@ class _TourismNewsScreenState extends State<TourismNewsScreen> {
           }
         });
       });
+    _getTourismNews(_page);
   }
 
   @override
@@ -57,64 +124,77 @@ class _TourismNewsScreenState extends State<TourismNewsScreen> {
     final screenSize = MediaQuery.of(context).size;
 
     return Scaffold(
-      body: CustomScrollView(
-        slivers: <Widget>[
-          SliverAppBar(
-            expandedHeight: screenSize.height * 0.25,
-            backgroundColor: Theme.of(context).colorScheme.secondary,
-            flexibleSpace: FlexibleSpaceBar(
-              title: const Text("Tourism News"),
-              background: Image.asset(
-                "assets/images/pictures/announcement/tourism_news.jpg",
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-          SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) => Card(
-                elevation: 3.0,
-                margin: EdgeInsets.only(
-                  top: index == 0 ? 10.0 : 7.5,
-                  bottom: index == 19 ? 30.0 : 7.5,
-                  left: 10.0,
-                  right: 10.0,
-                ),
-                child: ListTile(
-                  leading: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 3.0),
-                    child: SizedBox(
-                      width: screenSize.width * 0.22,
-                      height: screenSize.width * 0.22,
-                      child: Image.asset(
-                        "assets/images/pictures/announcement/tourism_news.jpg",
-                        fit: BoxFit.cover,
-                      ),
+      body: _isInitLoading
+          ? GlobalDialogHelper().showLoadingSpinner()
+          : CustomScrollView(
+              controller: _scrollController,
+              slivers: <Widget>[
+                SliverAppBar(
+                  expandedHeight: screenSize.height * 0.25,
+                  backgroundColor: Theme.of(context).colorScheme.secondary,
+                  flexibleSpace: FlexibleSpaceBar(
+                    title: const Text("Tourism News"),
+                    background: Image.asset(
+                      "assets/images/pictures/announcement/tourism_news.jpg",
+                      fit: BoxFit.cover,
                     ),
                   ),
-                  title: const Text(
-                    'Storm causes tree to uproot in front of Kg Luak house',
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  trailing: Icon(
-                    Icons.arrow_forward,
-                    color: Theme.of(context).colorScheme.primary,
-                    size: 15.0,
-                  ),
-                  onTap: () {
-                    // navigate to announcement detail screen
-                    _handleNavigateToAnnouncementDetail(context);
-                    print("tourism news detail pressed $index");
-                  },
                 ),
-              ),
-              childCount: 20,
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    childCount: _news.length,
+                    (context, index) {
+                      AnnouncementModel news = _news[index];
+                      List<AttachmentDtoList> tourismPhoto = news
+                          .attachmentDtoList
+                          .where((photo) => photo.attFileType == '2')
+                          .toList();
+                      return Card(
+                        elevation: 3.0,
+                        margin: EdgeInsets.only(
+                          top: index == 0 ? 10.0 : 7.5,
+                          bottom: index == 19 ? 30.0 : 7.5,
+                          left: 10.0,
+                          right: 10.0,
+                        ),
+                        child: ListTile(
+                          leading: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 3.0),
+                            child: SizedBox(
+                              width: screenSize.width * 0.22,
+                              height: screenSize.width * 0.22,
+                              child: tourismPhoto.isNotEmpty
+                                  ? Image.network(
+                                      tourismPhoto[0].attFilePath,
+                                      fit: BoxFit.cover,
+                                    )
+                                  : Image.asset(
+                                      "assets/images/icon/sioc.png",
+                                      fit: BoxFit.cover,
+                                    ),
+                            ),
+                          ),
+                          title: Text(
+                            getAnnouncementTitle(index),
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          trailing: Icon(
+                            Icons.arrow_forward,
+                            color: Theme.of(context).colorScheme.primary,
+                            size: 15.0,
+                          ),
+                          onTap: () {
+                            // navigate to announcement detail screen
+                            _handleNavigateToAnnouncementDetail(context, index);
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                )
+              ],
             ),
-          )
-        ],
-        controller: _scrollController,
-      ),
     );
   }
 }

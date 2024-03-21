@@ -14,7 +14,7 @@ class SubscriptionResultScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Receipt"),
+        title: Text("Subscription Receipt"),
         automaticallyImplyLeading: false,
         centerTitle: true,
       ),

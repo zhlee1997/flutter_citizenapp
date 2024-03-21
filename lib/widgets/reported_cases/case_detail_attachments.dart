@@ -29,7 +29,7 @@ class CaseDetailAttachments extends StatelessWidget {
             AppLocalization.of(context)!.translate('attachments')!,
             style: TextStyle(
               color: Colors.grey,
-              fontSize: Platform.isIOS ? 20.0 : 15.0,
+              fontSize: Platform.isIOS ? 18.0 : 15.0,
             ),
           ),
           const SizedBox(
@@ -40,7 +40,7 @@ class CaseDetailAttachments extends StatelessWidget {
             height: imageList!.length > 0 ? screenSize.height * 0.1 : null,
             child: imageList!.length > 0
                 ? ListView(
-                    physics: AlwaysScrollableScrollPhysics(),
+                    physics: const AlwaysScrollableScrollPhysics(),
                     scrollDirection: Axis.horizontal,
                     children: [
                       ...imageList!.map(
@@ -60,13 +60,13 @@ class CaseDetailAttachments extends StatelessWidget {
                 : Text(
                     'None',
                     style: TextStyle(
-                      fontSize: Platform.isIOS ? 25.0 : 20.0,
+                      fontSize: Platform.isIOS ? 18.0 : 15.0,
                     ),
                   ),
           ),
-          Divider(
+          const Divider(
             color: Colors.grey,
-            thickness: 1.5,
+            thickness: 1,
           ),
         ],
       ),

@@ -16,7 +16,7 @@ import './home_screen.dart';
 import './onboarding_screen.dart';
 // import '../utils/general_helper.dart';
 import '../utils/app_constant.dart';
-// import '../utils/notification/push_notification.dart';
+import '../utils/notification/push_notification.dart';
 
 class SplashVideoScreen extends StatefulWidget {
   const SplashVideoScreen({super.key});
@@ -28,6 +28,7 @@ class SplashVideoScreen extends StatefulWidget {
 class _SplashVideoScreenState extends State<SplashVideoScreen> {
   late VlcPlayerController _videoPlayerController;
   bool _isLoading = false;
+  PushNotification _pushNotification = PushNotification();
 
   @override
   void initState() {
@@ -61,8 +62,11 @@ class _SplashVideoScreenState extends State<SplashVideoScreen> {
                   .checkIsAuthAndSubscribeOverdue(context)
                   .then((bool isAuth) {
                 if (isAuth) {
+                  _pushNotification.setFirebase(true);
                   Provider.of<LocationProvider>(context, listen: false)
                       .getCurrentLocation();
+                } else {
+                  _pushNotification.setFirebase(false);
                 }
                 Navigator.of(context)
                     .pushReplacementNamed(HomeScreen.routeName);

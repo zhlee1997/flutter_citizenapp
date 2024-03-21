@@ -17,6 +17,7 @@
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
 		D9A6B57E2BA6F4B1003F0469 /* FlutterJlBluetoothPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9A6B57D2BA6F4B1003F0469 /* FlutterJlBluetoothPlugin.swift */; };
 		D9A6B5822BA6F84B003F0469 /* libSarawakSDK.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D9A6B57F2BA6F84B003F0469 /* libSarawakSDK.a */; };
+		D9CD34662BA94370001E6448 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D9CD34652BA94370001E6448 /* GoogleService-Info.plist */; };
 		E6F556328B62A707CABF2DC1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 18310B0141C9FD329183E0C2 /* GoogleService-Info.plist */; };
 		EF8BBC48D33C5FC64192423D /* Pods_RunnerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 876D25B83C031166F7421CDF /* Pods_RunnerTests.framework */; };
 /* End PBXBuildFile section */
@@ -72,6 +73,8 @@
 		D9A6B57D2BA6F4B1003F0469 /* FlutterJlBluetoothPlugin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FlutterJlBluetoothPlugin.swift; path = ../../../CitizenApp_dev/ios/Runner/FlutterJlBluetoothPlugin.swift; sourceTree = "<group>"; };
 		D9A6B57F2BA6F84B003F0469 /* libSarawakSDK.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libSarawakSDK.a; sourceTree = "<group>"; };
 		D9A6B5802BA6F84B003F0469 /* SarawakSDK.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SarawakSDK.h; sourceTree = "<group>"; };
+		D9CD34622BA93C2E001E6448 /* Runner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Runner.entitlements; sourceTree = "<group>"; };
+		D9CD34652BA94370001E6448 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -139,6 +142,8 @@
 		97C146F01CF9000F007C117D /* Runner */ = {
 			isa = PBXGroup;
 			children = (
+				D9CD34652BA94370001E6448 /* GoogleService-Info.plist */,
+				D9CD34622BA93C2E001E6448 /* Runner.entitlements */,
 				D9A6B5812BA6F84B003F0469 /* SDK */,
 				97C146FA1CF9000F007C117D /* Main.storyboard */,
 				97C146FD1CF9000F007C117D /* Assets.xcassets */,
@@ -286,6 +291,7 @@
 				97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */,
 				97C146FC1CF9000F007C117D /* Main.storyboard in Resources */,
 				E6F556328B62A707CABF2DC1 /* GoogleService-Info.plist in Resources */,
+				D9CD34662BA94370001E6448 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -511,6 +517,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = 4F59FSB5ZL;
 				ENABLE_BITCODE = NO;
@@ -707,6 +714,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = 4F59FSB5ZL;
 				ENABLE_BITCODE = NO;
@@ -741,6 +749,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = 4F59FSB5ZL;
 				ENABLE_BITCODE = NO;

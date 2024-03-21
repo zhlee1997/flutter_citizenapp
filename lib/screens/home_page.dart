@@ -21,6 +21,7 @@ import '../screens/announcement/tourism_news_screen.dart';
 import '../screens/subscription/subscription_choose_screen.dart';
 import '../screens/subscription/subscription_result_screen.dart';
 import '../screens/traffic/traffic_images_list_screen.dart';
+import '../screens/bill_payment/bill_payment_result_screen.dart';
 
 import '../providers/announcement_provider.dart';
 import '../providers/auth_provider.dart';
@@ -105,13 +106,21 @@ class _HomePageState extends State<HomePage> {
 
   // display transaction result screen when a transaction is completed
   void jumpPayResult(Map<String, dynamic> param) {
-    // for subscription, after payment
-    Navigator.of(context).pushNamedAndRemoveUntil(
-      SubscriptionResultScreen.routeName,
-      (route) => route.isFirst,
-      arguments: param,
-    ); // is used to keep only the first route (the HomeScreen));
-    // TODO: screen navigation for bill payment
+    if (Provider.of<SubscriptionProvider>(context, listen: false)
+        .isSubscription) {
+      // for subscription, after payment
+      Navigator.of(context).pushNamedAndRemoveUntil(
+        SubscriptionResultScreen.routeName,
+        (route) => route.isFirst,
+        arguments: param,
+      ); // is used to keep only the first route (the HomeScreen);
+    } else {
+      // TODO: screen navigation for bill payment
+      Navigator.of(context).pushNamedAndRemoveUntil(
+        BillPaymentResultScreen.routeName,
+        (route) => route.isFirst,
+      ); // is used to keep only the first route (the HomeScreen);
+    }
   }
 
   String returnPackageName(String packageName) {

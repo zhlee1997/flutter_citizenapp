@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -8,8 +9,12 @@ import 'package:path_provider/path_provider.dart';
 import 'package:lottie/lottie.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 import 'package:provider/provider.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../providers/emergency_provider.dart';
+import '../../services/upload_services.dart';
+import '../../utils/global_dialog_helper.dart';
+import '../../utils/app_localization.dart';
 
 class RecordingScreen extends StatefulWidget {
   static const String routeName = "recording-screen";
@@ -34,16 +39,55 @@ class _RecordingScreenState extends State<RecordingScreen> {
   Future<void> _uploadRecording() async {
     // TODO: upload the multipart file to Upload API, set the res URL to provider
     // TODO: set a timeout for upload, if hit show upload timeout message
+    String path = audioPath;
+    String name = path.substring(path.lastIndexOf("/") + 1, path.length);
+    String type = name.substring(name.lastIndexOf(".") + 1, name.length);
+    File audioFile = File(audioPath);
 
-    // Provider
-    Provider.of<EmergencyProvider>(context, listen: false)
-        .setAudioPath(audioPath);
-    Provider.of<EmergencyProvider>(context, listen: false)
-        .setCategoryAndYourself(category: 7, yourself: true);
-    Provider.of<EmergencyProvider>(context, listen: false).setOtherText(null);
+    double audioByte = audioFile.lengthSync() / (1024 * 1024);
+    print('audioSize: $audioByte');
 
-    // pop() the screen and currentStep +1 to go next step
-    arguments['handleNextProceed']();
+    GlobalDialogHelper().buildCircularProgressWithTextCenter(
+      context: context,
+      message: "Uploading Audio",
+    );
+
+    Uint8List uint8listAudio =
+        Uint8List.fromList(File(audioPath).readAsBytesSync());
+
+    try {
+      var response = await UploadServices().uploadAudioFile(
+        uint8listAudio,
+        type,
+        name,
+      );
+      if (response["status"] == '200') {
+        Navigator.of(context).pop();
+        // Provider
+        Provider.of<EmergencyProvider>(context, listen: false).setAudioPath(
+          audioPath: response["data"]["filePath"],
+          audioName: response["data"]["fileName"],
+          audioSuffix: response["data"]["fileSuffix"],
+        );
+        // voice note category => 6
+        // Emergency provider => yourself: true
+        Provider.of<EmergencyProvider>(context, listen: false)
+            .setCategoryAndYourself(
+          category: 6,
+          yourself: true,
+        );
+        Provider.of<EmergencyProvider>(context, listen: false)
+            .setOtherText(null);
+        // pop() the screen and currentStep +1 to go next step
+        arguments['handleNextProceed']();
+      }
+    } catch (e) {
+      print("_uploadRecording error: ${e.toString()}");
+      Navigator.of(context).pop();
+      Fluttertoast.showToast(
+        msg: AppLocalization.of(context)!.translate('upload_fail')!,
+      );
+    }
   }
 
   Future<void> _resetRecording() async {
@@ -97,6 +141,7 @@ class _RecordingScreenState extends State<RecordingScreen> {
   Future<void> _stopRecording() async {
     try {
       String? path = await audioRecorder.stop();
+
       setState(() {
         isRecording = false;
         audioPath = path ?? "";
@@ -108,7 +153,7 @@ class _RecordingScreenState extends State<RecordingScreen> {
 
   Future<void> _playRecording() async {
     try {
-      print("upload audio file: $audioPath");
+      print("play audio file: $audioPath");
       Source urlSource = UrlSource(audioPath);
       await audioPlayer.play(urlSource);
     } catch (e) {
@@ -338,7 +383,7 @@ class _RecordingScreenState extends State<RecordingScreen> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              "Recorded Audio File: $audioPath",
+              "Recorded File: $audioPath",
               textAlign: TextAlign.center,
             ),
           ),
@@ -346,14 +391,14 @@ class _RecordingScreenState extends State<RecordingScreen> {
             height: screenSize.width * 0.05,
           ),
           ElevatedButton.icon(
-            icon: const Icon(Icons.send),
+            icon: const Icon(Icons.ios_share_rounded),
             onPressed: _uploadRecording,
             style: ButtonStyle(
               backgroundColor: MaterialStateProperty.all<Color>(
                   Theme.of(context).colorScheme.secondary),
             ),
             label: const Text(
-              "Upload To Continue",
+              "Upload Recording",
               style: TextStyle(
                 fontSize: 18.0,
               ),

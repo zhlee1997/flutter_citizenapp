@@ -25,6 +25,28 @@ class ConfirmScreen extends StatelessWidget {
     }
   }
 
+  /// Determine the type of description message based on selected case
+  /// The description message will be submitted via sendRequest()
+  ///
+  /// Returns description message
+  String returnRemarksInText(BuildContext context, int categoryIndex) {
+    if (categoryIndex == 0) {
+      return 'You reported Harassment';
+    } else if (categoryIndex == 1) {
+      return 'You reported Fire/Rescue';
+    } else if (categoryIndex == 2) {
+      return 'You reported Traffic Accident/Injuries';
+    } else if (categoryIndex == 3) {
+      return 'You reported Theft/Robbery';
+    } else if (categoryIndex == 4) {
+      return 'You reported Physical Violence';
+    } else if (categoryIndex == 5) {
+      return Provider.of<EmergencyProvider>(context).otherText ?? "No remarks";
+    } else {
+      return "You submitted Voice Recording";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final String audioPath = Provider.of<EmergencyProvider>(context).audioPath;
@@ -73,7 +95,7 @@ class ConfirmScreen extends StatelessWidget {
         if (audioPath.isNotEmpty) const Text("ATTACHMENT"),
         if (audioPath.isNotEmpty)
           Text(
-            audioPath,
+            audioPath.substring(audioPath.lastIndexOf("/"), audioPath.length),
             style: const TextStyle(
               fontWeight: FontWeight.bold,
             ),
@@ -93,7 +115,10 @@ class ConfirmScreen extends StatelessWidget {
         ),
         const Text("REMARKS"),
         Text(
-          Provider.of<EmergencyProvider>(context).otherText ?? "No remarks",
+          returnRemarksInText(
+            context,
+            Provider.of<EmergencyProvider>(context).category,
+          ),
           style: const TextStyle(
             fontWeight: FontWeight.bold,
           ),

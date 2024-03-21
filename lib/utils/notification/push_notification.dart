@@ -2,13 +2,11 @@ import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:http/http.dart';
 
 import './show_notification.dart';
 import '../navigation_service.dart';
 import '../../services/notification_services.dart';
-// TODO
-// import '../../screens/announcement/announcement_detail_screen.dart';
+import '../../screens/announcement/announcement_detail_screen.dart';
 
 class PushNotification {
   late bool? _initLocalNotifcation;
@@ -19,7 +17,7 @@ class PushNotification {
       FlutterLocalNotificationsPlugin();
 
   AndroidNotificationChannel _androidNotificationChannel =
-      AndroidNotificationChannel(
+      const AndroidNotificationChannel(
     "unknownId", // id
     'unknownTitle', // title
     description: 'unknownDescription', // description
@@ -28,33 +26,31 @@ class PushNotification {
     playSound: true,
   );
 
-  // TODO
-  /// Navigate to Announcement Detail Screen when tapping on local notification
+  /// TODO: Navigate to Announcement Detail Screen when tapping on local notification
   ///
   /// Receives [payload] as the announcement ID
   Future<dynamic> _onSelectNotitification(String? payload) async {
-    // NavigationService.instance.navigateTo(
-    //   AnnouncementDetailScreen.routeName,
-    //   arguments: {
-    //     'id': '$payload',
-    //     'isMajor': true,
-    //   },
-    // );
+    NavigationService.instance.navigateTo(
+      AnnouncementDetailScreen.routeName,
+      arguments: {
+        'id': '$payload',
+        'isMajor': true,
+      },
+    );
   }
 
-  // TODO
-  /// Navigate to Announcement Detail Screen when tapping on local notification
+  /// TODO: Navigate to Announcement Detail Screen when tapping on local notification
   ///
   /// Receives [payload] as the announcement ID
   Future<dynamic> _onDidReceiveNotificationResponse(
       NotificationResponse notificationResponse) async {
-    // NavigationService.instance.navigateTo(
-    //   AnnouncementDetailScreen.routeName,
-    //   arguments: {
-    //     'id': '${notificationResponse.actionId}',
-    //     'isMajor': true,
-    //   },
-    // );
+    NavigationService.instance.navigateTo(
+      AnnouncementDetailScreen.routeName,
+      arguments: {
+        'id': '${notificationResponse.payload}',
+        'isMajor': true,
+      },
+    );
   }
 
   /// Initialize Firebase Cloud Messaging
@@ -121,6 +117,7 @@ class PushNotification {
 
       FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
         var payload = message.data['msgId'];
+        print("payload: $payload");
         _onSelectNotitification(payload);
       });
     }

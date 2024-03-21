@@ -49,7 +49,7 @@ class AnnouncementServices {
   Future<dynamic> queryAnnouncementDetail(String attId) async {
     try {
       var response = await _apiBaseHelper.get(
-        '/announcement/getById/$attId',
+        'announcement/getById/$attId',
         requireToken: false,
       );
       print("queryAnnouncementDetail API success: $response");

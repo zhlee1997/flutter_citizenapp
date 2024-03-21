@@ -24,7 +24,10 @@ class TransactionProvider with ChangeNotifier {
   /// memberId, orderStatus, startTime, endTime
   /// Returns transaction [Response] data from API
   Future<dynamic> queryTransactionProvider(map, BuildContext context) async {
-    String handleTitle(String goodsCode, String stateName) {
+    String handleTitle(
+      String goodsCode,
+      String stateName,
+    ) {
       if (goodsCode == "V001") {
         return AppLocalization.of(context)!.translate('subscription_1')!;
       } else {
@@ -48,7 +51,8 @@ class TransactionProvider with ChangeNotifier {
           //2: Assessment rate, 1: Subscription
           String type = item['goodsCode'] == 'T001' ? '2' : '1';
           // TODO: temp, lack of stateName
-          String title = handleTitle(item['goodsCode'], "item['stateName']");
+          String title =
+              handleTitle(item['goodsCode'], item['stateName'] ?? "");
           // String title = handleTitle(item['goodsCode'], item['stateName']);
           var money = item['orderAmount'];
           _list.add({
@@ -58,7 +62,7 @@ class TransactionProvider with ChangeNotifier {
             'amount': money,
             'orderNo': item['outTradeNo'],
             // TODO: temp, lack of taxCode
-            'taxCode': "item['taxCode']"
+            'taxCode': item['taxCode'] ?? ""
             // 'taxCode': item['taxCode']
           });
         }

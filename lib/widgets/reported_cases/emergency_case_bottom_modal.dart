@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../../utils/app_localization.dart';
 import '../../providers/emergency_provider.dart';
 import './case_detail_bottom_bar.dart';
+import './emergency_recording_full_bottom_modal.dart';
 
 class EmergencyCaseBottomModal extends StatelessWidget {
   const EmergencyCaseBottomModal({super.key});
@@ -33,6 +34,24 @@ class EmergencyCaseBottomModal extends StatelessWidget {
         status = '';
     }
     return status;
+  }
+
+  Future<void> handleEmergencyFullBottomModal(
+    BuildContext context,
+    String audioWavHttpURL,
+  ) async {
+    await showModalBottomSheet(
+      barrierColor: Theme.of(context).colorScheme.onInverseSurface,
+      useSafeArea: true,
+      enableDrag: false,
+      isScrollControlled: true,
+      context: context,
+      builder: (BuildContext context) {
+        return EmergencyRecordingFullBottomModal(
+          audioWavHttpURL: audioWavHttpURL,
+        );
+      },
+    );
   }
 
   @override
@@ -117,6 +136,27 @@ class EmergencyCaseBottomModal extends StatelessWidget {
                     label: AppLocalization.of(context)!.translate('request_d')!,
                     value: caseData.reportedCaseDetail!.eventDesc ?? "",
                   ),
+                  // TODO: Emergency -> show recording player
+                  const SizedBox(
+                    height: 15.0,
+                  ),
+                  // TODO: temp condition
+                  if (!caseData.reportCaseAttachmentList.isNotEmpty)
+                    OutlinedButton.icon(
+                      onPressed: () => handleEmergencyFullBottomModal(
+                        context,
+                        // TODO: temp wav URL, to get from backend
+                        "http://124.70.29.113:9000/picture/picture_1711006188820.wav",
+                        // caseData.reportCaseAttachmentList[0].attFilePath,
+                      ),
+                      icon: const Icon(Icons.file_present_outlined),
+                      label: Text("Recording File"),
+                      style: OutlinedButton.styleFrom(
+                        side: BorderSide(
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                    ),
                   const SizedBox(
                     height: 50,
                   )

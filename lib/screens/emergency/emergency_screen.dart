@@ -27,6 +27,7 @@ class EmergencyScreen extends StatefulWidget {
 
 class _EmergencyScreenState extends State<EmergencyScreen> {
   int currentStep = 0;
+  List<Map> _audioAttachCreate = [];
 
   final EventServices _eventServices = EventServices();
   static final _formKey = GlobalKey<FormState>();
@@ -36,7 +37,9 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
       context: context,
       builder: (BuildContext context) {
         return VoiceNoteBottomModal(
-          childWidget: const EmergencyAudioPlayer(),
+          childWidget: const EmergencyAudioPlayer(
+            audioWavHttpURL: "",
+          ),
           handleNextProceed: handleProceedNext,
         );
       },
@@ -73,11 +76,34 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
     setState(() => currentStep += 1);
   }
 
+  /// Determine the type of description message based on selected case
+  /// The description message will be submitted via sendRequest()
+  ///
+  /// Returns description message
+  String returnRemarksInText(int categoryIndex) {
+    if (categoryIndex == 0) {
+      return 'You reported Harassment';
+    } else if (categoryIndex == 1) {
+      return 'You reported Fire/Rescue';
+    } else if (categoryIndex == 2) {
+      return 'You reported Traffic Accident/Injuries';
+    } else if (categoryIndex == 3) {
+      return 'You reported Theft/Robbery';
+    } else if (categoryIndex == 4) {
+      return 'You reported Physical Violence';
+    } else if (categoryIndex == 5) {
+      return Provider.of<EmergencyProvider>(context).otherText ?? "No remarks";
+    } else {
+      return "You submitted Voice Recording";
+    }
+  }
+
   Future<void> submitCase() async {
-    // API Lack of "Voice Recording" category
+    // TODO: API Lack of "Voice Recording" category
     // eventLongitude, eventLatitude, eventLocation
-    // eventAudioURL
-    // eventYourself
+    // TODO: Lack of eventAudioURL
+    // TODO: Lack of eventYourself
+    // TODO: attachment API
 
     final GlobalDialogHelper globalDialogHelper = GlobalDialogHelper();
     final EmergencyProvider emergencyProvider =
@@ -90,7 +116,7 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
       'eventLongitude': emergencyProvider.longitude.toString(),
       // TODO: New field for emergency (address) => API
       'eventLocation': emergencyProvider.address.toString(),
-      'eventDesc': emergencyProvider.otherText ?? "No remarks"
+      'eventDesc': returnRemarksInText(emergencyProvider.category),
     };
 
     try {
@@ -99,10 +125,24 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
         message: "Submitting",
       );
       var response = await _eventServices.create(paramater);
-      if (response == "201") {
+      if (response["status"] == "200") {
+        String? eventId = response["data"];
+        if (eventId != null) {
+          if (emergencyProvider.audioPath.isNotEmpty) {
+            // Upload Attachment => API
+            _audioAttachCreate.insert(0, {
+              "eventId": eventId,
+              "attFileName": emergencyProvider.audioName,
+              "attFileType": '1',
+              "attFileSuffix": emergencyProvider.audioSuffix,
+              "attFilePath": emergencyProvider.audioPath,
+            });
+            await _eventServices.attachmentCreate(_audioAttachCreate);
+          }
+        }
+
         // dismiss the dialog
         Navigator.of(context).pop();
-        // TODO: showBottomModalDialog => success
         await showModalBottomSheet(
           barrierColor: Theme.of(context).colorScheme.onInverseSurface,
           useSafeArea: true,

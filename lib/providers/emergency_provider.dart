@@ -30,6 +30,12 @@ class EmergencyProvider with ChangeNotifier {
   String _audioPath = "";
   String get audioPath => _audioPath;
 
+  String _audioName = "";
+  String get audioName => _audioName;
+
+  String _audioSuffix = "";
+  String get audioSuffix => _audioSuffix;
+
   String? _otherText;
   String? get otherText => _otherText;
 
@@ -71,8 +77,14 @@ class EmergencyProvider with ChangeNotifier {
     _otherText = otherText;
   }
 
-  void setAudioPath(String audioPath) {
+  void setAudioPath({
+    required String audioPath,
+    required String audioSuffix,
+    required String audioName,
+  }) {
     _audioPath = audioPath;
+    _audioSuffix = audioSuffix;
+    _audioName = audioName;
   }
 
   void resetProvider() {
@@ -82,6 +94,8 @@ class EmergencyProvider with ChangeNotifier {
     _category = -1;
     _yourself = true;
     _audioPath = "";
+    _audioName = "";
+    _audioSuffix = "";
     _otherText = null;
     notifyListeners();
   }
