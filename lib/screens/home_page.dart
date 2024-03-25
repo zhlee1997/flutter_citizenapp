@@ -32,6 +32,8 @@ import "../models/announcement_model.dart";
 import '../models/major_announcement_model.dart';
 import "../utils/global_dialog_helper.dart";
 import '../utils/major_dialog_helper.dart';
+import '../arguments/bill_payment_result_screen_arguments.dart';
+import '../arguments/subscription_result_screen_arguments.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -44,6 +46,7 @@ class _HomePageState extends State<HomePage> {
   // TODO: To query subscription status API (in video splash screen), if isAuth => true
   // TODO: add subscription status in provider
   bool isSubscribed = false;
+  bool isSubscription = false;
   String? vipDueDate;
 
   bool citizenShimmer = false;
@@ -64,13 +67,10 @@ class _HomePageState extends State<HomePage> {
   // stream for listening to SPay SDK when payment is done
   void _onData(Object? obj) async {
     try {
-      if (Provider.of<SubscriptionProvider>(context, listen: false)
-          .isSubscription) {
+      if (isSubscription) {
         // TODO: Temp skip auth checking
         Provider.of<AuthProvider>(context, listen: false)
             .queryUserInfoAfterSubscriptionProvider();
-        Provider.of<SubscriptionProvider>(context, listen: false)
-            .changeIsSubscription(false);
       }
       String encryptedData = obj as String;
       if (encryptedData.isEmpty) {
@@ -106,19 +106,29 @@ class _HomePageState extends State<HomePage> {
 
   // display transaction result screen when a transaction is completed
   void jumpPayResult(Map<String, dynamic> param) {
-    if (Provider.of<SubscriptionProvider>(context, listen: false)
-        .isSubscription) {
+    print("isSubscription: $isSubscription");
+    if (isSubscription) {
       // for subscription, after payment
+      Provider.of<SubscriptionProvider>(context, listen: false)
+          .changeIsSubscription(false);
       Navigator.of(context).pushNamedAndRemoveUntil(
         SubscriptionResultScreen.routeName,
         (route) => route.isFirst,
-        arguments: param,
+        arguments: SubscriptionResultScreenArguments(
+          orderAmt: param["orderAmt"],
+          orderDate: param["orderDate"],
+          orderStatus: param["orderStatus"],
+        ),
       ); // is used to keep only the first route (the HomeScreen);
     } else {
-      // TODO: screen navigation for bill payment
       Navigator.of(context).pushNamedAndRemoveUntil(
         BillPaymentResultScreen.routeName,
         (route) => route.isFirst,
+        arguments: BillPaymentResultScreenArguments(
+          orderAmt: param["orderAmt"],
+          orderDate: param["orderDate"],
+          orderStatus: param["orderStatus"],
+        ),
       ); // is used to keep only the first route (the HomeScreen);
     }
   }
@@ -371,9 +381,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _handleNavigateToTrafficImages(BuildContext context) =>
-      Provider.of<AuthProvider>(context, listen: false).isAuth
-          ? Navigator.of(context).pushNamed(TrafficImagesListScreen.routeName)
-          : _handleFullScreenLoginBottomModal(context);
+      Navigator.of(context).pushNamed(TrafficImagesListScreen.routeName);
 
   void _handleNavigateToPayment(BuildContext context) =>
       Provider.of<AuthProvider>(context, listen: false).isAuth
@@ -459,6 +467,7 @@ class _HomePageState extends State<HomePage> {
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
     isSubscribed = Provider.of<AuthProvider>(context).auth.vipStatus;
+    isSubscription = Provider.of<SubscriptionProvider>(context).isSubscription;
     vipDueDate = Provider.of<AuthProvider>(context).auth.vipDueDate;
   }
 

@@ -140,14 +140,11 @@ class EmergencyCaseBottomModal extends StatelessWidget {
                   const SizedBox(
                     height: 15.0,
                   ),
-                  // TODO: temp condition
-                  if (!caseData.reportCaseAttachmentList.isNotEmpty)
+                  if (caseData.reportCaseAttachmentList.isNotEmpty)
                     OutlinedButton.icon(
                       onPressed: () => handleEmergencyFullBottomModal(
                         context,
-                        // TODO: temp wav URL, to get from backend
-                        "http://124.70.29.113:9000/picture/picture_1711006188820.wav",
-                        // caseData.reportCaseAttachmentList[0].attFilePath,
+                        caseData.reportCaseAttachmentList[0].attFilePath,
                       ),
                       icon: const Icon(Icons.file_present_outlined),
                       label: Text("Recording File"),

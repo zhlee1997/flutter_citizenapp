@@ -43,6 +43,8 @@ import './screens/transaction/transaction_history_screen.dart';
 import './screens/reported_cases/emergency_cases_screen.dart';
 import './screens/reported_cases/talikhidmat_cases_screen.dart';
 
+import './screens/bus_schedule/bus_map_screen.dart';
+
 import './screens/home_screen.dart';
 import './screens/onboarding_screen.dart';
 
@@ -84,4 +86,5 @@ final Map<String, WidgetBuilder> routes = <String, WidgetBuilder>{
   TransactionHistoryScreen.routeName: (ctx) => const TransactionHistoryScreen(),
   TalikhidmatCasesScreen.routeName: (ctx) => const TalikhidmatCasesScreen(),
   EmergencyCasesScreen.routeName: (ctx) => const EmergencyCasesScreen(),
+  BusMapScreen.routeName: (ctx) => const BusMapScreen(),
 };

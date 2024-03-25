@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_citizenapp/providers/settings_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../providers/auth_provider.dart';
+import '../../providers/language_provider.dart';
 import '../../widgets/sarawakid/login_full_bottom_modal.dart';
 import '../../screens/support/privacy_policy_screen.dart';
 import '../../screens/support/terms_and_conditions_screen.dart';
@@ -11,6 +13,7 @@ import '../../screens/support/send_feedback_screen.dart';
 import '../../screens/reported_cases/emergency_cases_screen.dart';
 import '../../screens/reported_cases/talikhidmat_cases_screen.dart';
 import '../../screens/transaction/transaction_history_screen.dart';
+import '../../utils/notification/push_notification.dart';
 
 class ProfileBottomNavScreen extends StatefulWidget {
   static const String routeName = 'profile-bottom-nav-screen';
@@ -28,13 +31,18 @@ class _ProfileBottomNavScreenState extends State<ProfileBottomNavScreen> {
   final double _kItemExtent = 32.0;
   final List<String> _fruitNames = <String>[
     'English',
-    'Mandarin',
     'Bahasa Malaysia',
+    '中文',
   ];
+
+  late String languageCode;
 
   int _selectedFruit = 0;
   late bool isLogin;
   String appVersion = "";
+  bool isLoading = false;
+
+  PushNotification _pushNotification = PushNotification();
 
   // return app version in drawer
   Future<void> _getAppVersion() async {
@@ -152,8 +160,19 @@ class _ProfileBottomNavScreenState extends State<ProfileBottomNavScreen> {
 
   @override
   void didChangeDependencies() {
-    isLogin = Provider.of<AuthProvider>(context).isAuth;
     super.didChangeDependencies();
+    isLogin = Provider.of<AuthProvider>(context).isAuth;
+    languageCode = Provider.of<LanguageProvider>(context).locale.languageCode;
+    if (languageCode == "en") {
+      _selectedFruit = 0;
+    } else if (languageCode == "ms") {
+      _selectedFruit = 1;
+    } else {
+      _selectedFruit = 2;
+    }
+    music = Provider.of<SettingsProvider>(context).isSplashScreenMusicEnabled;
+    notification =
+        Provider.of<SettingsProvider>(context).isPushNotificationEnabled;
   }
 
   @override
@@ -294,37 +313,66 @@ class _ProfileBottomNavScreenState extends State<ProfileBottomNavScreen> {
                     ),
                   ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Row(
-                      children: <Widget>[
-                        const Icon(
-                          Icons.notifications_outlined,
-                          size: 30.0,
-                        ),
-                        const SizedBox(
-                          width: 15.0,
-                        ),
-                        Text(
-                          "Push Notifications",
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                      ],
-                    ),
-                    Transform.scale(
-                      scaleY: 0.75,
-                      scaleX: 0.85,
-                      child: Switch(
-                          value: notification,
-                          onChanged: (bool value) {
-                            setState(() {
-                              notification = value;
-                            });
-                          }),
-                    ),
-                  ],
-                ),
+                if (isLogin)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Row(
+                        children: <Widget>[
+                          const Icon(
+                            Icons.notifications_outlined,
+                            size: 30.0,
+                          ),
+                          const SizedBox(
+                            width: 15.0,
+                          ),
+                          Text(
+                            "Push Notifications",
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                        ],
+                      ),
+                      Transform.scale(
+                        scaleY: 0.75,
+                        scaleX: 0.85,
+                        child: Switch(
+                            value: notification,
+                            onChanged: isLoading
+                                ? null
+                                : (bool value) async {
+                                    setState(() {
+                                      isLoading = true;
+                                    });
+                                    if (value) {
+                                      _pushNotification
+                                          .setFirebase(true)
+                                          .then((_) {
+                                        setState(() {
+                                          notification = value;
+                                          Provider.of<SettingsProvider>(context,
+                                                  listen: false)
+                                              .enablePushNotification();
+                                        });
+                                      });
+                                    } else {
+                                      _pushNotification
+                                          .setFirebase(false)
+                                          .then((_) {
+                                        setState(() {
+                                          notification = value;
+                                          Provider.of<SettingsProvider>(context,
+                                                  listen: false)
+                                              .disablePushNotification();
+                                        });
+                                      });
+                                    }
+                                    setState(() {
+                                      isLoading = false;
+                                    });
+                                  }),
+                      ),
+                    ],
+                  ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
@@ -352,6 +400,15 @@ class _ProfileBottomNavScreenState extends State<ProfileBottomNavScreen> {
                             setState(() {
                               music = value;
                             });
+                            if (value) {
+                              Provider.of<SettingsProvider>(context,
+                                      listen: false)
+                                  .enableSplashScreenMusic();
+                            } else {
+                              Provider.of<SettingsProvider>(context,
+                                      listen: false)
+                                  .disableSplashScreenMusic();
+                            }
                           }),
                     ),
                   ],
@@ -391,11 +448,29 @@ class _ProfileBottomNavScreenState extends State<ProfileBottomNavScreen> {
                               onSelectedItemChanged: (int selectedItem) {
                                 setState(() {
                                   _selectedFruit = selectedItem;
+                                  if (selectedItem == 0) {
+                                    Provider.of<LanguageProvider>(
+                                      context,
+                                      listen: false,
+                                    ).changeLanguage('en', 'US');
+                                  } else if (selectedItem == 1) {
+                                    Provider.of<LanguageProvider>(
+                                      context,
+                                      listen: false,
+                                    ).changeLanguage('ms', 'MY');
+                                  } else {
+                                    Provider.of<LanguageProvider>(
+                                      context,
+                                      listen: false,
+                                    ).changeLanguage('zh', 'CN');
+                                  }
                                 });
                               },
                               children: List<Widget>.generate(
                                   _fruitNames.length, (int index) {
-                                return Center(child: Text(_fruitNames[index]));
+                                return Center(
+                                  child: Text(_fruitNames[index]),
+                                );
                               }),
                             ),
                           ),

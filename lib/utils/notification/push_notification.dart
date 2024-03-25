@@ -53,10 +53,20 @@ class PushNotification {
     );
   }
 
-  /// Initialize Firebase Cloud Messaging
+  /// Initialize Firebase Cloud Messaging & Local Notifications
   ///
   /// Receives [isAuth] as the authentication status
-  Future<void> setFirebase(bool isAuth) async {
+  Future<void> setFirebase(bool isFCMRequired) async {
+    // if isFCMRequired is true, then getFcmToken()
+    // else, delete FCM Token
+    if (isFCMRequired) {
+      getFcmToken();
+    } else {
+      print("Delete FCM Token");
+      await _firebaseMessaging.deleteToken();
+      return;
+    }
+
     // todo: initialise the plugin. app_icon needs to be a added as a drawable resource to the Android head project
     final AndroidInitializationSettings initializationSettingsAndroid =
         new AndroidInitializationSettings('@drawable/notification_icon');
@@ -121,8 +131,6 @@ class PushNotification {
         _onSelectNotitification(payload);
       });
     }
-    // if isAuth is true, then getFcmToken()
-    if (isAuth) getFcmToken();
   }
 
   /// Get FCM Token from Firebase when user is authenticated

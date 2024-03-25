@@ -78,6 +78,7 @@ dependencies:
   installed_apps: ^1.5.0
   dio: ^5.4.1
   mask_text_input_formatter: ^2.9.0
+  flutter_polyline_points: ^2.0.0
 
 dev_dependencies:
   flutter_test:
@@ -153,6 +154,10 @@ flutter:
     # images/pictures/subscription
     - assets/images/pictures/subscription/
 
+      # images/pictures/bus_schedule
+    - assets/images/pictures/bus_schedule/dun.jpeg
+    - assets/images/pictures/bus_schedule/semenggoh.jpeg
+
     # images/animation
     - assets/animations/lottie_recorder.json
     - assets/animations/lottie_profile.json
@@ -160,6 +165,8 @@ flutter:
 
     # images/svg
     - assets/images/svg/no_data.svg
+    - assets/images/svg/undraw_bus_stop.svg
+    - assets/images/svg/undraw_online.svg
 
     # images/svg/onboarding
     - assets/images/svg/onboarding/
@@ -167,12 +174,15 @@ flutter:
     # images/gif
     - assets/gif/app_live_video.gif
 
+    # images/spay
+    - assets/images/pictures/spay/spay-not-installed-ad.jpeg
+
     #language
     - assets/language/en.json
     - assets/language/ms.json
     - assets/language/zh.json
 
-      #privacy
+    #privacy
     - assets/privacy/privacy_en.md
     - assets/privacy/privacy_ms.md
     - assets/privacy/privacy_zh.md

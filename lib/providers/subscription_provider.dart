@@ -25,6 +25,7 @@ class SubscriptionProvider with ChangeNotifier {
   /// If [value] is 'false', it is not subscription payment.
   void changeIsSubscription(bool value) {
     _isSubscription = value;
+    notifyListeners();
   }
 
   Future<void> queryAndSetIsSubscriptionEnabled() async {

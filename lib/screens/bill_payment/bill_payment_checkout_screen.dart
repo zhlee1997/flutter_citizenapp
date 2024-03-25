@@ -13,6 +13,7 @@ import '../../utils/app_localization.dart';
 import '../../utils/global_dialog_helper.dart';
 import '../../utils/general_helper.dart';
 import '../../services/bill_services.dart';
+import '../../widgets/bill_payment/bill_payment_install_spay_bottom_modal.dart';
 
 class BillPaymentCheckoutScreen extends StatefulWidget {
   static const String routeName = 'bill-payment-checkout-screen';
@@ -31,6 +32,13 @@ class _BillPaymentCheckoutScreenState extends State<BillPaymentCheckoutScreen> {
   final BillServices _billServices = BillServices();
 
   static const platform = MethodChannel('com.sma.citizen_mobile/main');
+
+  Future<void> showNeedInstallSPayBottomModal() async {
+    await showModalBottomSheet(
+      context: context,
+      builder: (_) => const BillPaymentInstallSPayBottomModal(),
+    );
+  }
 
   /// Create and confirm order when paying through S Pay Global
   /// To get encrypted data from SIOC Backend
@@ -339,14 +347,14 @@ class _BillPaymentCheckoutScreenState extends State<BillPaymentCheckoutScreen> {
                           message: AppLocalization.of(context)!
                               .translate('payment_in_progress')!,
                         );
-                        // TODO: skip this for demo, navigate to Result screen
                         orderRequest(context, args);
                       } else {
-                        Navigator.of(context).pop();
-                        Fluttertoast.showToast(
-                          msg: AppLocalization.of(context)!
-                              .translate('please_install_spay')!,
-                        );
+                        // Navigator.of(context).pop();
+                        showNeedInstallSPayBottomModal();
+                        // Fluttertoast.showToast(
+                        //   msg: AppLocalization.of(context)!
+                        //       .translate('please_install_spay')!,
+                        // );
                       }
                     },
                   ),

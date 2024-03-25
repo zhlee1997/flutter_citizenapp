@@ -54,16 +54,13 @@ class AuthProvider with ChangeNotifier {
 
     try {
       if (data['userId'] != null) {
-        prefs.setBool("vipStatus", data['isSubscribed'] == 'true');
         prefs.setInt(
             "expire", int.parse(data['expire']!) * 1000 + currentMilliSec);
         prefs.setString("userId", data['userId'] ?? '');
 
         // VIP due date
         // callback response URL will not have "vipDueDate" if "isSubscribed" is false
-        if (data['isSubscribed'] == 'true') {
-          prefs.setString("vipDueDate", data['vipDueDate'] ?? '');
-        }
+        // if (data['isSubscribed'] == 'true') {}
 
         storage.write(
           key: 'siocToken',
@@ -103,8 +100,7 @@ class AuthProvider with ChangeNotifier {
     String? sarawakToken = await storage.read(key: 'sarawakToken');
 
     try {
-      // TODO: deleteToken
-      // await _notificationServices.deleteToken();
+      await _notificationServices.deleteToken();
       var response = await _authServices.signOut(
         sarawakToken: sarawakToken,
         siocToken: siocToken,
@@ -150,6 +146,8 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
+  // http://124.70.29.113:28300/loading.html?sarawakToken=159952acea21cbb45844594aa9ad4485&isSubscribed=false&userId=22569&siocToken=eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIyMjU2OSIsInVzZXJJZCI6IjEwMDIwNDU2MDciLCJuYW1lIjoiWmhvbmdMaWFuZ1dhbmciLCJleHAiOjE3MTI1NjI3MjQsImlhdCI6MTcxMTI2NjcyNH0.jx0vxGVxhVShHDsVgaDOPm1Zey_y5OZ9b0pKUK2YfbOvsGNTEH2aKPqp-0z7WmQdNhzCnS07fnJ3YOHmdrOJsCx1rzzw4MPPnn0gD2-N_OBbdTbD21xzacXViANqTsFlhxJYW0py1Q5KMsmuylufHt79w52qWesf8t1g1Rlv8l0&expire=1296000&loginMode=1
+  // "isSubscribed" param not used by backend anymore
   Future<bool> queryLoginUserInfo(String userId, bool isSubscribed) async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -164,7 +162,7 @@ class AuthProvider with ChangeNotifier {
           sId: response['data']['memberId'] ?? '',
           userName: response['data']['sarawakId'] ?? '',
           fullName: response['data']['nickName'] ?? '',
-          vipStatus: isSubscribed,
+          vipStatus: response['data']['vipStatus'] == "1",
           vipDueDate: response['data']['vipDueDate'] ?? '',
         );
         prefs.setString("userEmail", response['data']['email'] ?? '');
@@ -173,8 +171,10 @@ class AuthProvider with ChangeNotifier {
         prefs.setString("userMobileNo", response['data']['mobile'] ?? '');
         prefs.setString("userShortName", response['data']['sarawakId'] ?? '');
         prefs.setString("userResAddr1", response['data']['address'] ?? '');
+        prefs.setBool("vipStatus", response['data']['vipStatus'] == "1");
         // double assure in case vipDueDate is not insert into prefs in "signInProvider" due to "isSubscribed" == false
         prefs.setString("vipDueDate", response['data']['vipDueDate'] ?? '');
+
         notifyListeners();
         return true;
       } else {
@@ -185,7 +185,7 @@ class AuthProvider with ChangeNotifier {
           sId: '',
           userName: '',
           fullName: '',
-          vipStatus: isSubscribed,
+          vipStatus: false,
         );
         notifyListeners();
         return false;
@@ -257,12 +257,9 @@ class AuthProvider with ChangeNotifier {
         sarawakToken != null &&
         sarawakToken.isNotEmpty) {
       if (currentMilliSec > expire) {
-        // TODO: Setup signOut API
-        // Sign out if exceeds valid refresh period
-        print("signOut");
-        // signOut(context);
+        print("Sign out due to exceeds valid refresh period");
+        signOutProvider(context);
       } else {
-        // TODO: Setup refreshToken API
         // If within valid refresh period, then refresh token (everytime open app)
         refreshTokenProvider();
         isTokenOk = true;

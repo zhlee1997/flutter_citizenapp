@@ -278,12 +278,7 @@ class GlobalDialogHelper {
     }
     if (noMoreData) {
       return Center(
-        child: Container(
-          padding: const EdgeInsets.symmetric(
-            vertical: 20.0,
-          ),
-          child: Text(AppLocalization.of(context)!.translate('end_of')!),
-        ),
+        child: Text(AppLocalization.of(context)!.translate('end_of')!),
       );
     } else {
       return Container(

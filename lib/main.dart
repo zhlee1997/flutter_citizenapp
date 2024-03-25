@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:month_year_picker/month_year_picker.dart';
@@ -21,6 +22,8 @@ import './providers/subscription_provider.dart';
 import './providers/talikhidmat_provider.dart';
 import './providers/transaction_provider.dart';
 import './providers/announcement_provider.dart';
+import './providers/settings_provider.dart';
+import './providers/bus_provider.dart';
 
 // language settings
 import './utils/app_localization.dart';
@@ -38,6 +41,10 @@ Future<void> main() async {
   );
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   runApp(const MyApp());
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    statusBarColor: Colors.transparent,
+  ));
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 }
 
 class MyApp extends StatelessWidget {
@@ -75,10 +82,20 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (ctx) => AnnouncementProvider(),
         ),
+        ChangeNotifierProvider(
+          create: (ctx) => SettingsProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (ctx) => BusProvider(),
+        ),
       ],
       child: Consumer<LanguageProvider>(
         child: const SplashVideoScreen(),
-        builder: (BuildContext context, dynamic languageData, Widget? child) {
+        builder: (
+          BuildContext context,
+          LanguageProvider languageProvider,
+          Widget? child,
+        ) {
           return MaterialApp(
             navigatorKey: NavigationService.instance.navigationKey,
             title: 'CitizenApp',
@@ -86,7 +103,7 @@ class MyApp extends StatelessWidget {
             onUnknownRoute: (_) => MaterialPageRoute(
               builder: (_) => const HomeScreen(),
             ),
-            locale: languageData.locale,
+            locale: languageProvider.locale,
             supportedLocales: const [
               Locale('en', 'US'),
               Locale('zh', 'CN'),

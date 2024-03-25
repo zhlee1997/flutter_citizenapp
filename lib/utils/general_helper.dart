@@ -40,14 +40,14 @@ class GeneralHelper {
   /// Receives [format] as the desired datetime format
   /// [dateString] as the datetime value
   /// Returns formatted datetime value
-  // static String formatDateTime({
-  //   String format = 'yyyy-MM-dd – kk:mm',
-  //   required String dateString,
-  // }) {
-  //   DateTime dateTime = DateTime.parse(dateString);
-  //   String formattedDate = DateFormat(format).format(dateTime);
-  //   return formattedDate;
-  // }
+  static String formatDateTime({
+    String format = 'yyyy-MM-dd – kk:mm',
+    required String dateString,
+  }) {
+    DateTime dateTime = DateTime.parse(dateString);
+    String formattedDate = DateFormat(format).format(dateTime);
+    return formattedDate;
+  }
 
   /// Perform check if an application is installed on the mobile device
   /// Through package name

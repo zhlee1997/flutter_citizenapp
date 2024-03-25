@@ -42,7 +42,7 @@ class _MajorDialogHelperState extends State<MajorDialogHelper> {
               },
               children: majorAnnouncementList
                   .map((e) => ImageNetworkHelper.imageNetworkBuilder(
-                        url: e.image,
+                        url: e.image.isNotEmpty ? e.image : null,
                         fit: BoxFit.contain,
                         height: 200,
                         width: 200,
@@ -78,7 +78,7 @@ class _MajorDialogHelperState extends State<MajorDialogHelper> {
             child: Text(
               majorAnnouncementList[_pageNumber].title,
               maxLines: 2,
-              // textAlign: TextAlign.center,
+              textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.titleLarge,
             ),
           ),
@@ -124,7 +124,6 @@ class _MajorDialogHelperState extends State<MajorDialogHelper> {
               AppLocalization.of(context)!.translate('find_out')!,
               style: const TextStyle(
                 color: Colors.white,
-                fontSize: 18,
               ),
             ),
           ),
@@ -136,16 +135,16 @@ class _MajorDialogHelperState extends State<MajorDialogHelper> {
   // return page view indicators
   Widget _pageViewIndicator(bool isActive) {
     return SizedBox(
-      height: 10,
+      height: 6,
       child: AnimatedContainer(
         duration: Duration(milliseconds: 250),
         margin: EdgeInsets.symmetric(horizontal: 4.0),
-        height: isActive ? 10 : 8.0,
-        width: isActive ? 12 : 8.0,
+        height: isActive ? 6 : 4.0,
+        width: isActive ? 8 : 4.0,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: isActive
-              ? Theme.of(context).primaryColor.withOpacity(0.7)
+              ? Theme.of(context).primaryColor.withOpacity(0.75)
               : Color(0XFFEAEAEA),
           boxShadow: [
             isActive

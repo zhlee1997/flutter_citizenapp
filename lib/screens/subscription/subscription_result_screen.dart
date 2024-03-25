@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../widgets/subscription/subscription_result_widget.dart';
 import './subscription_choose_screen.dart';
+import '../../arguments/subscription_result_screen_arguments.dart';
+import '../../utils/app_localization.dart';
 
 class SubscriptionResultScreen extends StatelessWidget {
   static const String routeName = 'subscribe-result-screen';
@@ -10,7 +12,71 @@ class SubscriptionResultScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final args = ModalRoute.of(context)!.settings.arguments
+        as SubscriptionResultScreenArguments;
+    // determine successful or fail transaction
+    // payResult['orderAmt'], payResult['orderDate']
+    final bool isSuccessful = args.orderStatus == '1';
     final screenSize = MediaQuery.of(context).size;
+
+    if (!isSuccessful) {
+      return Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(20.0),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.red,
+                ),
+                child: Icon(
+                  Icons.cancel_sharp,
+                  color: Colors.white,
+                  size: 70,
+                ),
+              ),
+              SizedBox(
+                height: screenSize.height * 0.025,
+              ),
+              Text(
+                "Failed Subscription",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+              ),
+              SizedBox(
+                height: screenSize.height * 0.025,
+              ),
+              Text(
+                "Your subscription was unsuccessful.\nPlease try again.",
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(
+                height: screenSize.height * 0.025,
+              ),
+              SizedBox(
+                width: screenSize.width * 0.7,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context)
+                        .popUntil(ModalRoute.withName('home-page-screen'));
+                  },
+                  child: Text(
+                    AppLocalization.of(context)!.translate('done')!,
+                    style: TextStyle(
+                      fontSize: 18,
+                    ),
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(

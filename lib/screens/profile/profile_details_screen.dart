@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
+import 'package:flutter_citizenapp/providers/settings_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -479,37 +480,45 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                               message: AppLocalization.of(context)!
                                   .translate('logging_out')!,
                             );
-                            authProvider.signOutProvider(context).then((_) {
-                              Navigator.of(context).popUntil(
-                                  ModalRoute.withName('home-page-screen'));
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Container(
-                                    padding: const EdgeInsets.all(10.0),
-                                    decoration: BoxDecoration(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .primaryContainer,
-                                      borderRadius: const BorderRadius.all(
-                                        Radius.circular(10.0),
+                            authProvider
+                                .signOutProvider(context)
+                                .then((bool isLogoutSuccess) {
+                              if (isLogoutSuccess) {
+                                // when logout success, set push notification to true (local)
+                                Provider.of<SettingsProvider>(context,
+                                        listen: false)
+                                    .enablePushNotification();
+                                Navigator.of(context).popUntil(
+                                    ModalRoute.withName('home-page-screen'));
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Container(
+                                      padding: const EdgeInsets.all(10.0),
+                                      decoration: BoxDecoration(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primaryContainer,
+                                        borderRadius: const BorderRadius.all(
+                                          Radius.circular(10.0),
+                                        ),
                                       ),
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        "Logout successfully",
-                                        style: TextStyle(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary,
+                                      child: Center(
+                                        child: Text(
+                                          "Logout successfully",
+                                          style: TextStyle(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary,
+                                          ),
                                         ),
                                       ),
                                     ),
+                                    behavior: SnackBarBehavior.floating,
+                                    backgroundColor: Colors.transparent,
+                                    elevation: 0,
                                   ),
-                                  behavior: SnackBarBehavior.floating,
-                                  backgroundColor: Colors.transparent,
-                                  elevation: 0,
-                                ),
-                              );
+                                );
+                              }
                             });
                           });
                         },

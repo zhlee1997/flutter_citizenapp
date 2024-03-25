@@ -15,7 +15,7 @@ class CCTVServices {
         'vms/getCameraList',
         data: json.encode(data),
       );
-      print('getCctvCoordinates success: $response');
+      print('getCctvCoordinates API success: $response');
       return response;
     } catch (e) {
       print('getCctvCoordinates fail: ${e.toString()}');

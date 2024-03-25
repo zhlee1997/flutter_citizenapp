@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_citizenapp/providers/bus_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_vlc_player/flutter_vlc_player.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-// import '../providers/settings_provider.dart';
-// import '../providers/language_provider.dart';
+import '../providers/settings_provider.dart';
+import '../providers/language_provider.dart';
 // import '../providers/bus_provider.dart';
 // import '../providers/inbox_provider.dart';
 import '../providers/auth_provider.dart';
@@ -32,13 +33,23 @@ class _SplashVideoScreenState extends State<SplashVideoScreen> {
 
   @override
   void initState() {
+    Provider.of<SettingsProvider>(context, listen: false).checkSettings();
     super.initState();
     _videoPlayerController = VlcPlayerController.asset(
       AppConstant.splashVideoFilename,
       hwAcc: HwAcc.full,
-      autoPlay: true,
       options: VlcPlayerOptions(),
     );
+    _videoPlayerController.addOnInitListener(() {
+      bool isMusicEnabled =
+          Provider.of<SettingsProvider>(context, listen: false)
+              .isSplashScreenMusicEnabled;
+      if (isMusicEnabled) {
+        _videoPlayerController.setVolume(100);
+      } else {
+        _videoPlayerController.setVolume(0);
+      }
+    });
     _videoPlayerController.addListener(() async {
       final prefs = await SharedPreferences.getInstance();
       if (_videoPlayerController.value.playingState == PlayingState.ended) {
@@ -47,45 +58,68 @@ class _SplashVideoScreenState extends State<SplashVideoScreen> {
           setState(() {
             _isLoading = true;
           });
-          // TODO: if false, need to get auth (init, check local storage and check subscribe), location, inbox, language, music, bus route
+          // TODO: if false, need to get auth (init, check local storage and check subscribe due date), location, inbox, language, music, bus route
+          // TODO: need to get push notification status (local) -> if Auth & disable status, no need to get FCM Token; if no Auth, no need
           // TODO: can show a loading spinner in end of video, after complete then navigate to HomeScreen
           // TODO: check subscription package and whether enabled
           // TODO: need to get major announcements
-
-          Provider.of<AnnouncementProvider>(context, listen: false)
-              .queryandSetMajorAnnouncementProvider(context)
+          Provider.of<LanguageProvider>(context, listen: false)
+              .checkLanguage()
               .then((_) {
-            Provider.of<SubscriptionProvider>(context, listen: false)
-                .queryAndSetIsSubscriptionEnabled()
+            Provider.of<BusProvider>(context, listen: false)
+                .setBusRouteProvider()
                 .then((_) {
-              Provider.of<AuthProvider>(context, listen: false)
-                  .checkIsAuthAndSubscribeOverdue(context)
-                  .then((bool isAuth) {
-                if (isAuth) {
-                  _pushNotification.setFirebase(true);
-                  Provider.of<LocationProvider>(context, listen: false)
-                      .getCurrentLocation();
-                } else {
-                  _pushNotification.setFirebase(false);
-                }
-                Navigator.of(context)
-                    .pushReplacementNamed(HomeScreen.routeName);
+              Provider.of<AnnouncementProvider>(context, listen: false)
+                  .queryandSetMajorAnnouncementProvider(context)
+                  .then((_) {
+                Provider.of<SubscriptionProvider>(context, listen: false)
+                    .queryAndSetIsSubscriptionEnabled()
+                    .then((_) {
+                  Provider.of<AuthProvider>(context, listen: false)
+                      .checkIsAuthAndSubscribeOverdue(context)
+                      .then((bool isAuth) {
+                    if (isAuth) {
+                      Provider.of<SettingsProvider>(context, listen: false)
+                          .checkPushNotification()
+                          .then((bool isPushNotificationEnabled) {
+                        if (isPushNotificationEnabled) {
+                          _pushNotification.setFirebase(true);
+                        } else {
+                          _pushNotification.setFirebase(false);
+                        }
+                      });
+                      Provider.of<LocationProvider>(context, listen: false)
+                          .getCurrentLocation();
+                    } else {
+                      _pushNotification.setFirebase(false);
+                    }
+                    Navigator.of(context)
+                        .pushReplacementNamed(HomeScreen.routeName);
+                  });
+                });
               });
             });
           });
           return;
         } else {
           // TODO: shared preferences => isAppFirstStart: true
-          // TODO: if true, no need to get auth, location (no permission), inbox, language, music
+          // TODO: if true, no need to get auth, location (no permission), inbox, language, music, push notification
           // TODO: need to get bus route
           // TODO: need to get major announcements
-          Provider.of<AnnouncementProvider>(context, listen: false)
-              .queryandSetMajorAnnouncementProvider(context)
+          Provider.of<BusProvider>(context, listen: false)
+              .setBusRouteProvider()
               .then((_) {
-            Navigator.of(context)
-                .pushReplacementNamed(OnboardingScreen.routeName);
+            Provider.of<AnnouncementProvider>(context, listen: false)
+                .queryandSetMajorAnnouncementProvider(context)
+                .then((_) {
+              Provider.of<SubscriptionProvider>(context, listen: false)
+                  .queryAndSetIsSubscriptionEnabled()
+                  .then((_) {
+                Navigator.of(context)
+                    .pushReplacementNamed(OnboardingScreen.routeName);
+              });
+            });
           });
-
           return;
         }
       }

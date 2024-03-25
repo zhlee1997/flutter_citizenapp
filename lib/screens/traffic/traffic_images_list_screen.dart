@@ -26,7 +26,7 @@ class _TrafficImagesListScreenState extends State<TrafficImagesListScreen> {
 
   final GlobalDialogHelper _globalDialogHelper = GlobalDialogHelper();
 
-  // on tap Camera Marker to show Camera details
+  // Tap the Camera Marker to show camera details
   Future<void> onPressCameraIcon(CCTVModel cctv) async {
     Future<void> handleFuture() async {
       // try {
@@ -37,13 +37,10 @@ class _TrafficImagesListScreenState extends State<TrafficImagesListScreen> {
       //     _isError = true;
       //   });
       // }
-
       // Map<String, dynamic> data = {
       //   "channel": "02",
       //   "thridDeviceId": cctv.cctvId,
       // };
-      // print(cctv.cctvId);
-
       // try {
       //   await Provider.of<CCTVProvider>(context, listen: false)
       //       .getCameraShortCutUrlProvider(data);
@@ -74,7 +71,7 @@ class _TrafficImagesListScreenState extends State<TrafficImagesListScreen> {
                         SizedBox(
                           height: 150,
                           child: SvgPicture.asset(
-                              'assets/images/undraw_online.svg'),
+                              'assets/images/svg/undraw_online.svg'),
                         ),
                         const SizedBox(
                           height: 20,
@@ -92,72 +89,16 @@ class _TrafficImagesListScreenState extends State<TrafficImagesListScreen> {
     );
   }
 
-  // TODO: Get Snapshots API
-  // TODO: infinite scrolling
-  // TODO: show total number of CCTVs in the bottom of list
-  Future<void> getSnapshotList(Map<String, dynamic> data) async {
-    final CCTVServices cctvServices = CCTVServices();
-
-    try {
-      var response = await cctvServices.queryCCTVSnapshotList(data);
-      if (response["status"] == "200") {
-        setState(() {
-          _cctvModelList = response["obj"];
-        });
-      }
-    } catch (e) {
-      print("getSnapshotList fail: ${e.toString()}");
-    }
-  }
-
   Future<void> _initCCTVList() async {
     setState(() {
       _isLoading = true;
     });
-    setState(() {
-      _cctvModelList = [
-        CCTVModel(
-          cctvId: "1",
-          deviceName: "SIOC CCTV 1",
-          location: "Bangunan Baitulmakmur 1",
-          latitude: "1.553110",
-          longitude: "110.345032",
-          channel: "02",
-        ),
-        CCTVModel(
-          cctvId: "2",
-          deviceName: "SIOC CCTV 2",
-          location: "Bangunan Baitulmakmur 2",
-          latitude: "1.553110",
-          longitude: "110.345032",
-          channel: "02",
-        ),
-        CCTVModel(
-          cctvId: "3",
-          deviceName: "SIOC CCTV 3",
-          location: "Bangunan Baitulmakmur 3",
-          latitude: "1.553110",
-          longitude: "110.345032",
-          channel: "02",
-        ),
-        CCTVModel(
-          cctvId: "4",
-          deviceName: "SIOC CCTV 4",
-          location: "Bangunan Baitulmakmur 4",
-          latitude: "1.553110",
-          longitude: "110.345032",
-          channel: "02",
-        ),
-        CCTVModel(
-          cctvId: "5",
-          deviceName: "SIOC CCTV 5",
-          location: "Bangunan Baitulmakmur 5",
-          latitude: "1.553110",
-          longitude: "110.345032",
-          channel: "02",
-        )
-      ];
-    });
+    bool success = await Provider.of<CCTVProvider>(context, listen: false)
+        .getCctvCoordinatesProvider();
+    if (success) {
+      _cctvModelList =
+          Provider.of<CCTVProvider>(context, listen: false).cctvModel;
+    }
     setState(() {
       _isLoading = false;
     });
@@ -172,7 +113,6 @@ class _TrafficImagesListScreenState extends State<TrafficImagesListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: infinite scrolling
     return Scaffold(
       appBar: AppBar(title: const Text("Traffic Images")),
       body: _isLoading

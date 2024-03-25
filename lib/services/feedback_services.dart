@@ -23,7 +23,6 @@ class FeedbackServices {
       "marks": comment ?? ""
     };
     try {
-      print("postData: $data");
       var response = await _apiBaseHelper.post(
         "member/memberFeedback/createBySelective",
         data: json.encode(data),

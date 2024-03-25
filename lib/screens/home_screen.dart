@@ -42,8 +42,85 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Future<void> showDeleteAllBottomModal(Size screenSize) async {
+    showModalBottomSheet(
+      context: context,
+      builder: (_) {
+        return Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(25.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                "Delete all notifications?",
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              SizedBox(
+                height: 10.0,
+              ),
+              Text(
+                "You can't undo this later.",
+                style: TextStyle(
+                  color: Colors.black54,
+                  fontSize: Theme.of(context).textTheme.titleMedium!.fontSize,
+                ),
+              ),
+              SizedBox(
+                height: 20.0,
+              ),
+              SizedBox(
+                width: screenSize.width * 0.9,
+                child: ElevatedButton(
+                  onPressed: () {},
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 15.0),
+                    child: Text(
+                      "Delete All",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 10.0,
+              ),
+              SizedBox(
+                width: screenSize.width * 0.9,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.secondary,
+                  ),
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 15.0),
+                    child: Text(
+                      "Keep Them",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              )
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+
     return Scaffold(
       bottomNavigationBar: NavigationBarTheme(
         data: NavigationBarThemeData(
@@ -116,7 +193,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-      appBar: _handleAppBar(),
+      appBar: _handleAppBar(screenSize),
       body: IndexedStack(
         index: _currentPageIndex,
         children: _screens,
@@ -124,7 +201,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  PreferredSizeWidget _handleAppBar() {
+  PreferredSizeWidget _handleAppBar(Size screenSize) {
     void handleNavigateToProfileDetailsScreen() =>
         Navigator.of(context).pushNamed(ProfileDetailsScreen.routeName);
 
@@ -212,6 +289,14 @@ class _HomeScreenState extends State<HomeScreen> {
       case 2:
         return AppBar(
           title: const Text("Notifications"),
+          actions: [
+            IconButton(
+              onPressed: () async {
+                await showDeleteAllBottomModal(screenSize);
+              },
+              icon: Icon(Icons.delete_outline),
+            )
+          ],
         );
       case 3:
         return Provider.of<AuthProvider>(context).isAuth

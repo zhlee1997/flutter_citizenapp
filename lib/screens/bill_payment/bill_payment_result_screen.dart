@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../widgets/bill_payment/bill_payment_result_widget.dart';
 import '../transaction/transaction_history_screen.dart';
+import '../../arguments/bill_payment_result_screen_arguments.dart';
+import '../../utils/app_localization.dart';
 
 class BillPaymentResultScreen extends StatelessWidget {
   static const String routeName = "bill-payment-result-screen";
@@ -10,7 +12,70 @@ class BillPaymentResultScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final args = ModalRoute.of(context)!.settings.arguments
+        as BillPaymentResultScreenArguments;
+    // determine successful or fail transaction
+    // payResult['orderAmt'], payResult['orderDate']
+    final bool isSuccessful = args.orderStatus == '1';
     final screenSize = MediaQuery.of(context).size;
+
+    if (!isSuccessful) {
+      return Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(20.0),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.red,
+                ),
+                child: Icon(
+                  Icons.cancel_sharp,
+                  color: Colors.white,
+                  size: 70,
+                ),
+              ),
+              SizedBox(
+                height: screenSize.height * 0.025,
+              ),
+              Text(
+                AppLocalization.of(context)!.translate('fail_transact')!,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+              ),
+              SizedBox(
+                height: screenSize.height * 0.025,
+              ),
+              Text(
+                  AppLocalization.of(context)!.translate('your_payment_fail')! +
+                      ". Please try again."),
+              SizedBox(
+                height: screenSize.height * 0.025,
+              ),
+              SizedBox(
+                width: screenSize.width * 0.7,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context)
+                        .popUntil(ModalRoute.withName('home-page-screen'));
+                  },
+                  child: Text(
+                    AppLocalization.of(context)!.translate('done')!,
+                    style: TextStyle(
+                      fontSize: 18,
+                    ),
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -20,17 +85,17 @@ class BillPaymentResultScreen extends StatelessWidget {
       ),
       body: Container(
         width: double.infinity,
-        padding: EdgeInsets.symmetric(horizontal: 15.0),
+        padding: const EdgeInsets.symmetric(horizontal: 15.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const BillPaymentResultWidget(),
-            Divider(),
+            const Divider(),
             SizedBox(
               height: screenSize.height * 0.01,
             ),
-            Text("PAYMENT DETAILS"),
-            SizedBox(
+            const Text("PAYMENT DETAILS"),
+            const SizedBox(
               height: 10.0,
             ),
             Row(
@@ -45,22 +110,22 @@ class BillPaymentResultScreen extends StatelessWidget {
                 )
               ],
             ),
-            SizedBox(
+            const SizedBox(
               height: 5.0,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Text("Paid Amount"),
+                const Text("Paid Amount"),
                 Text(
-                  "RM 136.75",
-                  style: TextStyle(
+                  "RM ${args.orderAmt}",
+                  style: const TextStyle(
                     fontWeight: FontWeight.bold,
                   ),
                 )
               ],
             ),
-            SizedBox(
+            const SizedBox(
               height: 5.0,
             ),
             Row(
@@ -75,25 +140,26 @@ class BillPaymentResultScreen extends StatelessWidget {
                 )
               ],
             ),
-            SizedBox(
+            const SizedBox(
               height: 5.0,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Text("Payment Date"),
+                const Text("Payment Date"),
                 Text(
-                  "03 Mar, 2024",
-                  style: TextStyle(
+                  // "03 Mar, 2024",
+                  args.orderDate ?? "",
+                  style: const TextStyle(
                     fontWeight: FontWeight.bold,
                   ),
                 )
               ],
             ),
-            SizedBox(
+            const SizedBox(
               height: 5.0,
             ),
-            Row(
+            const Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Text("Payment Method"),
@@ -105,7 +171,7 @@ class BillPaymentResultScreen extends StatelessWidget {
                 )
               ],
             ),
-            SizedBox(
+            const SizedBox(
               height: 5.0,
             ),
             Row(

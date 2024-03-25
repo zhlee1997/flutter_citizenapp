@@ -21,8 +21,7 @@ class NotificationServices {
       print('saveToken API success: $response');
       return response;
     } catch (e) {
-      print(e.toString());
-      print('saveToken error');
+      print('saveToken error: ${e.toString()}');
       // TODO: Error handling
       // throw e;
       rethrow;
@@ -33,15 +32,16 @@ class NotificationServices {
   ///
   /// Returns API response object
   Future<dynamic> deleteToken() async {
-    // Response? response;
     try {
-      var response = await _apiBaseHelper.get("member/remove/firebase/token",
-          requireToken: true);
+      var response = await _apiBaseHelper.get(
+        "member/remove/firebase/token",
+        requireToken: true,
+      );
       // TODO: Error handling for JDBC issue
       print('deleteToken API success: $response');
       return response;
     } catch (e) {
-      print('deleteToken error');
+      print('deleteToken error: ${e.toString()}');
       throw e;
     }
   }

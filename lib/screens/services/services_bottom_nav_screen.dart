@@ -1,9 +1,18 @@
 import 'package:flutter/material.dart';
 
+import '../bus_schedule/bus_map_screen.dart';
+import '../traffic/traffic_images_list_screen.dart';
+
 class ServicesBottomNavScreen extends StatelessWidget {
   static const String routeName = 'servcies-bottom-nav-screen';
 
   const ServicesBottomNavScreen({super.key});
+
+  void _handleNavigateToBusSchedule(BuildContext context) =>
+      Navigator.of(context).pushNamed(BusMapScreen.routeName);
+
+  void _handleNavigateToTrafficImages(BuildContext context) =>
+      Navigator.of(context).pushNamed(TrafficImagesListScreen.routeName);
 
   @override
   Widget build(BuildContext context) {
@@ -137,15 +146,13 @@ class ServicesBottomNavScreen extends StatelessWidget {
               ),
             ),
             GestureDetector(
-              onTap: () {
-                print("Traffic images pressed");
-              },
+              onTap: () => _handleNavigateToTrafficImages(context),
               child: Card(
                 elevation: 5.0,
                 child: Container(
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10.0),
-                      image: DecorationImage(
+                      image: const DecorationImage(
                         image: AssetImage(
                             "assets/images/pictures/traffic_image.jpg"),
                         fit: BoxFit.cover,
@@ -154,15 +161,15 @@ class ServicesBottomNavScreen extends StatelessWidget {
                   child: Column(
                     children: <Widget>[
                       Container(
-                        margin: EdgeInsets.only(
+                        margin: const EdgeInsets.only(
                           top: 35.0,
                         ),
-                        child: Icon(
+                        child: const Icon(
                           Icons.traffic_outlined,
                           size: 50.0,
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10.0,
                       ),
                       Text(
@@ -255,9 +262,7 @@ class ServicesBottomNavScreen extends StatelessWidget {
               ),
             ),
             GestureDetector(
-              onTap: () {
-                print("Bus Schedule pressed");
-              },
+              onTap: () => _handleNavigateToBusSchedule(context),
               child: Card(
                 elevation: 5.0,
                 child: Container(

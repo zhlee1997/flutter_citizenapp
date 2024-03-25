@@ -14,6 +14,7 @@ import '../../providers/subscription_provider.dart';
 import '../../utils/app_localization.dart';
 import '../../utils/global_dialog_helper.dart';
 import '../../utils/general_helper.dart';
+import '../../widgets/subscription/subscription_install_spay_bottom_modal.dart';
 
 class SubscriptionCheckoutScreen extends StatefulWidget {
   static const String routeName = 'subscription-checkout-screen';
@@ -34,6 +35,13 @@ class _SubscriptionCheckoutScreenState
   final Map data = {};
 
   final SubscriptionServices _subscriptionServices = SubscriptionServices();
+
+  Future<void> showNeedInstallSPayBottomModal() async {
+    await showModalBottomSheet(
+      context: context,
+      builder: (_) => const SubscriptionInstallSPayBottomModal(),
+    );
+  }
 
   /// Create and confirm order when paying through S Pay Global
   /// To get encrypted data from SIOC Backend
@@ -333,11 +341,12 @@ class _SubscriptionCheckoutScreenState
                         );
                         orderRequest(context, args.selectedPrice);
                       } else {
-                        Navigator.of(context).pop();
-                        Fluttertoast.showToast(
-                          msg: AppLocalization.of(context)!
-                              .translate('please_install_spay')!,
-                        );
+                        // Navigator.of(context).pop();
+                        showNeedInstallSPayBottomModal();
+                        // Fluttertoast.showToast(
+                        //   msg: AppLocalization.of(context)!
+                        //       .translate('please_install_spay')!,
+                        // );
                       }
                     },
                   ),
