@@ -23,32 +23,33 @@ class _TrafficImagesListScreenState extends State<TrafficImagesListScreen> {
   List<CCTVModel> _cctvModelList = [];
   bool _isLoading = false;
   bool _isError = false;
+  late CCTVModelDetail _cctvModelDetail;
 
   final GlobalDialogHelper _globalDialogHelper = GlobalDialogHelper();
 
   // Tap the Camera Marker to show camera details
   Future<void> onPressCameraIcon(CCTVModel cctv) async {
     Future<void> handleFuture() async {
-      // try {
-      //   await Provider.of<CCTVProvider>(context, listen: false)
-      //       .getCctvDetailProvider(cctv);
-      // } catch (e) {
-      //   setState(() {
-      //     _isError = true;
-      //   });
-      // }
-      // Map<String, dynamic> data = {
-      //   "channel": "02",
-      //   "thridDeviceId": cctv.cctvId,
-      // };
-      // try {
-      //   await Provider.of<CCTVProvider>(context, listen: false)
-      //       .getCameraShortCutUrlProvider(data);
-      // } catch (e) {
-      //   setState(() {
-      //     _isError = true;
-      //   });
-      // }
+      _cctvModelDetail = CCTVModelDetail(
+        id: cctv.cctvId,
+        name: cctv.deviceName,
+        location: cctv.location,
+        image: '',
+        updateTime: '',
+        liveUrl: '',
+      );
+      Map<String, dynamic> data = {
+        "channel": "02",
+        "thridDeviceId": cctv.cctvId,
+      };
+      try {
+        await Provider.of<CCTVProvider>(context, listen: false)
+            .getCameraShortCutUrlProvider(data);
+      } catch (e) {
+        setState(() {
+          _isError = true;
+        });
+      }
     }
 
     await showModalBottomSheet(
@@ -82,7 +83,9 @@ class _TrafficImagesListScreenState extends State<TrafficImagesListScreen> {
                     ),
                   );
                 }
-                return TrafficImagesBottomWidget();
+                return TrafficImagesBottomWidget(
+                  cctvModelDetail: _cctvModelDetail,
+                );
               }
             });
       },
@@ -130,7 +133,7 @@ class _TrafficImagesListScreenState extends State<TrafficImagesListScreen> {
                     child: Text("${index + 1}".toString()),
                   ),
                   trailing: Icon(
-                    Icons.camera_alt_outlined,
+                    Icons.emoji_transportation_outlined,
                     color: Theme.of(context).colorScheme.primary,
                   ),
                   onTap: () async {

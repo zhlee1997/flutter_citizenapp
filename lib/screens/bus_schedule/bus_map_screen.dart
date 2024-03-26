@@ -14,6 +14,7 @@ import '../../utils/global_dialog_helper.dart';
 import '../../providers/bus_provider.dart';
 import '../../models/bus_model.dart';
 import '../../widgets/bus_schedule/bus_detail_bottom_modal.dart';
+import '../../widgets/bus_schedule/bus_map_filter_drawer.dart';
 
 class BusMapScreen extends StatefulWidget {
   static const routeName = 'bus-map-screen';
@@ -25,7 +26,6 @@ class BusMapScreen extends StatefulWidget {
 }
 
 class _BusMapScreenState extends State<BusMapScreen> {
-  // TODO: _isLoading
   bool _isLoading = false;
   late CameraPosition? _initialLocation;
   late double _latitude;
@@ -47,45 +47,76 @@ class _BusMapScreenState extends State<BusMapScreen> {
   /// And when switching to new route
   ///
   /// Receives [busStationList] as the list of bus stations from API
-  Future<void> _getRoutes() async {
-    List<PointLatLng> route_1 = polylinePoints
-        .decodePolyline(busRouteEncodedString.semenggohToDunRoutePartOne);
-    print(route_1);
+  void _getRoutes(String routeId) {
+    if (routeId == "c007661d0bd643a9896829a42d6ce915") {
+      List<PointLatLng> route_1 = polylinePoints
+          .decodePolyline(busRouteEncodedString.semenggohToDunRoutePartOne);
+      print(route_1);
 
-    List<PointLatLng> route_2 = polylinePoints
-        .decodePolyline(busRouteEncodedString.semenggohToDunRoutePartTwo);
-    print(route_2);
+      List<PointLatLng> route_2 = polylinePoints
+          .decodePolyline(busRouteEncodedString.semenggohToDunRoutePartTwo);
+      print(route_2);
 
-    List<PointLatLng> route_3 = polylinePoints
-        .decodePolyline(busRouteEncodedString.semenggohToDunRoutePartThree);
-    print(route_3);
+      List<PointLatLng> route_3 = polylinePoints
+          .decodePolyline(busRouteEncodedString.semenggohToDunRoutePartThree);
+      print(route_3);
 
-    if (route_1.isNotEmpty) {
-      route_1.forEach((element) {
-        _polyPoints.add(LatLng(element.latitude, element.longitude));
-      });
+      if (route_1.isNotEmpty) {
+        route_1.forEach((element) {
+          _polyPoints.add(LatLng(element.latitude, element.longitude));
+        });
+      }
+      if (route_2.isNotEmpty) {
+        route_2.forEach((element) {
+          _polyPoints.add(LatLng(element.latitude, element.longitude));
+        });
+      }
+      if (route_3.isNotEmpty) {
+        route_3.forEach((element) {
+          _polyPoints.add(LatLng(element.latitude, element.longitude));
+        });
+      }
+    } else {
+      // routeId => c007661d0bd643a9896829a42d6ce916
+      List<PointLatLng> route_1 = polylinePoints
+          .decodePolyline(busRouteEncodedString.dunToSemenggohRoutePartOne);
+      print(route_1);
+
+      List<PointLatLng> route_2 = polylinePoints
+          .decodePolyline(busRouteEncodedString.dunToSemenggohRoutePartTwo);
+      print(route_2);
+
+      List<PointLatLng> route_3 = polylinePoints
+          .decodePolyline(busRouteEncodedString.dunToSemenggohRoutePartThree);
+      print(route_3);
+
+      if (route_1.isNotEmpty) {
+        route_1.forEach((element) {
+          _polyPoints.add(LatLng(element.latitude, element.longitude));
+        });
+      }
+      if (route_2.isNotEmpty) {
+        route_2.forEach((element) {
+          _polyPoints.add(LatLng(element.latitude, element.longitude));
+        });
+      }
+      if (route_3.isNotEmpty) {
+        route_3.forEach((element) {
+          _polyPoints.add(LatLng(element.latitude, element.longitude));
+        });
+      }
     }
-
-    if (route_2.isNotEmpty) {
-      route_2.forEach((element) {
-        _polyPoints.add(LatLng(element.latitude, element.longitude));
-      });
-    }
-
-    if (route_3.isNotEmpty) {
-      route_3.forEach((element) {
-        _polyPoints.add(LatLng(element.latitude, element.longitude));
-      });
-    }
-
     _polylines.add(Polyline(
-      polylineId: PolylineId("polylines"),
+      polylineId: const PolylineId("polylines"),
       color: Colors.purple,
       width: 5,
       points: _polyPoints,
     ));
-
-    if (mounted) setState(() {});
+    if (mounted) {
+      setState(() {
+        _isLoadingAction = false;
+      });
+    }
   }
 
   Future<void> getBusStation(String routeId) async {
@@ -98,7 +129,7 @@ class _BusMapScreenState extends State<BusMapScreen> {
           _isLoading = false;
         });
         _renderMarker(busStationList);
-        _getRoutes();
+        _getRoutes(routeId);
       }
     } catch (e) {
       throw e;
@@ -251,23 +282,23 @@ class _BusMapScreenState extends State<BusMapScreen> {
   void didChangeDependencies() {
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
-    String? _routeId = Provider.of<BusProvider>(context).routeId;
-    if (_routeId == null) {
+    String? routeId = Provider.of<BusProvider>(context).routeId;
+    if (routeId == null) {
       Provider.of<BusProvider>(context, listen: false).setBusRouteProvider();
     }
     _isLoadingAction = true;
     _polylines.clear();
     _markers.clear();
     _polyPoints = [];
-    if (_routeId != null) {
-      getBusStation(_routeId);
+    if (routeId != null) {
+      getBusStation(routeId);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // endDrawer: BusMapFilterDrawer(onPressAnimate: animateToMapCenter),
+      endDrawer: BusMapFilterDrawer(onPressAnimate: () {}),
       appBar: AppBar(
         title: Text("Bus Schedule"),
         leading: GestureDetector(
@@ -277,21 +308,18 @@ class _BusMapScreenState extends State<BusMapScreen> {
             Navigator.of(context).pop();
           },
         ),
-        // actions: [
-        //   Builder(
-        //     builder: (ctx) => TextButton(
-        //       onPressed: !_isLoadingAction
-        //           ? () => Scaffold.of(ctx).openEndDrawer()
-        //           : null,
-        //       child: Text(
-        //         AppLocalization.of(context)!.translate('select')!,
-        //         style: TextStyle(
-        //           color: Colors.white,
-        //         ),
-        //       ),
-        //     ),
-        //   ),
-        // ],
+        actions: [
+          Builder(
+            builder: (ctx) => TextButton(
+              onPressed: !_isLoadingAction
+                  ? () => Scaffold.of(ctx).openEndDrawer()
+                  : null,
+              child: Text(
+                AppLocalization.of(context)!.translate('select')!,
+              ),
+            ),
+          ),
+        ],
       ),
       body: _isLoading
           ? GlobalDialogHelper().showLoadingSpinner()
@@ -368,4 +396,13 @@ class BusRouteEncodedString {
       "_whHseu`TuAnA{@fA{@~As@tB{@lDIx@CdBI|BMn@UjAOh@aAfBw@bBUn@g@~BGbAI|FElDKdAYbBWnBS~A_@rBgAlEm@~C]hESfDk@lHSfB[dAO`@E^Cn@Nt@@\\Eb@Md@Q\\SV]TYJe@Hw@@eAGc@Oa@Se@Ks@?]Du@XsAf@i@PDLAd@?NK?K@yAh@c@REJ?Jb@bApAfDw@XkAz@iAz@MLMIMSI_@Mc@SYUWQo@K_@[aAYw@iDvAa@PCZANEJEBEI[{@IIE?KBIFILETmCfAuEhBc@N{@Rm@Fm@Bg@?{DMaDQMAg@HwAj@c@Xa@y@{@gAq@iAgBmEq@gBiCiHy@qCmA{Ey@_De@aC[}@_AoB]m@GBmC}FaCmERIo@sAy@aBuAuC_@q@YWQKe@Oy@Uu@Oc@AO@OBu@lAu@~@s@d@kBbA]Rk@d@kAnAe@b@c@`@@\\@j@ItASjFM|DWbHEz@Kz@Ql@i@vA]x@U\\M`A@J@X?RGRUPSJo@`Bu@bB_@z@]f@c@h@eArAsAjAyA`AaAh@OPITGf@SdCEj@Id@e@tAu@rBS^a@`@YTe@Zy@^SJYRW`@W`@Ut@If@Gv@@ZN`A^xAL\\|ApBHRFV?z@Gt@BNFLZZICQ@]F}@f@CHAVBJQKG?OLYb@a@fAWn@m@~@gExGEL@HFFtB`At@\\l@NjBr@h@\rCrA~DtB|@h@hBlAj@PxEx@~@Lj@F^F?PDhAXrENpDBdB?lAKzAKhAIlA@xDBxDA`AEdBL@R?DuCbA@Cr@GdBEbACfAkAAQAChACnA?nBI~DCdBE|AKvAG`CD|@GlBOhBAlBGtBEb@Df@E`D?zB[KEN@DVH@P?PQV_EvEgArA@BHGF?BDINe@h@V^LL?DOTy@fAUQUZMIECK@SBMFY^y@dAURgAbAmAhA}@bA}@jAuBfCoBbC}AdBUV";
   String get semenggohToDunRoutePartThree =>
       "croHqsi`TsFrGoB`CsA|AkArAgBtBg@c@iEgEmAuAoBcCuCmDiGuHYYOIeBWkBWY?k@BQFc@Le@Fq@Km@Oe@UIMKc@AQe@u@c@m@gDwDyJwLiJsKmLiNwBuCm@oAw@_Ck@uBYs@e@i@_@YWg@Me@Ci@@i@B[[XSJMDsC`@mBXo@@a@C_@Gu@Qq@CoALuB\\gAHY@SEg@UYYQWAJIXQRWLLD^Db@Lv@?dAGlEo@|@Ed@BnAVd@B|C?xBET@JBx@^Me@Ci@@i@P}@Rk@p@o@Tk@F_@@]Aa@UwHMcBScFE_Ac@qISoCW_G_@iJ_AmNSoHWmES[GYO_CEaBLg@Ga@Kc@a@m@KKLD^D^A^GXQOTOn@Ar@x@vPh@tJd@~JR^NRVXb@TPDTBd@?n@K`BwApAgAzA}AvCyB|KqKZ]rA_BbFaFZc@Ti@`@mBO}CKa@[e@R@f@Cb@ILEpBEfCATKbC@hB?D_Bp@AHJ?^?z@?|@Gj@?Ts@?KvBQPiABuC?Br@DVPj@^|@zAnAbDpB~Ap@hAVfBX~HdAjBNbACt@IRCFNJRRFx@@h@EtAg@RVEDAHBHHBJ@`@S";
+
+// Encoded Google Polyline String => bus route id: c007661d0bd643a9896829a42d6ce916
+// Generated by Google Directions Service API
+  String get dunToSemenggohRoutePartOne =>
+      "qepHi`o`Ta@RKAICCI@IDESWeA`@ODi@Dy@ASGKSGOSBu@HcABkBO_IeAgBYiAW_Bq@cDqB{AoA_@}@Qk@IkAtC?hACPQJwBEeCD_BAsE?kCGm@[k@yGjFmA`A_@ZMPERBfAGb@O`@Y\\SNMDSRK\\?n@T~BRpCELILaB~AuEbEmBvAoE|DmFhFqCzCa@l@oBdB}BvBQZa@v@c@bAg@bBOdAKbAKzA`@tH~@nSTpENpAJn@Td@FHOMg@Sk@Cg@Le@`@Sj@M`@[XSJk@JcFt@o@@a@CeAUk@Es@?gBXyARgAFe@Mo@g@QWAJIXQRWLl@Jb@Lv@?dAG~Dk@r@Id@?`APjAL~FCl@?dAb@Vf@^Xd@h@Xr@j@tBv@~Bl@nAvBtCXYbCxCdHnIxDhEhNzOpCzCvAzAZRVJl@Hl@IFCXKn@Kl@Eb@Fj@NRLR^Fd@AVALMf@?XBPJLXPnC^^Px@x@jErFrCjDz@fAnAzAVS`@]B?@@pAvALIB?B?~A~AFCH@HDjAlAJALQHAVUrDcEdE}EnHyIxDsEpBaCfCeCfAqAd@m@?GGIGEj@}@JFP@g@t@NJZTLHT[TPx@gANU?EMMW_@d@i@HK?CCEG?GDC?BGbGeHPY?OAQWIAEDOg@YYAW@[EYOQWI[DoCJmDHc@EkAByARoGD{BH}BZuLWQQEoACBc@DkBDoA?]jA@BA?CJyBCSCEIAcA?@a@tBH?VBXDN@a@@q@@u@@}APaA`A_Cz@eCV}@Hi@Bu@A{AQyEM}AWcDyA}@aBUUE{@bCIJWEz@oB[M{@rBRFTDPC|@iCaC_@_@KmBiAQ?WP_@j@[NWC}@U{Ai@kA]{Aq@Q?KHaAlBa@bA[b@QJ}@\\s@aAy@AIJCLGKOMu@]SSQuCGgB@eARkAL_@jAkBXm@`EqG`AgBr@mBZc@\\U|@i@PWLs@Do@Cu@IW_@m@_AmAUk@[gAIm@GcABo@TmALc@Zk@LUTaAJy@v@uB^Wf@{ANGVGr@Ef@BRGJQ`@wEFWTYzCmBhAaAhB}Br@eAt@kBPs@?WG[N@VEp@WTQFSAm@EUMUIET[f@cAt@sBPo@ReD^{JNcF?iEVm@pD_DfC}ArAaArAoBJWD@~Ab@dBb@f@Tf@j@zA|CtBjE~AnD~AvCLGr@~Ap@tA|@rBVv@bAlD|@`Ep@jCt@xClAbDfAtC~BdGf@`Ad@n@JJ^Lz@Ln@BzAD|I^tACl@Gz@SxFyBtAi@";
+  String get dunToSemenggohRoutePartTwo =>
+      "}bkHy}p`TfJ{DxF{BJ[@WCQQ]z@?b@?T?RChB{@HM?Ob@?VGf@UTMJS?mACgAkABIE`AeAb@`@d@Tj@HF@NOr@S|@I|@@r@V`@G^K\\UZc@Nm@ToDb@sGb@aGZ{BpAwF|@oFv@wFHwABqAD_BBeCL{BLoAR_At@qB\\q@r@cBh@kCF_A\\sDZgBb@eB`@sAVq@l@kA~@wAj@q@fCcCLLlAwAzB_ChCaCh@`@\\FjFr@hAFN?ZSPM^^xBzBFQ?MGSrGdH~@|@n@\\zAl@hC~@zGpCxCrA~Ad@fATZBK\\}@jGg@jD_AtFsA`H_@hAi@lA{BvFg@dAm@`AeDzDwAbCa@|@]tAk@vF]hDu@xF]zA_C|HuAxD_BzEcAvCyC|Fg@dAg@nAE`@Pn@p@fAPTDPfE`@z@J?m@G{B@WFEfBGbEOtAIr@QfDzCk@l@NP[d@?PVn@LF|BX~D^Sd@nAJzD\\bANb@Fv@Zj@LDWMCM`@I^GAAG?ORFjCz@lChAdJhDpHtCvAj@z@TJRtDfBrB|@hBp@RDLH^s@?MEIIQUEa@Sb@MdAg@`@[X]j@gACyIMgFq@qLa@wEOy@yAuEo@oB_@DgA}Dc@mA_A}Ag@]YY~ASVMES}@sGIgAL{CXkDJwB@q@c@cFsAuIKcAI_BRADmBNoAhAyEl@aBpAgCjDkHt@_ATSJQDS@UCUGSdBr@bDXbBJ|BB~BCrF]lAGdDSbBG\\E@XT~EJlBTzBdApEzArFpCtKpAdFxEbQd@bBbCrJHb@l@zCr@tF`@hCnAlIh@hEd@|DFfBGpBk@xHSrDi@tJt@T`Ax@d@f@b@p@^~@b@rAhDdL~@tDjAjDd@d@NFd@F\\@fA_@T@j@EV?|@Fn@TRTBJNTlBfGnAbEPnAMv@Wh@MNQRe@XSZyAXQVITAVATPPVN`ATp@LrARdB^`A\bKzFf@XrChAjBv@r@d@r@p@d@t@Pj@RfABb@?\\IhA_@~BXC@^Dj@DHDAt@V~@HfABD[Ha@?KAQGGs@IeAGoAAg@@UfAKl@_@jBBTHZLZVVXTrAHnBRfCPfGZfAFtCNdCRZFJHtAFr@FDGJC|ADpCFvCCfA?pJPpDDbLV~AHALPBEt@EhB?|A|@t@\\RPJxCCfBD`@BnAFdBT`QxEtHrBdA`@rAb@zCjAjCdAnBf@lB^nBZ`AF`A?dBEpD_@xUqC~@QhA]n@SrB_A~A{@rDyBbAk@~DcBfBw@rB_ApBu@tA_@bBYtAMt@Ex@CdBDtERjALr@?tFXfFX";
+  String get dunToSemenggohRoutePartThree =>
+      "ucxG_tk`T|DR`AJv@BrAJzABpAHzCNbDFzBJdDLjHj@~CLzF^vF\\Cj@@n@@PRd@TV`@\\h@RXPr@Vb@P^Jf@Ff@BpCFtAA~DBpAE@ABAJ@FFTNl@VdCRf@?xCdAdA\vA^hALdF^xD`@hBRj@@f@?VCPCbASvBm@zBu@nB_@dAEhA?`ABnDZjFZhFj@pC^hFv@`F~@vGdApBVhBPv@A|@MrB]fDs@nASZA`@Bd@Db@AfA?`BJp@@rAK|@S`@KVl@bBs@";
 }

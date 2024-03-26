@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_citizenapp/providers/inbox_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:lottie/lottie.dart';
 
@@ -167,16 +168,21 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             NavigationDestination(
               selectedIcon: Badge(
+                isLabelVisible:
+                    Provider.of<InboxProvider>(context).unreadMessageCount != 0,
                 child: Icon(
                   Icons.notifications,
                   color: Theme.of(context).colorScheme.primary,
                 ),
               ),
-              icon: const Badge(
-                  child: Icon(
-                Icons.notifications_outlined,
-                color: Colors.grey,
-              )),
+              icon: Badge(
+                  isLabelVisible:
+                      Provider.of<InboxProvider>(context).unreadMessageCount !=
+                          0,
+                  child: const Icon(
+                    Icons.notifications_outlined,
+                    color: Colors.grey,
+                  )),
               label: 'Notifications',
             ),
             NavigationDestination(

@@ -2,11 +2,18 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 import '../../providers/auth_provider.dart';
+import '../../providers/inbox_provider.dart';
 import '../../widgets/sarawakid/login_full_bottom_modal.dart';
 import '../../services/inbox_services.dart';
 import '../../models/inbox_model.dart';
+import '../announcement/announcement_detail_screen.dart';
+import './notifications_detail_screen.dart';
+import '../../utils/app_localization.dart';
+import '../../utils/global_dialog_helper.dart';
 
 class NotificationsBottomNavScreen extends StatefulWidget {
   static const String routeName = 'notifications-bottom-nav-screen';
@@ -19,7 +26,7 @@ class NotificationsBottomNavScreen extends StatefulWidget {
 }
 
 class _NotificationsBottomNavScreenState
-    extends State<NotificationsBottomNavScreen> {
+    extends State<NotificationsBottomNavScreen> with TickerProviderStateMixin {
   int selected = 1;
   bool _isLoading = false;
   bool _noMoreData = false;
@@ -27,11 +34,72 @@ class _NotificationsBottomNavScreenState
   late bool _isInitLoading;
   late ScrollController _scrollController;
   int _page = 1;
+  late SnackBar snackBar;
+
+  final dateFormat = DateFormat('dd MMM');
 
   final List<String> items_major =
       List.generate(5, (index) => 'Major Item $index');
-  final List<String> items_notification =
-      List.generate(5, (index) => 'Notification Item $index');
+  // final List<String> items_notification =
+  //     List.generate(5, (index) => 'Notification Item $index');
+
+  /// Update the read status of message when message is read
+  /// Using modifyByIdSelective API
+  ///
+  /// Receives [idx] as the index of inbox list
+  Future<void> inboxRead(int idx) async {
+    InboxModel inbox = _inboxes[idx];
+    // Navigate to announcement detail screen
+    if (inbox.msgType == "7") {
+      Map<String, dynamic> msgObj = json.decode(inbox.msgContext);
+      Navigator.of(context)
+          .pushNamed(AnnouncementDetailScreen.routeName, arguments: {
+        'id': msgObj['msgId'],
+        'isMajor': true,
+      });
+    } else {
+      Navigator.of(context).pushNamed(
+        NotificationsDetailScreen.routeName,
+        arguments: inbox.rcvId,
+      );
+    }
+
+    try {
+      if (inbox.msgReadStatus == "1") {
+        return;
+      }
+      var response = await InboxServices().modifyByIdSelective(inbox.rcvId);
+      if (response['status'] == '200') {
+        Provider.of<InboxProvider>(context, listen: false).refreshCount();
+        setState(() {
+          inbox.msgReadStatus = "1";
+        });
+      }
+    } catch (e) {
+      print('inboxRead fail');
+      throw e;
+    }
+  }
+
+  /// Delete a message
+  /// Using removeById API
+  ///
+  /// Receives [idx] as the index of inbox list
+  Future<void> remove(int idx) async {
+    try {
+      InboxModel inbox = _inboxes[idx];
+      var response = await InboxServices().removeById(inbox.rcvId);
+      if (response['status'] == '200') {
+        Provider.of<InboxProvider>(context, listen: false).refreshCount();
+        setState(() {
+          _inboxes.removeAt(idx);
+        });
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      } else {}
+    } catch (e) {
+      print('delete message failed');
+    }
+  }
 
   Future<void> _handleFullScreenLoginBottomModal(BuildContext context) async {
     await showModalBottomSheet(
@@ -44,6 +112,10 @@ class _NotificationsBottomNavScreenState
         return const LoginFullBottomModal();
       },
     );
+  }
+
+  Future<void> getMajorAnnouncements(int page) async {
+    // Announcement API => announcement/queryPageList (annType = 3)
   }
 
   /// Get inbox list when screen first renders
@@ -103,6 +175,15 @@ class _NotificationsBottomNavScreenState
         });
       });
     getNotifications(_page);
+  }
+
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    snackBar = SnackBar(
+      content: Text(AppLocalization.of(context)!.translate('message_deleted')!),
+    );
   }
 
   @override
@@ -186,107 +267,154 @@ class _NotificationsBottomNavScreenState
                     ),
                   ],
                 ),
-                Container(
+                Expanded(
                   child: selected == 0
                       ? ListView.builder(
-                          controller: _scrollController,
                           shrinkWrap: true,
                           itemCount: items_major.length,
                           itemBuilder: ((context, index) {
-                            return ListTile(
-                              leading: Badge(
-                                smallSize: 8.0,
-                                child: Container(
-                                  width: 40,
-                                  height: 40,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .inversePrimary
-                                        .withOpacity(0.7),
+                            return Slidable(
+                              endActionPane: ActionPane(
+                                motion: const StretchMotion(),
+                                extentRatio: 0.3,
+                                children: [
+                                  SlidableAction(
+                                    label: AppLocalization.of(context)!
+                                        .translate('delete')!,
+                                    backgroundColor: Colors.red,
+                                    icon: Icons.delete,
+                                    onPressed: (BuildContext context) {
+// TODO: remove announcement
+                                    },
                                   ),
-                                  child: Icon(
-                                    Icons.announcement_outlined,
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
+                                ],
+                              ),
+                              child: ListTile(
+                                leading: Badge(
+                                  smallSize: 8.0,
+                                  child: Container(
+                                    width: 40,
+                                    height: 40,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .inversePrimary
+                                          .withOpacity(0.7),
+                                    ),
+                                    child: Icon(
+                                      Icons.announcement_outlined,
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              title: Text(
-                                items_major[index],
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w500,
+                                title: Text(
+                                  items_major[index],
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
-                              ),
-                              subtitle: Text(
-                                "Get an instant Travel Insurance quote now.",
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w300,
+                                subtitle: Text(
+                                  "Get an instant Travel Insurance quote now.",
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w300,
+                                  ),
                                 ),
-                              ),
-                              trailing: Text(
-                                "20 Jan",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
+                                trailing: Text(
+                                  "20 Jan",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
                             );
                           }),
                         )
-                      : ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: _inboxes.length,
-                          itemBuilder: ((context, index) {
-                            return ListTile(
-                              onTap: () {
-                                // TODO: Get message detail
-                                // inboxRead(index);
-                              },
-                              leading: Badge(
-                                smallSize: 8.0,
-                                child: Container(
-                                  width: 40,
-                                  height: 40,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .inversePrimary
-                                        .withOpacity(0.7),
+                      : _inboxes.length == 0
+                          ? GlobalDialogHelper().buildCenterNoData(
+                              context,
+                              message: AppLocalization.of(context)!
+                                  .translate('no_inbox_data')!,
+                            )
+                          : ListView.builder(
+                              controller: _scrollController,
+                              shrinkWrap: true,
+                              itemCount: _inboxes.length,
+                              itemBuilder: ((context, index) {
+                                return Slidable(
+                                  endActionPane: ActionPane(
+                                    motion: const StretchMotion(),
+                                    extentRatio: 0.3,
+                                    children: [
+                                      SlidableAction(
+                                        label: AppLocalization.of(context)!
+                                            .translate('delete')!,
+                                        backgroundColor: Colors.red,
+                                        icon: Icons.delete,
+                                        onPressed: (BuildContext context) {
+                                          remove(index);
+                                        },
+                                      ),
+                                    ],
                                   ),
-                                  child: Icon(
-                                    Icons.payment,
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
+                                  child: ListTile(
+                                    onTap: () {
+                                      // TODO: Get message detail
+                                      inboxRead(index);
+                                    },
+                                    leading: Badge(
+                                      isLabelVisible:
+                                          _inboxes[index].msgReadStatus == "0",
+                                      smallSize: 8.0,
+                                      child: Container(
+                                        width: 40,
+                                        height: 40,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .inversePrimary
+                                              .withOpacity(0.7),
+                                        ),
+                                        child: Icon(
+                                          Icons.payment,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                        ),
+                                      ),
+                                    ),
+                                    title: Text(
+                                      _inboxes[index].msgTitle,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    subtitle: Text(
+                                        _inboxes[index].msgType == "1"
+                                            ? json.decode(_inboxes[index]
+                                                .msgContext)["content"]
+                                            : json.decode(_inboxes[index]
+                                                .msgContext)["title"],
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.w300,
+                                        )),
+                                    trailing: Text(
+                                      dateFormat.format(DateTime.parse(
+                                          _inboxes[index].createTime)),
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ),
-                              title: Text(
-                                _inboxes[index].msgTitle,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              subtitle: Text(
-                                  json.decode(
-                                      _inboxes[index].msgContext)["content"],
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w300,
-                                  )),
-                              trailing: Text(
-                                _inboxes[index].createTime,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            );
-                          }),
-                        ),
+                                );
+                              }),
+                            ),
                 )
               ],
             ),

@@ -5,6 +5,7 @@ import './screens/sarawakid/sarawakid_screen.dart';
 import './screens/talikhidmat/new_case_screen.dart';
 
 import './screens/notifications/notifications_bottom_nav_screen.dart';
+import './screens/notifications/notifications_detail_screen.dart';
 
 import './screens/services/services_bottom_nav_screen.dart';
 
@@ -87,4 +88,6 @@ final Map<String, WidgetBuilder> routes = <String, WidgetBuilder>{
   TalikhidmatCasesScreen.routeName: (ctx) => const TalikhidmatCasesScreen(),
   EmergencyCasesScreen.routeName: (ctx) => const EmergencyCasesScreen(),
   BusMapScreen.routeName: (ctx) => const BusMapScreen(),
+  NotificationsDetailScreen.routeName: (ctx) =>
+      const NotificationsDetailScreen(),
 };

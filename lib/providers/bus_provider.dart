@@ -65,4 +65,17 @@ class BusProvider with ChangeNotifier {
       throw e;
     }
   }
+
+  /// Change bus route when accessing filter drawer in bus schedule.
+  ///
+  /// Receives [id] as the bus route ID and [routeName] as
+  /// the name of bus route.
+  void changeRouteProvider(
+    String id,
+    String routeName,
+  ) {
+    _routeId = id;
+    _routeName = routeName;
+    notifyListeners();
+  }
 }

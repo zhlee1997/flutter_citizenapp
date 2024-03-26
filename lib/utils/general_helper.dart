@@ -8,7 +8,7 @@ import 'package:path_provider/path_provider.dart';
 // import 'package:flutter/services.dart';
 // import 'package:dio/dio.dart';
 
-// import '../utils/api_helper.dart';
+import '../utils/api_base_helper.dart';
 
 class GeneralHelper {
   /// Perform formatting of price input when in Bill Payment
@@ -120,23 +120,22 @@ class GeneralHelper {
   /// Receives [operType] as the operation type
   /// Returns 'true' if calling API is successful
   /// Returns 'false' if calling API is failed
-  // static Future<bool> clearCache(String operType) async {
-  //   try {
-  //     Response? response;
-  //     ApiBaseHelper _apiBaseHelper = ApiBaseHelper();
-
-  //     response = await _apiBaseHelper.get(
-  //       '/file/delCacheKey',
-  //       queryParameters: {
-  //         'operType': operType,
-  //       },
-  //     );
-  //     print('clearCache $response');
-  //     if (response!.data['status'] == "200") return true;
-  //     return false;
-  //   } catch (e) {
-  //     print('clearCache fail');
-  //     throw e;
-  //   }
-  // }
+  static Future<bool> clearCache(String operType) async {
+    try {
+      ApiBaseHelper _apiBaseHelper = ApiBaseHelper();
+      var response = await _apiBaseHelper.get(
+        '/file/delCacheKey',
+        queryParameters: {
+          'operType': operType,
+        },
+        requireToken: true,
+      );
+      print('clearCache inbox API success: $response');
+      if (response['status'] == "200") return true;
+      return false;
+    } catch (e) {
+      print('clearCache API fail: ${e.toString()}');
+      throw e;
+    }
+  }
 }

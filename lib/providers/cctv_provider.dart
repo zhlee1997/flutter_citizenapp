@@ -72,14 +72,12 @@ class CCTVProvider with ChangeNotifier {
   /// Receives [data] as the CCTV information
   /// Return 'true' if getCameraShortCutUrl API is successful.
   /// Return 'false' if getCameraShortCutUrl API is failed.
-  Future<bool> getCameraShortCutUrlProvider(Map<String, dynamic> data) async {
+  Future<void> getCameraShortCutUrlProvider(Map<String, dynamic> data) async {
     try {
       var response = await CCTVServices().getCameraShortCutUrl(data);
       if (response['status'] == 200) {
         _imageUrl = response['obj']['picUrl'] ?? '';
-        return true;
       }
-      return false;
     } catch (e) {
       print('getCameraShortCutUrlProvider failed');
       throw e;
@@ -87,7 +85,7 @@ class CCTVProvider with ChangeNotifier {
   }
 
   // Provider - obtain 5 nearby CCTV
-  Future<bool> queryNearbyDevicesListProvider(Map<String, dynamic> data) async {
+  Future<void> queryNearbyDevicesListProvider(Map<String, dynamic> data) async {
     try {
       var response = await CCTVServices().queryNearbyDevicesList(data);
       if (response['status'] == 200) {
@@ -104,21 +102,10 @@ class CCTVProvider with ChangeNotifier {
             };
             _nearCameraList.add(item);
           });
-          // TODO: 5 Cameras => API
-          // List<dynamic> images = await getImages(_nearCameraList);
-          List<dynamic> images = [];
-          if (images.length == _nearCameraList.length) {
-            return true;
-          } else {
-            return false;
-          }
         }
-        return true;
       }
-      return false;
     } catch (e) {
       print('queryNearbyDevicesListProvider fail');
-      return false;
     }
   }
 

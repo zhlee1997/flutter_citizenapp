@@ -15,7 +15,12 @@ import '../../utils/global_dialog_helper.dart';
 import '../../models/cctv_model.dart';
 
 class TrafficImagesBottomWidget extends StatefulWidget {
-  const TrafficImagesBottomWidget({super.key});
+  final CCTVModelDetail cctvModelDetail;
+
+  const TrafficImagesBottomWidget({
+    required this.cctvModelDetail,
+    super.key,
+  });
 
   @override
   State<TrafficImagesBottomWidget> createState() =>
@@ -28,9 +33,8 @@ class _TrafficImagesBottomWidgetState extends State<TrafficImagesBottomWidget> {
   Uint8List? imageByteData;
   late Uint8List watermarkImage;
 
-  String handleDateTime() {
-    return DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now());
-  }
+  String get returnCurrentTime =>
+      DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now());
 
   Future<Uint8List?> _loadNetworkImage(String path) async {
     final completer = Completer<ImageInfo>();
@@ -68,10 +72,7 @@ class _TrafficImagesBottomWidgetState extends State<TrafficImagesBottomWidget> {
       );
     });
     try {
-      // imageByteData = await _loadNetworkImage(cctvProvider.imageUrl)
-      //     .timeout(const Duration(seconds: 12));
-      imageByteData = await _loadNetworkImage(
-              "https://images.lifestyleasia.com/wp-content/uploads/sites/5/2022/07/15175110/Hero_Sarawak_River-1600x900.jpg")
+      imageByteData = await _loadNetworkImage(cctvProvider.imageUrl)
           .timeout(const Duration(seconds: 12));
     } on TimeoutException catch (e) {
       print('Image Timeout');
@@ -104,43 +105,24 @@ class _TrafficImagesBottomWidgetState extends State<TrafficImagesBottomWidget> {
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
 
-    // final CCTVModelDetail? cctvDetail =
-    // Provider.of<CCTVProvider>(context, listen: false).cctvModelDetail;
-
-    final CCTVModelDetail? cctvDetail = CCTVModelDetail(
-      id: "1",
-      name: "SIOC CCTV 1",
-      location: "Bangunan Baitulmakmur 1",
-      image:
-          "https://images.lifestyleasia.com/wp-content/uploads/sites/5/2022/07/15175110/Hero_Sarawak_River-1600x900.jpg",
-      updateTime: "updateTime1",
-      liveUrl:
-          "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-    );
-
-    // if (cctvProvider.imageUrl.isEmpty) {
-    //   print("imageURL is empty");
-    //   return Container(
-    //     child: Center(
-    //       child: Column(
-    //         mainAxisAlignment: MainAxisAlignment.center,
-    //         children: [
-    //           SizedBox(
-    //             height: 150,
-    //             child: SvgPicture.asset('assets/images/undraw_online.svg'),
-    //           ),
-    //           SizedBox(
-    //             height: 20,
-    //           ),
-    //           Container(
-    //             child: Text(AppLocalization.of(context)!
-    //                 .translate('camera_is_not_available')!),
-    //           )
-    //         ],
-    //       ),
-    //     ),
-    //   );
-    // }
+    if (cctvProvider.imageUrl.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+              height: 150,
+              child: SvgPicture.asset('assets/images/svg/undraw_online.svg'),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Text(AppLocalization.of(context)!
+                .translate('camera_is_not_available')!)
+          ],
+        ),
+      );
+    }
 
     return Column(
       children: [
@@ -220,12 +202,15 @@ class _TrafficImagesBottomWidgetState extends State<TrafficImagesBottomWidget> {
               }
             }),
         Container(
-          margin: const EdgeInsets.all(20.0),
+          margin: const EdgeInsets.symmetric(
+            horizontal: 20.0,
+            vertical: 10.0,
+          ),
           width: double.infinity,
           child: Text(
-            cctvDetail!.location,
+            widget.cctvModelDetail.location,
             style: const TextStyle(
-              fontSize: 18.0,
+              fontSize: 16.0,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -242,14 +227,9 @@ class _TrafficImagesBottomWidgetState extends State<TrafficImagesBottomWidget> {
                 width: 10,
               ),
               const Text(
-                'Last check at:  ',
-                style: TextStyle(
-                  fontStyle: FontStyle.italic,
-                ),
+                'Last Check At: ',
               ),
-              Text(
-                handleDateTime(),
-              )
+              Text(returnCurrentTime)
             ],
           ),
         ),

@@ -275,7 +275,7 @@ class _SubscriptionVideoScreenState extends State<SubscriptionVideoScreen>
             TabBar(
               tabs: const [
                 Tab(
-                  icon: Icon(Icons.details_outlined),
+                  icon: Icon(Icons.camera),
                   text: "Camera Details",
                 ),
                 Tab(
@@ -308,9 +308,12 @@ class _SubscriptionVideoScreenState extends State<SubscriptionVideoScreen>
                                 const SizedBox(
                                   width: 10.0,
                                 ),
-                                Text(
-                                  args.address,
-                                  style: Theme.of(context).textTheme.bodyLarge,
+                                Flexible(
+                                  child: Text(
+                                    args.address,
+                                    style:
+                                        Theme.of(context).textTheme.bodyLarge,
+                                  ),
                                 ),
                               ],
                             ),

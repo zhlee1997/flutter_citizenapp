@@ -84,6 +84,44 @@ class ApiBaseHelper {
     return responseJson;
   }
 
+  Future<dynamic> delete(
+    String url, {
+    dynamic data,
+    required bool requireToken,
+    Function(int, int)? onSendProgress,
+  }) async {
+    final dio = Dio();
+    final storage = new FlutterSecureStorage();
+    var siocToken = await storage.read(key: 'siocToken');
+    var sarawakToken = await storage.read(key: 'sarawakToken');
+
+    var responseJson;
+
+    try {
+      print("deleteURL: $_baseUrl$url");
+      print("deleteData: $data");
+      final response = await dio.delete(
+        "$_baseUrl$url",
+        options: requireToken
+            ? Options(
+                headers: {
+                  'Authorization': siocToken ?? '',
+                  'sarawakToken': sarawakToken ?? '',
+                },
+              )
+            : null,
+        data: data,
+      );
+      responseJson = _returnResponse(response);
+    } catch (e) {
+      print('deleteError: ${e.toString()}');
+      // make it explicit that this function can throw exceptions
+      rethrow;
+    }
+    // _checkResponse(responseJson);
+    return responseJson;
+  }
+
   dynamic _returnResponse(Response response) {
     switch (response.statusCode) {
       case 200:

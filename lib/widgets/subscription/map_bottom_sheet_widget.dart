@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_citizenapp/arguments/subscription_video_screen_arguments.dart';
 import 'package:provider/provider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../providers/cctv_provider.dart';
 import '../../models/cctv_model.dart';
@@ -47,11 +48,11 @@ class _MapBottomSheetWidgetState extends State<MapBottomSheetWidget> {
       );
     });
     try {
-      // imageByteData = await _loadNetworkImage(cctvProvider.imageUrl)
-      //     .timeout(const Duration(seconds: 12));
-      imageByteData = await _loadNetworkImage(
-              "https://images.lifestyleasia.com/wp-content/uploads/sites/5/2022/07/15175110/Hero_Sarawak_River-1600x900.jpg")
+      imageByteData = await _loadNetworkImage(cctvProvider.imageUrl)
           .timeout(const Duration(seconds: 12));
+      // imageByteData = await _loadNetworkImage(
+      //         "https://images.lifestyleasia.com/wp-content/uploads/sites/5/2022/07/15175110/Hero_Sarawak_River-1600x900.jpg")
+      //     .timeout(const Duration(seconds: 12));
     } on TimeoutException catch (e) {
       print('Image Timeout');
       print(e.toString());
@@ -78,43 +79,38 @@ class _MapBottomSheetWidgetState extends State<MapBottomSheetWidget> {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
-    // final CCTVModelDetail? cctvDetail =
-    //     Provider.of<CCTVProvider>(context, listen: false).cctvModelDetail;
+    final CCTVModelDetail? cctvDetail =
+        Provider.of<CCTVProvider>(context, listen: false).cctvModelDetail;
 
-    final CCTVModelDetail? cctvDetail = CCTVModelDetail(
-      id: "1",
-      name: "SIOC CCTV 1",
-      location: "Bangunan Baitulmakmur 1",
-      image:
-          "https://images.lifestyleasia.com/wp-content/uploads/sites/5/2022/07/15175110/Hero_Sarawak_River-1600x900.jpg",
-      updateTime: "updateTime1",
-      liveUrl:
-          "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-    );
+    // final CCTVModelDetail? cctvDetail = CCTVModelDetail(
+    //   id: "1",
+    //   name: "SIOC CCTV 1",
+    //   location: "Bangunan Baitulmakmur 1",
+    //   image:
+    //       "https://images.lifestyleasia.com/wp-content/uploads/sites/5/2022/07/15175110/Hero_Sarawak_River-1600x900.jpg",
+    //   updateTime: "updateTime1",
+    //   liveUrl:
+    //       "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+    // );
 
-    // if (cctvProvider.imageUrl.isEmpty) {
-    //   print("imageURL is empty");
-    //   return Container(
-    //     child: Center(
-    //       child: Column(
-    //         mainAxisAlignment: MainAxisAlignment.center,
-    //         children: [
-    //           SizedBox(
-    //             height: 150,
-    //             child: SvgPicture.asset('assets/images/undraw_online.svg'),
-    //           ),
-    //           SizedBox(
-    //             height: 20,
-    //           ),
-    //           Container(
-    //             child: Text(AppLocalization.of(context)!
-    //                 .translate('camera_is_not_available')!),
-    //           )
-    //         ],
-    //       ),
-    //     ),
-    //   );
-    // }
+    if (cctvProvider.imageUrl.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+              height: 150,
+              child: SvgPicture.asset('assets/images/undraw_online.svg'),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Text(AppLocalization.of(context)!
+                .translate('camera_is_not_available')!)
+          ],
+        ),
+      );
+    }
 
     return FutureBuilder(
       future: _loadWatermark(),

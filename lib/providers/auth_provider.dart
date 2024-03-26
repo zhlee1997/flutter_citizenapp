@@ -261,7 +261,8 @@ class AuthProvider with ChangeNotifier {
         signOutProvider(context);
       } else {
         // If within valid refresh period, then refresh token (everytime open app)
-        refreshTokenProvider();
+        // TODO: refresh token
+        // refreshTokenProvider();
         isTokenOk = true;
         bool subscriptionOverdueStatus = await checkSubscribeOverdue();
 

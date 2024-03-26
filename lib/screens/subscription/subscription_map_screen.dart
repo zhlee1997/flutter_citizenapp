@@ -57,27 +57,27 @@ class _SubscriptionMapScreenState extends State<SubscriptionMapScreen> {
 
   Future<void> onPressCctvIcon(CCTVModel cctv) async {
     Future<void> handleFuture() async {
-      // try {
-      //   await Provider.of<CCTVProvider>(context, listen: false)
-      //       .getCctvDetailProvider(cctv);
-      // } catch (e) {
-      //   setState(() {
-      //     _isError = true;
-      //   });
-      // }
+      try {
+        await Provider.of<CCTVProvider>(context, listen: false)
+            .getCctvDetailProvider(cctv);
+      } catch (e) {
+        setState(() {
+          _isError = true;
+        });
+      }
 
-      // Map<String, dynamic> data = {
-      //   "channel": "02",
-      //   "thridDeviceId": cctv.cctvId,
-      // };
-      // try {
-      //   await Provider.of<CCTVProvider>(context, listen: false)
-      //       .getCameraShortCutUrlProvider(data);
-      // } catch (e) {
-      //   setState(() {
-      //     _isError = true;
-      //   });
-      // }
+      Map<String, dynamic> data = {
+        "channel": "02",
+        "thridDeviceId": cctv.cctvId,
+      };
+      try {
+        await Provider.of<CCTVProvider>(context, listen: false)
+            .getCameraShortCutUrlProvider(data);
+      } catch (e) {
+        setState(() {
+          _isError = true;
+        });
+      }
     }
 
     await showModalBottomSheet(
@@ -121,81 +121,38 @@ class _SubscriptionMapScreenState extends State<SubscriptionMapScreen> {
   /// Displays the markers of CCTV on Google Map when screen first renders
   Future<void> _renderMarker() async {
     // TODO: vms/getCameraList => API
-    // bool success = await Provider.of<CCTVProvider>(context, listen: false)
-    //     .getCctvCoordinatesProvider();
-    // if (success) {
-    //   List<CCTVModel> cctvModel =
-    //       Provider.of<CCTVProvider>(context, listen: false).cctvModel;
+    bool success = await Provider.of<CCTVProvider>(context, listen: false)
+        .getCctvCoordinatesProvider();
+    if (success) {
+      List<CCTVModel> cctvModel =
+          Provider.of<CCTVProvider>(context, listen: false).cctvModel;
 
-    List<CCTVModel> cctvModel = [
-      CCTVModel(
-        cctvId: "1",
-        latitude: "1.553110",
-        longitude: "110.345032",
-        channel: "02",
-        deviceName: "SIOC CCTV 1",
-        location: "SIOC Kuching 1",
-      ),
-      CCTVModel(
-        cctvId: "2",
-        latitude: "1.556512",
-        longitude: "110.353659",
-        channel: "02",
-        deviceName: "SIOC CCTV 2",
-        location: "SIOC Kuching 2",
-      ),
-      CCTVModel(
-        cctvId: "3",
-        latitude: "1.565435",
-        longitude: "110.353659",
-        channel: "02",
-        deviceName: "SIOC CCTV 3",
-        location: "SIOC Kuching 3",
-      ),
-      CCTVModel(
-        cctvId: "4",
-        latitude: "1.566808",
-        longitude: "110.339917",
-        channel: "02",
-        deviceName: "SIOC CCTV 4",
-        location: "SIOC Kuching 4",
-      ),
-      CCTVModel(
-        cctvId: "5",
-        latitude: "1.556340",
-        longitude: "110.333046",
-        channel: "02",
-        deviceName: "SIOC CCTV 5",
-        location: "SIOC Kuching 5",
-      ),
-    ];
-
-    final Uint8List markerIcon =
-        await getBytesFromAsset('assets/images/icon/cctv.png', 80);
-    cctvModel.forEach((cctv) {
-      setState(() {
-        _markers.add(
-          Marker(
-            markerId: MarkerId(cctv.cctvId),
-            position: LatLng(
-              convertStringToDouble(cctv.latitude),
-              convertStringToDouble(cctv.longitude),
+      final Uint8List markerIcon =
+          await getBytesFromAsset('assets/images/icon/cctv.png', 80);
+      cctvModel.forEach((cctv) {
+        setState(() {
+          _markers.add(
+            Marker(
+              markerId: MarkerId(cctv.cctvId),
+              position: LatLng(
+                convertStringToDouble(cctv.latitude),
+                convertStringToDouble(cctv.longitude),
+              ),
+              icon: BitmapDescriptor.fromBytes(markerIcon),
+              onTap: () async {
+                setState(() {
+                  _isError = false;
+                });
+                await onPressCctvIcon(cctv);
+              },
             ),
-            icon: BitmapDescriptor.fromBytes(markerIcon),
-            onTap: () async {
-              setState(() {
-                _isError = false;
-              });
-              await onPressCctvIcon(cctv);
-            },
-          ),
-        );
+          );
+        });
       });
-    });
-    setState(() {
-      _isLoading = false;
-    });
-    // }
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   Future<void> _showBottomModalSheetFirstNote() async {
