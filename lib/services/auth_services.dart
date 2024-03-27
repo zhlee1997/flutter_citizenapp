@@ -79,11 +79,11 @@ class AuthServices {
       );
 
       if (response['status'] == '200') {
-        storage.write(
+        await storage.write(
           key: 'siocToken',
           value: response['data']['siocToken'],
         );
-        storage.write(
+        await storage.write(
           key: 'sarawakToken',
           value: response['data']['sarawakToken'],
         );

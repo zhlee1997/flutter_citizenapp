@@ -81,21 +81,28 @@ class _SplashVideoScreenState extends State<SplashVideoScreen> {
                         .checkIsAuthAndSubscribeOverdue(context)
                         .then((bool isAuth) {
                       if (isAuth) {
-                        Provider.of<InboxProvider>(context, listen: false)
-                            .refreshCount()
+                        // Refresh Token Provider
+                        // After checking is within the valid refresh period (checkIsAuthAndSubscribeOverdue), then refresh token (everytime open app)
+                        Provider.of<AuthProvider>(context, listen: false)
+                            .refreshTokenProvider()
                             .then((_) {
-                          Provider.of<SettingsProvider>(context, listen: false)
-                              .checkPushNotification()
-                              .then((bool isPushNotificationEnabled) {
-                            if (isPushNotificationEnabled) {
-                              _pushNotification.setFirebase(true).then((_) =>
-                                  Navigator.of(context).pushReplacementNamed(
-                                      HomeScreen.routeName));
-                            } else {
-                              _pushNotification.setFirebase(false).then((_) =>
-                                  Navigator.of(context).pushReplacementNamed(
-                                      HomeScreen.routeName));
-                            }
+                          Provider.of<InboxProvider>(context, listen: false)
+                              .refreshCount()
+                              .then((_) {
+                            Provider.of<SettingsProvider>(context,
+                                    listen: false)
+                                .checkPushNotification()
+                                .then((bool isPushNotificationEnabled) {
+                              if (isPushNotificationEnabled) {
+                                _pushNotification.setFirebase(true).then((_) =>
+                                    Navigator.of(context).pushReplacementNamed(
+                                        HomeScreen.routeName));
+                              } else {
+                                _pushNotification.setFirebase(false).then((_) =>
+                                    Navigator.of(context).pushReplacementNamed(
+                                        HomeScreen.routeName));
+                              }
+                            });
                           });
                         });
                       } else {

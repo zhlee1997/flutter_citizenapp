@@ -62,11 +62,11 @@ class AuthProvider with ChangeNotifier {
         // callback response URL will not have "vipDueDate" if "isSubscribed" is false
         // if (data['isSubscribed'] == 'true') {}
 
-        storage.write(
+        await storage.write(
           key: 'siocToken',
           value: data['siocToken'] ?? '',
         );
-        storage.write(
+        await storage.write(
           key: 'sarawakToken',
           value: data['sarawakToken'] ?? '',
         );
@@ -110,7 +110,7 @@ class AuthProvider with ChangeNotifier {
         prefs.clear();
         // reset the isAppFirstStart after clear all
         prefs.setBool('isAppFirstStart', true);
-        storage.deleteAll();
+        await storage.deleteAll();
         // _isShow = true;
         _isAuth = false;
         _auth = null;
@@ -132,7 +132,6 @@ class AuthProvider with ChangeNotifier {
   Future<void> refreshTokenProvider() async {
     final prefs = await SharedPreferences.getInstance();
     final storage = new FlutterSecureStorage();
-
     String? siocToken = await storage.read(key: 'siocToken');
     String? sarawakToken = await storage.read(key: 'sarawakToken');
 
@@ -143,6 +142,14 @@ class AuthProvider with ChangeNotifier {
     if (response['status'] == '200') {
       prefs.setInt(
           "expire", response['data']['expire'] * 1000 + currentMilliSec);
+      await storage.write(
+        key: 'siocToken',
+        value: response['data']['siocToken'] ?? '',
+      );
+      await storage.write(
+        key: 'sarawakToken',
+        value: response['data']['sarawakToken'] ?? '',
+      );
     }
   }
 
@@ -260,9 +267,6 @@ class AuthProvider with ChangeNotifier {
         print("Sign out due to exceeds valid refresh period");
         signOutProvider(context);
       } else {
-        // If within valid refresh period, then refresh token (everytime open app)
-        // TODO: refresh token
-        // refreshTokenProvider();
         isTokenOk = true;
         bool subscriptionOverdueStatus = await checkSubscribeOverdue();
 

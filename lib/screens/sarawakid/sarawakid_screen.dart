@@ -5,6 +5,7 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:provider/provider.dart';
 
 import "../../providers/auth_provider.dart";
+import "../../providers/inbox_provider.dart";
 import '../../utils/app_localization.dart';
 import '../../utils/notification/push_notification.dart';
 
@@ -42,6 +43,7 @@ class _SarawakIDScreenState extends State<SarawakIDScreen> {
                 response['userId']!, response['isSubscribed'] == 'true')
             .then((value) {
           if (value) {
+            Provider.of<InboxProvider>(context, listen: false).refreshCount();
             _pushNotification.setFirebase(true).then((_) {
               if (mounted) {
                 Navigator.of(context)

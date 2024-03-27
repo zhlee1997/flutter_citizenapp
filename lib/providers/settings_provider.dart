@@ -5,7 +5,7 @@ class SettingsProvider with ChangeNotifier {
   late bool _isSplashScreenMusicEnabled;
   bool get isSplashScreenMusicEnabled => _isSplashScreenMusicEnabled;
 
-  late bool _isPushNotificationEnabled;
+  bool _isPushNotificationEnabled = true;
   bool get isPushNotificationEnabled => _isPushNotificationEnabled;
 
   /// Turn on music of splash video in Settings

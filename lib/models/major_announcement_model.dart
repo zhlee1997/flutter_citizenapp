@@ -3,6 +3,7 @@ class MajorAnnouncementModel {
   late String image;
   late String title;
   late String description;
+  late String date;
 
   // model constructor
   MajorAnnouncementModel({
@@ -10,5 +11,6 @@ class MajorAnnouncementModel {
     required this.image,
     required this.title,
     required this.description,
+    this.date = "",
   });
 }

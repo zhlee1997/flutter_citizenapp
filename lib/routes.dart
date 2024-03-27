@@ -52,8 +52,6 @@ import './screens/onboarding_screen.dart';
 final Map<String, WidgetBuilder> routes = <String, WidgetBuilder>{
   NewCaseScreen.routeName: (ctx) => const NewCaseScreen(),
   HomeScreen.routeName: (ctx) => const HomeScreen(),
-  NotificationsBottomNavScreen.routeName: (ctx) =>
-      const NotificationsBottomNavScreen(),
   ServicesBottomNavScreen.routeName: (ctx) => const ServicesBottomNavScreen(),
   ProfileBottomNavScreen.routeName: (ctx) => const ProfileBottomNavScreen(),
   ProfileDetailsScreen.routeName: (ctx) => const ProfileDetailsScreen(),

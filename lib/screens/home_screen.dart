@@ -22,13 +22,15 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _currentPageIndex = 0;
+  bool isNotificationsSelected = true;
 
-  final List<Widget> _screens = [
-    const HomePage(),
-    const ServicesBottomNavScreen(),
-    const NotificationsBottomNavScreen(),
-    const ProfileBottomNavScreen(),
-  ];
+  void setNotificationsState(bool isSelected) {
+    setState(() {
+      isNotificationsSelected = isSelected;
+    });
+  }
+
+  List<Widget> _screens = [];
 
   Future<void> _handleFullScreenLoginBottomModal() async {
     await showModalBottomSheet(
@@ -119,6 +121,20 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _screens = [
+      const HomePage(),
+      const ServicesBottomNavScreen(),
+      NotificationsBottomNavScreen(
+        setNotificationsState: setNotificationsState,
+      ),
+      const ProfileBottomNavScreen(),
+    ];
+  }
+
+  @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
 
@@ -199,7 +215,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-      appBar: _handleAppBar(screenSize),
+      appBar: _handleAppBar(screenSize, isNotificationsSelected),
       body: IndexedStack(
         index: _currentPageIndex,
         children: _screens,
@@ -207,7 +223,10 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  PreferredSizeWidget _handleAppBar(Size screenSize) {
+  PreferredSizeWidget _handleAppBar(
+    Size screenSize,
+    bool isNotificationsSelected,
+  ) {
     void handleNavigateToProfileDetailsScreen() =>
         Navigator.of(context).pushNamed(ProfileDetailsScreen.routeName);
 
@@ -295,14 +314,16 @@ class _HomeScreenState extends State<HomeScreen> {
       case 2:
         return AppBar(
           title: const Text("Notifications"),
-          actions: [
-            IconButton(
-              onPressed: () async {
-                await showDeleteAllBottomModal(screenSize);
-              },
-              icon: Icon(Icons.delete_outline),
-            )
-          ],
+          actions: isNotificationsSelected
+              ? [
+                  IconButton(
+                    onPressed: () async {
+                      await showDeleteAllBottomModal(screenSize);
+                    },
+                    icon: Icon(Icons.delete_outline),
+                  )
+                ]
+              : null,
         );
       case 3:
         return Provider.of<AuthProvider>(context).isAuth

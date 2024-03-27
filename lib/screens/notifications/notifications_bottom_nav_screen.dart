@@ -9,16 +9,22 @@ import '../../providers/auth_provider.dart';
 import '../../providers/inbox_provider.dart';
 import '../../widgets/sarawakid/login_full_bottom_modal.dart';
 import '../../services/inbox_services.dart';
+import '../../services/announcement_services.dart';
 import '../../models/inbox_model.dart';
+import '../../models/announcement_model.dart';
+import '../../models/major_announcement_model.dart';
 import '../announcement/announcement_detail_screen.dart';
 import './notifications_detail_screen.dart';
 import '../../utils/app_localization.dart';
 import '../../utils/global_dialog_helper.dart';
 
 class NotificationsBottomNavScreen extends StatefulWidget {
-  static const String routeName = 'notifications-bottom-nav-screen';
+  final void Function(bool) setNotificationsState;
 
-  const NotificationsBottomNavScreen({super.key});
+  const NotificationsBottomNavScreen({
+    required this.setNotificationsState,
+    super.key,
+  });
 
   @override
   State<NotificationsBottomNavScreen> createState() =>
@@ -27,6 +33,7 @@ class NotificationsBottomNavScreen extends StatefulWidget {
 
 class _NotificationsBottomNavScreenState
     extends State<NotificationsBottomNavScreen> with TickerProviderStateMixin {
+  late bool isLogin;
   int selected = 1;
   bool _isLoading = false;
   bool _noMoreData = false;
@@ -36,7 +43,14 @@ class _NotificationsBottomNavScreenState
   int _page = 1;
   late SnackBar snackBar;
 
+  bool _majorIsLoading = false;
+  bool _majorNoMoreData = false;
+  List<MajorAnnouncementModel> _majorAnnouncements = [];
+  late ScrollController _majorScrollController;
+  int _majorPage = 1;
+
   final dateFormat = DateFormat('dd MMM');
+  final f = DateFormat('yyyy-MM-dd');
 
   final List<String> items_major =
       List.generate(5, (index) => 'Major Item $index');
@@ -114,8 +128,55 @@ class _NotificationsBottomNavScreenState
     );
   }
 
+  // Announcement API => announcement/queryPageList (annType = 3)
   Future<void> getMajorAnnouncements(int page) async {
-    // Announcement API => announcement/queryPageList (annType = 3)
+    if (_majorIsLoading) {
+      return;
+    }
+    _majorIsLoading = true;
+    try {
+      var response = await AnnouncementServices().queryPageList(
+        '1',
+        annType: '3',
+        nowTime: f.format(DateTime.now()),
+      );
+      if (response['status'] == '200') {
+        var data = response['data']['list'] as List;
+
+        setState(() {
+          if (data.length < 20) {
+            _majorNoMoreData = true;
+          }
+
+          List<AnnouncementModel> announcements =
+              data.map((e) => AnnouncementModel.fromJson(e)).toList();
+          announcements.forEach((AnnouncementModel element) {
+            var m = MajorAnnouncementModel(
+              sid: element.annId,
+              image: element.attachmentDtoList.length > 0
+                  ? element.attachmentDtoList[0].attFilePath.toString()
+                  : '',
+              title: AnnouncementModel.getAnnouncementTitle(
+                context,
+                element,
+                isMajorAnnouncement: true,
+              ),
+              description: AnnouncementModel.getAnnouncementContent(
+                context,
+                element,
+                isMajorAnnouncement: true,
+              ),
+              date: element.annStartDate,
+            );
+            _majorAnnouncements.add(m);
+          });
+        });
+      }
+      _majorIsLoading = false;
+    } catch (e) {
+      _majorIsLoading = false;
+      print("getMajorAnnouncements fail");
+    }
   }
 
   /// Get inbox list when screen first renders
@@ -162,7 +223,6 @@ class _NotificationsBottomNavScreenState
   void initState() {
     // TODO: implement initState
     super.initState();
-    _isInitLoading = true;
     _scrollController = ScrollController()
       ..addListener(() {
         setState(() {
@@ -174,13 +234,33 @@ class _NotificationsBottomNavScreenState
           }
         });
       });
-    getNotifications(_page);
+    _majorScrollController = ScrollController()
+      ..addListener(() {
+        setState(() {
+          var maxScroll = _majorScrollController.position.maxScrollExtent;
+          var pixels = _majorScrollController.position.pixels;
+          if (maxScroll == pixels && !_majorNoMoreData) {
+            _majorPage++;
+            getMajorAnnouncements(_majorPage);
+          }
+        });
+      });
   }
 
   @override
   void didChangeDependencies() {
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
+    isLogin = Provider.of<AuthProvider>(context).isAuth;
+    if (isLogin) {
+      _isInitLoading = true;
+      _page = 1;
+      _majorPage = 1;
+      _inboxes = [];
+      _majorAnnouncements = [];
+      getNotifications(_page);
+      getMajorAnnouncements(_majorPage);
+    }
     snackBar = SnackBar(
       content: Text(AppLocalization.of(context)!.translate('message_deleted')!),
     );
@@ -191,11 +271,12 @@ class _NotificationsBottomNavScreenState
     // TODO: implement dispose
     super.dispose();
     _scrollController.dispose();
+    _majorScrollController.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Provider.of<AuthProvider>(context).isAuth
+    return isLogin
         ? Container(
             padding: const EdgeInsets.all(10.0),
             child: Column(
@@ -206,6 +287,7 @@ class _NotificationsBottomNavScreenState
                       flex: 1,
                       child: ElevatedButton(
                         onPressed: () {
+                          widget.setNotificationsState(false);
                           setState(() {
                             selected = 0;
                           });
@@ -239,6 +321,7 @@ class _NotificationsBottomNavScreenState
                       flex: 1,
                       child: ElevatedButton(
                         onPressed: () {
+                          widget.setNotificationsState(true);
                           setState(() {
                             selected = 1;
                           });
@@ -271,63 +354,56 @@ class _NotificationsBottomNavScreenState
                   child: selected == 0
                       ? ListView.builder(
                           shrinkWrap: true,
-                          itemCount: items_major.length,
+                          itemCount: _majorAnnouncements.length,
                           itemBuilder: ((context, index) {
-                            return Slidable(
-                              endActionPane: ActionPane(
-                                motion: const StretchMotion(),
-                                extentRatio: 0.3,
-                                children: [
-                                  SlidableAction(
-                                    label: AppLocalization.of(context)!
-                                        .translate('delete')!,
-                                    backgroundColor: Colors.red,
-                                    icon: Icons.delete,
-                                    onPressed: (BuildContext context) {
-// TODO: remove announcement
-                                    },
-                                  ),
-                                ],
+                            return ListTile(
+                              onTap: () {
+                                Navigator.of(context).pushNamed(
+                                  AnnouncementDetailScreen.routeName,
+                                  arguments: {
+                                    'id': _majorAnnouncements[index].sid,
+                                    'isMajor': true
+                                  },
+                                ).then((value) {
+                                  if (value == true) {
+                                    Navigator.of(context).pop();
+                                  }
+                                });
+                              },
+                              leading: Container(
+                                width: 40,
+                                height: 40,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .inversePrimary
+                                      .withOpacity(0.7),
+                                ),
+                                child: Icon(
+                                  Icons.announcement_outlined,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
                               ),
-                              child: ListTile(
-                                leading: Badge(
-                                  smallSize: 8.0,
-                                  child: Container(
-                                    width: 40,
-                                    height: 40,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .inversePrimary
-                                          .withOpacity(0.7),
-                                    ),
-                                    child: Icon(
-                                      Icons.announcement_outlined,
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                    ),
-                                  ),
+                              title: Text(
+                                _majorAnnouncements[index].title,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w500,
                                 ),
-                                title: Text(
-                                  items_major[index],
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                  ),
+                              ),
+                              subtitle: Text(
+                                _majorAnnouncements[index].description,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w300,
                                 ),
-                                subtitle: Text(
-                                  "Get an instant Travel Insurance quote now.",
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w300,
-                                  ),
-                                ),
-                                trailing: Text(
-                                  "20 Jan",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                              ),
+                              trailing: Text(
+                                dateFormat.format(DateTime.parse(
+                                    _majorAnnouncements[index].date)),
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
                             );
