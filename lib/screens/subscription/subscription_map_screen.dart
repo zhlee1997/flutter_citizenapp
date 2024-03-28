@@ -111,7 +111,10 @@ class _SubscriptionMapScreenState extends State<SubscriptionMapScreen> {
                     ),
                   );
                 }
-                return const MapBottomSheetWidget();
+                return MapBottomSheetWidget(
+                  cctvLatitude: cctv.latitude,
+                  cctvLongitude: cctv.longitude,
+                );
               }
             });
       },

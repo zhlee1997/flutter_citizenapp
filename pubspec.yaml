@@ -163,6 +163,7 @@ flutter:
     - assets/animations/lottie_recorder.json
     - assets/animations/lottie_profile.json
     - assets/animations/lottie_done.json
+    - assets/animations/lottie_premium.json
 
     # images/svg
     - assets/images/svg/no_data.svg

@@ -89,7 +89,9 @@ class SubscriptionProvider with ChangeNotifier {
         List filteredList = subscribeList
             .where((element) => element["subscribeCode"] == "Default")
             .toList();
-        packageId = filteredList[0]["option"] ?? "";
+        if (filteredList.isNotEmpty) {
+          packageId = filteredList[0]["option"] ?? "";
+        }
       }
     } catch (e) {
       print("querySubscriptionPackageOptionProvider: ${e.toString()}");

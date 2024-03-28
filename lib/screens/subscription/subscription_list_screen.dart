@@ -33,6 +33,8 @@ class _SubscriptionListScreenState extends State<SubscriptionListScreen> {
         liveUrl,
         name,
         location,
+        // TODO: to calculate the distance between for camera
+        "15",
       ),
     );
   }

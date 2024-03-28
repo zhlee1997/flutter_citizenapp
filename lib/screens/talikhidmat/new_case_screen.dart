@@ -7,6 +7,7 @@ import './report_screen.dart';
 import './location_screen.dart';
 import './confirm_screen.dart';
 import '../../providers/location_provider.dart';
+import '../../providers/inbox_provider.dart';
 import '../../providers/talikhidmat_provider.dart';
 import '../../utils/global_dialog_helper.dart';
 import '../../utils/app_localization.dart';
@@ -108,6 +109,8 @@ class _NewCaseScreenState extends State<NewCaseScreen> {
       Navigator.of(context).pop();
       Fluttertoast.showToast(msg: "Submit failed. Please try again");
       print("submit emergency failed: ${e.toString()}");
+    } finally {
+      Provider.of<InboxProvider>(context, listen: false).refreshCount();
     }
   }
 

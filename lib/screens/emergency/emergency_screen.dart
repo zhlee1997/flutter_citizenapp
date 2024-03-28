@@ -13,6 +13,7 @@ import "../../widgets/emergency/other_emergency_bottom_modal.dart";
 import "../../widgets/emergency/emergency_finish_full_bottom_modal.dart";
 import '../../services/event_services.dart';
 import '../../providers/emergency_provider.dart';
+import '../../providers/inbox_provider.dart';
 import '../../utils/global_dialog_helper.dart';
 import '../../utils/app_localization.dart';
 
@@ -160,6 +161,8 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
       Navigator.of(context).pop();
       Fluttertoast.showToast(msg: "Submit failed. Please try again");
       print("submit emergency failed: ${e.toString()}");
+    } finally {
+      Provider.of<InboxProvider>(context, listen: false).refreshCount();
     }
   }
 

@@ -52,11 +52,6 @@ class _NotificationsBottomNavScreenState
   final dateFormat = DateFormat('dd MMM');
   final f = DateFormat('yyyy-MM-dd');
 
-  final List<String> items_major =
-      List.generate(5, (index) => 'Major Item $index');
-  // final List<String> items_notification =
-  //     List.generate(5, (index) => 'Notification Item $index');
-
   /// Update the read status of message when message is read
   /// Using modifyByIdSelective API
   ///
@@ -219,6 +214,18 @@ class _NotificationsBottomNavScreenState
     }
   }
 
+  /// Pull to refresh notifications
+  Future<void> _onRefresh() async {
+    try {
+      _isInitLoading = true;
+      _page = 1;
+      _inboxes = [];
+      await getNotifications(_page);
+    } catch (e) {
+      print("onRefresh Notification error");
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -245,6 +252,7 @@ class _NotificationsBottomNavScreenState
           }
         });
       });
+    getMajorAnnouncements(_majorPage);
   }
 
   @override
@@ -252,14 +260,13 @@ class _NotificationsBottomNavScreenState
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
     isLogin = Provider.of<AuthProvider>(context).isAuth;
+    // to trigger notification page refresh
+    Provider.of<InboxProvider>(context).unreadMessageCount;
     if (isLogin) {
       _isInitLoading = true;
       _page = 1;
-      _majorPage = 1;
       _inboxes = [];
-      _majorAnnouncements = [];
       getNotifications(_page);
-      getMajorAnnouncements(_majorPage);
     }
     snackBar = SnackBar(
       content: Text(AppLocalization.of(context)!.translate('message_deleted')!),
@@ -415,81 +422,85 @@ class _NotificationsBottomNavScreenState
                               message: AppLocalization.of(context)!
                                   .translate('no_inbox_data')!,
                             )
-                          : ListView.builder(
-                              controller: _scrollController,
-                              shrinkWrap: true,
-                              itemCount: _inboxes.length,
-                              itemBuilder: ((context, index) {
-                                return Slidable(
-                                  endActionPane: ActionPane(
-                                    motion: const StretchMotion(),
-                                    extentRatio: 0.3,
-                                    children: [
-                                      SlidableAction(
-                                        label: AppLocalization.of(context)!
-                                            .translate('delete')!,
-                                        backgroundColor: Colors.red,
-                                        icon: Icons.delete,
-                                        onPressed: (BuildContext context) {
-                                          remove(index);
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                  child: ListTile(
-                                    onTap: () {
-                                      // TODO: Get message detail
-                                      inboxRead(index);
-                                    },
-                                    leading: Badge(
-                                      isLabelVisible:
-                                          _inboxes[index].msgReadStatus == "0",
-                                      smallSize: 8.0,
-                                      child: Container(
-                                        width: 40,
-                                        height: 40,
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .inversePrimary
-                                              .withOpacity(0.7),
+                          : RefreshIndicator(
+                              onRefresh: _onRefresh,
+                              child: ListView.builder(
+                                controller: _scrollController,
+                                shrinkWrap: true,
+                                itemCount: _inboxes.length,
+                                itemBuilder: ((context, index) {
+                                  return Slidable(
+                                    endActionPane: ActionPane(
+                                      motion: const StretchMotion(),
+                                      extentRatio: 0.3,
+                                      children: [
+                                        SlidableAction(
+                                          label: AppLocalization.of(context)!
+                                              .translate('delete')!,
+                                          backgroundColor: Colors.red,
+                                          icon: Icons.delete,
+                                          onPressed: (BuildContext context) {
+                                            remove(index);
+                                          },
                                         ),
-                                        child: Icon(
-                                          Icons.payment,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary,
+                                      ],
+                                    ),
+                                    child: ListTile(
+                                      onTap: () {
+                                        // TODO: Get message detail
+                                        inboxRead(index);
+                                      },
+                                      leading: Badge(
+                                        isLabelVisible:
+                                            _inboxes[index].msgReadStatus ==
+                                                "0",
+                                        smallSize: 8.0,
+                                        child: Container(
+                                          width: 40,
+                                          height: 40,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .inversePrimary
+                                                .withOpacity(0.7),
+                                          ),
+                                          child: Icon(
+                                            Icons.payment,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    title: Text(
-                                      _inboxes[index].msgTitle,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                    subtitle: Text(
-                                        _inboxes[index].msgType == "1"
-                                            ? json.decode(_inboxes[index]
-                                                .msgContext)["content"]
-                                            : json.decode(_inboxes[index]
-                                                .msgContext)["title"],
+                                      title: Text(
+                                        _inboxes[index].msgTitle,
                                         overflow: TextOverflow.ellipsis,
                                         style: const TextStyle(
-                                          fontWeight: FontWeight.w300,
-                                        )),
-                                    trailing: Text(
-                                      dateFormat.format(DateTime.parse(
-                                          _inboxes[index].createTime)),
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                      subtitle: Text(
+                                          _inboxes[index].msgType == "1"
+                                              ? json.decode(_inboxes[index]
+                                                  .msgContext)["content"]
+                                              : json.decode(_inboxes[index]
+                                                  .msgContext)["title"],
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.w300,
+                                          )),
+                                      trailing: Text(
+                                        dateFormat.format(DateTime.parse(
+                                            _inboxes[index].createTime)),
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                );
-                              }),
+                                  );
+                                }),
+                              ),
                             ),
                 )
               ],

@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '../screens/emergency/emergency_screen.dart';
 import '../screens/talikhidmat/new_case_screen.dart';
@@ -133,6 +134,12 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  /// Pull to refresh announcement and tourism information
+  Future<void> _onRefresh() async {
+    await getCitizenAnn();
+    await getTourismAnn();
+  }
+
   String returnPackageName(String packageName) {
     switch (packageName) {
       case "option_1":
@@ -170,6 +177,9 @@ class _HomePageState extends State<HomePage> {
             );
           },
         );
+      } else {
+        Navigator.of(context).pop();
+        Fluttertoast.showToast(msg: "No result");
       }
     } catch (e) {
       Navigator.of(context).pop();
@@ -446,6 +456,19 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  // Get today's date
+  DateTime now = DateTime.now();
+
+  // Define the target date (March 31, 2024)
+  DateTime targetDate = DateTime(2024, 3, 31);
+
+  int calculateRemainingDays(String? targetDate) {
+    if (targetDate != null) {
+      return DateTime.parse(targetDate).difference(now).inDays;
+    }
+    return 0;
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -484,209 +507,117 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
 
-    return SingleChildScrollView(
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(
-          horizontal: 15.0,
-          vertical: 10.0,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            if (isSubscribed)
-              GestureDetector(
-                onTap: getSubscriptionPackageOption,
-                child: Container(
-                  margin: const EdgeInsets.only(bottom: 15.0, top: 5.0),
-                  width: double.infinity,
-                  height: screenSize.height * 0.125,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10.0),
-                    border: Border.all(
-                      width: 2.0,
-                      color: Colors.grey.shade300,
+    return PopScope(
+      canPop: false,
+      child: RefreshIndicator.adaptive(
+        onRefresh: _onRefresh,
+        child: SingleChildScrollView(
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(
+              horizontal: 15.0,
+              vertical: 10.0,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                if (isSubscribed)
+                  GestureDetector(
+                    onTap: getSubscriptionPackageOption,
+                    child: Container(
+                      margin: const EdgeInsets.only(bottom: 15.0, top: 5.0),
+                      width: double.infinity,
+                      height: screenSize.height * 0.13,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10.0),
+                        border: Border.all(
+                          width: 2.0,
+                          color: Colors.grey.shade300,
+                        ),
+                      ),
+                      child: Stack(
+                        children: <Widget>[
+                          SizedBox(
+                            width: double.infinity,
+                            child: Image.asset(
+                              "assets/images/pictures/premium/premium_image.png",
+                              opacity: const AlwaysStoppedAnimation(0.15),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          Container(
+                            alignment: Alignment.centerRight,
+                            width: double.infinity,
+                            child: Image.asset(
+                              "assets/images/pictures/premium/premium_image_bg.png",
+                              width: screenSize.width * 0.2,
+                              height: screenSize.width * 0.2,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          Container(
+                            width: double.infinity,
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 10.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                if (calculateRemainingDays(vipDueDate) <= 10)
+                                  Text(
+                                    "${calculateRemainingDays(vipDueDate)} days left !",
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.red,
+                                    ),
+                                  ),
+                                Text(
+                                  "You are subscribed",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: Theme.of(context)
+                                        .textTheme
+                                        .titleLarge!
+                                        .fontSize,
+                                  ),
+                                ),
+                                const SizedBox(height: 3.0),
+                                Text("Due date: ${vipDueDate ?? "---"}"),
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
                     ),
                   ),
-                  child: Stack(
+                Text(
+                  'Quick Services',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                Text(
+                  'Shortcut to frequently used function',
+                  style: TextStyle(
+                    color: Colors.grey[600],
+                    fontSize: Theme.of(context).textTheme.labelLarge!.fontSize,
+                  ),
+                ),
+                Container(
+                  margin: const EdgeInsets.symmetric(
+                    vertical: 20.0,
+                  ),
+                  child: GridView(
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 8.0,
+                      mainAxisSpacing: 8.0,
+                      childAspectRatio: 1.6 / 1,
+                    ),
                     children: <Widget>[
-                      SizedBox(
-                        width: double.infinity,
-                        child: Image.asset(
-                          "assets/images/pictures/premium/premium_image.png",
-                          opacity: const AlwaysStoppedAnimation(0.15),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      Container(
-                        alignment: Alignment.centerRight,
-                        width: double.infinity,
-                        child: Image.asset(
-                          "assets/images/pictures/premium/premium_image_bg.png",
-                          width: screenSize.width * 0.2,
-                          height: screenSize.width * 0.2,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            // TODO: calculate remaining days, and show alert text when lower than 14 days
-                            const Text(
-                              "4 days left!",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.red,
-                              ),
-                            ),
-                            Text(
-                              "You are subscribed",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: Theme.of(context)
-                                    .textTheme
-                                    .titleLarge!
-                                    .fontSize,
-                              ),
-                            ),
-                            const SizedBox(height: 3.0),
-                            Text("Due date: ${vipDueDate ?? "---"}"),
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            Text(
-              'Quick Services',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            Text(
-              'Shortcut to frequently used function',
-              style: TextStyle(
-                color: Colors.grey[600],
-                fontSize: Theme.of(context).textTheme.labelLarge!.fontSize,
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.symmetric(
-                vertical: 20.0,
-              ),
-              child: GridView(
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 8.0,
-                  mainAxisSpacing: 8.0,
-                  childAspectRatio: 1.6 / 1,
-                ),
-                children: <Widget>[
-                  GestureDetector(
-                    onTap: () => _handleNavigateToTalikhidmat(context),
-                    child: Card(
-                      elevation: 5.0,
-                      child: Container(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
-                                Icon(
-                                  Icons.feedback_outlined,
-                                  color: Theme.of(context).colorScheme.primary,
-                                  size: 30.0,
-                                ),
-                                const Text(
-                                  "Talikhidmat",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 10.0,
-                            ),
-                            Container(
-                              margin: const EdgeInsets.only(
-                                left: 10.0,
-                              ),
-                              child: Text(
-                                "Submit a report",
-                                style: TextStyle(
-                                  color: Colors.grey[600],
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  GestureDetector(
-                    // TODO: check for location permission
-                    onTap: () => _handleNavigateToEmergency(context),
-                    child: Card(
-                      elevation: 5.0,
-                      child: Container(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
-                                Icon(
-                                  Icons.sos_outlined,
-                                  color: Theme.of(context).colorScheme.primary,
-                                  size: 30.0,
-                                ),
-                                const Text(
-                                  "Emergency",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 10.0,
-                            ),
-                            Container(
-                              margin: const EdgeInsets.only(
-                                left: 10.0,
-                              ),
-                              child: Text(
-                                "Rescue request",
-                                style: TextStyle(
-                                  color: Colors.grey[600],
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  Consumer<SubscriptionProvider>(
-                    builder: (BuildContext ctx,
-                        SubscriptionProvider subscriptionProvider, child) {
-                      return GestureDetector(
-                        onTap: () => subscriptionProvider.isSubscriptionEnabled
-                            ? _handleNavigateToSubscription(context)
-                            : _handleNavigateToTrafficImages(context),
+                      GestureDetector(
+                        onTap: () => _handleNavigateToTalikhidmat(context),
                         child: Card(
                           elevation: 5.0,
                           child: Container(
@@ -700,26 +631,15 @@ class _HomePageState extends State<HomePage> {
                                       MainAxisAlignment.spaceEvenly,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: <Widget>[
-                                    subscriptionProvider.isSubscriptionEnabled
-                                        ? Icon(
-                                            Icons.subscriptions,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .primary,
-                                            size: 30.0,
-                                          )
-                                        : Icon(
-                                            Icons.traffic_outlined,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .primary,
-                                            size: 30.0,
-                                          ),
-                                    Text(
-                                      subscriptionProvider.isSubscriptionEnabled
-                                          ? "Subscription"
-                                          : "Traffic images",
-                                      style: const TextStyle(
+                                    Icon(
+                                      Icons.feedback_outlined,
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                      size: 30.0,
+                                    ),
+                                    const Text(
+                                      "Talikhidmat",
+                                      style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
@@ -733,9 +653,7 @@ class _HomePageState extends State<HomePage> {
                                     left: 10.0,
                                   ),
                                   child: Text(
-                                    subscriptionProvider.isSubscriptionEnabled
-                                        ? "Premium member"
-                                        : "Live road images",
+                                    "Submit a report",
                                     style: TextStyle(
                                       color: Colors.grey[600],
                                     ),
@@ -745,198 +663,325 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ),
                         ),
-                      );
-                    },
-                  ),
-                  GestureDetector(
-                    onTap: () => _handleNavigateToPayment(context),
-                    child: Card(
-                      elevation: 5.0,
-                      child: Container(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              crossAxisAlignment: CrossAxisAlignment.center,
+                      ),
+                      GestureDetector(
+                        // TODO: check for location permission
+                        onTap: () => _handleNavigateToEmergency(context),
+                        child: Card(
+                          elevation: 5.0,
+                          child: Container(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
-                                Icon(
-                                  Icons.receipt_long_outlined,
-                                  color: Theme.of(context).colorScheme.primary,
-                                  size: 30.0,
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    Icon(
+                                      Icons.sos_outlined,
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                      size: 30.0,
+                                    ),
+                                    const Text(
+                                      "Emergency",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                const Text(
-                                  "Bill Payment",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
+                                const SizedBox(
+                                  height: 10.0,
+                                ),
+                                Container(
+                                  margin: const EdgeInsets.only(
+                                    left: 10.0,
                                   ),
-                                ),
+                                  child: Text(
+                                    "Rescue request",
+                                    style: TextStyle(
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                )
                               ],
                             ),
-                            const SizedBox(
-                              height: 10.0,
-                            ),
-                            Container(
-                              margin: const EdgeInsets.only(
-                                left: 10.0,
-                              ),
-                              child: Text(
-                                "Billing and taxes",
-                                style: TextStyle(
-                                  color: Colors.grey[600],
+                          ),
+                        ),
+                      ),
+                      Consumer<SubscriptionProvider>(
+                        builder: (BuildContext ctx,
+                            SubscriptionProvider subscriptionProvider, child) {
+                          return GestureDetector(
+                            onTap: () =>
+                                subscriptionProvider.isSubscriptionEnabled
+                                    ? _handleNavigateToSubscription(context)
+                                    : _handleNavigateToTrafficImages(context),
+                            child: Card(
+                              elevation: 5.0,
+                              child: Container(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: <Widget>[
+                                        subscriptionProvider
+                                                .isSubscriptionEnabled
+                                            ? Icon(
+                                                Icons.subscriptions,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .primary,
+                                                size: 30.0,
+                                              )
+                                            : Icon(
+                                                Icons.traffic_outlined,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .primary,
+                                                size: 30.0,
+                                              ),
+                                        Text(
+                                          subscriptionProvider
+                                                  .isSubscriptionEnabled
+                                              ? "Subscription"
+                                              : "Traffic images",
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(
+                                      height: 10.0,
+                                    ),
+                                    Container(
+                                      margin: const EdgeInsets.only(
+                                        left: 10.0,
+                                      ),
+                                      child: Text(
+                                        subscriptionProvider
+                                                .isSubscriptionEnabled
+                                            ? "Premium member"
+                                            : "Live road images",
+                                        style: TextStyle(
+                                          color: Colors.grey[600],
+                                        ),
+                                      ),
+                                    )
+                                  ],
                                 ),
                               ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(
-              height: 10.0,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Citizen Announcements',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                GestureDetector(
-                  onTap: () => _handleNavigateToCitizenAnnouncements(context),
-                  child: Text(
-                    'VIEW ALL',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize:
-                          Theme.of(context).textTheme.labelSmall!.fontSize,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            Text(
-              'Get updated on the latest announcements',
-              style: TextStyle(
-                color: Colors.grey[600],
-                fontSize: Theme.of(context).textTheme.labelLarge!.fontSize,
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.symmetric(
-                vertical: 20.0,
-              ),
-              child: HomepageCitizenAnnouncement(
-                citizenShimmer: citizenShimmer,
-                citizenAnnouncements: citizenAnnouncements,
-              ),
-            ),
-            const SizedBox(
-              height: 10.0,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Tourism News',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                GestureDetector(
-                  onTap: () => _handleNavigateToTourismNews(context),
-                  child: Text(
-                    'VIEW ALL',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize:
-                          Theme.of(context).textTheme.labelSmall!.fontSize,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            Text(
-              'Checkout the tourist updates',
-              style: TextStyle(
-                color: Colors.grey[600],
-                fontSize: Theme.of(context).textTheme.labelLarge!.fontSize,
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.symmetric(
-                vertical: 20.0,
-              ),
-              child: tourismAnnouncements.isEmpty
-                  ? Container(
-                      margin: const EdgeInsets.symmetric(
-                        vertical: 10.0,
-                      ),
-                      child: Center(
-                        child: Column(
-                          children: <Widget>[
-                            SvgPicture.asset(
-                              "assets/images/svg/no_data.svg",
-                              width: screenSize.width * 0.25,
-                              height: screenSize.width * 0.25,
-                              semanticsLabel: 'No Data Logo',
                             ),
-                            const SizedBox(
-                              height: 10.0,
-                            ),
-                            const Text("No news"),
-                          ],
-                        ),
+                          );
+                        },
                       ),
-                    )
-                  : Column(
-                      children: tourismShimmer
-                          ? List.generate(
-                              3,
-                              (index) => Shimmer.fromColors(
-                                    baseColor: Colors.white,
-                                    highlightColor: Colors.transparent,
-                                    child: const HomepageTourismCard(
-                                      useDefault: true,
-                                      imageUrl: "assets/images/icon/sioc.png",
-                                      title: "Loading...",
-                                      subtitle: "Loading...",
+                      GestureDetector(
+                        onTap: () => _handleNavigateToPayment(context),
+                        child: Card(
+                          elevation: 5.0,
+                          child: Container(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    Icon(
+                                      Icons.receipt_long_outlined,
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                      size: 30.0,
                                     ),
-                                  ))
-                          : tourismAnnouncements
-                              .map((e) => e.attachmentDtoList.isEmpty
-                                  ? HomepageTourismCard(
-                                      useDefault: true,
-                                      annId: e.annId,
-                                      imageUrl: "assets/images/icon/sioc.png",
-                                      title: e.annTitleEn,
-                                      subtitle: e.annMessageEn,
-                                    )
-                                  : HomepageTourismCard(
-                                      annId: e.annId,
-                                      imageUrl:
-                                          e.attachmentDtoList[0].attFilePath,
-                                      title: e.annTitleEn,
-                                      subtitle: e.annMessageEn,
-                                    ))
-                              .toList(),
+                                    const Text(
+                                      "Bill Payment",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(
+                                  height: 10.0,
+                                ),
+                                Container(
+                                  margin: const EdgeInsets.only(
+                                    left: 10.0,
+                                  ),
+                                  child: Text(
+                                    "Billing and taxes",
+                                    style: TextStyle(
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 10.0,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Citizen Announcements',
+                      style: Theme.of(context).textTheme.titleMedium,
                     ),
+                    GestureDetector(
+                      onTap: () =>
+                          _handleNavigateToCitizenAnnouncements(context),
+                      child: Text(
+                        'VIEW ALL',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize:
+                              Theme.of(context).textTheme.labelSmall!.fontSize,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Text(
+                  'Get updated on the latest announcements',
+                  style: TextStyle(
+                    color: Colors.grey[600],
+                    fontSize: Theme.of(context).textTheme.labelLarge!.fontSize,
+                  ),
+                ),
+                Container(
+                  margin: const EdgeInsets.symmetric(
+                    vertical: 20.0,
+                  ),
+                  child: HomepageCitizenAnnouncement(
+                    citizenShimmer: citizenShimmer,
+                    citizenAnnouncements: citizenAnnouncements,
+                  ),
+                ),
+                const SizedBox(
+                  height: 10.0,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Tourism News',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    GestureDetector(
+                      onTap: () => _handleNavigateToTourismNews(context),
+                      child: Text(
+                        'VIEW ALL',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize:
+                              Theme.of(context).textTheme.labelSmall!.fontSize,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Text(
+                  'Checkout the tourist updates',
+                  style: TextStyle(
+                    color: Colors.grey[600],
+                    fontSize: Theme.of(context).textTheme.labelLarge!.fontSize,
+                  ),
+                ),
+                Container(
+                  margin: const EdgeInsets.symmetric(
+                    vertical: 20.0,
+                  ),
+                  child: tourismAnnouncements.isEmpty
+                      ? Container(
+                          margin: const EdgeInsets.symmetric(
+                            vertical: 10.0,
+                          ),
+                          child: Center(
+                            child: Column(
+                              children: <Widget>[
+                                SvgPicture.asset(
+                                  "assets/images/svg/no_data.svg",
+                                  width: screenSize.width * 0.25,
+                                  height: screenSize.width * 0.25,
+                                  semanticsLabel: 'No Data Logo',
+                                ),
+                                const SizedBox(
+                                  height: 10.0,
+                                ),
+                                const Text("No news"),
+                              ],
+                            ),
+                          ),
+                        )
+                      : Column(
+                          children: tourismShimmer
+                              ? List.generate(
+                                  3,
+                                  (index) => Shimmer.fromColors(
+                                        baseColor: Colors.white,
+                                        highlightColor: Colors.transparent,
+                                        child: const HomepageTourismCard(
+                                          useDefault: true,
+                                          imageUrl:
+                                              "assets/images/icon/sioc.png",
+                                          title: "Loading...",
+                                          subtitle: "Loading...",
+                                        ),
+                                      ))
+                              : tourismAnnouncements
+                                  .map((e) => e.attachmentDtoList.isEmpty
+                                      ? HomepageTourismCard(
+                                          useDefault: true,
+                                          annId: e.annId,
+                                          imageUrl:
+                                              "assets/images/icon/sioc.png",
+                                          title: e.annTitleEn,
+                                          subtitle: e.annMessageEn,
+                                        )
+                                      : HomepageTourismCard(
+                                          annId: e.annId,
+                                          imageUrl: e
+                                              .attachmentDtoList[0].attFilePath,
+                                          title: e.annTitleEn,
+                                          subtitle: e.annMessageEn,
+                                        ))
+                                  .toList(),
+                        ),
+                ),
+                Container(
+                  margin: const EdgeInsets.only(
+                    bottom: 20.0,
+                  ),
+                  alignment: Alignment.center,
+                  child: const Text(
+                    "That's all for now",
+                  ),
+                )
+              ],
             ),
-            Container(
-              margin: const EdgeInsets.only(
-                bottom: 20.0,
-              ),
-              alignment: Alignment.center,
-              child: const Text(
-                "That's all for now",
-              ),
-            )
-          ],
+          ),
         ),
       ),
     );

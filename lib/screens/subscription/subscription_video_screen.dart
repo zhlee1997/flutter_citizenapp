@@ -129,6 +129,8 @@ class _SubscriptionVideoScreenState extends State<SubscriptionVideoScreen>
           channel: "02",
           deviceName: "SIOC Other CCTV 1",
           location: "SIOC Kuching 1",
+          latitude: "0",
+          longitude: "1",
         ),
         CCTVSnapshotModel(
           cctvId: "2",
@@ -137,6 +139,8 @@ class _SubscriptionVideoScreenState extends State<SubscriptionVideoScreen>
           channel: "02",
           deviceName: "SIOC Other CCTV 2",
           location: "SIOC Kuching 2",
+          latitude: "0",
+          longitude: "1",
         ),
         CCTVSnapshotModel(
           cctvId: "3",
@@ -145,6 +149,8 @@ class _SubscriptionVideoScreenState extends State<SubscriptionVideoScreen>
           channel: "02",
           deviceName: "SIOC Other CCTV 3",
           location: "SIOC Kuching 3",
+          latitude: "0",
+          longitude: "1",
         ),
         CCTVSnapshotModel(
           cctvId: "4",
@@ -153,6 +159,8 @@ class _SubscriptionVideoScreenState extends State<SubscriptionVideoScreen>
           channel: "02",
           deviceName: "SIOC Other CCTV 4",
           location: "SIOC Kuching 4",
+          latitude: "0",
+          longitude: "1",
         ),
         CCTVSnapshotModel(
           cctvId: "5",
@@ -161,6 +169,8 @@ class _SubscriptionVideoScreenState extends State<SubscriptionVideoScreen>
           channel: "02",
           deviceName: "SIOC Other CCTV 5",
           location: "SIOC Kuching 5",
+          latitude: "0",
+          longitude: "1",
         )
       ];
     });
@@ -189,7 +199,7 @@ class _SubscriptionVideoScreenState extends State<SubscriptionVideoScreen>
   }
 
   // TODO: Get camera detail for liveUrl and navigate page
-  Future<void> getCameraDetail() async {
+  Future<void> getCameraDetail(CCTVSnapshotModel cctvSnapshotModel) async {
     // TODO: Get camera detail => API
     // TODO: temp static data => otherCCTVDetail
     otherCCTVDetail = CCTVModelDetail(
@@ -202,13 +212,16 @@ class _SubscriptionVideoScreenState extends State<SubscriptionVideoScreen>
       liveUrl:
           "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
     );
-    Navigator.of(context)
-        .pushReplacementNamed(SubscriptionVideoScreen.routeName,
-            arguments: SubscriptionVideoScreenArguments(
-              otherCCTVDetail!.liveUrl,
-              otherCCTVDetail!.name,
-              otherCCTVDetail!.location,
-            ));
+    // TODO: To calculate distance in between for other cameras
+    Navigator.of(context).pushReplacementNamed(
+      SubscriptionVideoScreen.routeName,
+      arguments: SubscriptionVideoScreenArguments(
+        otherCCTVDetail!.liveUrl,
+        otherCCTVDetail!.name,
+        otherCCTVDetail!.location,
+        "12",
+      ),
+    );
   }
 
   @override
@@ -342,7 +355,7 @@ class _SubscriptionVideoScreenState extends State<SubscriptionVideoScreen>
                                   width: 10.0,
                                 ),
                                 Text(
-                                  "5 KM",
+                                  "${args.distanceInBetween} KM",
                                   style: Theme.of(context).textTheme.bodyLarge,
                                 ),
                               ],
@@ -389,7 +402,8 @@ class _SubscriptionVideoScreenState extends State<SubscriptionVideoScreen>
                     itemCount: _listCCTVSnapshotModel.length,
                     itemBuilder: ((context, index) {
                       return ListTile(
-                        onTap: getCameraDetail,
+                        onTap: () =>
+                            getCameraDetail(_listCCTVSnapshotModel[index]),
                         title: Text(
                           _listCCTVSnapshotModel[index].location,
                           overflow: TextOverflow.ellipsis,

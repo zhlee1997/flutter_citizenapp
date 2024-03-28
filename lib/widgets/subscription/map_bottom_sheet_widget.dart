@@ -1,21 +1,31 @@
 import 'dart:async';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_citizenapp/arguments/subscription_video_screen_arguments.dart';
 import 'package:provider/provider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:geolocator/geolocator.dart';
 
 import '../../providers/cctv_provider.dart';
+import '../../providers/location_provider.dart';
 import '../../models/cctv_model.dart';
 import '../../utils/app_localization.dart';
 import '../../utils/global_dialog_helper.dart';
 import '../../screens/subscription/subscription_video_screen.dart';
 
 class MapBottomSheetWidget extends StatefulWidget {
-  const MapBottomSheetWidget({super.key});
+  final String cctvLatitude;
+  final String cctvLongitude;
+
+  const MapBottomSheetWidget({
+    required this.cctvLatitude,
+    required this.cctvLongitude,
+    super.key,
+  });
 
   @override
   State<MapBottomSheetWidget> createState() => _MapBottomSheetWidgetState();
@@ -26,6 +36,10 @@ class _MapBottomSheetWidgetState extends State<MapBottomSheetWidget> {
 
   late CCTVProvider cctvProvider;
   late Timer timer;
+
+  double _endLatitude = 0;
+  double _endLongitude = 0;
+  String _distanceInBetween = "";
 
   Future<Uint8List?> _loadNetworkImage(String path) async {
     final completer = Completer<ImageInfo>();
@@ -50,9 +64,6 @@ class _MapBottomSheetWidgetState extends State<MapBottomSheetWidget> {
     try {
       imageByteData = await _loadNetworkImage(cctvProvider.imageUrl)
           .timeout(const Duration(seconds: 12));
-      // imageByteData = await _loadNetworkImage(
-      //         "https://images.lifestyleasia.com/wp-content/uploads/sites/5/2022/07/15175110/Hero_Sarawak_River-1600x900.jpg")
-      //     .timeout(const Duration(seconds: 12));
     } on TimeoutException catch (e) {
       print('Image Timeout');
       print(e.toString());
@@ -68,30 +79,43 @@ class _MapBottomSheetWidgetState extends State<MapBottomSheetWidget> {
   }
 
   // TODO: use geolocator service to calculate the distance
-  Future<void> getDistanceFromCoordinates() async {}
+  String getDistanceFromCoordinates(
+    double startLatitude,
+    double startLongitude,
+    double endLatitude,
+    double endLongitude,
+  ) {
+    double distanceBetween = Geolocator.distanceBetween(
+      startLatitude,
+      startLongitude,
+      endLatitude,
+      endLongitude,
+    );
+    distanceBetween = distanceBetween / 1000;
+    return distanceBetween.toStringAsFixed(1);
+  }
 
   @override
   void didChangeDependencies() async {
-    cctvProvider = Provider.of<CCTVProvider>(context, listen: false);
     super.didChangeDependencies();
+    cctvProvider = Provider.of<CCTVProvider>(context, listen: false);
+    LocationProvider locationProvider = Provider.of<LocationProvider>(context);
+    if (locationProvider.currentLocation != null) {
+      _endLatitude = locationProvider.currentLocation!.latitude;
+      _endLongitude = locationProvider.currentLocation!.longitude;
+      _distanceInBetween = getDistanceFromCoordinates(
+        double.parse(widget.cctvLatitude),
+        double.parse(widget.cctvLongitude),
+        _endLatitude,
+        _endLongitude,
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
-    final CCTVModelDetail? cctvDetail =
-        Provider.of<CCTVProvider>(context, listen: false).cctvModelDetail;
-
-    // final CCTVModelDetail? cctvDetail = CCTVModelDetail(
-    //   id: "1",
-    //   name: "SIOC CCTV 1",
-    //   location: "Bangunan Baitulmakmur 1",
-    //   image:
-    //       "https://images.lifestyleasia.com/wp-content/uploads/sites/5/2022/07/15175110/Hero_Sarawak_River-1600x900.jpg",
-    //   updateTime: "updateTime1",
-    //   liveUrl:
-    //       "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-    // );
+    final CCTVModelDetail? cctvDetail = cctvProvider.cctvModelDetail;
 
     if (cctvProvider.imageUrl.isEmpty) {
       return Center(
@@ -192,8 +216,8 @@ class _MapBottomSheetWidgetState extends State<MapBottomSheetWidget> {
                     const SizedBox(
                       width: 5.0,
                     ),
-                    const Text(
-                      "5 KM",
+                    Text(
+                      "$_distanceInBetween KM",
                       style: TextStyle(
                         fontSize: 15.0,
                       ),
@@ -206,11 +230,6 @@ class _MapBottomSheetWidgetState extends State<MapBottomSheetWidget> {
                 // height: screenSize.height * 0.06,
                 child: ElevatedButton(
                   onPressed: () async {
-                    // Map<String, dynamic> data = {
-                    //   "liveUrl": cctvDetail.liveUrl,
-                    //   "name": cctvDetail.name,
-                    //   "address": cctvDetail.location
-                    // };
                     timer.cancel();
                     Fluttertoast.cancel();
                     Navigator.of(context).pop();
@@ -221,6 +240,7 @@ class _MapBottomSheetWidgetState extends State<MapBottomSheetWidget> {
                         cctvDetail.liveUrl,
                         cctvDetail.name,
                         cctvDetail.location,
+                        _distanceInBetween,
                       ),
                     );
                   },
@@ -242,71 +262,70 @@ class _MapBottomSheetWidgetState extends State<MapBottomSheetWidget> {
             ],
           );
         } else {
-          // if (imageByteData == null) {
-          //   return Column(
-          //     children: <Widget>[
-          //       Container(
-          //         child: Center(
-          //           child: Container(
-          //             width: double.infinity,
-          //             height: screenSize.height * 0.25,
-          //             child: Center(
-          //               child: Text(
-          //                 AppLocalization.of(context)!
-          //                     .translate('camera_is_not_available')!,
-          //                 textAlign: TextAlign.center,
-          //               ),
-          //             ),
-          //           ),
-          //         ),
-          //       ),
-          //       Container(
-          //         margin: const EdgeInsets.only(
-          //           top: 20.0,
-          //           left: 20.0,
-          //           right: 20.0,
-          //           bottom: 10.0,
-          //         ),
-          //         width: double.infinity,
-          //         child: Text(
-          //           '${cctvDetail!.location}',
-          //           style: TextStyle(
-          //             fontSize: Platform.isIOS ? 18.0 : 18.0,
-          //             fontWeight: FontWeight.bold,
-          //           ),
-          //         ),
-          //       ),
-          //       Container(
-          //         margin: const EdgeInsets.only(
-          //           left: 20.0,
-          //           right: 20.0,
-          //           bottom: 20.0,
-          //         ),
-          //         width: double.infinity,
-          //         child: Text(
-          //           '${cctvDetail.name}',
-          //           softWrap: true,
-          //           style: TextStyle(
-          //             fontSize: Platform.isIOS ? 18.0 : 15.0,
-          //           ),
-          //         ),
-          //       ),
-          //       Container(
-          //         width: screenSize.width * 0.9,
-          //         height: screenSize.height * 0.06,
-          //         child: ElevatedButton(
-          //           onPressed: null,
-          //           child: Text(
-          //             AppLocalization.of(context)!.translate('play_now')!,
-          //             style: TextStyle(
-          //               fontWeight: FontWeight.bold,
-          //             ),
-          //           ),
-          //         ),
-          //       )
-          //     ],
-          //   );
-          // }
+          if (imageByteData == null) {
+            return Column(
+              children: <Widget>[
+                Center(
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: screenSize.height * 0.25,
+                    child: Center(
+                      child: Text(
+                        AppLocalization.of(context)!
+                            .translate('camera_is_not_available')!,
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                ),
+                Container(
+                  margin: const EdgeInsets.only(
+                    top: 20.0,
+                    left: 20.0,
+                    right: 20.0,
+                    bottom: 10.0,
+                  ),
+                  width: double.infinity,
+                  child: Text(
+                    cctvDetail!.location,
+                    style: TextStyle(
+                      fontSize: Platform.isIOS ? 18.0 : 18.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Container(
+                  margin: const EdgeInsets.only(
+                    left: 20.0,
+                    right: 20.0,
+                    bottom: 20.0,
+                  ),
+                  width: double.infinity,
+                  child: Text(
+                    cctvDetail.name,
+                    softWrap: true,
+                    style: TextStyle(
+                      fontSize: Platform.isIOS ? 18.0 : 15.0,
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width: screenSize.width * 0.9,
+                  height: screenSize.height * 0.06,
+                  child: ElevatedButton(
+                    onPressed: null,
+                    child: Text(
+                      AppLocalization.of(context)!.translate('play_now')!,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            );
+          }
+
           return Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
@@ -372,8 +391,8 @@ class _MapBottomSheetWidgetState extends State<MapBottomSheetWidget> {
                     const SizedBox(
                       width: 5.0,
                     ),
-                    const Text(
-                      "5 KM",
+                    Text(
+                      "$_distanceInBetween KM",
                       style: TextStyle(
                         fontSize: 15.0,
                       ),
@@ -386,11 +405,6 @@ class _MapBottomSheetWidgetState extends State<MapBottomSheetWidget> {
                 // height: screenSize.height * 0.06,
                 child: ElevatedButton(
                   onPressed: () async {
-                    // Map<String, dynamic> data = {
-                    //   "liveUrl": cctvDetail.liveUrl,
-                    //   "name": cctvDetail.name,
-                    //   "address": cctvDetail.location
-                    // };
                     timer.cancel();
                     Fluttertoast.cancel();
                     Navigator.of(context).pop();
@@ -401,6 +415,7 @@ class _MapBottomSheetWidgetState extends State<MapBottomSheetWidget> {
                         cctvDetail.liveUrl,
                         cctvDetail.name,
                         cctvDetail.location,
+                        _distanceInBetween,
                       ),
                     );
                   },

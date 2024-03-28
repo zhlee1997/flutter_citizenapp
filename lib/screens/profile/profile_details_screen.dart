@@ -6,7 +6,8 @@ import 'package:flutter_citizenapp/providers/settings_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
-// import 'package:fluttertoast/fluttertoast.dart';
+import 'package:lottie/lottie.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../models/auth_model.dart';
 import '../../services/auth_services.dart';
@@ -44,9 +45,9 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
 
   /// Launch Sarawak ID Website when tap on 'Sarawak ID' link
   void _handleLaunchWebsite() {
-    final Uri _uri =
+    final Uri uri =
         Uri.parse("https://sarawakid-tnt.sarawak.gov.my/web/ssov1/login/");
-    launchUrl(_uri);
+    launchUrl(uri);
   }
 
   // TODO: refresh profile
@@ -93,6 +94,9 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
             );
           },
         );
+      } else {
+        Navigator.of(context).pop();
+        Fluttertoast.showToast(msg: "No result");
       }
     } catch (e) {
       Navigator.of(context).pop();
@@ -148,7 +152,8 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
         child: Column(
           children: <Widget>[
             SizedBox(
-              height: 260,
+              // TODO: to make it responsive
+              height: 140 + 30,
               child: Stack(
                 children: <Widget>[
                   Image.asset(
@@ -175,7 +180,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                             alignment: Alignment.bottomRight,
                             children: [
                               CircleAvatar(
-                                radius: Platform.isIOS ? 42.5 : 32.5,
+                                radius: Platform.isIOS ? 32.5 : 32.5,
                                 backgroundColor: Theme.of(context).primaryColor,
                                 foregroundImage: _profileImage != null
                                     ? NetworkImage("$_profileImage")
@@ -186,7 +191,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                         radius: 30,
                                         child: Icon(
                                           Icons.person,
-                                          size: 50,
+                                          size: 35,
                                         ),
                                       ),
                               ),
@@ -204,72 +209,6 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                               ),
                             ],
                           ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Text(
-                            _fullName,
-                            style: const TextStyle(
-                              fontSize: 18.0,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          _isSubscribe
-                              ? GestureDetector(
-                                  onTap: getSubscriptionPackageOption,
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 12,
-                                      vertical: 6,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: Colors.yellow[300],
-                                      borderRadius: BorderRadius.circular(16),
-                                      border: Border.all(width: 0.5),
-                                    ),
-                                    child: const Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Icon(
-                                          Icons.star,
-                                          color: Colors.black,
-                                        ),
-                                        SizedBox(width: 4),
-                                        Text(
-                                          'Premium',
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                )
-                              : ActionChip(
-                                  side: BorderSide(
-                                    color: Theme.of(context).primaryColor,
-                                  ),
-                                  avatar: Icon(
-                                    Icons.verified_user,
-                                    color: Theme.of(context).primaryColor,
-                                  ),
-                                  label: Text(
-                                    "Subcribe Premium",
-                                    style: TextStyle(
-                                      color: Theme.of(context).primaryColor,
-                                    ),
-                                  ),
-                                  backgroundColor:
-                                      Theme.of(context).colorScheme.background,
-                                  onPressed: () {
-                                    // Navigator.of(context)
-                                    //     .pushNamed(SubscribeScreen.routeName);
-                                  },
-                                ),
                         ],
                       ),
                     ),
@@ -277,6 +216,57 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                 ],
               ),
             ),
+            // HERE
+            const SizedBox(
+              height: 10,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  _fullName,
+                  style: const TextStyle(
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                if (_isSubscribe)
+                  GestureDetector(
+                    onTap: getSubscriptionPackageOption,
+                    child: Lottie.asset(
+                      "assets/animations/lottie_premium.json",
+                      width: MediaQuery.of(context).size.width * 0.125,
+                      height: MediaQuery.of(context).size.width * 0.125,
+                      fit: BoxFit.fill,
+                    ),
+                  )
+              ],
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            _isSubscribe
+                ? Container()
+                : ActionChip(
+                    side: BorderSide(
+                      color: Theme.of(context).primaryColor,
+                    ),
+                    avatar: Icon(
+                      Icons.verified_user,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                    label: Text(
+                      "Subcribe Premium",
+                      style: TextStyle(
+                        color: Theme.of(context).primaryColor,
+                      ),
+                    ),
+                    backgroundColor: Theme.of(context).colorScheme.background,
+                    onPressed: () {
+                      // Navigator.of(context)
+                      //     .pushNamed(SubscribeScreen.routeName);
+                    },
+                  ),
             if (_isSubscribe)
               Container(
                 margin: const EdgeInsets.symmetric(

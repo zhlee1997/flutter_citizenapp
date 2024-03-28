@@ -61,6 +61,8 @@ class CCTVSnapshotModel {
   late String channel;
   late String deviceName;
   late String location;
+  late String latitude;
+  late String longitude;
 
   // model constructor
   CCTVSnapshotModel({
@@ -69,6 +71,8 @@ class CCTVSnapshotModel {
     required this.channel,
     required this.deviceName,
     required this.location,
+    required this.latitude,
+    required this.longitude,
   });
 
   // serialize from json
@@ -78,5 +82,7 @@ class CCTVSnapshotModel {
     deviceName = json["deviceName"];
     imageUrl = json["imageUrl"];
     location = json["location"];
+    latitude = json["latitude"];
+    longitude = json["longitude"];
   }
 }
