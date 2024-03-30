@@ -26,7 +26,7 @@ class TransactionProvider with ChangeNotifier {
   Future<dynamic> queryTransactionProvider(map, BuildContext context) async {
     String handleTitle(
       String goodsCode,
-      String stateName,
+      String? stateName,
     ) {
       if (goodsCode == "V001") {
         return AppLocalization.of(context)!.translate('subscription_1')!;
@@ -48,12 +48,10 @@ class TransactionProvider with ChangeNotifier {
       if (response['data'] != null && response['data'].length > 0) {
         for (var item in response['data']) {
           counter += item['orderAmount'];
-          //2: Assessment rate, 1: Subscription
+          // 2: Assessment rate, 1: Subscription
           String type = item['goodsCode'] == 'T001' ? '2' : '1';
-          // TODO: temp, lack of stateName
-          String title =
-              handleTitle(item['goodsCode'], item['stateName'] ?? "");
-          // String title = handleTitle(item['goodsCode'], item['stateName']);
+          // only Assessment Rate has "stateName"
+          String title = handleTitle(item['goodsCode'], item['stateName']);
           var money = item['orderAmount'];
           _list.add({
             'createTime': item['createTime'],
@@ -61,9 +59,10 @@ class TransactionProvider with ChangeNotifier {
             'description': title,
             'amount': money,
             'orderNo': item['outTradeNo'],
-            // TODO: temp, lack of taxCode
-            'taxCode': item['taxCode'] ?? ""
-            // 'taxCode': item['taxCode']
+            // only Assessment Rate has "taxCode"
+            'taxCode': item['taxCode'] ?? "",
+            // only Subscription has "option"
+            'option': item['option'] ?? "",
           });
         }
       }

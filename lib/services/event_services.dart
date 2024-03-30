@@ -100,4 +100,22 @@ class EventServices {
       throw e;
     }
   }
+
+  /// Submit new case using POST method
+  ///
+  /// Receives [parameter] as the case input information
+  /// Returns API response object
+  Future<dynamic> queryEmergencyRequestFrequency() async {
+    try {
+      var response = await _apiBaseHelper.get(
+        "/eventManual/queryUrgentEventReportNumber",
+        requireToken: true,
+      );
+      print('queryEmergencyRequestFrequency success: $response');
+      return response;
+    } catch (e) {
+      print('queryEmergencyRequestFrequency failed: ${e.toString()}');
+      throw e;
+    }
+  }
 }

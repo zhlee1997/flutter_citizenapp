@@ -16,6 +16,19 @@ class TransactionDetailBottomModal extends StatelessWidget {
     super.key,
   });
 
+  String handleType(BuildContext context) {
+    switch (type) {
+      case "option_1":
+        return "Subscription Package: 1-month Subscription";
+      case "option_2":
+        return "Subscription Package: 3-month Subscription";
+      case "option_3":
+        return "Subscription Package: 12-month Subscription";
+      default:
+        return "${AppLocalization.of(context)!.translate('account_number')!}: $taxCode";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -44,11 +57,10 @@ class TransactionDetailBottomModal extends StatelessWidget {
             style: Theme.of(context).textTheme.bodyMedium,
           ),
           const SizedBox(height: 5.0),
-          if (type == "2")
-            Text(
-              '${AppLocalization.of(context)!.translate('account_number')!}: $taxCode',
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
+          Text(
+            handleType(context),
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
           const SizedBox(height: 5.0),
           Text(
             'Date: $date',

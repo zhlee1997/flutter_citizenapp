@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 
 import '../../services/feedback_services.dart';
 import '../../utils/global_dialog_helper.dart';
+import '../../providers/auth_provider.dart';
 
 class SendFeedbackScreen extends StatefulWidget {
   static const String routeName = 'send-feedback-screen';
@@ -167,12 +169,8 @@ class _SendFeedbackScreenState extends State<SendFeedbackScreen> {
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Send Feedback"),
-      ),
-      backgroundColor: Theme.of(context).colorScheme.background,
-      body: SizedBox(
+    return Consumer<AuthProvider>(
+      child: SizedBox(
         width: double.infinity,
         child: SingleChildScrollView(
           child: Column(
@@ -271,6 +269,64 @@ class _SendFeedbackScreenState extends State<SendFeedbackScreen> {
           ),
         ),
       ),
+      builder: (_, AuthProvider authProvider, Widget? child) {
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text("Send Feedback"),
+            actions: authProvider.isAuth
+                ? <Widget>[
+                    IconButton(
+                      onPressed: () {
+                        // TODO: FutureBuilder => call Get Feedback API
+                        showDialog(
+                            context: context,
+                            builder: (_) {
+                              return Dialog.fullscreen(
+                                child: Container(
+                                  padding: const EdgeInsets.all(20.0),
+                                  child: Column(
+                                    children: <Widget>[
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: <Widget>[
+                                          Text(
+                                            "Feedback History",
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .headlineSmall,
+                                          ),
+                                          IconButton.filledTonal(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            icon: const Icon(
+                                                Icons.close_outlined),
+                                          )
+                                        ],
+                                      ),
+                                      Expanded(
+                                          child: ListView.builder(
+                                        itemCount: 5,
+                                        itemBuilder: (context, index) {
+                                          return Container();
+                                        },
+                                      ))
+                                    ],
+                                  ),
+                                ),
+                              );
+                            });
+                      },
+                      icon: Icon(Icons.history_outlined),
+                    )
+                  ]
+                : null,
+          ),
+          backgroundColor: Theme.of(context).colorScheme.background,
+          body: child,
+        );
+      },
     );
   }
 

@@ -95,8 +95,8 @@ class SubscriptionResultScreen extends StatelessWidget {
             SizedBox(
               height: screenSize.height * 0.01,
             ),
-            Text("PAYMENT DETAILS"),
-            SizedBox(
+            const Text("PAYMENT DETAILS"),
+            const SizedBox(
               height: 10.0,
             ),
             Row(
@@ -111,22 +111,22 @@ class SubscriptionResultScreen extends StatelessWidget {
                 )
               ],
             ),
-            SizedBox(
+            const SizedBox(
               height: 5.0,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Text("Paid Amount"),
+                const Text("Paid Amount"),
                 Text(
-                  "RM 136.75",
-                  style: TextStyle(
+                  "RM ${args.orderAmt}",
+                  style: const TextStyle(
                     fontWeight: FontWeight.bold,
                   ),
                 )
               ],
             ),
-            SizedBox(
+            const SizedBox(
               height: 5.0,
             ),
             Row(
@@ -141,25 +141,26 @@ class SubscriptionResultScreen extends StatelessWidget {
                 )
               ],
             ),
-            SizedBox(
+            const SizedBox(
               height: 5.0,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Text("Payment Date"),
+                const Text("Payment Date"),
                 Text(
-                  "03 Mar, 2024",
-                  style: TextStyle(
+                  // "03 Mar, 2024",
+                  args.orderDate ?? "",
+                  style: const TextStyle(
                     fontWeight: FontWeight.bold,
                   ),
                 )
               ],
             ),
-            SizedBox(
+            const SizedBox(
               height: 5.0,
             ),
-            Row(
+            const Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Text("Payment Method"),
@@ -171,7 +172,7 @@ class SubscriptionResultScreen extends StatelessWidget {
                 )
               ],
             ),
-            SizedBox(
+            const SizedBox(
               height: 5.0,
             ),
             Row(

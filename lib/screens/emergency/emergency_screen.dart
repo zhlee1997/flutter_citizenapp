@@ -142,7 +142,7 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
           }
         }
 
-        // dismiss the dialog
+        // dismiss the dialog after submit success
         Navigator.of(context).pop();
         await showModalBottomSheet(
           barrierColor: Theme.of(context).colorScheme.onInverseSurface,
@@ -154,7 +154,6 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
             return const EmergencyFinishFullBottomModal();
           },
         );
-        print("submit emergency success");
       }
     } catch (e) {
       // dismiss the dialog

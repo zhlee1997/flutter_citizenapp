@@ -50,7 +50,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
     launchUrl(uri);
   }
 
-  // TODO: refresh profile
+  // TODO: refresh profile (new Update API)
   Future<void> _refreshProfile() async {}
 
   String formatDate(DateTime date) {

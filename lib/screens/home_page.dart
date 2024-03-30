@@ -26,9 +26,11 @@ import '../screens/bill_payment/bill_payment_result_screen.dart';
 
 import '../providers/announcement_provider.dart';
 import '../providers/auth_provider.dart';
+import '../providers/inbox_provider.dart';
 import '../providers/subscription_provider.dart';
 import '../services/announcement_services.dart';
 import '../services/subscription_services.dart';
+import '../services/event_services.dart';
 import "../models/announcement_model.dart";
 import '../models/major_announcement_model.dart';
 import "../utils/global_dialog_helper.dart";
@@ -54,7 +56,7 @@ class _HomePageState extends State<HomePage> {
   bool tourismShimmer = false;
   List<AnnouncementModel> citizenAnnouncements = [];
   List<AnnouncementModel> tourismAnnouncements = [];
-  late int numberOfRequestLeft;
+  int numberOfRequestLeft = 0;
 
   final AnnouncementServices _announcementServices = AnnouncementServices();
   final GlobalDialogHelper _globalDialogHelper = GlobalDialogHelper();
@@ -75,7 +77,7 @@ class _HomePageState extends State<HomePage> {
       }
       String encryptedData = obj as String;
       if (encryptedData.isEmpty) {
-        GlobalDialogHelper().showAlertDialogWithSingleButton(
+        _globalDialogHelper.showAlertDialogWithSingleButton(
           context: context,
           title: "Payment Error",
           message:
@@ -89,7 +91,7 @@ class _HomePageState extends State<HomePage> {
       Map<String, dynamic> payResult = {};
       if (response['status'] == '200') {
         payResult = response['data'];
-        // Provider.of<InboxProvider>(context, listen: false).refreshCount();
+        Provider.of<InboxProvider>(context, listen: false).refreshCount();
         Navigator.of(context).pop(true);
 
         // when success, can look for extra data
@@ -107,7 +109,6 @@ class _HomePageState extends State<HomePage> {
 
   // display transaction result screen when a transaction is completed
   void jumpPayResult(Map<String, dynamic> param) {
-    print("isSubscription: $isSubscription");
     if (isSubscription) {
       // for subscription, after payment
       Provider.of<SubscriptionProvider>(context, listen: false)
@@ -152,7 +153,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> getSubscriptionPackageOption() async {
-    GlobalDialogHelper().buildCircularProgressCenter(context: context);
+    _globalDialogHelper.buildCircularProgressCenter(context: context);
     try {
       var response =
           await Provider.of<SubscriptionProvider>(context, listen: false)
@@ -280,6 +281,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _showEmergencyRequestLeftDialog(BuildContext context) async {
+    await getNumberofRequestLeft();
     // TODO: Emergency service to check location permission is given
     // TODO: If denied, ask again
     // TODO: If foreverDenied, need navigate to app settings
@@ -371,7 +373,7 @@ class _HomePageState extends State<HomePage> {
         Provider.of<SubscriptionProvider>(context, listen: false);
 
     if (authProvider.isAuth) {
-      GlobalDialogHelper().buildCircularProgressCenter(context: context);
+      _globalDialogHelper.buildCircularProgressCenter(context: context);
       bool isWhitelisted = await subscriptionProvider
           .queryAndSetIsWhitelisted(authProvider.auth.fullName);
       Navigator.of(context).pop();
@@ -469,6 +471,23 @@ class _HomePageState extends State<HomePage> {
     return 0;
   }
 
+  Future<void> getNumberofRequestLeft() async {
+    _globalDialogHelper.buildCircularProgressCenter(context: context);
+    try {
+      var response = await EventServices().queryEmergencyRequestFrequency();
+      if (response["status"] == "200") {
+        setState(() {
+          numberOfRequestLeft = int.parse(response["data"]);
+        });
+      }
+    } catch (e) {
+      print('getNumberofRequestLeft: ${e.toString()}');
+    } finally {
+      // dismiss the loading dialog
+      Navigator.of(context).pop();
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -482,7 +501,6 @@ class _HomePageState extends State<HomePage> {
         );
     getCitizenAnn();
     getTourismAnn();
-    numberOfRequestLeft = 2;
   }
 
   @override
