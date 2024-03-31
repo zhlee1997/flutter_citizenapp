@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../../widgets/subscription/subscription_benefit_card.dart';
 import '../../widgets/subscription/subscription_price_card.dart';
@@ -22,6 +23,7 @@ class SubscriptionPackageScreen extends StatefulWidget {
 }
 
 class _SubscriptionPackageScreenState extends State<SubscriptionPackageScreen> {
+  bool priceShimmer = false;
   bool isChecked = false;
   String _url = "";
 
@@ -49,6 +51,9 @@ class _SubscriptionPackageScreenState extends State<SubscriptionPackageScreen> {
 
   // TODO: GET PACKAGE PRICE API
   Future<void> _getPackagePrice() async {
+    setState(() {
+      priceShimmer = true;
+    });
     try {
       var response =
           await _subscriptionServices.queryPackageAndSubscriptionEnable();
@@ -63,6 +68,7 @@ class _SubscriptionPackageScreenState extends State<SubscriptionPackageScreen> {
           twelveMonthPrice = filteredList[0]["option_3"];
           // First render set price
           selectedPrice = oneMonthPrice;
+          priceShimmer = false;
         });
       }
     } catch (e) {
@@ -125,12 +131,23 @@ class _SubscriptionPackageScreenState extends State<SubscriptionPackageScreen> {
               "Guaranteed privacy protection"
             ],
           ),
-          SubscriptionPriceCard(
-            oneMonthPrice: oneMonthPrice,
-            threeMonthPrice: threeMonthPrice,
-            twelveMonthPrice: twelveMonthPrice,
-            handleSelectPackage: handleSelectPackage,
-          ),
+          priceShimmer
+              ? Shimmer.fromColors(
+                  baseColor: Colors.white,
+                  highlightColor: Colors.transparent,
+                  child: SubscriptionPriceCard(
+                    oneMonthPrice: 0,
+                    threeMonthPrice: 0,
+                    twelveMonthPrice: 0,
+                    handleSelectPackage: (p0, p1) {},
+                  ),
+                )
+              : SubscriptionPriceCard(
+                  oneMonthPrice: oneMonthPrice,
+                  threeMonthPrice: threeMonthPrice,
+                  twelveMonthPrice: twelveMonthPrice,
+                  handleSelectPackage: handleSelectPackage,
+                ),
           const SizedBox(
             height: 15,
           ),

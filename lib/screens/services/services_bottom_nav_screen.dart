@@ -37,12 +37,12 @@ class ServicesBottomNavScreen extends StatelessWidget {
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10.0),
-                    image: DecorationImage(
-                      image: AssetImage(
-                          "assets/images/pictures/talikhidmat_image.jpg"),
-                      fit: BoxFit.cover,
-                      opacity: 0.3,
-                    ),
+                    // image: DecorationImage(
+                    //   image: AssetImage(
+                    //       "assets/images/pictures/talikhidmat_image.jpg"),
+                    //   fit: BoxFit.cover,
+                    //   opacity: 0.3,
+                    // ),
                   ),
                   child: Column(
                     children: <Widget>[
@@ -76,11 +76,11 @@ class ServicesBottomNavScreen extends StatelessWidget {
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10.0),
-                    image: DecorationImage(
-                      image: AssetImage("assets/images/pictures/sos_image.jpg"),
-                      fit: BoxFit.cover,
-                      opacity: 0.15,
-                    ),
+                    // image: DecorationImage(
+                    //   image: AssetImage("assets/images/pictures/sos_image.jpg"),
+                    //   fit: BoxFit.cover,
+                    //   opacity: 0.15,
+                    // ),
                   ),
                   child: Column(
                     children: <Widget>[
@@ -114,13 +114,14 @@ class ServicesBottomNavScreen extends StatelessWidget {
                 elevation: 5.0,
                 child: Container(
                   decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.0),
-                      image: DecorationImage(
-                        image: AssetImage(
-                            "assets/images/pictures/subscription_image.jpg"),
-                        fit: BoxFit.cover,
-                        opacity: 0.2,
-                      )),
+                    borderRadius: BorderRadius.circular(10.0),
+                    // image: DecorationImage(
+                    //   image: AssetImage(
+                    //       "assets/images/pictures/subscription_image.jpg"),
+                    //   fit: BoxFit.cover,
+                    //   opacity: 0.2,
+                    // ),
+                  ),
                   child: Column(
                     children: <Widget>[
                       Container(
@@ -151,13 +152,14 @@ class ServicesBottomNavScreen extends StatelessWidget {
                 elevation: 5.0,
                 child: Container(
                   decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.0),
-                      image: const DecorationImage(
-                        image: AssetImage(
-                            "assets/images/pictures/traffic_image.jpg"),
-                        fit: BoxFit.cover,
-                        opacity: 0.2,
-                      )),
+                    borderRadius: BorderRadius.circular(10.0),
+                    // image: const DecorationImage(
+                    //   image: AssetImage(
+                    //       "assets/images/pictures/traffic_image.jpg"),
+                    //   fit: BoxFit.cover,
+                    //   opacity: 0.2,
+                    // ),
+                  ),
                   child: Column(
                     children: <Widget>[
                       Container(
@@ -191,12 +193,12 @@ class ServicesBottomNavScreen extends StatelessWidget {
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10.0),
-                    image: DecorationImage(
-                      image: AssetImage(
-                          "assets/images/pictures/payment_image.jpg"),
-                      fit: BoxFit.cover,
-                      opacity: 0.2,
-                    ),
+                    // image: DecorationImage(
+                    //   image: AssetImage(
+                    //       "assets/images/pictures/payment_image.jpg"),
+                    //   fit: BoxFit.cover,
+                    //   opacity: 0.2,
+                    // ),
                   ),
                   child: Column(
                     children: <Widget>[
@@ -230,13 +232,14 @@ class ServicesBottomNavScreen extends StatelessWidget {
                 elevation: 5.0,
                 child: Container(
                   decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.0),
-                      image: DecorationImage(
-                        image: AssetImage(
-                            "assets/images/pictures/tourism_image.jpg"),
-                        fit: BoxFit.cover,
-                        opacity: 0.3,
-                      )),
+                    borderRadius: BorderRadius.circular(10.0),
+                    // image: DecorationImage(
+                    //   image: AssetImage(
+                    //       "assets/images/pictures/tourism_image.jpg"),
+                    //   fit: BoxFit.cover,
+                    //   opacity: 0.3,
+                    // ),
+                  ),
                   child: Column(
                     children: <Widget>[
                       Container(
@@ -267,13 +270,13 @@ class ServicesBottomNavScreen extends StatelessWidget {
                 elevation: 5.0,
                 child: Container(
                   decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.0),
-                      image: DecorationImage(
-                        image:
-                            AssetImage("assets/images/pictures/bus_image.jpg"),
-                        fit: BoxFit.cover,
-                        opacity: 0.2,
-                      )),
+                    borderRadius: BorderRadius.circular(10.0),
+                    // image: DecorationImage(
+                    //   image: AssetImage("assets/images/pictures/bus_image.jpg"),
+                    //   fit: BoxFit.cover,
+                    //   opacity: 0.2,
+                    // ),
+                  ),
                   child: Column(
                     children: <Widget>[
                       Container(

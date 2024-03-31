@@ -10,7 +10,7 @@ class SubscriptionServices {
     try {
       var response = await _apiBaseHelper.get(
         'member/memberSubscribePackage/queryList',
-        requireToken: false,
+        requireToken: true,
       );
       print("queryPackageAndSubscriptionEnable API success: $response");
       return response;

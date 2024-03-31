@@ -33,15 +33,15 @@ class _SubscriptionPriceCardState extends State<SubscriptionPriceCard> {
 
     packageArray = [
       {
-        "month": 1,
+        "days": 30,
         "monthPrice": widget.oneMonthPrice,
       },
       {
-        "month": 3,
+        "days": 90,
         "monthPrice": widget.threeMonthPrice,
       },
       {
-        "month": 12,
+        "days": 365,
         "monthPrice": widget.twelveMonthPrice,
       },
     ];
@@ -98,7 +98,7 @@ class _SubscriptionPriceCardState extends State<SubscriptionPriceCard> {
                               top: 5,
                             ),
                             child: Text(
-                              '${e["month"]}',
+                              '${e["days"]}',
                               textAlign: TextAlign.center,
                               style: const TextStyle(
                                 fontSize: 20.0,
@@ -110,7 +110,7 @@ class _SubscriptionPriceCardState extends State<SubscriptionPriceCard> {
                               bottom: 5,
                             ),
                             child: Text(
-                              '${e["month"] != 1 ? "months" : "month"}',
+                              'Days',
                               textAlign: TextAlign.center,
                               style: const TextStyle(
                                 fontSize: 20.0,

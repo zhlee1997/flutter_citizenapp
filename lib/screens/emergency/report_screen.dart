@@ -24,7 +24,7 @@ class ReportScreen extends StatelessWidget {
           ),
           alignment: Alignment.centerLeft,
           child: const Text(
-            "Method 1: Select one for emergency request",
+            "Select one for emergency request",
             style: TextStyle(
               fontWeight: FontWeight.w500,
             ),
@@ -33,11 +33,11 @@ class ReportScreen extends StatelessWidget {
         GridView(
           physics: const NeverScrollableScrollPhysics(),
           shrinkWrap: true,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             crossAxisSpacing: 8.0,
             mainAxisSpacing: 8.0,
-            childAspectRatio: 1.35 / 1,
+            childAspectRatio: screenSize.width * 0.0045 / 1,
           ),
           children: <Widget>[
             GestureDetector(
@@ -196,9 +196,9 @@ class ReportScreen extends StatelessWidget {
           margin: const EdgeInsets.symmetric(
             vertical: 10.0,
           ),
-          alignment: Alignment.centerLeft,
+          alignment: Alignment.center,
           child: const Text(
-            "Method 2: Record your voice for help",
+            "OR: Record your voice for help",
             style: TextStyle(
               fontWeight: FontWeight.w500,
             ),
@@ -214,12 +214,12 @@ class ReportScreen extends StatelessWidget {
             ),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10.0),
-              image: const DecorationImage(
-                image: AssetImage(
-                    "assets/images/pictures/emergency/voice_recording.jpg"),
-                fit: BoxFit.cover,
-                opacity: 0.3,
-              ),
+              // image: const DecorationImage(
+              //   image: AssetImage(
+              //       "assets/images/pictures/emergency/voice_recording.jpg"),
+              //   fit: BoxFit.cover,
+              //   opacity: 0.3,
+              // ),
             ),
             padding: const EdgeInsets.all(8.0),
             child: const Center(

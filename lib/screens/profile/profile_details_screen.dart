@@ -11,6 +11,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../models/auth_model.dart';
 import '../../services/auth_services.dart';
+import "../../services/notification_services.dart";
 import '../../providers/auth_provider.dart';
 import '../../utils/app_localization.dart';
 import '../../utils/global_dialog_helper.dart';
@@ -39,9 +40,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
   String? _vipDueDate;
 
   AuthServices _authServices = AuthServices();
-
-  // DateTime startDate = DateTime.now();
-  // DateTime endDate = DateTime.now().add(Duration(days: 30));
+  NotificationServices _notificationServices = NotificationServices();
 
   /// Launch Sarawak ID Website when tap on 'Sarawak ID' link
   void _handleLaunchWebsite() {
@@ -344,7 +343,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                   borderRadius: BorderRadius.circular(10.0),
                 ),
                 title: Text(
-                  AppLocalization.of(context)!.translate('email_add')! + ":",
+                  "${AppLocalization.of(context)!.translate('email_add')!}:",
                 ),
                 subtitle: Container(
                   margin: EdgeInsets.only(
@@ -374,7 +373,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                   borderRadius: BorderRadius.circular(10.0),
                 ),
                 title: Text(
-                  AppLocalization.of(context)!.translate('mobile_num')! + ":",
+                  "${AppLocalization.of(context)!.translate('mobile_num')!}:",
                 ),
                 subtitle: Container(
                   margin: EdgeInsets.only(
@@ -404,7 +403,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                   borderRadius: BorderRadius.circular(10.0),
                 ),
                 title: Text(
-                  AppLocalization.of(context)!.translate('address')! + ":",
+                  "${AppLocalization.of(context)!.translate('address')!}:",
                 ),
                 subtitle: Container(
                   margin: EdgeInsets.only(
@@ -472,9 +471,11 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                             );
                             authProvider
                                 .signOutProvider(context)
-                                .then((bool isLogoutSuccess) {
+                                .then((bool isLogoutSuccess) async {
                               if (isLogoutSuccess) {
-                                // when logout success, set push notification to true (local)
+                                // DELETE FCM TOKEN IF LOGOUT SUCCESS
+                                await _notificationServices.deleteToken();
+                                // when logout success, set push notification to true (local, back to default)
                                 Provider.of<SettingsProvider>(context,
                                         listen: false)
                                     .enablePushNotification();
@@ -508,6 +509,8 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                     elevation: 0,
                                   ),
                                 );
+                              } else {
+                                Navigator.of(context).pop();
                               }
                             });
                           });

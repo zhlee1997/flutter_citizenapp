@@ -1,9 +1,13 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:geocoding/geocoding.dart';
 
 import '../../providers/emergency_provider.dart';
+import '../../providers/location_provider.dart';
 
-class EmergencyBottomModal extends StatelessWidget {
+class EmergencyBottomModal extends StatefulWidget {
   final VoidCallback handleProceedNext;
   final int category;
 
@@ -12,6 +16,15 @@ class EmergencyBottomModal extends StatelessWidget {
     required this.category,
     super.key,
   });
+
+  @override
+  State<EmergencyBottomModal> createState() => _EmergencyBottomModalState();
+}
+
+class _EmergencyBottomModalState extends State<EmergencyBottomModal> {
+  String _address = "";
+  double _latitude = 0;
+  double _longitude = 0;
 
   String returnCategoryInText(int category) {
     switch (category) {
@@ -29,6 +42,50 @@ class EmergencyBottomModal extends StatelessWidget {
         return "OTHERS";
       default:
         return "VOICE RECORDING";
+    }
+  }
+
+  /// Perform geocoding from coordinates to get address
+  ///
+  /// Receives [latitude] and [longitude] as the latitude and longitude
+  Future<void> _geocodeAddress(double latitude, double longitude) async {
+    List<Placemark> placemarks =
+        await placemarkFromCoordinates(latitude, longitude);
+    String name = placemarks[0].name != '' ? '${placemarks[0].name}, ' : '';
+    String subLocal =
+        placemarks[0].subLocality != '' ? '${placemarks[0].subLocality}, ' : '';
+    String thoroughfare = placemarks[0].thoroughfare != '' && Platform.isAndroid
+        ? '${placemarks[0].thoroughfare}, '
+        : '';
+    _address =
+        '$name$thoroughfare$subLocal${placemarks[0].locality}, ${placemarks[0].administrativeArea}, ${placemarks[0].postalCode}';
+    if (mounted) {
+      Provider.of<EmergencyProvider>(context, listen: false)
+          .setAddressAndLocation(
+        address: _address,
+        latitide: latitude,
+        longitude: longitude,
+      );
+      setState(() {});
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    final LocationProvider locationProvider =
+        Provider.of<LocationProvider>(context);
+    if (locationProvider.currentLocation != null) {
+      _latitude = locationProvider.currentLocation!.latitude;
+      _longitude = locationProvider.currentLocation!.longitude;
+      _geocodeAddress(_latitude, _longitude);
+    } else {
+      // no location permission (just in case)
+      // because emergency cannot access if no location permission
+      _latitude = 1.576472;
+      _longitude = 110.345828;
+      _geocodeAddress(_latitude, _longitude);
     }
   }
 
@@ -60,7 +117,7 @@ class EmergencyBottomModal extends StatelessWidget {
             ),
             Container(
               margin: const EdgeInsets.only(bottom: 10.0),
-              child: Text(returnCategoryInText(category)),
+              child: Text(returnCategoryInText(widget.category)),
             ),
             Theme(
               data: Theme.of(context).copyWith(
@@ -80,10 +137,10 @@ class EmergencyBottomModal extends StatelessWidget {
                     // Emergency provider => yourself: true
                     Provider.of<EmergencyProvider>(context, listen: false)
                         .setCategoryAndYourself(
-                      category: category,
+                      category: widget.category,
                       yourself: true,
                     );
-                    handleProceedNext();
+                    widget.handleProceedNext();
                   },
                   child: const Text(
                     "Yes",
@@ -111,10 +168,10 @@ class EmergencyBottomModal extends StatelessWidget {
                     // Emergency provider => yourself: false
                     Provider.of<EmergencyProvider>(context, listen: false)
                         .setCategoryAndYourself(
-                      category: category,
+                      category: widget.category,
                       yourself: false,
                     );
-                    handleProceedNext();
+                    widget.handleProceedNext();
                   },
                   child: Text(
                     "No",

@@ -2,16 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
 
 import "../models/auth_model.dart";
 import "../services/auth_services.dart";
-import "../services/notification_services.dart";
-import "../services/subscription_services.dart";
+import "../providers/inbox_provider.dart";
 import '../../utils/app_localization.dart';
 
 class AuthProvider with ChangeNotifier {
   AuthServices _authServices = AuthServices();
-  NotificationServices _notificationServices = NotificationServices();
 
   int currentMilliSec = DateTime.now().millisecondsSinceEpoch;
 
@@ -100,13 +99,12 @@ class AuthProvider with ChangeNotifier {
     String? sarawakToken = await storage.read(key: 'sarawakToken');
 
     try {
-      await _notificationServices.deleteToken();
       var response = await _authServices.signOut(
         sarawakToken: sarawakToken,
         siocToken: siocToken,
       );
       if (response['status'] == '200') {
-        // Provider.of<InboxProvider>(context, listen: false).resetMessageCount();
+        Provider.of<InboxProvider>(context, listen: false).resetMessageCount();
         prefs.clear();
         // reset the isAppFirstStart after clear all
         prefs.setBool('isAppFirstStart', true);
@@ -142,11 +140,11 @@ class AuthProvider with ChangeNotifier {
     if (response['status'] == '200') {
       prefs.setInt(
           "expire", response['data']['expire'] * 1000 + currentMilliSec);
-      await storage.write(
+      storage.write(
         key: 'siocToken',
         value: response['data']['siocToken'] ?? '',
       );
-      await storage.write(
+      storage.write(
         key: 'sarawakToken',
         value: response['data']['sarawakToken'] ?? '',
       );

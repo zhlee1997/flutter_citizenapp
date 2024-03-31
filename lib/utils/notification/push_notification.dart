@@ -152,7 +152,7 @@ class PushNotification {
         });
 
         var response = await _notificationServices.saveToken(fcmToken);
-        if (response != null) {
+        if (response["status"] == "200") {
           print('saveToken success');
         } else {
           print('saveToken fail');

@@ -1,4 +1,6 @@
 PODS:
+  - audio_waveforms (0.0.1):
+    - Flutter
   - audioplayers_darwin (0.0.1):
     - Flutter
   - BIJKPlayer (0.7.16)
@@ -157,6 +159,7 @@ PODS:
     - Flutter
 
 DEPENDENCIES:
+  - audio_waveforms (from `.symlinks/plugins/audio_waveforms/ios`)
   - audioplayers_darwin (from `.symlinks/plugins/audioplayers_darwin/ios`)
   - fijkplayer (from `.symlinks/plugins/fijkplayer/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
@@ -204,6 +207,8 @@ SPEC REPOS:
     - Toast
 
 EXTERNAL SOURCES:
+  audio_waveforms:
+    :path: ".symlinks/plugins/audio_waveforms/ios"
   audioplayers_darwin:
     :path: ".symlinks/plugins/audioplayers_darwin/ios"
   fijkplayer:
@@ -254,6 +259,7 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/url_launcher_ios/ios"
 
 SPEC CHECKSUMS:
+  audio_waveforms: cd736909ebc6b6a164eb74701d8c705ce3241e1c
   audioplayers_darwin: 877d9a4d06331c5c374595e46e16453ac7eafa40
   BIJKPlayer: 4c5d66e5cb99ae5bade6f22a4fcc031722a81c64
   fijkplayer: 8b6d864948dc28e6e07248ed4fce61a7467db4df

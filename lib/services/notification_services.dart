@@ -31,7 +31,7 @@ class NotificationServices {
   /// Delete FCM Token
   ///
   /// Returns API response object
-  Future<dynamic> deleteToken() async {
+  Future<void> deleteToken() async {
     try {
       var response = await _apiBaseHelper.get(
         "member/remove/firebase/token",

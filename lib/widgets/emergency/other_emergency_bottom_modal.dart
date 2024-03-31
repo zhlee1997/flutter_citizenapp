@@ -1,20 +1,77 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:geocoding/geocoding.dart';
 
 import '../../providers/emergency_provider.dart';
 import '../../utils/app_localization.dart';
+import '../../providers/location_provider.dart';
 
-class OtherEmergencyBottomModal extends StatelessWidget {
+class OtherEmergencyBottomModal extends StatefulWidget {
   final VoidCallback handleProceedNext;
   final GlobalKey<FormState> formKey;
 
-  OtherEmergencyBottomModal({
+  const OtherEmergencyBottomModal({
     required this.handleProceedNext,
     required this.formKey,
     super.key,
   });
 
+  @override
+  State<OtherEmergencyBottomModal> createState() =>
+      _OtherEmergencyBottomModalState();
+}
+
+class _OtherEmergencyBottomModalState extends State<OtherEmergencyBottomModal> {
+  String _address = "";
+  double _latitude = 0;
+  double _longitude = 0;
   final TextEditingController textEditingController = TextEditingController();
+
+  /// Perform geocoding from coordinates to get address
+  ///
+  /// Receives [latitude] and [longitude] as the latitude and longitude
+  Future<void> _geocodeAddress(double latitude, double longitude) async {
+    List<Placemark> placemarks =
+        await placemarkFromCoordinates(latitude, longitude);
+    String name = placemarks[0].name != '' ? '${placemarks[0].name}, ' : '';
+    String subLocal =
+        placemarks[0].subLocality != '' ? '${placemarks[0].subLocality}, ' : '';
+    String thoroughfare = placemarks[0].thoroughfare != '' && Platform.isAndroid
+        ? '${placemarks[0].thoroughfare}, '
+        : '';
+    _address =
+        '$name$thoroughfare$subLocal${placemarks[0].locality}, ${placemarks[0].administrativeArea}, ${placemarks[0].postalCode}';
+    if (mounted) {
+      Provider.of<EmergencyProvider>(context, listen: false)
+          .setAddressAndLocation(
+        address: _address,
+        latitide: latitude,
+        longitude: longitude,
+      );
+      setState(() {});
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    final LocationProvider locationProvider =
+        Provider.of<LocationProvider>(context);
+    if (locationProvider.currentLocation != null) {
+      _latitude = locationProvider.currentLocation!.latitude;
+      _longitude = locationProvider.currentLocation!.longitude;
+      _geocodeAddress(_latitude, _longitude);
+    } else {
+      // no location permission (just in case)
+      // because emergency cannot access if no location permission
+      _latitude = 1.576472;
+      _longitude = 110.345828;
+      _geocodeAddress(_latitude, _longitude);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +107,7 @@ class OtherEmergencyBottomModal extends StatelessWidget {
                   horizontal: 5.0,
                 ),
                 child: Form(
-                  key: formKey,
+                  key: widget.formKey,
                   child: TextFormField(
                       controller: textEditingController,
                       decoration: const InputDecoration(
@@ -96,7 +153,7 @@ class OtherEmergencyBottomModal extends StatelessWidget {
                       backgroundColor: Colors.red,
                     ),
                     onPressed: () {
-                      if (!formKey.currentState!.validate()) {
+                      if (!widget.formKey.currentState!.validate()) {
                         return;
                       }
                       Provider.of<EmergencyProvider>(context, listen: false)
@@ -108,7 +165,7 @@ class OtherEmergencyBottomModal extends StatelessWidget {
                         category: 5,
                         yourself: true,
                       );
-                      handleProceedNext();
+                      widget.handleProceedNext();
                     },
                     child: const Text(
                       "Yes",
@@ -131,7 +188,7 @@ class OtherEmergencyBottomModal extends StatelessWidget {
                   child: OutlinedButton(
                     style: OutlinedButton.styleFrom(),
                     onPressed: () {
-                      if (!formKey.currentState!.validate()) {
+                      if (!widget.formKey.currentState!.validate()) {
                         return;
                       }
                       Provider.of<EmergencyProvider>(context, listen: false)
@@ -143,7 +200,7 @@ class OtherEmergencyBottomModal extends StatelessWidget {
                         category: 5,
                         yourself: false,
                       );
-                      handleProceedNext();
+                      widget.handleProceedNext();
                     },
                     child: Text(
                       "No",

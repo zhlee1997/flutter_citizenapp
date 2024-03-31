@@ -8,6 +8,7 @@ import 'package:shimmer/shimmer.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
 
 import '../screens/emergency/emergency_screen.dart';
 import '../screens/talikhidmat/new_case_screen.dart';
@@ -57,6 +58,9 @@ class _HomePageState extends State<HomePage> {
   List<AnnouncementModel> citizenAnnouncements = [];
   List<AnnouncementModel> tourismAnnouncements = [];
   int numberOfRequestLeft = 0;
+
+  // Define the date format
+  DateFormat dateFormat = DateFormat('dd MMM yyyy HH:mm:ss');
 
   final AnnouncementServices _announcementServices = AnnouncementServices();
   final GlobalDialogHelper _globalDialogHelper = GlobalDialogHelper();
@@ -600,7 +604,8 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                 ),
                                 const SizedBox(height: 3.0),
-                                Text("Due date: ${vipDueDate ?? "---"}"),
+                                Text(
+                                    "Due date:  ${vipDueDate != null ? dateFormat.format(DateTime.parse(vipDueDate!)) : "---"}"),
                               ],
                             ),
                           )

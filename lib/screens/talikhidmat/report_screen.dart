@@ -219,6 +219,7 @@ class _ReportScreenState extends State<ReportScreen> {
           ),
           const Divider(),
           Container(
+            height: screenSize.height * 0.1,
             margin: const EdgeInsets.only(
               top: 15.0,
             ),
@@ -288,6 +289,7 @@ class _ReportScreenState extends State<ReportScreen> {
             ),
           ),
           Container(
+            height: screenSize.height * 0.13,
             margin: const EdgeInsets.only(
               top: 10.0,
             ),
@@ -330,7 +332,7 @@ class _ReportScreenState extends State<ReportScreen> {
             margin: const EdgeInsets.only(
               top: 15.0,
             ),
-            height: screenSize.height * 0.13,
+            height: screenSize.height * 0.1,
             child: _images.length == 0
                 ? GestureDetector(
                     onTap: _showPhotoModal,

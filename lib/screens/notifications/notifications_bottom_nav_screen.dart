@@ -417,10 +417,22 @@ class _NotificationsBottomNavScreenState
                           }),
                         )
                       : _inboxes.length == 0
-                          ? GlobalDialogHelper().buildCenterNoData(
-                              context,
-                              message: AppLocalization.of(context)!
-                                  .translate('no_inbox_data')!,
+                          ? Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                GlobalDialogHelper().buildCenterNoData(
+                                  context,
+                                  message: AppLocalization.of(context)!
+                                      .translate('no_inbox_data')!,
+                                ),
+                                const SizedBox(
+                                  height: 20.0,
+                                ),
+                                ElevatedButton(
+                                  onPressed: _onRefresh,
+                                  child: Text("Refresh"),
+                                )
+                              ],
                             )
                           : RefreshIndicator(
                               onRefresh: _onRefresh,

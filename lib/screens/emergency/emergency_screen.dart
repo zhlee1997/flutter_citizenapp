@@ -126,6 +126,16 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
         message: "Submitting",
       );
       var response = await _eventServices.create(paramater);
+      if (response["status"] == "500") {
+        // dismiss the dialog after submit fail (reached daily limit)
+        Navigator.of(context).pop();
+        await GlobalDialogHelper().showAlertDialogWithSingleButton(
+          context: context,
+          title: "Submit Fail",
+          message: response["message"],
+        );
+        return;
+      }
       if (response["status"] == "200") {
         String? eventId = response["data"];
         if (eventId != null) {
@@ -281,21 +291,21 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
               handleEmergencyBottomModal: _handleEmergencyBottomModal,
               handleOtherEmergencyBottomModal: _handleOtherEmergencyBottomModal,
             )),
+        // Step(
+        //   isActive: currentStep >= 1,
+        //   state: currentStep > 1 ? StepState.complete : StepState.indexed,
+        //   title: Text(
+        //     "Location",
+        //     style: TextStyle(
+        //       color: currentStep >= 1 ? Colors.red : null,
+        //       fontSize: Theme.of(context).textTheme.labelSmall!.fontSize,
+        //     ),
+        //   ),
+        //   content: const LocationScreen(),
+        // ),
         Step(
           isActive: currentStep >= 1,
           state: currentStep > 1 ? StepState.complete : StepState.indexed,
-          title: Text(
-            "Location",
-            style: TextStyle(
-              color: currentStep >= 1 ? Colors.red : null,
-              fontSize: Theme.of(context).textTheme.labelSmall!.fontSize,
-            ),
-          ),
-          content: const LocationScreen(),
-        ),
-        Step(
-          isActive: currentStep >= 2,
-          state: currentStep > 2 ? StepState.complete : StepState.indexed,
           title: Text(
             "Confirm",
             style: Theme.of(context).textTheme.labelSmall,
