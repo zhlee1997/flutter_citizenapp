@@ -29,9 +29,9 @@ class _EmergencyCasesScreenState extends State<EmergencyCasesScreen> {
   bool isPendingLoading = false;
   bool isResolvedLoading = false;
 
-  List<CaseModel> _cases = [];
-  List<CaseModel> _pendingCases = [];
-  List<CaseModel> _resolvedCases = [];
+  List<EmergencyCaseModel> _cases = [];
+  List<EmergencyCaseModel> _pendingCases = [];
+  List<EmergencyCaseModel> _resolvedCases = [];
 
   final EventServices _eventServices = EventServices();
 
@@ -48,7 +48,7 @@ class _EmergencyCasesScreenState extends State<EmergencyCasesScreen> {
   Future<void> setCases(int filterType) async {
     bool noMoreData = _noMoreLoad;
     int page = _page;
-    List<CaseModel> data = _cases;
+    List<EmergencyCaseModel> data = _cases;
 
     try {
       if (!noMoreData) {
@@ -72,10 +72,11 @@ class _EmergencyCasesScreenState extends State<EmergencyCasesScreen> {
           }
 
           if (page == 1) {
-            data = caseData.map((e) => CaseModel.fromJson(e)).toList();
+            data = caseData.map((e) => EmergencyCaseModel.fromJson(e)).toList();
             _cases = data;
           } else {
-            data.addAll(caseData.map((e) => CaseModel.fromJson(e)).toList());
+            data.addAll(
+                caseData.map((e) => EmergencyCaseModel.fromJson(e)).toList());
           }
           setState(() {
             isLoading = false;
@@ -95,7 +96,7 @@ class _EmergencyCasesScreenState extends State<EmergencyCasesScreen> {
   Future<void> setPendingCases(int filterType) async {
     bool noMoreData = _noPendingMoreLoad;
     int page = _PendingPage;
-    List<CaseModel> data = _pendingCases;
+    List<EmergencyCaseModel> data = _pendingCases;
 
     try {
       if (!noMoreData) {
@@ -119,10 +120,11 @@ class _EmergencyCasesScreenState extends State<EmergencyCasesScreen> {
           }
 
           if (page == 1) {
-            data = caseData.map((e) => CaseModel.fromJson(e)).toList();
+            data = caseData.map((e) => EmergencyCaseModel.fromJson(e)).toList();
             _pendingCases = data;
           } else {
-            data.addAll(caseData.map((e) => CaseModel.fromJson(e)).toList());
+            data.addAll(
+                caseData.map((e) => EmergencyCaseModel.fromJson(e)).toList());
           }
           setState(() {
             isPendingLoading = false;
@@ -142,7 +144,7 @@ class _EmergencyCasesScreenState extends State<EmergencyCasesScreen> {
   Future<void> setResolvedCases(int filterType) async {
     bool noMoreData = _noResolvedMoreLoad;
     int page = _ResolvedPage;
-    List<CaseModel> data = _resolvedCases;
+    List<EmergencyCaseModel> data = _resolvedCases;
 
     try {
       if (!noMoreData) {
@@ -166,10 +168,11 @@ class _EmergencyCasesScreenState extends State<EmergencyCasesScreen> {
           }
 
           if (page == 1) {
-            data = caseData.map((e) => CaseModel.fromJson(e)).toList();
+            data = caseData.map((e) => EmergencyCaseModel.fromJson(e)).toList();
             _resolvedCases = data;
           } else {
-            data.addAll(caseData.map((e) => CaseModel.fromJson(e)).toList());
+            data.addAll(
+                caseData.map((e) => EmergencyCaseModel.fromJson(e)).toList());
           }
           setState(() {
             isResolvedLoading = false;
@@ -293,6 +296,7 @@ class _EmergencyCasesScreenState extends State<EmergencyCasesScreen> {
                                           caseNo: _cases[index].eventDesc,
                                           caseDate: _cases[index].eventTime,
                                           caseStatus: _cases[index].eventStatus,
+                                          caseCategory: _cases[index].eventType,
                                           caseType: 2,
                                         );
                                       }
@@ -339,6 +343,7 @@ class _EmergencyCasesScreenState extends State<EmergencyCasesScreen> {
                                               _pendingCases[index].eventTime,
                                           caseStatus:
                                               _pendingCases[index].eventStatus,
+                                          caseCategory: _cases[index].eventType,
                                           caseType: 2,
                                         );
                                       }
@@ -385,6 +390,7 @@ class _EmergencyCasesScreenState extends State<EmergencyCasesScreen> {
                                               _resolvedCases[index].eventTime,
                                           caseStatus:
                                               _resolvedCases[index].eventStatus,
+                                          caseCategory: _cases[index].eventType,
                                           caseType: 2,
                                         );
                                       }

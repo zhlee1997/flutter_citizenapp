@@ -60,7 +60,7 @@ class _RecordingBottomModalState extends State<RecordingBottomModal> {
     print("audio path: $path");
     if (path != null) {
       // close the voice recording bottom modal
-      Navigator.of(context).pop();
+      // Navigator.of(context).pop();
       await _uploadRecording(path);
     }
     // pop() the screen and currentStep +1 to go next step
@@ -112,7 +112,7 @@ class _RecordingBottomModalState extends State<RecordingBottomModal> {
       }
     } catch (e) {
       print("_uploadRecording error: ${e.toString()}");
-      Navigator.of(context).pop();
+      // Navigator.of(context).pop();
       Fluttertoast.showToast(
         msg: AppLocalization.of(context)!.translate('upload_fail')!,
       );

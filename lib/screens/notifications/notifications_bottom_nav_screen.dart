@@ -42,6 +42,7 @@ class _NotificationsBottomNavScreenState
   late ScrollController _scrollController;
   int _page = 1;
   late SnackBar snackBar;
+  late SnackBar allMessageSnackBar;
 
   bool _majorIsLoading = false;
   bool _majorNoMoreData = false;
@@ -271,6 +272,16 @@ class _NotificationsBottomNavScreenState
     snackBar = SnackBar(
       content: Text(AppLocalization.of(context)!.translate('message_deleted')!),
     );
+    allMessageSnackBar = SnackBar(content: Text("All messages deleted!"));
+    bool deleteAll = Provider.of<InboxProvider>(context).deleteAll;
+    print(deleteAll);
+  }
+
+  @override
+  void didUpdateWidget(covariant NotificationsBottomNavScreen oldWidget) {
+    // TODO: implement didUpdateWidget
+    super.didUpdateWidget(oldWidget);
+    print("hello2");
   }
 
   @override

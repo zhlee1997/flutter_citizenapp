@@ -241,9 +241,7 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
                           ),
                         ),
                         onPressed: details.onStepContinue,
-                        child: currentStep == 2
-                            ? const Text("SUBMIT")
-                            : const Text('PROCEED'),
+                        child: const Text("SUBMIT"),
                       ),
                     ),
                   ],

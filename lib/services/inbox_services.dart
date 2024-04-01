@@ -106,4 +106,21 @@ class InboxServices {
       throw e;
     }
   }
+
+  /// Delete all inbox messages using DELETE method
+  ///
+  /// Returns API response object
+  Future<dynamic> removeAll() async {
+    try {
+      var response = await _apiBaseHelper.delete(
+        '/messageRcv/removeAll',
+        requireToken: true,
+      );
+      print("removeAll API success: $response");
+      return response;
+    } catch (e) {
+      print('delete all inbox fail: ${e.toString()}');
+      throw e;
+    }
+  }
 }

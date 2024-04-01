@@ -34,6 +34,42 @@ class CaseModel {
   }
 }
 
+class EmergencyCaseModel {
+  String eventId = "";
+  String eventDesc = "";
+  String eventTime = "";
+  String eventType = "";
+  String eventStatus = "";
+
+  // model constructor
+  EmergencyCaseModel({
+    required this.eventId,
+    required this.eventDesc,
+    required this.eventTime,
+    required this.eventType,
+    required this.eventStatus,
+  });
+
+  // serialize from json
+  EmergencyCaseModel.fromJson(Map<String, dynamic> json) {
+    if (json.containsKey("eventId")) {
+      eventId = json['eventId'];
+    }
+    if (json.containsKey("eventDesc")) {
+      eventDesc = json['eventDesc'];
+    }
+    if (json.containsKey("createTime")) {
+      eventTime = json['createTime'];
+    }
+    if (json.containsKey("eventTargetUrgent")) {
+      eventType = json['eventTargetUrgent'];
+    }
+    if (json.containsKey("eventStatus")) {
+      eventStatus = json['eventStatus'];
+    }
+  }
+}
+
 class CaseDetailModel {
   String? createBy;
   String? createTime;

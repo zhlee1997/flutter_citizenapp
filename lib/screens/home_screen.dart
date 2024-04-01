@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_citizenapp/providers/inbox_provider.dart';
+import 'package:flutter_citizenapp/services/inbox_services.dart';
 import 'package:provider/provider.dart';
 import 'package:lottie/lottie.dart';
 
@@ -44,6 +45,19 @@ class _HomeScreenState extends State<HomeScreen> {
       },
     );
   }
+
+  // Future<bool> deleteAllMessages() async {
+  //   try {
+  //     var response = await InboxServices().removeAll();
+  //     if (response["status"] == "200") {
+  //       return true;
+  //     }
+  //   } catch (e) {
+  //     print('deleteAllMessages error: ${e.toString()}');
+  //     return false;
+  //   }
+  //   return false;
+  // }
 
   Future<void> showDeleteAllBottomModal(Size screenSize) async {
     showModalBottomSheet(
@@ -314,16 +328,16 @@ class _HomeScreenState extends State<HomeScreen> {
       case 2:
         return AppBar(
           title: const Text("Notifications"),
-          actions: isNotificationsSelected
-              ? [
-                  IconButton(
-                    onPressed: () async {
-                      await showDeleteAllBottomModal(screenSize);
-                    },
-                    icon: Icon(Icons.delete_outline),
-                  )
-                ]
-              : null,
+          // actions: isNotificationsSelected
+          //     ? [
+          //         IconButton(
+          //           onPressed: () async {
+          //             await showDeleteAllBottomModal(screenSize);
+          //           },
+          //           icon: Icon(Icons.delete_outline),
+          //         )
+          //       ]
+          //     : null,
         );
       case 3:
         return Provider.of<AuthProvider>(context).isAuth

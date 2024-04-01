@@ -8,9 +8,11 @@ import "../models/auth_model.dart";
 import "../services/auth_services.dart";
 import "../providers/inbox_provider.dart";
 import '../../utils/app_localization.dart';
+import "../../services/notification_services.dart";
 
 class AuthProvider with ChangeNotifier {
   AuthServices _authServices = AuthServices();
+  NotificationServices _notificationServices = NotificationServices();
 
   int currentMilliSec = DateTime.now().millisecondsSinceEpoch;
 
@@ -104,6 +106,8 @@ class AuthProvider with ChangeNotifier {
         siocToken: siocToken,
       );
       if (response['status'] == '200') {
+        // DELETE FCM TOKEN IF LOGOUT SUCCESS
+        await _notificationServices.deleteToken();
         Provider.of<InboxProvider>(context, listen: false).resetMessageCount();
         prefs.clear();
         // reset the isAppFirstStart after clear all

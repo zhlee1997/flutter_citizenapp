@@ -293,6 +293,7 @@ class _TalikhidmatCasesScreenState extends State<TalikhidmatCasesScreen> {
                                           caseNo: _cases[index].eventDesc,
                                           caseDate: _cases[index].eventTime,
                                           caseStatus: _cases[index].eventStatus,
+                                          caseCategory: _cases[index].eventType,
                                           caseType: 1,
                                         );
                                       }
@@ -339,6 +340,7 @@ class _TalikhidmatCasesScreenState extends State<TalikhidmatCasesScreen> {
                                               _pendingCases[index].eventTime,
                                           caseStatus:
                                               _pendingCases[index].eventStatus,
+                                          caseCategory: _cases[index].eventType,
                                           caseType: 1,
                                         );
                                       }
@@ -385,6 +387,7 @@ class _TalikhidmatCasesScreenState extends State<TalikhidmatCasesScreen> {
                                               _resolvedCases[index].eventTime,
                                           caseStatus:
                                               _resolvedCases[index].eventStatus,
+                                          caseCategory: _cases[index].eventType,
                                           caseType: 1,
                                         );
                                       }

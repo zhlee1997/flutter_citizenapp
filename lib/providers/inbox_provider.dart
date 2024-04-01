@@ -7,6 +7,9 @@ class InboxProvider with ChangeNotifier {
   int _unreadMessageCount = 0;
   int get unreadMessageCount => _unreadMessageCount;
 
+  bool _deleteAll = false;
+  bool get deleteAll => _deleteAll;
+
   /// Get the number of unread messages when app is opened
   /// When submitting cases
   /// Using queryCnt API
@@ -21,6 +24,11 @@ class InboxProvider with ChangeNotifier {
 
   void resetMessageCount() {
     _unreadMessageCount = 0;
+    notifyListeners();
+  }
+
+  void setDeleteAll(bool state) {
+    _deleteAll = state;
     notifyListeners();
   }
 }

@@ -194,7 +194,7 @@ class ReportScreen extends StatelessWidget {
         ),
         Container(
           margin: const EdgeInsets.symmetric(
-            vertical: 10.0,
+            vertical: 20.0,
           ),
           alignment: Alignment.center,
           child: const Text(
@@ -214,6 +214,9 @@ class ReportScreen extends StatelessWidget {
             ),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10.0),
+              border: Border.all(
+                color: Theme.of(context).colorScheme.primary,
+              ),
               // image: const DecorationImage(
               //   image: AssetImage(
               //       "assets/images/pictures/emergency/voice_recording.jpg"),
@@ -222,15 +225,28 @@ class ReportScreen extends StatelessWidget {
               // ),
             ),
             padding: const EdgeInsets.all(8.0),
-            child: const Center(
-              child: Text(
-                "VOICE RECORDING",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16.0,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.record_voice_over_outlined,
+                  size: 27.5,
+                  color: Colors.red,
                 ),
-              ),
+                SizedBox(
+                  height: 10.0,
+                ),
+                Text(
+                  "VOICE RECORDING",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16.0,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                ),
+              ],
             ),
           ),
         ),

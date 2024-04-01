@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 
 import './case_detail_bottom_modal.dart';
 import './emergency_case_bottom_modal.dart';
@@ -13,6 +14,7 @@ class CaseCard extends StatelessWidget {
   final String caseNo;
   final String caseDate;
   final String caseStatus;
+  final String caseCategory;
   final int caseType;
 
   const CaseCard({
@@ -20,6 +22,7 @@ class CaseCard extends StatelessWidget {
     required this.caseNo,
     required this.caseDate,
     required this.caseStatus,
+    required this.caseCategory,
     required this.caseType,
     super.key,
   });
@@ -63,12 +66,6 @@ class CaseCard extends StatelessWidget {
   /// Using bottom modal
   void showEmergencyCaseBottomModal(BuildContext ctx) {
     showModalBottomSheet(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20.0),
-          topRight: Radius.circular(20.0),
-        ),
-      ),
       context: ctx,
       builder: (_) => FutureBuilder(
         future:
@@ -91,60 +88,131 @@ class CaseCard extends StatelessWidget {
 
   /// Displays case status such as 'New', 'Pending' and 'Resolved'
   ///
-  /// Receives [caseStatus] as the case status code
+  /// Receives [caseCategory] as the case category code
   /// Returns case status
-  String handleCaseStatus(
-    String caseStatus,
-    BuildContext context,
-  ) {
+  String handleCaseCategory(String caseCategory) {
     String status;
-    switch (caseStatus) {
-      case "0":
-        status = AppLocalization.of(context)!.translate('new')!;
-        break;
+    switch (caseCategory) {
       case "1":
-        status = AppLocalization.of(context)!.translate('pending')!;
+        status = "Complaint";
         break;
       case "2":
-        status = AppLocalization.of(context)!.translate('resolved')!;
+        status = "Request for Service";
+        break;
+      case "3":
+        status = "Compliment";
+        break;
+      case "4":
+        status = "Enquiry";
         break;
       default:
-        status = AppLocalization.of(context)!.translate('new')!;
+        status = "Suggestion";
     }
     return status;
   }
 
+  /// Displays case status such as 'New', 'Pending' and 'Resolved'
+  ///
+  /// Receives [caseCategory] as the case category code
+  /// Returns case status
+  String handleEmergencyCaseCategory(String caseCategory) {
+    String status;
+    switch (caseCategory) {
+      case "0":
+        status = "Harassment";
+        break;
+      case "1":
+        status = "Fire/Rescue";
+        break;
+      case "2":
+        status = "Traffic Accident/Injuries";
+        break;
+      case "3":
+        status = "Theft/Robbery";
+        break;
+      case "4":
+        status = "Physical Violence";
+      case "5":
+        status = "Others";
+      default:
+        status = "Voice Recording";
+    }
+    return status;
+  }
+
+  Color handleBorderColor(String caseStatus) {
+    switch (caseStatus) {
+      case "0":
+        return Colors.red.shade100;
+      case "1":
+        return Colors.yellow.shade100;
+      default:
+        return Colors.green.shade100;
+    }
+  }
+
+  Icon handleStatusIcon(String caseStatus) {
+    switch (caseStatus) {
+      case "0":
+        return Icon(
+          Icons.new_releases_outlined,
+          color: Colors.red,
+        );
+      case "1":
+        return Icon(
+          Icons.pending_actions_outlined,
+          color: Colors.yellow,
+        );
+      default:
+        return Icon(
+          Icons.done_outline_rounded,
+          color: Colors.green,
+        );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Card(
+    DateFormat dateFormat = DateFormat('dd MMM');
+
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+        border: Border.all(
+          color: handleBorderColor(caseStatus),
+        ),
+      ),
       margin: const EdgeInsets.symmetric(
         vertical: 5.0,
         horizontal: 5.0,
       ),
-      elevation: 5.0,
+      // elevation: 5.0,
       child: ListTile(
         onTap: () => caseType == 1
             ? showCaseBottomModal(context)
             : showEmergencyCaseBottomModal(context),
-        title: Row(
-          children: [
-            SizedBox(
-              width: 200,
-              child: Text(
-                caseNo,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-            ),
-          ],
+        leading: handleStatusIcon(caseStatus),
+        title: SizedBox(
+          width: 200,
+          child: Text(
+            caseType == 1
+                ? handleCaseCategory(caseCategory)
+                : handleEmergencyCaseCategory(caseCategory),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context)
+                .textTheme
+                .bodyMedium!
+                .copyWith(fontWeight: FontWeight.w500),
+          ),
         ),
         subtitle: Text(
-          caseDate,
-          style: Theme.of(context).textTheme.labelSmall,
+          caseNo,
+          overflow: TextOverflow.ellipsis,
+          style: Theme.of(context).textTheme.bodySmall,
         ),
         trailing: Text(
-          handleCaseStatus(caseStatus, context),
+          dateFormat.format(DateTime.parse(caseDate)),
           style: TextStyle(
             color: Theme.of(context).primaryColor,
           ),

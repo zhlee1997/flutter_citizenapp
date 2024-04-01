@@ -10,8 +10,6 @@ import 'package:lottie/lottie.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../models/auth_model.dart';
-import '../../services/auth_services.dart';
-import "../../services/notification_services.dart";
 import '../../providers/auth_provider.dart';
 import '../../utils/app_localization.dart';
 import '../../utils/global_dialog_helper.dart';
@@ -38,9 +36,6 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
   String? _profileImage;
   late AuthModel _authData;
   String? _vipDueDate;
-
-  AuthServices _authServices = AuthServices();
-  NotificationServices _notificationServices = NotificationServices();
 
   /// Launch Sarawak ID Website when tap on 'Sarawak ID' link
   void _handleLaunchWebsite() {
@@ -473,8 +468,6 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                 .signOutProvider(context)
                                 .then((bool isLogoutSuccess) async {
                               if (isLogoutSuccess) {
-                                // DELETE FCM TOKEN IF LOGOUT SUCCESS
-                                await _notificationServices.deleteToken();
                                 // when logout success, set push notification to true (local, back to default)
                                 Provider.of<SettingsProvider>(context,
                                         listen: false)

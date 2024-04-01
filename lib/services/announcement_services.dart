@@ -30,8 +30,11 @@ class AnnouncementServices {
       if (nowTime != null) {
         parameters['nowTime'] = nowTime;
       }
-      var response = await _apiBaseHelper.get('announcement/queryPageList',
-          queryParameters: parameters, requireToken: false);
+      var response = await _apiBaseHelper.get(
+        'announcement/queryPageList',
+        queryParameters: parameters,
+        requireToken: false,
+      );
       print("queryPageList API success: $response");
       return response;
     } catch (e) {

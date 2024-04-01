@@ -86,22 +86,23 @@ class _SplashVideoScreenState extends State<SplashVideoScreen> {
                         Provider.of<AuthProvider>(context, listen: false)
                             .refreshTokenProvider()
                             .then((_) {
-                          // Provider.of<InboxProvider>(context, listen: false)
-                          //     .refreshCount()
-                          //     .then((_) {
-                          Provider.of<SettingsProvider>(context, listen: false)
-                              .checkPushNotification()
-                              .then((bool isPushNotificationEnabled) {
-                            if (isPushNotificationEnabled) {
-                              _pushNotification.setFirebase(true).then((_) =>
-                                  Navigator.of(context).pushReplacementNamed(
-                                      HomeScreen.routeName));
-                            } else {
-                              _pushNotification.setFirebase(false).then((_) =>
-                                  Navigator.of(context).pushReplacementNamed(
-                                      HomeScreen.routeName));
-                            }
-                            // });
+                          Provider.of<InboxProvider>(context, listen: false)
+                              .refreshCount()
+                              .then((_) {
+                            Provider.of<SettingsProvider>(context,
+                                    listen: false)
+                                .checkPushNotification()
+                                .then((bool isPushNotificationEnabled) {
+                              if (isPushNotificationEnabled) {
+                                _pushNotification.setFirebase(true).then((_) =>
+                                    Navigator.of(context).pushReplacementNamed(
+                                        HomeScreen.routeName));
+                              } else {
+                                _pushNotification.setFirebase(false).then((_) =>
+                                    Navigator.of(context).pushReplacementNamed(
+                                        HomeScreen.routeName));
+                              }
+                            });
                           });
                         });
                       } else {

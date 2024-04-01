@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import '../../services/feedback_services.dart';
 import '../../utils/global_dialog_helper.dart';
 import '../../providers/auth_provider.dart';
+import '../../widgets/feedback/feedback_history_full_dialog.dart';
 
 class SendFeedbackScreen extends StatefulWidget {
   static const String routeName = 'send-feedback-screen';
@@ -151,10 +152,27 @@ class _SendFeedbackScreenState extends State<SendFeedbackScreen> {
         rating: _feedbackValue.toInt(),
         services: selectedIndexes,
         comment: text,
+        isLogin: Provider.of<AuthProvider>(context, listen: false).isAuth,
       );
       if (response["status"] == "200") {
         Navigator.of(context).pop();
         _showDoneDialog();
+      } else if (response["status"] == "5001") {
+        String submissionNumber = response["data"];
+        // dismiss first dialog
+        Navigator.of(context).pop();
+        GlobalDialogHelper().showAlertDialogWithSingleButton(
+          context: context,
+          title: "Limit Reached",
+          message:
+              "You have submitted $submissionNumber times. Please try again tomorrow.",
+        );
+      } else {
+        Navigator.of(context).pop();
+        Fluttertoast.showToast(
+          msg: "Error in sending feedback. Please try again",
+          toastLength: Toast.LENGTH_SHORT,
+        );
       }
     } catch (e) {
       Navigator.of(context).pop();
@@ -281,41 +299,7 @@ class _SendFeedbackScreenState extends State<SendFeedbackScreen> {
                         showDialog(
                             context: context,
                             builder: (_) {
-                              return Dialog.fullscreen(
-                                child: Container(
-                                  padding: const EdgeInsets.all(20.0),
-                                  child: Column(
-                                    children: <Widget>[
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: <Widget>[
-                                          Text(
-                                            "Feedback History",
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .headlineSmall,
-                                          ),
-                                          IconButton.filledTonal(
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                            icon: const Icon(
-                                                Icons.close_outlined),
-                                          )
-                                        ],
-                                      ),
-                                      Expanded(
-                                          child: ListView.builder(
-                                        itemCount: 5,
-                                        itemBuilder: (context, index) {
-                                          return Container();
-                                        },
-                                      ))
-                                    ],
-                                  ),
-                                ),
-                              );
+                              return FeedbackHistoryFullDialog();
                             });
                       },
                       icon: Icon(Icons.history_outlined),
