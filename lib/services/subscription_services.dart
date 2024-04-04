@@ -10,7 +10,7 @@ class SubscriptionServices {
     try {
       var response = await _apiBaseHelper.get(
         'member/memberSubscribePackage/queryList',
-        requireToken: true,
+        requireToken: false,
       );
       print("queryPackageAndSubscriptionEnable API success: $response");
       return response;
@@ -25,12 +25,12 @@ class SubscriptionServices {
   // TODO: NEW API: querySubscriptionWhitelisted
   Future<dynamic> querySubscriptionWhitelisted({
     required String subscribeId,
-    required String nickName,
+    required String memberId,
   }) async {
     try {
       Map<String, dynamic> queryParameters = {
         "subscribeId": subscribeId,
-        "nickName": nickName,
+        "memberId": memberId,
       };
       var response = await _apiBaseHelper.get(
         'member/subscribePackageMemberRlt/queryList',

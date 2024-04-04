@@ -47,7 +47,7 @@ class _ReportScreenState extends State<ReportScreen> {
       _images.removeWhere((img) => img['file'].path == imagePath);
     });
     // TODO: new added provider for images
-    Provider.of<TalikhidmatProvider>(context).removeAttachement(
+    Provider.of<TalikhidmatProvider>(context, listen: false).removeAttachement(
       attachment: imagePath,
     );
   }
@@ -345,8 +345,9 @@ class _ReportScreenState extends State<ReportScreen> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                            const Icon(
-                              Icons.add_a_photo,
+                            Icon(
+                              Icons.attachment_outlined,
+                              color: Colors.grey.shade700,
                               size: 30,
                             ),
                             const SizedBox(
@@ -377,7 +378,7 @@ class _ReportScreenState extends State<ReportScreen> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: <Widget>[
                                       Icon(
-                                        Icons.add_a_photo,
+                                        Icons.attachment_outlined,
                                         size: 25,
                                         color: Colors.grey.shade700,
                                       ),

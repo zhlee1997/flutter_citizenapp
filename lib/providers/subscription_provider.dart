@@ -16,6 +16,17 @@ class SubscriptionProvider with ChangeNotifier {
   String _subscribeId = "";
   String get subscribeId => _subscribeId;
 
+  late String _paymentItem;
+  String get paymentItem => _paymentItem;
+
+  // use pay_id from payment/orderForm/create/confrim
+  late String _receiptNumber;
+  String get receiptNumber => _receiptNumber;
+
+  // use order_id from payment/orderForm/createBySelective
+  late String _referenceNumber;
+  String get referenceNumber => _referenceNumber;
+
   final SubscriptionServices _subscriptionServices = SubscriptionServices();
 
   /// Determine whether it is subscription payment when paying using S Pay Global
@@ -50,12 +61,12 @@ class SubscriptionProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> queryAndSetIsWhitelisted(String nickName) async {
+  Future<bool> queryAndSetIsWhitelisted(String memberId) async {
     try {
       // TODO: Temp use Lucy, to get nickName from auth model
       var response = await _subscriptionServices.querySubscriptionWhitelisted(
         subscribeId: _subscribeId,
-        nickName: nickName,
+        memberId: memberId,
       );
       if (response['status'] == '200') {
         var responseList = response['data'] as List;
@@ -86,9 +97,10 @@ class SubscriptionProvider with ChangeNotifier {
       if (response["status"] == "200") {
         // packageId: option_1, option_2, option_3
         List subscribeList = response["data"] as List;
-        List filteredList = subscribeList
-            .where((element) => element["subscribeCode"] == "Default")
-            .toList();
+        // List filteredList = subscribeList
+        //     .where((element) => element["subscribeCode"] == "Default")
+        //     .toList();
+        List filteredList = subscribeList;
         if (filteredList.isNotEmpty) {
           packageId = filteredList[0]["option"] ?? "";
         }
@@ -97,5 +109,20 @@ class SubscriptionProvider with ChangeNotifier {
       print("querySubscriptionPackageOptionProvider: ${e.toString()}");
     }
     return packageId;
+  }
+
+  // set paymentItem
+  void setPaymentItem(String item) {
+    _paymentItem = item;
+  }
+
+  // set receiptNumber
+  void setReceiptNumber(String number) {
+    _receiptNumber = number;
+  }
+
+  // set referenceNumber
+  void setReferenceNumber(String number) {
+    _referenceNumber = number;
   }
 }

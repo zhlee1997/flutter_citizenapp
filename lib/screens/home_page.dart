@@ -60,7 +60,7 @@ class _HomePageState extends State<HomePage> {
   int numberOfRequestLeft = 0;
 
   // Define the date format
-  DateFormat dateFormat = DateFormat('dd MMM yyyy HH:mm:ss');
+  DateFormat dateFormat = DateFormat('dd MMMM yyyy');
 
   final AnnouncementServices _announcementServices = AnnouncementServices();
   final GlobalDialogHelper _globalDialogHelper = GlobalDialogHelper();
@@ -285,31 +285,33 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _showEmergencyRequestLeftDialog(BuildContext context) async {
-    await getNumberofRequestLeft();
+    // await getNumberofRequestLeft();
     // TODO: Emergency service to check location permission is given
     // TODO: If denied, ask again
     // TODO: If foreverDenied, need navigate to app settings
     await Permission.location.onDeniedCallback(() {
       // Your code
     }).onGrantedCallback(() async {
-      if (numberOfRequestLeft != 0) {
-        await _globalDialogHelper.showAlertDialog(
-          context: context,
-          yesButtonFunc: () {
-            Navigator.of(context).pop();
-            Navigator.of(context).pushNamed(EmergencyScreen.routeName);
-          },
-          title: "Remaining requests",
-          message:
-              "You have $numberOfRequestLeft requests left per day. Are you sure to proceed?",
-        );
-      } else {
-        await _globalDialogHelper.showAlertDialogWithSingleButton(
-          context: context,
-          title: "No more requests",
-          message: "There is no more requests. Please try again tomorrow",
-        );
-      }
+      Navigator.of(context).pushNamed(EmergencyScreen.routeName);
+
+      // if (numberOfRequestLeft != 0) {
+      //   await _globalDialogHelper.showAlertDialog(
+      //     context: context,
+      //     yesButtonFunc: () {
+      //       Navigator.of(context).pop();
+      //       Navigator.of(context).pushNamed(EmergencyScreen.routeName);
+      //     },
+      //     title: "Remaining requests",
+      //     message:
+      //         "You have $numberOfRequestLeft requests left per day. Are you sure to proceed?",
+      //   );
+      // } else {
+      //   await _globalDialogHelper.showAlertDialogWithSingleButton(
+      //     context: context,
+      //     title: "No more requests",
+      //     message: "There is no more requests. Please try again tomorrow",
+      //   );
+      // }
     }).onPermanentlyDeniedCallback(() async {
       // The user opted to never again see the permission request dialog for this
       // app. The only way to change the permission's status now is to let the
@@ -379,7 +381,7 @@ class _HomePageState extends State<HomePage> {
     if (authProvider.isAuth) {
       _globalDialogHelper.buildCircularProgressCenter(context: context);
       bool isWhitelisted = await subscriptionProvider
-          .queryAndSetIsWhitelisted(authProvider.auth.fullName);
+          .queryAndSetIsWhitelisted(authProvider.auth.sId);
       Navigator.of(context).pop();
       if (isWhitelisted) {
         // show bottom modal
@@ -464,9 +466,6 @@ class _HomePageState extends State<HomePage> {
 
   // Get today's date
   DateTime now = DateTime.now();
-
-  // Define the target date (March 31, 2024)
-  DateTime targetDate = DateTime(2024, 3, 31);
 
   int calculateRemainingDays(String? targetDate) {
     if (targetDate != null) {

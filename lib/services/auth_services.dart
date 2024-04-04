@@ -95,4 +95,29 @@ class AuthServices {
       throw e;
     }
   }
+
+  /// Get refresh token & latest profile information
+  ///
+  /// Receives [accessToken] as the access token
+  /// Returns API Response object
+  Future<dynamic> updateProfileInfo() async {
+    final storage = new FlutterSecureStorage();
+    String? sarawakToken = await storage.read(key: 'sarawakToken');
+    if (sarawakToken != null) {
+      Map<String, dynamic> map = {
+        'accessToken': sarawakToken,
+      };
+      try {
+        var response = await _apiBaseHelper.post(
+          'member/update/info',
+          data: map,
+        );
+        print('updateProfileInfo API success: $response');
+        return response;
+      } catch (e) {
+        print('updateProfileInfo error: ${e.toString()}');
+        throw e;
+      }
+    }
+  }
 }

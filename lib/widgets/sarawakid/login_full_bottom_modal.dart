@@ -1,12 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../screens/sarawakid/sarawakid_screen.dart';
+import '../../utils/global_dialog_helper.dart';
 
 class LoginFullBottomModal extends StatelessWidget {
   const LoginFullBottomModal({super.key});
 
   void handleNavigateSarawakIDScreen(BuildContext context) =>
       Navigator.of(context).pushNamed(SarawakIDScreen.routeName);
+
+  void openExternalBrowser() {
+    final Uri uri =
+        Uri.parse("https://sarawakid-tnt.sarawak.gov.my/web/ssov1/signup/");
+    launchUrl(
+      uri,
+      mode: LaunchMode.externalApplication,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +86,7 @@ class LoginFullBottomModal extends StatelessWidget {
                   backgroundColor: Colors.transparent,
                   shadowColor: Colors.transparent,
                 ),
-                onPressed: () {},
+                onPressed: () => handleNavigateSarawakIDScreen(context),
                 child: Row(
                   children: <Widget>[
                     Image.asset(
@@ -86,7 +97,7 @@ class LoginFullBottomModal extends StatelessWidget {
                       width: 10.0,
                     ),
                     const Text(
-                      "Sign Up with SarawakID",
+                      "Sign In with SarawakID",
                       style: TextStyle(
                         color: Colors.white,
                       ),
@@ -106,7 +117,7 @@ class LoginFullBottomModal extends StatelessWidget {
               height: 10.0,
             ),
             Text(
-              "Already have an account?",
+              "Not yet have an account?",
               style: Theme.of(context).textTheme.titleSmall,
             ),
             const SizedBox(
@@ -116,17 +127,29 @@ class LoginFullBottomModal extends StatelessWidget {
               width: screenSize.width * 0.75,
               height: screenSize.width * 0.125,
               child: OutlinedButton(
-                onPressed: () => handleNavigateSarawakIDScreen(context),
-                child: Row(
+                onPressed: () async {
+                  await GlobalDialogHelper().showAlertDialog(
+                    context: context,
+                    yesButtonFunc: () {
+                      Navigator.of(context).pop();
+                      openExternalBrowser();
+                    },
+                    title: "New Registration",
+                    message:
+                        "You are about to use a browser for user registration. Close the browser and Sign in with SarawakID after registration is completed. Do you want to proceed?",
+                  );
+                },
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Image.asset(
-                      "assets/images/icon/sarawakid_logo.png",
-                      width: screenSize.width * 0.1,
-                    ),
-                    const SizedBox(
+                    Text("Sign Up with SarawakID"),
+                    SizedBox(
                       width: 10.0,
                     ),
-                    const Text("Sign In with SarawakID")
+                    Icon(
+                      Icons.open_in_new_outlined,
+                      size: 20.0,
+                    )
                   ],
                 ),
               ),

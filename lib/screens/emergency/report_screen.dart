@@ -205,7 +205,7 @@ class ReportScreen extends StatelessWidget {
           ),
         ),
         GestureDetector(
-          onTap: () => handleVoiceNoteBottomModal(),
+          // onTap: () => handleVoiceNoteBottomModal(),
           child: Container(
             width: double.infinity,
             height: screenSize.height * 0.15,
@@ -213,40 +213,50 @@ class ReportScreen extends StatelessWidget {
               bottom: 8.0,
             ),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10.0),
-              border: Border.all(
-                color: Theme.of(context).colorScheme.primary,
+                // borderRadius: BorderRadius.circular(10.0),
+                // border: Border.all(
+                //   color: Theme.of(context).colorScheme.primary,
+                // ),
+                // image: const DecorationImage(
+                //   image: AssetImage(
+                //       "assets/images/pictures/emergency/voice_recording.jpg"),
+                //   fit: BoxFit.cover,
+                //   opacity: 0.3,
+                // ),
+                ),
+            // padding: const EdgeInsets.all(8.0),
+            child: ElevatedButton(
+              onPressed: handleVoiceNoteBottomModal,
+              style: ElevatedButton.styleFrom(
+                elevation: 5.0,
+                side: BorderSide(
+                  color: Theme.of(context).colorScheme.primary,
+                  width: 0.5,
+                ),
               ),
-              // image: const DecorationImage(
-              //   image: AssetImage(
-              //       "assets/images/pictures/emergency/voice_recording.jpg"),
-              //   fit: BoxFit.cover,
-              //   opacity: 0.3,
-              // ),
-            ),
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.record_voice_over_outlined,
-                  size: 27.5,
-                  color: Colors.red,
-                ),
-                SizedBox(
-                  height: 10.0,
-                ),
-                Text(
-                  "VOICE RECORDING",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16.0,
-                    color: Theme.of(context).colorScheme.primary,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.record_voice_over_outlined,
+                    size: 27.5,
+                    color: Colors.red,
                   ),
-                ),
-              ],
+                  SizedBox(
+                    height: 10.0,
+                  ),
+                  Text(
+                    "VOICE RECORDING",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      // fontSize: 16.0,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

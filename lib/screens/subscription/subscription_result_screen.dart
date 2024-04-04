@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../widgets/subscription/subscription_result_widget.dart';
 import './subscription_choose_screen.dart';
 import '../../arguments/subscription_result_screen_arguments.dart';
 import '../../utils/app_localization.dart';
+import '../../providers/subscription_provider.dart';
 
 class SubscriptionResultScreen extends StatelessWidget {
   static const String routeName = 'subscribe-result-screen';
@@ -17,6 +19,8 @@ class SubscriptionResultScreen extends StatelessWidget {
     // determine successful or fail transaction
     // payResult['orderAmt'], payResult['orderDate']
     final bool isSuccessful = args.orderStatus == '1';
+    final SubscriptionProvider subscriptionProvider =
+        Provider.of<SubscriptionProvider>(context, listen: false);
     final screenSize = MediaQuery.of(context).size;
 
     if (!isSuccessful) {
@@ -104,7 +108,7 @@ class SubscriptionResultScreen extends StatelessWidget {
               children: <Widget>[
                 Text("Receipt Number"),
                 Text(
-                  "64953501",
+                  subscriptionProvider.receiptNumber,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                   ),
@@ -134,7 +138,7 @@ class SubscriptionResultScreen extends StatelessWidget {
               children: <Widget>[
                 Text("Payment Item"),
                 Text(
-                  "1-month Subscription",
+                  subscriptionProvider.paymentItem,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                   ),
@@ -180,7 +184,7 @@ class SubscriptionResultScreen extends StatelessWidget {
               children: <Widget>[
                 Text("Reference Number"),
                 Text(
-                  "20240303094410103",
+                  subscriptionProvider.referenceNumber.substring(0, 9),
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                   ),

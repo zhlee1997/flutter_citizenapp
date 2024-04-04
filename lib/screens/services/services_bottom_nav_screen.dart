@@ -1,7 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../bus_schedule/bus_map_screen.dart';
 import '../traffic/traffic_images_list_screen.dart';
+import '../talikhidmat/new_case_screen.dart';
+import '../emergency/emergency_screen.dart';
+import '../../widgets/sarawakid/login_full_bottom_modal.dart';
+import '../bill_payment/bill_payment_screen.dart';
+import '../announcement/tourism_news_screen.dart';
+
+import '../../providers/auth_provider.dart';
 
 class ServicesBottomNavScreen extends StatelessWidget {
   static const String routeName = 'servcies-bottom-nav-screen';
@@ -13,6 +22,112 @@ class ServicesBottomNavScreen extends StatelessWidget {
 
   void _handleNavigateToTrafficImages(BuildContext context) =>
       Navigator.of(context).pushNamed(TrafficImagesListScreen.routeName);
+
+  Future<void> _handleFullScreenLoginBottomModal(BuildContext context) async {
+    await showModalBottomSheet(
+      barrierColor: Theme.of(context).colorScheme.onInverseSurface,
+      useSafeArea: true,
+      enableDrag: false,
+      isScrollControlled: true,
+      context: context,
+      builder: (BuildContext context) {
+        return const LoginFullBottomModal();
+      },
+    );
+  }
+
+  // Permission: location, camera, gallery
+  // Location: no permission, still can access
+  void _handleNavigateToTalikhidmat(BuildContext context) async {
+    if (Provider.of<AuthProvider>(context, listen: false).isAuth) {
+      if (await Permission.location.isGranted) {
+        Navigator.of(context).pushNamed(NewCaseScreen.routeName);
+      } else {
+        Permission.location.request().then(
+            (_) => Navigator.of(context).pushNamed(NewCaseScreen.routeName));
+      }
+    } else {
+      _handleFullScreenLoginBottomModal(context);
+    }
+  }
+
+  Future<void> _showEmergencyRequestLeftDialog(BuildContext context) async {
+    // await getNumberofRequestLeft();
+    // TODO: Emergency service to check location permission is given
+    // TODO: If denied, ask again
+    // TODO: If foreverDenied, need navigate to app settings
+    await Permission.location.onDeniedCallback(() {
+      // Your code
+    }).onGrantedCallback(() async {
+      Navigator.of(context).pushNamed(EmergencyScreen.routeName);
+
+      // if (numberOfRequestLeft != 0) {
+      //   await _globalDialogHelper.showAlertDialog(
+      //     context: context,
+      //     yesButtonFunc: () {
+      //       Navigator.of(context).pop();
+      //       Navigator.of(context).pushNamed(EmergencyScreen.routeName);
+      //     },
+      //     title: "Remaining requests",
+      //     message:
+      //         "You have $numberOfRequestLeft requests left per day. Are you sure to proceed?",
+      //   );
+      // } else {
+      //   await _globalDialogHelper.showAlertDialogWithSingleButton(
+      //     context: context,
+      //     title: "No more requests",
+      //     message: "There is no more requests. Please try again tomorrow",
+      //   );
+      // }
+    }).onPermanentlyDeniedCallback(() async {
+      // The user opted to never again see the permission request dialog for this
+      // app. The only way to change the permission's status now is to let the
+      // user manually enables it in the system settings.
+      await showDialog<bool>(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Permission Denied'),
+              content: const Text(
+                  "You have to manually enable the location permission's status in the system settings."),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('Open Settings'),
+                  onPressed: () {
+                    Navigator.pop(context, false);
+                    openAppSettings();
+                  },
+                ),
+                TextButton(
+                  child: const Text('Cancel'),
+                  onPressed: () {
+                    Navigator.pop(context, false);
+                  },
+                ),
+              ],
+            );
+          });
+    }).onRestrictedCallback(() {
+      // Your code
+    }).onLimitedCallback(() {
+      // Your code
+    }).onProvisionalCallback(() {
+      // Your code
+    }).request();
+  }
+
+  void _handleNavigateToEmergency(BuildContext context) =>
+      Provider.of<AuthProvider>(context, listen: false).isAuth
+          ? _showEmergencyRequestLeftDialog(context)
+          : _handleFullScreenLoginBottomModal(context);
+
+  void _handleNavigateToPayment(BuildContext context) =>
+      Provider.of<AuthProvider>(context, listen: false).isAuth
+          ? Navigator.of(context).pushNamed(BillPaymentScreen.routeName)
+          : _handleFullScreenLoginBottomModal(context);
+
+  void _handleNavigateToTourismNews(BuildContext context) =>
+      Navigator.of(context).pushNamed(TourismNewsScreen.routeName);
 
   @override
   Widget build(BuildContext context) {
@@ -29,9 +144,7 @@ class ServicesBottomNavScreen extends StatelessWidget {
           ),
           children: <Widget>[
             GestureDetector(
-              onTap: () {
-                print("Talikhidmat pressed");
-              },
+              onTap: () => _handleNavigateToTalikhidmat(context),
               child: Card(
                 elevation: 5.0,
                 child: Container(
@@ -68,9 +181,7 @@ class ServicesBottomNavScreen extends StatelessWidget {
               ),
             ),
             GestureDetector(
-              onTap: () {
-                print("Emergency button pressed");
-              },
+              onTap: () => _handleNavigateToEmergency(context),
               child: Card(
                 elevation: 5.0,
                 child: Container(
@@ -107,9 +218,7 @@ class ServicesBottomNavScreen extends StatelessWidget {
               ),
             ),
             GestureDetector(
-              onTap: () {
-                print("Premium Subscription pressed");
-              },
+              onTap: () {},
               child: Card(
                 elevation: 5.0,
                 child: Container(
@@ -185,9 +294,7 @@ class ServicesBottomNavScreen extends StatelessWidget {
               ),
             ),
             GestureDetector(
-              onTap: () {
-                print("Bill Payment pressed");
-              },
+              onTap: () => _handleNavigateToPayment(context),
               child: Card(
                 elevation: 5.0,
                 child: Container(
@@ -225,9 +332,7 @@ class ServicesBottomNavScreen extends StatelessWidget {
               ),
             ),
             GestureDetector(
-              onTap: () {
-                print("Tourism News");
-              },
+              onTap: () => _handleNavigateToTourismNews(context),
               child: Card(
                 elevation: 5.0,
                 child: Container(

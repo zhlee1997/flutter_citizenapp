@@ -10,6 +10,7 @@ import 'package:lottie/lottie.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../models/auth_model.dart';
+import '../../services/auth_services.dart';
 import '../../providers/auth_provider.dart';
 import '../../utils/app_localization.dart';
 import '../../utils/global_dialog_helper.dart';
@@ -37,6 +38,8 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
   late AuthModel _authData;
   String? _vipDueDate;
 
+  final AuthServices _authServices = AuthServices();
+
   /// Launch Sarawak ID Website when tap on 'Sarawak ID' link
   void _handleLaunchWebsite() {
     final Uri uri =
@@ -45,20 +48,28 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
   }
 
   // TODO: refresh profile (new Update API)
-  Future<void> _refreshProfile() async {}
+  Future<void> _refreshProfile() async {
+    await GlobalDialogHelper().showAlertDialog(
+      context: context,
+      yesButtonFunc: () {},
+      title: "Refresh Profile",
+      message:
+          "Your profile information will be updated to the latest and old info may be replaced. Are you sure to proceed?",
+    );
+  }
 
   String formatDate(DateTime date) {
-    return DateFormat('MMM d, yyyy').format(date);
+    return DateFormat('dd MMMM yyyy').format(date);
   }
 
   String returnPackageName(String packageName) {
     switch (packageName) {
       case "option_1":
-        return "1-month Premium Subscription";
+        return "30-days Premium Subscription";
       case "option_2":
-        return "3-month Premium Subscription";
+        return "90-days Premium Subscription";
       default:
-        return "12-month Premium Subscription";
+        return "365-days Premium Subscription";
     }
   }
 
@@ -135,7 +146,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
         actions: <Widget>[
           IconButton(
             onPressed: _refreshProfile,
-            icon: const Icon(Icons.refresh),
+            icon: const Icon(Icons.refresh_outlined),
             tooltip: "Refresh profile",
           )
         ],
@@ -250,7 +261,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                       color: Theme.of(context).primaryColor,
                     ),
                     label: Text(
-                      "Subcribe Premium",
+                      "Get Premium",
                       style: TextStyle(
                         color: Theme.of(context).primaryColor,
                       ),
@@ -284,8 +295,9 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                       top: screenSize.width * 0.015,
                     ),
                     child: Text(
-                      // '${formatDate(startDate)} - ${formatDate(endDate)}',
-                      '$_vipDueDate',
+                      _vipDueDate != null
+                          ? formatDate(DateTime.parse(_vipDueDate!))
+                          : "---",
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                       ),

@@ -117,18 +117,23 @@ class _SubscriptionPriceCardState extends State<SubscriptionPriceCard> {
                               ),
                             ),
                           ),
-                          Text(
-                            index == 0
-                                ? "RM ${e["monthPrice"]}/month"
-                                : index == 1
-                                    ? "RM ${formatPrice(e["monthPrice"] / 3)}/month"
-                                    : "RM ${formatPrice(e["monthPrice"] / 12)}/month",
-                            style: const TextStyle(
-                              fontSize: 12.0,
-                            ),
-                          ),
+                          Text(index == 0
+                              ? "Package A"
+                              : index == 1
+                                  ? "Package B"
+                                  : "Package C"),
+                          // Text(
+                          //   index == 0
+                          //       ? "RM ${e["monthPrice"]}/month"
+                          //       : index == 1
+                          //           ? "RM ${formatPrice(e["monthPrice"] / 3)}/month"
+                          //           : "RM ${formatPrice(e["monthPrice"] / 12)}/month",
+                          //   style: const TextStyle(
+                          //     fontSize: 12.0,
+                          //   ),
+                          // ),
                           const SizedBox(
-                            height: 30.0,
+                            height: 25.0,
                           ),
                           Container(
                             width: screenSize.width * 0.2,

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../widgets/bill_payment/bill_payment_result_widget.dart';
 import '../transaction/transaction_history_screen.dart';
 import '../../arguments/bill_payment_result_screen_arguments.dart';
 import '../../utils/app_localization.dart';
+import '../../providers/bill_provider.dart';
 
 class BillPaymentResultScreen extends StatelessWidget {
   static const String routeName = "bill-payment-result-screen";
@@ -17,6 +19,8 @@ class BillPaymentResultScreen extends StatelessWidget {
     // determine successful or fail transaction
     // payResult['orderAmt'], payResult['orderDate']
     final bool isSuccessful = args.orderStatus == '1';
+    final BillProvider billProvider =
+        Provider.of<BillProvider>(context, listen: false);
     final screenSize = MediaQuery.of(context).size;
 
     if (!isSuccessful) {
@@ -103,7 +107,7 @@ class BillPaymentResultScreen extends StatelessWidget {
               children: <Widget>[
                 Text("Receipt Number"),
                 Text(
-                  "64953501",
+                  billProvider.receiptNumber,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                   ),
@@ -133,7 +137,7 @@ class BillPaymentResultScreen extends StatelessWidget {
               children: <Widget>[
                 Text("Payment Item"),
                 Text(
-                  "Assessment Rate - DBKU",
+                  billProvider.paymentItem,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                   ),
@@ -179,7 +183,7 @@ class BillPaymentResultScreen extends StatelessWidget {
               children: <Widget>[
                 Text("Reference Number"),
                 Text(
-                  "20240303094410103",
+                  billProvider.referenceNumber.substring(0, 9),
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                   ),

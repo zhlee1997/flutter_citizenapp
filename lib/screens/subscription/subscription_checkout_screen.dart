@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:dotted_border/dotted_border.dart';
-import 'package:flutter_citizenapp/screens/subscription/subscription_result_screen.dart';
 import 'package:slide_to_act/slide_to_act.dart';
 import 'package:provider/provider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -67,10 +66,18 @@ class _SubscriptionCheckoutScreenState
           .createSubcriptionOrder(data)
           .then((response) async {
         if (response['status'] == '200') {
+          // GET THE ORDER_ID FROM RESPONSE
+          String orderId = response["data"];
+          subscriptionProvider.setReferenceNumber(orderId);
+
           await _subscriptionServices.confirmSubscriptionOrder({
-            "orderCodes": response['data'],
-            "payType": "1"
+            "orderCodes": orderId,
+            "payType": "1",
           }).then((res) async {
+            // GET THE PAY_ID FROM RES
+            String payId = res["message"];
+            subscriptionProvider.setReceiptNumber(payId);
+
             if (res['status'] == '200') {
               await jumpPay(res['data'], context);
             } else {
@@ -147,16 +154,26 @@ class _SubscriptionCheckoutScreenState
         as SubscriptionCheckoutScreenArguments;
 
     String returnPackageName(int selectedPackage) {
+      String temp;
       switch (selectedPackage) {
         case 0:
           option = "option_1";
-          return "1-month Premium Subscription";
+          temp = "30-days Premium Subscription";
+          Provider.of<SubscriptionProvider>(context, listen: false)
+              .setPaymentItem(temp);
+          return temp;
         case 1:
           option = "option_2";
-          return "3-month Premium Subscription";
+          temp = "90-days Premium Subscription";
+          Provider.of<SubscriptionProvider>(context, listen: false)
+              .setPaymentItem(temp);
+          return temp;
         default:
           option = "option_3";
-          return "12-month Premium Subscription";
+          temp = "365-days Premium Subscription";
+          Provider.of<SubscriptionProvider>(context, listen: false)
+              .setPaymentItem(temp);
+          return temp;
       }
     }
 

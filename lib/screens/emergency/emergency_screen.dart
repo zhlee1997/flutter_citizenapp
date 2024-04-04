@@ -151,6 +151,7 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
             await _eventServices.attachmentCreate(_audioAttachCreate);
           }
         }
+        Provider.of<InboxProvider>(context, listen: false).refreshCount();
 
         // dismiss the dialog after submit success
         Navigator.of(context).pop();
@@ -170,8 +171,6 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
       Navigator.of(context).pop();
       Fluttertoast.showToast(msg: "Submit failed. Please try again");
       print("submit emergency failed: ${e.toString()}");
-    } finally {
-      Provider.of<InboxProvider>(context, listen: false).refreshCount();
     }
   }
 
@@ -241,7 +240,16 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
                           ),
                         ),
                         onPressed: details.onStepContinue,
-                        child: const Text("SUBMIT"),
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text("SUBMIT"),
+                            SizedBox(
+                              width: 10.0,
+                            ),
+                            Icon(Icons.send)
+                          ],
+                        ),
                       ),
                     ),
                   ],

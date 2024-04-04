@@ -151,7 +151,7 @@ class _RecordingBottomModalState extends State<RecordingBottomModal> {
     recorderController = RecorderController();
     _stopWatchTimer = StopWatchTimer(
       mode: StopWatchMode.countDown,
-      presetMillisecond: StopWatchTimer.getMilliSecFromSecond(2),
+      presetMillisecond: StopWatchTimer.getMilliSecFromSecond(1),
       onEnded: () async {
         // start recording
         setState(() {

@@ -2,12 +2,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
+import 'package:provider/provider.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:slide_to_act/slide_to_act.dart';
 
-import './bill_payment_result_screen.dart';
+import '../../providers/bill_provider.dart';
 import '../../arguments/bill_payment_checkout_screen_arguments.dart';
 import '../../utils/app_localization.dart';
 import '../../utils/global_dialog_helper.dart';
@@ -67,11 +67,21 @@ class _BillPaymentCheckoutScreenState extends State<BillPaymentCheckoutScreen> {
 
       await _billServices.createBillOrder(data).then((response) async {
         if (response['status'] == '200') {
+          // GET THE ORDER_ID FROM RESPONSE
+          String orderId = response["data"];
+          Provider.of<BillProvider>(context, listen: false)
+              .setReferenceNumber(orderId);
+
           // obtain encrypted payment data API
           await _billServices.confirmBillOrder({
-            "orderCodes": response['data'],
-            "payType": "1"
+            "orderCodes": orderId,
+            "payType": "1",
           }).then((res) async {
+            // GET THE PAY_ID FROM RES
+            String payId = res["message"];
+            Provider.of<BillProvider>(context, listen: false)
+                .setReceiptNumber(payId);
+
             if (res["status"] == '200') {
               await jumpPay(res['data'], context);
             } else {
@@ -130,17 +140,28 @@ class _BillPaymentCheckoutScreenState extends State<BillPaymentCheckoutScreen> {
   }
 
   String returnBillName(String stateName) {
+    String temp;
     switch (stateName) {
       case "1":
-        return "Assessment Rate - DBKU";
+        temp = "Assessment Rate - DBKU";
+        Provider.of<BillProvider>(context, listen: false).setPaymentItem(temp);
+        return temp;
       case "2":
-        return "Assessment Rate - MBKS";
+        temp = "Assessment Rate - MBKS";
+        Provider.of<BillProvider>(context, listen: false).setPaymentItem(temp);
+        return temp;
       case "3":
-        return "Assessment Rate - MPP";
+        temp = "Assessment Rate - MPP";
+        Provider.of<BillProvider>(context, listen: false).setPaymentItem(temp);
+        return temp;
       case "4":
-        return "Other Utilities - KWB";
+        temp = "Other Utilities - KWB";
+        Provider.of<BillProvider>(context, listen: false).setPaymentItem(temp);
+        return temp;
       default:
-        return "Other Utilities - SESCO";
+        temp = "Other Utilities - SESCO";
+        Provider.of<BillProvider>(context, listen: false).setPaymentItem(temp);
+        return temp;
     }
   }
 

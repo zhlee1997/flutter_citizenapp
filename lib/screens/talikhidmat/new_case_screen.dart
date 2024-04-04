@@ -90,6 +90,8 @@ class _NewCaseScreenState extends State<NewCaseScreen> {
             });
             await _eventServices.attachmentCreate(_imagesAttachCreate);
           }
+          Provider.of<InboxProvider>(context, listen: false).refreshCount();
+
           // dismiss the dialog
           Navigator.of(context).pop();
           await showModalBottomSheet(
@@ -109,8 +111,6 @@ class _NewCaseScreenState extends State<NewCaseScreen> {
       Navigator.of(context).pop();
       Fluttertoast.showToast(msg: "Submit failed. Please try again");
       print("submit emergency failed: ${e.toString()}");
-    } finally {
-      Provider.of<InboxProvider>(context, listen: false).refreshCount();
     }
   }
 
@@ -196,7 +196,16 @@ class _NewCaseScreenState extends State<NewCaseScreen> {
                       ),
                       onPressed: details.onStepContinue,
                       child: currentStep == 2
-                          ? const Text("SUBMIT")
+                          ? const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Text("SUBMIT"),
+                                SizedBox(
+                                  width: 10.0,
+                                ),
+                                Icon(Icons.send)
+                              ],
+                            )
                           : const Text('PROCEED'),
                     ),
                   ),
