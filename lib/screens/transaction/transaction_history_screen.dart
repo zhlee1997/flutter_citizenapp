@@ -177,7 +177,7 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
                 onTap: () => handleTransactionDetailBottomModal(
                   orderNo: transactionProvider.list[index]['orderNo'],
                   taxCode: transactionProvider.list[index]['taxCode'],
-                  // option => 1-month/3-month
+                  // option => 30-days/90-days
                   // type => 2: Assessment rate, 1: Subscription
                   type: transactionProvider.list[index]['option'] ??
                       transactionProvider.list[index]['type'],

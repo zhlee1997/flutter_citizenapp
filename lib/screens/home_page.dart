@@ -47,8 +47,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  // TODO: To query subscription status API (in video splash screen), if isAuth => true
-  // TODO: add subscription status in provider
   bool isSubscribed = false;
   bool isSubscription = false;
   String? vipDueDate;
@@ -148,11 +146,11 @@ class _HomePageState extends State<HomePage> {
   String returnPackageName(String packageName) {
     switch (packageName) {
       case "option_1":
-        return "1-month Premium Subscription";
+        return "30-days Premium Subscription";
       case "option_2":
-        return "3-month Premium Subscription";
+        return "90-days Premium Subscription";
       default:
-        return "12-month Premium Subscription";
+        return "365-days Premium Subscription";
     }
   }
 

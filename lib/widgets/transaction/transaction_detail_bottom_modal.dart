@@ -19,11 +19,11 @@ class TransactionDetailBottomModal extends StatelessWidget {
   String handleType(BuildContext context) {
     switch (type) {
       case "option_1":
-        return "Subscription Package: 1-month Subscription";
+        return "Subscription Package: 30-days Subscription";
       case "option_2":
-        return "Subscription Package: 3-month Subscription";
+        return "Subscription Package: 90-days Subscription";
       case "option_3":
-        return "Subscription Package: 12-month Subscription";
+        return "Subscription Package: 365-days Subscription";
       default:
         return "${AppLocalization.of(context)!.translate('account_number')!}: $taxCode";
     }

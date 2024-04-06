@@ -355,7 +355,7 @@ class _SubscriptionVideoScreenState extends State<SubscriptionVideoScreen>
                                   width: 10.0,
                                 ),
                                 Text(
-                                  "${args.distanceInBetween} KM",
+                                  "${args.distanceInBetween}KM from you",
                                   style: Theme.of(context).textTheme.bodyLarge,
                                 ),
                               ],

@@ -5,6 +5,7 @@ import '../../utils/global_dialog_helper.dart';
 import './subscription_video_screen.dart';
 import '../../arguments/subscription_video_screen_arguments.dart';
 import '../../services/cctv_services.dart';
+import '../../widgets/subscription/map_bottom_sheet_widget.dart';
 
 class SubscriptionListScreen extends StatefulWidget {
   static const String routeName = "subscription-list-screen";
@@ -23,10 +24,13 @@ class _SubscriptionListScreenState extends State<SubscriptionListScreen> {
   final GlobalDialogHelper _globalDialogHelper = GlobalDialogHelper();
 
   void _handleNavigateToSubscriptionVideoScreen({
+    required String imageUrl,
     required String liveUrl,
     required String name,
     required String location,
   }) {
+    // onPressCCCTVSnapshotImage(imageUrl, liveUrl, name, location);
+
     Navigator.of(context).pushNamed(
       SubscriptionVideoScreen.routeName,
       arguments: SubscriptionVideoScreenArguments(
@@ -112,6 +116,14 @@ class _SubscriptionListScreenState extends State<SubscriptionListScreen> {
           updateTime: "updateTime 5",
           liveUrl:
               "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+        ),
+        CCTVModelDetail(
+          id: "",
+          name: "",
+          location: "",
+          image: "",
+          updateTime: "",
+          liveUrl: "",
         )
       ];
     });
@@ -119,6 +131,73 @@ class _SubscriptionListScreenState extends State<SubscriptionListScreen> {
       _isLoading = false;
     });
   }
+
+  // Future<void> onPressCCCTVSnapshotImage(
+  //     imageUrl, liveUrl, name, location) async {
+  //   Future<void> handleFuture() async {
+  //     try {
+  //       await Provider.of<CCTVProvider>(context, listen: false)
+  //           .getCctvDetailProvider(cctv);
+  //     } catch (e) {
+  //       setState(() {
+  //         _isError = true;
+  //       });
+  //     }
+
+  //     Map<String, dynamic> data = {
+  //       "channel": "02",
+  //       "thridDeviceId": cctv.cctvId,
+  //     };
+  //     try {
+  //       await Provider.of<CCTVProvider>(context, listen: false)
+  //           .getCameraShortCutUrlProvider(data);
+  //     } catch (e) {
+  //       setState(() {
+  //         _isError = true;
+  //       });
+  //     }
+  //   }
+
+  //   await showModalBottomSheet(
+  //     context: context,
+  //     showDragHandle: true,
+  //     builder: (_) {
+  //       return FutureBuilder(
+  //           future: handleFuture(),
+  //           builder: (_, AsyncSnapshot snapshot) {
+  //             if (snapshot.connectionState == ConnectionState.waiting) {
+  //               return const Center(
+  //                 child: CircularProgressIndicator(),
+  //               );
+  //             } else {
+  //               if (_isError) {
+  //                 return Center(
+  //                   child: Column(
+  //                     mainAxisAlignment: MainAxisAlignment.center,
+  //                     children: [
+  //                       SizedBox(
+  //                         height: 150,
+  //                         child: SvgPicture.asset(
+  //                             'assets/images/undraw_online.svg'),
+  //                       ),
+  //                       const SizedBox(
+  //                         height: 20,
+  //                       ),
+  //                       Text(AppLocalization.of(context)!
+  //                           .translate('camera_is_not_available')!),
+  //                     ],
+  //                   ),
+  //                 );
+  //               }
+  //               return MapBottomSheetWidget(
+  //                 cctvLatitude: cctv.latitude,
+  //                 cctvLongitude: cctv.longitude,
+  //               );
+  //             }
+  //           });
+  //     },
+  //   );
+  // }
 
   @override
   void initState() {
@@ -149,74 +228,82 @@ class _SubscriptionListScreenState extends State<SubscriptionListScreen> {
                         padding: const EdgeInsets.symmetric(
                           vertical: 20.0,
                         ),
-                        child: Text("Number of CCTVs: 49"),
+                        child: Text(
+                            // Extra last empty element in array, so need to minus 1
+                            "Number of CCTVs: ${_cctvModelDetailList.length - 1}"),
                       ),
                     );
                   }
                 } else {
-                  return Column(
-                    children: [
-                      Container(
-                        width: double.infinity,
-                        height: screenSize.height * 0.035,
-                        color: Colors.blueGrey.shade800,
-                        alignment: Alignment.center,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.arrow_drop_down,
-                              color: Colors.white,
-                            ),
-                            const SizedBox(
-                              width: 5.0,
-                            ),
-                            Text(
-                              _cctvModelDetailList[index].name,
-                              style: const TextStyle(
-                                fontSize: 16.0,
+                  // to detect the last empty element
+                  if (_cctvModelDetailList[index].id.isNotEmpty) {
+                    return Column(
+                      children: [
+                        Container(
+                          width: double.infinity,
+                          height: screenSize.height * 0.035,
+                          color: Colors.blueGrey.shade800,
+                          alignment: Alignment.center,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(
+                                Icons.arrow_drop_down,
                                 color: Colors.white,
                               ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () => _handleNavigateToSubscriptionVideoScreen(
-                          liveUrl: _cctvModelDetailList[index].liveUrl,
-                          name: _cctvModelDetailList[index].name,
-                          location: _cctvModelDetailList[index].location,
-                        ),
-                        child: SizedBox(
-                          width: double.infinity,
-                          height: screenSize.height * 0.3,
-                          child: Stack(
-                            children: <Widget>[
-                              Image.network(
-                                _cctvModelDetailList[index].image,
-                                width: double.infinity,
-                                height: screenSize.height * 0.3,
-                                fit: BoxFit.cover,
+                              const SizedBox(
+                                width: 5.0,
                               ),
-                              // TODO: Current API lack of screenshot time
-                              Container(
-                                width: screenSize.width * 0.5,
-                                color: Colors.black,
-                                child: Text(
-                                  "02/03/2024 12:17:12 AM",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                  ),
+                              Text(
+                                _cctvModelDetailList[index].name,
+                                style: const TextStyle(
+                                  fontSize: 16.0,
+                                  color: Colors.white,
                                 ),
-                              )
+                              ),
                             ],
                           ),
                         ),
-                      ),
-                    ],
-                  );
+                        GestureDetector(
+                          onTap: () => _handleNavigateToSubscriptionVideoScreen(
+                            imageUrl: _cctvModelDetailList[index].image,
+                            liveUrl: _cctvModelDetailList[index].liveUrl,
+                            name: _cctvModelDetailList[index].name,
+                            location: _cctvModelDetailList[index].location,
+                          ),
+                          child: SizedBox(
+                            width: double.infinity,
+                            height: screenSize.height * 0.3,
+                            child: Stack(
+                              children: <Widget>[
+                                Image.network(
+                                  _cctvModelDetailList[index].image,
+                                  width: double.infinity,
+                                  height: screenSize.height * 0.3,
+                                  fit: BoxFit.cover,
+                                ),
+                                // TODO: Current API lack of screenshot time
+                                Container(
+                                  width: screenSize.width * 0.5,
+                                  color: Colors.black,
+                                  child: Text(
+                                    "02/03/2024 12:17:12 AM",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  }
                 }
+
+                return null;
               }),
             ),
     );

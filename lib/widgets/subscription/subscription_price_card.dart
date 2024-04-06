@@ -52,10 +52,10 @@ class _SubscriptionPriceCardState extends State<SubscriptionPriceCard> {
         Container(
           alignment: Alignment.centerLeft,
           margin: EdgeInsets.only(
-            bottom: screenSize.width * 0.025,
+            bottom: screenSize.width * 0.03,
           ),
           child: const Text(
-            "Select your subscription",
+            "Select your package",
             style: TextStyle(
               fontSize: 15.0,
               fontWeight: FontWeight.bold,

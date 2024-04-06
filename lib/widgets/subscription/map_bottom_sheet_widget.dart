@@ -195,32 +195,22 @@ class _MapBottomSheetWidgetState extends State<MapBottomSheetWidget> {
                 // width: double.infinity,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
+                  children: <Widget>[
                     Text(
                       cctvDetail.name,
                       softWrap: true,
-                      style: const TextStyle(
-                        fontSize: 15.0,
-                      ),
                     ),
                     const SizedBox(
-                      width: 5.0,
+                      width: 10.0,
                     ),
                     const Text(
-                      "\u00B7",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15.0,
-                      ),
+                      "|",
                     ),
                     const SizedBox(
-                      width: 5.0,
+                      width: 10.0,
                     ),
                     Text(
-                      "$_distanceInBetween KM",
-                      style: TextStyle(
-                        fontSize: 15.0,
-                      ),
+                      "${_distanceInBetween}KM from you",
                     )
                   ],
                 ),
@@ -365,6 +355,8 @@ class _MapBottomSheetWidgetState extends State<MapBottomSheetWidget> {
               ),
               Container(
                 margin: const EdgeInsets.only(
+                  left: 20.0,
+                  right: 20.0,
                   bottom: 20.0,
                 ),
                 // width: double.infinity,
@@ -374,28 +366,18 @@ class _MapBottomSheetWidgetState extends State<MapBottomSheetWidget> {
                     Text(
                       cctvDetail.name,
                       softWrap: true,
-                      style: const TextStyle(
-                        fontSize: 15.0,
-                      ),
                     ),
                     const SizedBox(
-                      width: 5.0,
+                      width: 10.0,
                     ),
                     const Text(
-                      "\u00B7",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15.0,
-                      ),
+                      "|",
                     ),
                     const SizedBox(
-                      width: 5.0,
+                      width: 10.0,
                     ),
                     Text(
-                      "$_distanceInBetween KM",
-                      style: TextStyle(
-                        fontSize: 15.0,
-                      ),
+                      "${_distanceInBetween}KM from you",
                     )
                   ],
                 ),

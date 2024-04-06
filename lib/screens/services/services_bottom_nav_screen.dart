@@ -9,13 +9,27 @@ import '../emergency/emergency_screen.dart';
 import '../../widgets/sarawakid/login_full_bottom_modal.dart';
 import '../bill_payment/bill_payment_screen.dart';
 import '../announcement/tourism_news_screen.dart';
+import '../../widgets/subscription/subscription_whitelist_bottom_modal.dart';
+import '../subscription/subscription_choose_screen.dart';
+import '../../widgets/subscription/subscription_preview_dialog.dart';
 
 import '../../providers/auth_provider.dart';
+import '../../providers/subscription_provider.dart';
+import '../../utils/global_dialog_helper.dart';
 
-class ServicesBottomNavScreen extends StatelessWidget {
+class ServicesBottomNavScreen extends StatefulWidget {
   static const String routeName = 'servcies-bottom-nav-screen';
 
   const ServicesBottomNavScreen({super.key});
+
+  @override
+  State<ServicesBottomNavScreen> createState() =>
+      _ServicesBottomNavScreenState();
+}
+
+class _ServicesBottomNavScreenState extends State<ServicesBottomNavScreen> {
+  bool isSubscribed = false;
+  bool isSubscriptionEnabled = false;
 
   void _handleNavigateToBusSchedule(BuildContext context) =>
       Navigator.of(context).pushNamed(BusMapScreen.routeName);
@@ -37,7 +51,6 @@ class ServicesBottomNavScreen extends StatelessWidget {
   }
 
   // Permission: location, camera, gallery
-  // Location: no permission, still can access
   void _handleNavigateToTalikhidmat(BuildContext context) async {
     if (Provider.of<AuthProvider>(context, listen: false).isAuth) {
       if (await Permission.location.isGranted) {
@@ -129,6 +142,64 @@ class ServicesBottomNavScreen extends StatelessWidget {
   void _handleNavigateToTourismNews(BuildContext context) =>
       Navigator.of(context).pushNamed(TourismNewsScreen.routeName);
 
+  // first => check subscription enabled (already done)
+  void _handleNavigateToSubscription(BuildContext context) async {
+    final AuthProvider authProvider =
+        Provider.of<AuthProvider>(context, listen: false);
+    final SubscriptionProvider subscriptionProvider =
+        Provider.of<SubscriptionProvider>(context, listen: false);
+
+    if (authProvider.isAuth) {
+      GlobalDialogHelper().buildCircularProgressCenter(context: context);
+      bool isWhitelisted = await subscriptionProvider
+          .queryAndSetIsWhitelisted(authProvider.auth.sId);
+      Navigator.of(context).pop();
+      if (isWhitelisted) {
+        // show bottom modal
+        _handleSubscriptionWhitelistBottomModal(context);
+      } else {
+        if (isSubscribed) {
+          Navigator.of(context).pushNamed(SubscriptionChooseScreen.routeName);
+        } else {
+          _showSubscriptionIntroDialog(context);
+        }
+      }
+    } else {
+      _handleFullScreenLoginBottomModal(context);
+    }
+  }
+
+  Future<void> _handleSubscriptionWhitelistBottomModal(
+      BuildContext context) async {
+    await showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return SubscriptionWhitelistBottomModal(
+          handleNavigateToChooseScreen: () => Navigator.of(context)
+              .pushNamed(SubscriptionChooseScreen.routeName),
+        );
+      },
+    );
+  }
+
+  Future<void> _showSubscriptionIntroDialog(BuildContext context) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return const SubscriptionPreviewDialog();
+      },
+    );
+  }
+
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    isSubscribed = Provider.of<AuthProvider>(context).auth.vipStatus;
+    isSubscriptionEnabled =
+        Provider.of<SubscriptionProvider>(context).isSubscriptionEnabled;
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -217,44 +288,45 @@ class ServicesBottomNavScreen extends StatelessWidget {
                 ),
               ),
             ),
-            GestureDetector(
-              onTap: () {},
-              child: Card(
-                elevation: 5.0,
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10.0),
-                    // image: DecorationImage(
-                    //   image: AssetImage(
-                    //       "assets/images/pictures/subscription_image.jpg"),
-                    //   fit: BoxFit.cover,
-                    //   opacity: 0.2,
-                    // ),
-                  ),
-                  child: Column(
-                    children: <Widget>[
-                      Container(
-                        margin: EdgeInsets.only(
-                          top: 35.0,
+            if (isSubscriptionEnabled)
+              GestureDetector(
+                onTap: () => _handleNavigateToSubscription(context),
+                child: Card(
+                  elevation: 5.0,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                      // image: DecorationImage(
+                      //   image: AssetImage(
+                      //       "assets/images/pictures/subscription_image.jpg"),
+                      //   fit: BoxFit.cover,
+                      //   opacity: 0.2,
+                      // ),
+                    ),
+                    child: Column(
+                      children: <Widget>[
+                        Container(
+                          margin: EdgeInsets.only(
+                            top: 35.0,
+                          ),
+                          child: Icon(
+                            Icons.subscriptions_outlined,
+                            size: 50.0,
+                          ),
                         ),
-                        child: Icon(
-                          Icons.subscriptions_outlined,
-                          size: 50.0,
+                        SizedBox(
+                          height: 10.0,
                         ),
-                      ),
-                      SizedBox(
-                        height: 10.0,
-                      ),
-                      Text(
-                        "Premium Subscription",
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      )
-                    ],
+                        Text(
+                          "Premium Subscription",
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
             GestureDetector(
               onTap: () => _handleNavigateToTrafficImages(context),
               child: Card(
