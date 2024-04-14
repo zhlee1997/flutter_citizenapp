@@ -277,17 +277,18 @@ class GlobalDialogHelper {
       );
     }
     if (noMoreData) {
-      return Center(
-        child: Text(AppLocalization.of(context)!.translate('end_of')!),
+      return Container(
+        margin: const EdgeInsets.only(top: 10.0),
+        child: const Center(
+          child: Text("That's all for now"),
+        ),
       );
     } else {
-      return Container(
-        padding: const EdgeInsets.all(20.0),
-        child: LinearProgressIndicator(
-          backgroundColor: Theme.of(context).colorScheme.secondary,
-          valueColor:
-              AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
-        ),
+      return LinearProgressIndicator(
+        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+        backgroundColor: Theme.of(context).colorScheme.secondary,
+        valueColor:
+            AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
       );
     }
   }

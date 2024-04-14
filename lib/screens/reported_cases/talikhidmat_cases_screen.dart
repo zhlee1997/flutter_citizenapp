@@ -274,18 +274,14 @@ class _TalikhidmatCasesScreenState extends State<TalikhidmatCasesScreen> {
                                     itemCount: _cases.length + 1,
                                     itemBuilder: (BuildContext ctx, int index) {
                                       if (_cases.length == index) {
-                                        return SizedBox(
-                                          width: 50,
-                                          height: 50,
-                                          child: GlobalDialogHelper()
-                                              .buildLinearProgressIndicator(
-                                            context: context,
-                                            currentLength: _cases.length,
-                                            noMoreData: _noMoreLoad,
-                                            handleLoadMore: () async {
-                                              await setCases(0);
-                                            },
-                                          ),
+                                        return GlobalDialogHelper()
+                                            .buildLinearProgressIndicator(
+                                          context: context,
+                                          currentLength: _cases.length,
+                                          noMoreData: _noMoreLoad,
+                                          handleLoadMore: () async {
+                                            await setCases(0);
+                                          },
                                         );
                                       } else {
                                         return CaseCard(

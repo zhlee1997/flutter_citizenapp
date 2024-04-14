@@ -13,7 +13,6 @@ import "../../widgets/emergency/other_emergency_bottom_modal.dart";
 import "../../widgets/emergency/emergency_finish_full_bottom_modal.dart";
 import '../../services/event_services.dart';
 import '../../providers/emergency_provider.dart';
-import '../../providers/inbox_provider.dart';
 import '../../utils/global_dialog_helper.dart';
 import '../../utils/app_localization.dart';
 
@@ -151,7 +150,6 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
             await _eventServices.attachmentCreate(_audioAttachCreate);
           }
         }
-        Provider.of<InboxProvider>(context, listen: false).refreshCount();
 
         // dismiss the dialog after submit success
         Navigator.of(context).pop();

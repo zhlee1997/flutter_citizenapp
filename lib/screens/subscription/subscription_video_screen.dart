@@ -367,25 +367,65 @@ class _SubscriptionVideoScreenState extends State<SubscriptionVideoScreen>
                             Container(
                               width: screenSize.width * 0.9,
                               margin: const EdgeInsets.only(
+                                bottom: 10.0,
+                              ),
+                              padding: const EdgeInsets.all(15.0),
+                              decoration: BoxDecoration(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .secondaryContainer,
+                                borderRadius: const BorderRadius.all(
+                                    Radius.circular(10.0)),
+                              ),
+                              child: Column(
+                                children: <Widget>[
+                                  Row(
+                                    children: <Widget>[
+                                      CircleAvatar(
+                                        backgroundColor: Theme.of(context)
+                                            .colorScheme
+                                            .background,
+                                        radius: 16.0,
+                                        child: Icon(
+                                          Icons.tips_and_updates,
+                                          size: 18.0,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        width: 10.0,
+                                      ),
+                                      const Text(
+                                        "Note",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    height: 5.0,
+                                  ),
+                                  const Text(
+                                    "You can open the Google Maps if installed. Otherwise, open map browser to pinpoint the camera location.",
+                                    style: TextStyle(
+                                      fontSize: 13.0,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              width: screenSize.width * 0.9,
+                              margin: const EdgeInsets.only(
                                 bottom: 5.0,
                               ),
                               child: ElevatedButton.icon(
                                 onPressed: _launchGoogleMaps,
                                 icon: const Icon(Icons.map_outlined),
                                 label: const Text("Google Maps"),
-                              ),
-                            ),
-                            Container(
-                              width: screenSize.width * 0.85,
-                              margin: const EdgeInsets.only(
-                                bottom: 10.0,
-                              ),
-                              child: Text(
-                                "Note: This will open the Google Maps if installed. Otherwise, open map in browser to pinpoint the camera location.",
-                                style: TextStyle(
-                                  fontSize: 12.0,
-                                  color: Colors.grey[600],
-                                ),
                               ),
                             ),
                           ],

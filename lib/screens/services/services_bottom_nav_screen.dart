@@ -237,6 +237,7 @@ class _ServicesBottomNavScreenState extends State<ServicesBottomNavScreen> {
                         child: Icon(
                           Icons.feedback_outlined,
                           size: 50.0,
+                          color: Colors.deepPurple,
                         ),
                       ),
                       SizedBox(
@@ -254,6 +255,7 @@ class _ServicesBottomNavScreenState extends State<ServicesBottomNavScreen> {
             GestureDetector(
               onTap: () => _handleNavigateToEmergency(context),
               child: Card(
+                color: Color.fromARGB(255, 255, 252, 221),
                 elevation: 5.0,
                 child: Container(
                   decoration: BoxDecoration(
@@ -273,6 +275,7 @@ class _ServicesBottomNavScreenState extends State<ServicesBottomNavScreen> {
                         child: Icon(
                           Icons.sos_outlined,
                           size: 50.0,
+                          color: Colors.orange,
                         ),
                       ),
                       SizedBox(
@@ -292,6 +295,7 @@ class _ServicesBottomNavScreenState extends State<ServicesBottomNavScreen> {
               GestureDetector(
                 onTap: () => _handleNavigateToSubscription(context),
                 child: Card(
+                  color: const Color.fromARGB(255, 227, 255, 235),
                   elevation: 5.0,
                   child: Container(
                     decoration: BoxDecoration(
@@ -310,8 +314,9 @@ class _ServicesBottomNavScreenState extends State<ServicesBottomNavScreen> {
                             top: 35.0,
                           ),
                           child: Icon(
-                            Icons.subscriptions_outlined,
+                            Icons.subscriptions,
                             size: 50.0,
+                            color: Colors.green,
                           ),
                         ),
                         SizedBox(
@@ -350,6 +355,7 @@ class _ServicesBottomNavScreenState extends State<ServicesBottomNavScreen> {
                         child: const Icon(
                           Icons.traffic_outlined,
                           size: 50.0,
+                          color: Colors.deepPurple,
                         ),
                       ),
                       const SizedBox(
@@ -368,6 +374,7 @@ class _ServicesBottomNavScreenState extends State<ServicesBottomNavScreen> {
             GestureDetector(
               onTap: () => _handleNavigateToPayment(context),
               child: Card(
+                color: Color.fromARGB(255, 255, 252, 221),
                 elevation: 5.0,
                 child: Container(
                   decoration: BoxDecoration(
@@ -386,8 +393,9 @@ class _ServicesBottomNavScreenState extends State<ServicesBottomNavScreen> {
                           top: 35.0,
                         ),
                         child: Icon(
-                          Icons.wallet_outlined,
+                          Icons.receipt_long_outlined,
                           size: 50.0,
+                          color: Colors.orange,
                         ),
                       ),
                       SizedBox(
@@ -406,6 +414,7 @@ class _ServicesBottomNavScreenState extends State<ServicesBottomNavScreen> {
             GestureDetector(
               onTap: () => _handleNavigateToTourismNews(context),
               child: Card(
+                color: Color.fromARGB(255, 227, 255, 235),
                 elevation: 5.0,
                 child: Container(
                   decoration: BoxDecoration(
@@ -426,6 +435,7 @@ class _ServicesBottomNavScreenState extends State<ServicesBottomNavScreen> {
                         child: Icon(
                           Icons.luggage_outlined,
                           size: 50.0,
+                          color: Colors.green,
                         ),
                       ),
                       SizedBox(
@@ -463,6 +473,7 @@ class _ServicesBottomNavScreenState extends State<ServicesBottomNavScreen> {
                         child: Icon(
                           Icons.bus_alert_outlined,
                           size: 50.0,
+                          color: Colors.deepPurple,
                         ),
                       ),
                       SizedBox(

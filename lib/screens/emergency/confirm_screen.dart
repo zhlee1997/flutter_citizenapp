@@ -49,13 +49,55 @@ class ConfirmScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+
     final String audioPath = Provider.of<EmergencyProvider>(context).audioPath;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text(
-          "Note: Please verify and check the information below before submission",
-          style: Theme.of(context).textTheme.titleSmall,
+        Container(
+          padding: const EdgeInsets.all(15.0),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.primaryContainer,
+            borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+          ),
+          child: Column(
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  CircleAvatar(
+                    backgroundColor: Theme.of(context).colorScheme.background,
+                    radius: 16.0,
+                    child: Icon(
+                      Icons.tips_and_updates,
+                      size: 18.0,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 10.0,
+                  ),
+                  const Text(
+                    "Note",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 8.0,
+              ),
+              const Text(
+                "Please verify and check the information below before submission.",
+                style: TextStyle(
+                  fontSize: 13.0,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
         ),
         const SizedBox(
           height: 20.0,

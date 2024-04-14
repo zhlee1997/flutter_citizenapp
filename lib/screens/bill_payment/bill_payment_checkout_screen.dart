@@ -219,15 +219,7 @@ class _BillPaymentCheckoutScreenState extends State<BillPaymentCheckoutScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        const Text(
-                          "Payment Item",
-                          style: TextStyle(
-                            fontSize: 16.0,
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 5,
-                        ),
+                        const Text("Payment Item"),
                         Text(
                           returnBillName(args.stateName!),
                           style: const TextStyle(
@@ -236,17 +228,9 @@ class _BillPaymentCheckoutScreenState extends State<BillPaymentCheckoutScreen> {
                           ),
                         ),
                         const SizedBox(
-                          height: 20.0,
+                          height: 15.0,
                         ),
-                        const Text(
-                          "Payment Account",
-                          style: TextStyle(
-                            fontSize: 16.0,
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 5,
-                        ),
+                        const Text("Payment Account"),
                         Text(
                           args.taxCode!,
                           style: const TextStyle(
@@ -255,17 +239,9 @@ class _BillPaymentCheckoutScreenState extends State<BillPaymentCheckoutScreen> {
                           ),
                         ),
                         const SizedBox(
-                          height: 20.0,
+                          height: 15.0,
                         ),
-                        const Text(
-                          "Payment Amount",
-                          style: TextStyle(
-                            fontSize: 16.0,
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 5,
-                        ),
+                        const Text("Payment Amount"),
                         Text(
                           "RM ${args.orderAmount}",
                           style: const TextStyle(
@@ -274,17 +250,9 @@ class _BillPaymentCheckoutScreenState extends State<BillPaymentCheckoutScreen> {
                           ),
                         ),
                         const SizedBox(
-                          height: 20.0,
+                          height: 15.0,
                         ),
-                        const Text(
-                          "Payment Method",
-                          style: TextStyle(
-                            fontSize: 16.0,
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 5,
-                        ),
+                        const Text("Payment Method"),
                         const Text(
                           "S Pay Global",
                           style: TextStyle(
@@ -302,7 +270,7 @@ class _BillPaymentCheckoutScreenState extends State<BillPaymentCheckoutScreen> {
                     right: screenSize.width * 0.07,
                   ),
                   margin: const EdgeInsets.symmetric(
-                    vertical: 30.0,
+                    vertical: 20.0,
                   ),
                   child: Row(
                     children: <Widget>[
@@ -331,6 +299,53 @@ class _BillPaymentCheckoutScreenState extends State<BillPaymentCheckoutScreen> {
             ),
             Column(
               children: <Widget>[
+                Container(
+                  width: screenSize.width * 0.8,
+                  margin: const EdgeInsets.only(
+                    bottom: 30.0,
+                  ),
+                  padding: const EdgeInsets.all(15.0),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.secondaryContainer,
+                    borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+                  ),
+                  child: Column(
+                    children: <Widget>[
+                      Row(
+                        children: <Widget>[
+                          CircleAvatar(
+                            backgroundColor:
+                                Theme.of(context).colorScheme.background,
+                            radius: 16.0,
+                            child: Icon(
+                              Icons.tips_and_updates,
+                              size: 18.0,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 10.0,
+                          ),
+                          const Text(
+                            "Note",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 5.0,
+                      ),
+                      const Text(
+                        "You are about to open the S Pay Global app. Please make sure the app is installed and have sufficient amount in the wallet.",
+                        style: TextStyle(
+                          fontSize: 13.0,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
                 SizedBox(
                   width: screenSize.width * 0.8,
                   child: SlideAction(
@@ -380,21 +395,8 @@ class _BillPaymentCheckoutScreenState extends State<BillPaymentCheckoutScreen> {
                     },
                   ),
                 ),
-                Container(
-                  width: screenSize.width * 0.8,
-                  margin: const EdgeInsets.only(
-                    top: 15.0,
-                  ),
-                  child: Text(
-                    "Note: This will open the S Pay Global app. Please make sure the app is installed and have sufficient amount in the wallet",
-                    style: TextStyle(
-                      fontSize: 12.0,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 20.0,
+                SizedBox(
+                  height: screenSize.height * 0.05,
                 )
               ],
             )

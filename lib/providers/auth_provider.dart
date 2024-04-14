@@ -7,10 +7,13 @@ import 'package:provider/provider.dart';
 import "../models/auth_model.dart";
 import "../services/auth_services.dart";
 import "../providers/inbox_provider.dart";
-import '../../utils/app_localization.dart';
+import '../utils/app_localization.dart';
 import "../../services/notification_services.dart";
+import "../utils/general_helper.dart";
 
 class AuthProvider with ChangeNotifier {
+  // TODO: to configure flavor
+  Flavor _flavor = Flavor.DEV;
   AuthServices _authServices = AuthServices();
   NotificationServices _notificationServices = NotificationServices();
 
@@ -35,6 +38,8 @@ class AuthProvider with ChangeNotifier {
         address: '',
         mobile: '',
         email: '',
+        profileImage: '',
+        identityNumber: '',
         sId: '',
         userName: '',
         fullName: '',
@@ -156,7 +161,7 @@ class AuthProvider with ChangeNotifier {
   }
 
   // http://124.70.29.113:28300/loading.html?sarawakToken=159952acea21cbb45844594aa9ad4485&isSubscribed=false&userId=22569&siocToken=eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIyMjU2OSIsInVzZXJJZCI6IjEwMDIwNDU2MDciLCJuYW1lIjoiWmhvbmdMaWFuZ1dhbmciLCJleHAiOjE3MTI1NjI3MjQsImlhdCI6MTcxMTI2NjcyNH0.jx0vxGVxhVShHDsVgaDOPm1Zey_y5OZ9b0pKUK2YfbOvsGNTEH2aKPqp-0z7WmQdNhzCnS07fnJ3YOHmdrOJsCx1rzzw4MPPnn0gD2-N_OBbdTbD21xzacXViANqTsFlhxJYW0py1Q5KMsmuylufHt79w52qWesf8t1g1Rlv8l0&expire=1296000&loginMode=1
-  // "isSubscribed" param not used by backend anymore
+  // TO DEV: "isSubscribed" param not used by backend anymore
   Future<bool> queryLoginUserInfo(String userId, bool isSubscribed) async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -168,6 +173,11 @@ class AuthProvider with ChangeNotifier {
           address: response['data']['address'] ?? '',
           mobile: response['data']['mobile'] ?? '',
           email: response['data']['email'] ?? '',
+          profileImage: GeneralHelper.flavorFormatImageUrl(
+            response['data']['facePhoto'] ?? '',
+            _flavor,
+          ),
+          identityNumber: response['data']['ic'] ?? '',
           sId: response['data']['memberId'] ?? '',
           userName: response['data']['sarawakId'] ?? '',
           fullName: response['data']['nickName'] ?? '',
@@ -175,6 +185,14 @@ class AuthProvider with ChangeNotifier {
           vipDueDate: response['data']['vipDueDate'] ?? '',
         );
         prefs.setString("userEmail", response['data']['email'] ?? '');
+        prefs.setString(
+          "profileImage",
+          GeneralHelper.flavorFormatImageUrl(
+            response['data']['facePhoto'] ?? '',
+            _flavor,
+          ),
+        );
+        prefs.setString("identityNumber", response['data']['ic'] ?? '');
         prefs.setString("userFullName", response['data']['nickName'] ?? '');
         prefs.setString("userId", response['data']['memberId'] ?? '');
         prefs.setString("userMobileNo", response['data']['mobile'] ?? '');
@@ -183,7 +201,6 @@ class AuthProvider with ChangeNotifier {
         prefs.setBool("vipStatus", response['data']['vipStatus'] == "1");
         // double assure in case vipDueDate is not insert into prefs in "signInProvider" due to "isSubscribed" == false
         prefs.setString("vipDueDate", response['data']['vipDueDate'] ?? '');
-
         notifyListeners();
         return true;
       } else {
@@ -191,6 +208,8 @@ class AuthProvider with ChangeNotifier {
           address: '',
           mobile: '',
           email: '',
+          profileImage: '',
+          identityNumber: '',
           sId: '',
           userName: '',
           fullName: '',
@@ -222,6 +241,8 @@ class AuthProvider with ChangeNotifier {
           address: prefs.getString('userResAddr1') ?? '',
           mobile: prefs.getString('userMobileNo') ?? '',
           email: prefs.getString('userEmail') ?? '',
+          profileImage: prefs.getString('profileImage') ?? '',
+          identityNumber: prefs.getString('identityNumber') ?? '',
           sId: prefs.getString('userId') ?? '',
           userName: prefs.getString('userShortName') ?? '',
           fullName: prefs.getString('userFullName') ?? '',
@@ -285,25 +306,29 @@ class AuthProvider with ChangeNotifier {
               address: prefs.getString('userResAddr1') ?? '',
               mobile: prefs.getString('userMobileNo') ?? '',
               email: prefs.getString('userEmail') ?? '',
+              profileImage: prefs.getString('profileImage') ?? '',
+              identityNumber: prefs.getString('identityNumber') ?? '',
               sId: prefs.getString('userId') ?? '',
               userName: prefs.getString('userShortName') ?? '',
               fullName: prefs.getString('userFullName') ?? '',
               vipStatus: prefs.getBool('vipStatus') ?? false,
               vipDueDate: prefs.getString('vipDueDate') ?? '');
         } else {
-          // out of due date (expired)
-          prefs.setBool("vipStatus", false);
-          prefs.setString("vipDueDate", '');
+          // out of due date (subscription expired)
           _auth = AuthModel(
             address: prefs.getString('userResAddr1') ?? '',
             mobile: prefs.getString('userMobileNo') ?? '',
             email: prefs.getString('userEmail') ?? '',
+            profileImage: prefs.getString('profileImage') ?? '',
+            identityNumber: prefs.getString('identityNumber') ?? '',
             sId: prefs.getString('userId') ?? '',
             userName: prefs.getString('userShortName') ?? '',
             fullName: prefs.getString('userFullName') ?? '',
             vipStatus: false,
             vipDueDate: '',
           );
+          prefs.setBool("vipStatus", false);
+          prefs.setString("vipDueDate", '');
         }
       }
     }
@@ -330,5 +355,30 @@ class AuthProvider with ChangeNotifier {
     } else {
       return false;
     }
+  }
+
+  Future<bool> updateProfileInfoProvider() async {
+    final storage = new FlutterSecureStorage();
+    final prefs = await SharedPreferences.getInstance();
+
+    String? sarawakToken = await storage.read(key: 'sarawakToken');
+    String memberId = prefs.getString('userId') ?? '';
+    String sarawakId = prefs.getString('userShortName') ?? '';
+    String ic = prefs.getString('identityNumber') ?? '';
+
+    try {
+      var response = await _authServices.updateProfileInfo(
+        sarawakToken: sarawakToken,
+        memberId: memberId,
+        sarawakId: sarawakId,
+        ic: ic,
+      );
+      if (response["status"] == "200") return true;
+      // notifyListeners();
+    } catch (e) {
+      print('updateProfileInfoProvider fail: ${e.toString()}');
+      throw e;
+    }
+    return false;
   }
 }

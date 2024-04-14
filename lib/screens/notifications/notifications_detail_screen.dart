@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -124,36 +123,25 @@ class _NotificationsDetailScreenState extends State<NotificationsDetailScreen> {
     // Emergency Case is accepted
     if (_inbox!.msgType == '2') {
       return SingleChildScrollView(
-        padding: EdgeInsets.only(
-          left: 12,
-          right: 12,
-          top: 12,
+        padding: const EdgeInsets.only(
+          left: 15,
+          right: 15,
+          top: 15,
           bottom: 50,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(
-              height: 10,
-            ),
             Text(
               _inbox!.msgTitle,
-              textAlign: TextAlign.left,
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: Platform.isIOS ? 23.0 : 15.0,
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(context).textTheme.titleLarge,
             ),
             SizedBox(
-              height: 30,
+              height: screenSize.height * 0.05,
             ),
             Text(
               _msgContext!["content"] ?? "",
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: Platform.isIOS ? 20.0 : 15.0,
-              ),
+              style: Theme.of(context).textTheme.bodyLarge,
             ),
             InboxCell(
               label: "Reported Date:",
@@ -167,16 +155,14 @@ class _NotificationsDetailScreenState extends State<NotificationsDetailScreen> {
             InboxCell(
               label: "Case Description:",
               value: "\n${_msgContext!["caseDescription"]}",
+              isSpaced: false,
             ),
             SizedBox(
-              height: 20.0,
+              height: screenSize.height * 0.05,
             ),
             Text(
               "${_msgContext!["greetings"] ?? ""}",
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: Platform.isIOS ? 20.0 : 15.0,
-              ),
+              style: Theme.of(context).textTheme.bodyLarge,
             ),
           ],
         ),
@@ -186,36 +172,25 @@ class _NotificationsDetailScreenState extends State<NotificationsDetailScreen> {
     // Emergency Case is solved
     if (_inbox!.msgType == '3') {
       return SingleChildScrollView(
-        padding: EdgeInsets.only(
-          left: 12,
-          right: 12,
-          top: 12,
+        padding: const EdgeInsets.only(
+          left: 15,
+          right: 15,
+          top: 15,
           bottom: 50,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(
-              height: 10,
-            ),
             Text(
               _inbox!.msgTitle,
-              textAlign: TextAlign.left,
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: Platform.isIOS ? 23.0 : 15.0,
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(context).textTheme.titleLarge,
             ),
             SizedBox(
-              height: 30,
+              height: screenSize.height * 0.05,
             ),
             Text(
               _msgContext!["content"] ?? "",
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: Platform.isIOS ? 20.0 : 15.0,
-              ),
+              style: Theme.of(context).textTheme.bodyLarge,
             ),
             InboxCell(
               label: "Case No.:",
@@ -232,14 +207,11 @@ class _NotificationsDetailScreenState extends State<NotificationsDetailScreen> {
               isSpaced: false,
             ),
             SizedBox(
-              height: 20.0,
+              height: screenSize.height * 0.05,
             ),
             Text(
               "${_msgContext!["greetings"] ?? ""}",
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: Platform.isIOS ? 20.0 : 15.0,
-              ),
+              style: Theme.of(context).textTheme.bodyLarge,
             ),
           ],
         ),
@@ -249,6 +221,7 @@ class _NotificationsDetailScreenState extends State<NotificationsDetailScreen> {
     // Assessment rate payment
     if (_inbox!.msgType == '4') {
       String price = double.parse(_msgContext!["amount"]).toStringAsFixed(2);
+
       return SingleChildScrollView(
         padding: const EdgeInsets.only(
           left: 15,
@@ -259,20 +232,12 @@ class _NotificationsDetailScreenState extends State<NotificationsDetailScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(
-              height: 10,
-            ),
             Text(
               _inbox!.msgTitle,
-              textAlign: TextAlign.left,
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: Platform.isIOS ? 23.0 : 15.0,
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(context).textTheme.titleLarge,
             ),
             SizedBox(
-              height: 30,
+              height: screenSize.height * 0.05,
             ),
             InboxCell(
               label: "Sarawak ID:",
@@ -287,6 +252,7 @@ class _NotificationsDetailScreenState extends State<NotificationsDetailScreen> {
             InboxCell(
               label: "Transaction No.:",
               value: _msgContext!["transactionNo"] ?? "",
+              isSpaced: false,
             ),
             InboxCell(
               label: "Transaction Time:",
@@ -299,14 +265,11 @@ class _NotificationsDetailScreenState extends State<NotificationsDetailScreen> {
               isSpaced: false,
             ),
             SizedBox(
-              height: 20.0,
+              height: screenSize.height * 0.05,
             ),
             Text(
               "${_msgContext!["greetings"] ?? ""}",
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: Platform.isIOS ? 20.0 : 15.0,
-              ),
+              style: Theme.of(context).textTheme.bodyLarge,
             ),
           ],
         ),
@@ -379,74 +342,25 @@ class _NotificationsDetailScreenState extends State<NotificationsDetailScreen> {
     // Emergency Case is created
     if (_inbox!.msgType == '6') {
       return SingleChildScrollView(
-        padding: EdgeInsets.only(
-          left: 12,
-          right: 12,
-          top: 12,
+        padding: const EdgeInsets.only(
+          left: 15,
+          right: 15,
+          top: 15,
           bottom: 50,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(
-              height: 10,
-            ),
             Text(
               _inbox!.msgTitle,
-              textAlign: TextAlign.left,
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: Platform.isIOS ? 23.0 : 15.0,
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(context).textTheme.titleLarge,
             ),
-            if (_msgContext!["eventLatitude"] == "-1" ||
-                _msgContext!["eventLongitude"] == "-1")
-              SizedBox(
-                height: 30,
-              ),
-            if (_msgContext!["eventLatitude"] == "-1" ||
-                _msgContext!["eventLongitude"] == "-1")
-              Container(
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.info,
-                      color: Colors.red,
-                      size: Platform.isIOS ? 30 : 25,
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Container(
-                      width: screenSize.width * 0.7,
-                      child: Text(
-                        'Your location is unknown.\nYou will be contacted soon.',
-                        style: TextStyle(
-                          fontSize: Platform.isIOS ? 18 : 16,
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-                padding: const EdgeInsets.all(10.0),
-                decoration: BoxDecoration(
-                  color: Colors.red[100],
-                  border: Border.all(
-                    color: Colors.red,
-                    width: Platform.isIOS ? 3.0 : 2.0,
-                  ),
-                ),
-              ),
             SizedBox(
-              height: 30,
+              height: screenSize.height * 0.05,
             ),
             Text(
               _msgContext!["content"] ?? "",
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: Platform.isIOS ? 20.0 : 15.0,
-              ),
+              style: Theme.of(context).textTheme.bodyLarge,
             ),
             InboxCell(
               label: "Reported Date:",
@@ -460,16 +374,14 @@ class _NotificationsDetailScreenState extends State<NotificationsDetailScreen> {
             InboxCell(
               label: "Case Description:",
               value: "\n${_msgContext!["caseDescription"]}",
+              isSpaced: false,
             ),
             SizedBox(
-              height: 20.0,
+              height: screenSize.height * 0.05,
             ),
             Text(
               "${_msgContext!["greetings"] ?? ""}",
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: Platform.isIOS ? 20.0 : 15.0,
-              ),
+              style: Theme.of(context).textTheme.bodyLarge,
             ),
           ],
         ),

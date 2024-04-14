@@ -182,7 +182,7 @@ class _SubscriptionMapScreenState extends State<SubscriptionMapScreen> {
                   Container(height: 10), // Add some more space.
                   // Add a text widget with a long description for the sheet.
                   Text(
-                    'Currently, the location of cameras focuses around city of Kuching. It will be updated from time to time.',
+                    'Currently, the location of cameras spans across city of Kuching. It will be updated from time to time.',
                     style: TextStyle(
                         color: Colors.grey[600], // Set the text color.
                         fontSize: 16.0 // Set the text size.

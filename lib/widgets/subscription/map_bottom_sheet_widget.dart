@@ -4,12 +4,12 @@ import 'dart:ui' as ui;
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_citizenapp/arguments/subscription_video_screen_arguments.dart';
 import 'package:provider/provider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geolocator/geolocator.dart';
 
+import '../../arguments/subscription_video_screen_arguments.dart';
 import '../../providers/cctv_provider.dart';
 import '../../providers/location_provider.dart';
 import '../../models/cctv_model.dart';
@@ -78,7 +78,7 @@ class _MapBottomSheetWidgetState extends State<MapBottomSheetWidget> {
     }
   }
 
-  // TODO: use geolocator service to calculate the distance
+  // Use geolocator service to calculate the distance
   String getDistanceFromCoordinates(
     double startLatitude,
     double startLongitude,

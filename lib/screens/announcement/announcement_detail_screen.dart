@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:intl/intl.dart';
 
 import '../../models/announcement_model.dart';
 import '../../utils/app_localization.dart';
@@ -95,10 +96,15 @@ class _AnnouncementDetailScreenState extends State<AnnouncementDetailScreen> {
     }
   }
 
+  String formatDateTime(String dateTime) {
+    final DateFormat formatter = DateFormat("E, MMM d, yyyy");
+    final String formattedDate = formatter.format(DateTime.parse(dateTime));
+    return formattedDate;
+  }
+
   @override
   void initState() {
     super.initState();
-
     SchedulerBinding.instance.addPostFrameCallback((_) {
       // Accessing the arguments passed to the modal route
       arguments = ModalRoute.of(context)!.settings.arguments;
@@ -130,47 +136,21 @@ class _AnnouncementDetailScreenState extends State<AnnouncementDetailScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            if (photoCarousel.isNotEmpty)
-              SizedBox(
-                  height: screenSize.height * 0.3,
-                  child: Stack(
-                    children: <Widget>[
-                      PageView.builder(
-                        itemCount: photoCarousel.length,
-                        onPageChanged: (int currentPageNumber) {
-                          setState(() {
-                            pageNumber = currentPageNumber + 1;
-                          });
-                        },
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        itemBuilder: (ctx, idx) =>
-                            ImageNetworkHelper.imageNetworkBuilder(
-                          url: photoCarousel[idx],
-                          height: screenSize.height * 0.25,
-                          width: double.infinity,
-                          fit: BoxFit.fill,
-                        ),
-                      ),
-                      Positioned(
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        child: Chip(
-                          label: Text('$pageNumber/$totalNumber'),
-                        ),
-                      ),
-                    ],
-                  )),
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(
-                horizontal: 20.0,
-                vertical: 10.0,
+              padding: const EdgeInsets.only(
+                left: 20.0,
+                right: 20.0,
+                // bottom: 10.0,
+                top: 15.0,
               ),
               child: Text(
                 getAnnouncementTitle(),
                 textAlign: TextAlign.left,
-                style: Theme.of(context).textTheme.headlineSmall,
+                style: Theme.of(context)
+                    .textTheme
+                    .titleLarge!
+                    .copyWith(fontWeight: FontWeight.bold),
               ),
             ),
             arguments['isMajor']
@@ -182,62 +162,79 @@ class _AnnouncementDetailScreenState extends State<AnnouncementDetailScreen> {
                     ),
                     child: ListTile(
                       leading: iconPath == null
-                          ? Container(
-                              padding: const EdgeInsets.all(8.0),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(width: 0.5),
-                              ),
-                              child: const Icon(
-                                Icons.person_outline_rounded,
-                                color: Colors.black54,
-                                size: 25,
+                          ? CircleAvatar(
+                              radius: 23.0,
+                              child: Icon(
+                                Icons.person,
+                                color: Theme.of(context).colorScheme.primary,
+                                size: 28.0,
                               ),
                             )
-                          : Container(
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(width: 0.5),
-                              ),
-                              child: CircleAvatar(
-                                radius: 30.0,
-                                backgroundColor: Colors.transparent,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(30),
-                                  child: CachedNetworkImage(
-                                    imageUrl: iconPath!,
-                                  ),
+                          : CircleAvatar(
+                              backgroundColor:
+                                  Theme.of(context).colorScheme.background,
+                              radius: 23.0,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(30),
+                                child: CachedNetworkImage(
+                                  imageUrl: iconPath!,
                                 ),
                               ),
                             ),
                       title: Text(
-                        _announcement!.annAuthor,
-                        style: Theme.of(context).textTheme.bodyMedium,
+                        "By ${_announcement!.annAuthor}",
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyMedium!
+                            .copyWith(fontWeight: FontWeight.bold),
                       ),
-                      subtitle: Container(
-                        margin: const EdgeInsets.only(top: 5.0),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Text(
-                              _announcement!.annStartDate,
-                              style: TextStyle(
-                                fontSize: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium!
-                                    .fontSize,
-                                color: Colors.black54,
-                              ),
-                            ),
-                          ],
+                      subtitle: Text(
+                        "Published on ${formatDateTime(_announcement!.annStartDate)}",
+                        style: TextStyle(
+                          fontSize:
+                              Theme.of(context).textTheme.bodyMedium!.fontSize,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black54,
                         ),
                       ),
                     ),
                   ),
+            if (photoCarousel.isNotEmpty)
+              SizedBox(
+                height: screenSize.height * 0.3,
+                child: Stack(
+                  children: <Widget>[
+                    PageView.builder(
+                      itemCount: photoCarousel.length,
+                      onPageChanged: (int currentPageNumber) {
+                        setState(() {
+                          pageNumber = currentPageNumber + 1;
+                        });
+                      },
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      itemBuilder: (ctx, idx) =>
+                          ImageNetworkHelper.imageNetworkBuilder(
+                        url: photoCarousel[idx],
+                        height: screenSize.height * 0.25,
+                        width: double.infinity,
+                        fit: BoxFit.fill,
+                      ),
+                    ),
+                    Positioned(
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      child: Chip(
+                        label: Text('$pageNumber/$totalNumber'),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             Container(
-              padding: const EdgeInsets.symmetric(
+              padding: EdgeInsets.symmetric(
                 horizontal: 20.0,
-                vertical: 10.0,
+                vertical: photoCarousel.isNotEmpty ? 25.0 : 5.0,
               ),
               child: Linkify(
                 onOpen: (link) async {
@@ -245,10 +242,10 @@ class _AnnouncementDetailScreenState extends State<AnnouncementDetailScreen> {
                   await launchUrl(uri);
                 },
                 text: getAnnouncementContent(),
-                // textAlign: TextAlign.justify,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 18.0,
                   height: 1.7,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ),

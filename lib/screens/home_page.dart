@@ -93,7 +93,6 @@ class _HomePageState extends State<HomePage> {
       Map<String, dynamic> payResult = {};
       if (response['status'] == '200') {
         payResult = response['data'];
-        Provider.of<InboxProvider>(context, listen: false).refreshCount();
         Navigator.of(context).pop(true);
 
         // when success, can look for extra data

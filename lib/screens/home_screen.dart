@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_citizenapp/providers/inbox_provider.dart';
-import 'package:flutter_citizenapp/services/inbox_services.dart';
 import 'package:provider/provider.dart';
 import 'package:lottie/lottie.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 import '../providers/auth_provider.dart';
+import '../providers/inbox_provider.dart';
 import '../screens/home_page.dart';
 import '../screens/notifications/notifications_bottom_nav_screen.dart';
 import '../screens/profile/profile_bottom_nav_screen.dart';
@@ -45,19 +45,6 @@ class _HomeScreenState extends State<HomeScreen> {
       },
     );
   }
-
-  // Future<bool> deleteAllMessages() async {
-  //   try {
-  //     var response = await InboxServices().removeAll();
-  //     if (response["status"] == "200") {
-  //       return true;
-  //     }
-  //   } catch (e) {
-  //     print('deleteAllMessages error: ${e.toString()}');
-  //     return false;
-  //   }
-  //   return false;
-  // }
 
   Future<void> showDeleteAllBottomModal(Size screenSize) async {
     showModalBottomSheet(
@@ -168,6 +155,19 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         child: NavigationBar(
           onDestinationSelected: (int index) {
+            // Check for NotificationsBottomNavScreen (Page 3).
+            if (index == 2) {
+              _screens.removeAt(2);
+              // Pass a UniqueKey as key to force the widget lifecycle to start over.
+              _screens.insert(
+                2,
+                NotificationsBottomNavScreen(
+                  key: UniqueKey(),
+                  setNotificationsState: setNotificationsState,
+                ),
+              );
+            }
+
             setState(() {
               _currentPageIndex = index;
             });
@@ -398,12 +398,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 primary: false,
                 title: Column(
                   children: <Widget>[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Consumer<AuthProvider>(
-                          builder: (_, AuthProvider authProvider, __) {
-                            return Container(
+                    Consumer<AuthProvider>(
+                      builder: (_, AuthProvider authProvider, __) {
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Container(
                               padding: EdgeInsets.only(left: 10.0),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -427,41 +427,90 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 ],
                               ),
-                            );
-                          },
-                        ),
-                        Container(
-                          padding: const EdgeInsets.only(right: 10.0),
-                          child: Stack(
-                            alignment: Alignment.bottomRight,
-                            children: [
-                              CircleAvatar(
-                                radius: 25.0,
-                                child: Lottie.asset(
-                                  'assets/animations/lottie_profile.json',
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.11,
-                                  height:
-                                      MediaQuery.of(context).size.width * 0.11,
-                                  fit: BoxFit.fill,
-                                ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.only(right: 10.0),
+                              child: Stack(
+                                alignment: Alignment.bottomRight,
+                                children: [
+                                  authProvider.auth.profileImage != null &&
+                                          authProvider
+                                              .auth.profileImage!.isNotEmpty
+                                      ? ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(25.0),
+                                          child: CachedNetworkImage(
+                                            fit: BoxFit.cover,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.13,
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.13,
+                                            placeholder: (BuildContext context,
+                                                    String url) =>
+                                                Container(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .secondary,
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child:
+                                                  const CircularProgressIndicator
+                                                      .adaptive(
+                                                strokeWidth: 2.0,
+                                              ),
+                                            ),
+                                            imageUrl:
+                                                authProvider.auth.profileImage!,
+                                            errorWidget:
+                                                (context, url, error) =>
+                                                    Container(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .secondary,
+                                              child: const Icon(
+                                                Icons.error_outline,
+                                                color: Colors.red,
+                                              ),
+                                            ),
+                                          ),
+                                        )
+                                      : CircleAvatar(
+                                          radius: 25.0,
+                                          child: Lottie.asset(
+                                            'assets/animations/lottie_profile.json',
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.11,
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.11,
+                                            fit: BoxFit.fill,
+                                          ),
+                                        ),
+                                  Container(
+                                    padding: const EdgeInsets.all(3),
+                                    decoration: const BoxDecoration(
+                                      color: Colors.green,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Icon(
+                                      Icons.star,
+                                      color: Colors.white,
+                                      size: 10.5,
+                                    ),
+                                  )
+                                ],
                               ),
-                              Container(
-                                padding: const EdgeInsets.all(3),
-                                decoration: const BoxDecoration(
-                                  color: Colors.green,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: const Icon(
-                                  Icons.star,
-                                  color: Colors.white,
-                                  size: 10.5,
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                      ],
+                            ),
+                          ],
+                        );
+                      },
                     ),
                     const Divider(),
                     GestureDetector(

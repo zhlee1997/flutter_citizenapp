@@ -285,14 +285,14 @@ class _BillPaymentDetailScreenState extends State<BillPaymentDetailScreen> {
                           type == "Majlis Bandaraya Kuching Selatan" ||
                           type == "Dewan Bandaraya Kuching Utara") {
                         Fluttertoast.showToast(
-                          msg: 'QR scan coming soon',
+                          msg: 'Coming soon',
                         );
                         return;
                       }
-                      // Navigator.of(context).pushNamed(
-                      //   BillPaymentScanScreen.routeName,
-                      //   arguments: paymentDetail,
-                      // );
+                      Navigator.of(context).pushNamed(
+                        BillPaymentScanScreen.routeName,
+                        arguments: paymentDetail,
+                      );
                     },
                     child: Container(
                       height: screenSize.height * 0.06,
@@ -301,7 +301,7 @@ class _BillPaymentDetailScreenState extends State<BillPaymentDetailScreen> {
                       child: const Row(
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
-                          Icon(Icons.qr_code),
+                          Icon(Icons.qr_code_2_outlined),
                           SizedBox(
                             width: 10,
                           ),

@@ -55,6 +55,41 @@ class CCTVModelDetail {
   }
 }
 
+class CCTVListModel {
+  late String cctvId;
+  late String name;
+  late String location;
+  late String latitude;
+  late String longitude;
+  late String image;
+  late String updateTime;
+  late String liveUrl;
+
+  // model constructor
+  CCTVListModel({
+    required this.cctvId,
+    required this.name,
+    required this.location,
+    required this.latitude,
+    required this.longitude,
+    required this.image,
+    required this.updateTime,
+    required this.liveUrl,
+  });
+
+  // serialize from json
+  CCTVListModel.fromJson(Map<String, dynamic> json) {
+    cctvId = json["_id"];
+    name = json["label"];
+    location = json["location"];
+    latitude = json["latitude"];
+    longitude = json["latitude"];
+    image = json["image"];
+    updateTime = json["updateTime"];
+    liveUrl = json["liveUrl"];
+  }
+}
+
 class CCTVSnapshotModel {
   late String cctvId;
   late String imageUrl;

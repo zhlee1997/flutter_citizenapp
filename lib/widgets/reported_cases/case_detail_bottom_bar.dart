@@ -36,9 +36,9 @@ class CaseDetailBottomBar extends StatelessWidget {
               fontSize: Platform.isIOS ? 18.0 : 15.0,
             ),
           ),
-          const Divider(
-            color: Colors.grey,
-            thickness: 1,
+          Divider(
+            color: Colors.grey.shade400,
+            thickness: 0.5,
           )
         ],
       ),

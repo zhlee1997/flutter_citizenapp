@@ -100,17 +100,23 @@ class AuthServices {
   ///
   /// Receives [accessToken] as the access token
   /// Returns API Response object
-  Future<dynamic> updateProfileInfo() async {
-    final storage = new FlutterSecureStorage();
-    String? sarawakToken = await storage.read(key: 'sarawakToken');
+  Future<dynamic> updateProfileInfo({
+    String? sarawakToken,
+    required String memberId,
+    required String sarawakId,
+    required String ic,
+  }) async {
     if (sarawakToken != null) {
-      Map<String, dynamic> map = {
+      Map<String, dynamic> body = {
         'accessToken': sarawakToken,
+        'memberId': memberId,
+        'sarawakId': sarawakId,
+        'ic': ic,
       };
       try {
         var response = await _apiBaseHelper.post(
-          'member/update/info',
-          data: map,
+          'member/modifyById',
+          data: body,
         );
         print('updateProfileInfo API success: $response');
         return response;

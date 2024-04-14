@@ -1,20 +1,18 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
-import 'package:flutter_citizenapp/providers/settings_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 import '../../models/auth_model.dart';
-import '../../services/auth_services.dart';
 import '../../providers/auth_provider.dart';
 import '../../utils/app_localization.dart';
 import '../../utils/global_dialog_helper.dart';
 import '../../providers/subscription_provider.dart';
+import '../../providers/settings_provider.dart';
 
 class ProfileDetailsScreen extends StatefulWidget {
   static const String routeName = 'profile-details-screen';
@@ -35,10 +33,9 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
   String? _mobile;
   String? _address;
   String? _profileImage;
+  String? _identityNumber;
   late AuthModel _authData;
   String? _vipDueDate;
-
-  final AuthServices _authServices = AuthServices();
 
   /// Launch Sarawak ID Website when tap on 'Sarawak ID' link
   void _handleLaunchWebsite() {
@@ -51,7 +48,26 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
   Future<void> _refreshProfile() async {
     await GlobalDialogHelper().showAlertDialog(
       context: context,
-      yesButtonFunc: () {},
+      yesButtonFunc: () async {
+        try {
+          Navigator.of(context).pop();
+          GlobalDialogHelper().buildCircularProgressWithTextCenter(
+              context: context, message: "Refreshing Profile");
+          bool success = await Provider.of<AuthProvider>(context, listen: false)
+              .updateProfileInfoProvider();
+          if (success) {
+            Navigator.of(context).pop();
+            Fluttertoast.showToast(msg: "Profile refresh successfully");
+          } else {
+            Navigator.of(context).pop();
+            Fluttertoast.showToast(msg: "Unable to refresh profile");
+          }
+        } catch (e) {
+          print("_refreshProfile error: ${e.toString()}");
+          Navigator.of(context).pop();
+          Fluttertoast.showToast(msg: "Error in refreshing profile");
+        }
+      },
       title: "Refresh Profile",
       message:
           "Your profile information will be updated to the latest and old info may be replaced. Are you sure to proceed?",
@@ -127,6 +143,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
     _mobile = _authData.mobile;
     _address = _authData.address;
     _profileImage = _authData.profileImage;
+    _identityNumber = _authData.identityNumber;
     super.didChangeDependencies();
   }
 
@@ -184,22 +201,55 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                           Stack(
                             alignment: Alignment.bottomRight,
                             children: [
-                              CircleAvatar(
-                                radius: Platform.isIOS ? 32.5 : 32.5,
-                                backgroundColor: Theme.of(context).primaryColor,
-                                foregroundImage: _profileImage != null
-                                    ? NetworkImage("$_profileImage")
-                                    : null,
-                                child: _profileImage != null
-                                    ? null
-                                    : const CircleAvatar(
+                              _profileImage != null && _profileImage!.isNotEmpty
+                                  ? ClipRRect(
+                                      borderRadius: BorderRadius.circular(32.5),
+                                      child: CachedNetworkImage(
+                                        fit: BoxFit.cover,
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.18,
+                                        height:
+                                            MediaQuery.of(context).size.width *
+                                                0.18,
+                                        placeholder: (BuildContext context,
+                                                String url) =>
+                                            Container(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .secondary,
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: const CircularProgressIndicator
+                                              .adaptive(
+                                            strokeWidth: 2.0,
+                                          ),
+                                        ),
+                                        imageUrl: _profileImage!,
+                                        errorWidget: (context, url, error) =>
+                                            Container(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .secondary,
+                                          child: const Icon(
+                                            Icons.error_outline,
+                                            color: Colors.red,
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  : CircleAvatar(
+                                      radius: 32.5,
+                                      backgroundColor: Theme.of(context)
+                                          .colorScheme
+                                          .secondary,
+                                      child: const CircleAvatar(
                                         radius: 30,
                                         child: Icon(
-                                          Icons.person,
+                                          Icons.person_outline,
                                           size: 35,
                                         ),
                                       ),
-                              ),
+                                    ),
                               Container(
                                 padding: const EdgeInsets.all(4),
                                 decoration: const BoxDecoration(
@@ -221,7 +271,6 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                 ],
               ),
             ),
-            // HERE
             const SizedBox(
               height: 10,
             ),
@@ -328,6 +377,36 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                   ),
                   child: Text(
                     _username,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.symmetric(
+                vertical: 5.0,
+                horizontal: 10.0,
+              ),
+              child: ListTile(
+                minVerticalPadding: 15.0,
+                shape: RoundedRectangleBorder(
+                  side: BorderSide(
+                    color: Theme.of(context).primaryColor,
+                    width: 0.5,
+                  ),
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                title: const Text(
+                  "MyKad Number:",
+                ),
+                subtitle: Container(
+                  margin: EdgeInsets.only(
+                    top: screenSize.width * 0.015,
+                  ),
+                  child: Text(
+                    _identityNumber!,
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                     ),

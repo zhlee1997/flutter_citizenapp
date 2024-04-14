@@ -48,7 +48,7 @@ class BillPaymentInstallSPayBottomModal extends StatelessWidget {
           Image.asset("assets/images/pictures/spay/spay-not-installed-ad.jpeg"),
           const SizedBox(height: 5.0),
           Text(
-            "Note: Please install and login S Pay Global before able to proceed with the payment.",
+            "Please install and login S Pay Global before able to proceed with the payment.",
             style: Theme.of(context).textTheme.bodyMedium,
           ),
           const SizedBox(height: 10.0),

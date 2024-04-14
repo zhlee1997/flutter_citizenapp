@@ -5,10 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:installed_apps/installed_apps.dart';
 import 'package:path_provider/path_provider.dart';
-// import 'package:flutter/services.dart';
-// import 'package:dio/dio.dart';
 
 import '../utils/api_base_helper.dart';
+import '../config/app_config.dart';
+
+enum Flavor {
+  DEV,
+  STAGING,
+  PROD,
+}
 
 class GeneralHelper {
   /// Perform formatting of price input when in Bill Payment
@@ -85,36 +90,6 @@ class GeneralHelper {
     return "${directory.path}/$fileName";
   }
 
-  // save the mp4 video from asset to application document directory
-  // static Future<void> saveAssetVideoToFile() async {
-  //   var content = await rootBundle.load("assets/video/sioc.mp4");
-  //   final directory = await getApplicationDocumentsDirectory();
-  //   var file = File("${directory.path}/sioc.mp4");
-  //   file.writeAsBytesSync(content.buffer.asUint8List());
-  // }
-
-  /// Get adaptive text size for icons in home screen
-  /// According to device sreeen size
-  ///
-  /// Receives [t] as the text size
-  /// Returns adaptive text size
-  // static double getAdaptiveTextSize(
-  //   BuildContext context,
-  //   dynamic value,
-  // ) {
-  //   // 720 is medium screen height
-  //   return (value / 720) * MediaQuery.of(context).size.height;
-  // }
-
-  // static int getAdaptiveIconSize(
-  //   BuildContext context,
-  //   dynamic value,
-  // ) {
-  //   // 720 is medium screen height
-  //   double val = (value / 720) * MediaQuery.of(context).size.height;
-  //   return val.round();
-  // }
-
   /// Clear cache using GET method when accessing inbox
   ///
   /// Receives [operType] as the operation type
@@ -136,6 +111,23 @@ class GeneralHelper {
     } catch (e) {
       print('clearCache API fail: ${e.toString()}');
       throw e;
+    }
+  }
+
+  // https://pic.sioc.sma.gov.my/picture/20240409171742-804329712.jpg
+  static String flavorFormatImageUrl(String imageUrl, Flavor flavor) {
+    Uri uri = Uri.parse(imageUrl);
+    String path = uri.path;
+
+    if (flavor == Flavor.DEV) {
+      String newDomain = AppConfig().picBaseUrlDev;
+      return "$newDomain$path";
+    } else if (flavor == Flavor.STAGING) {
+      return "";
+    } else if (flavor == Flavor.PROD) {
+      return "";
+    } else {
+      return imageUrl;
     }
   }
 }

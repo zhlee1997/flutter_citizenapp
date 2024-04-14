@@ -33,16 +33,14 @@ class NotificationsBottomNavScreen extends StatefulWidget {
 
 class _NotificationsBottomNavScreenState
     extends State<NotificationsBottomNavScreen> with TickerProviderStateMixin {
-  late bool isLogin;
+  // Default: select Notifications Tab
   int selected = 1;
-  bool _isLoading = false;
+
   bool _noMoreData = false;
   List<InboxModel> _inboxes = [];
-  late bool _isInitLoading;
   late ScrollController _scrollController;
-  int _page = 1;
+  int _pageLocal = 1;
   late SnackBar snackBar;
-  late SnackBar allMessageSnackBar;
 
   bool _majorIsLoading = false;
   bool _majorNoMoreData = false;
@@ -74,6 +72,7 @@ class _NotificationsBottomNavScreenState
       );
     }
 
+    // modify message status
     try {
       if (inbox.msgReadStatus == "1") {
         return;
@@ -175,53 +174,12 @@ class _NotificationsBottomNavScreenState
     }
   }
 
-  /// Get inbox list when screen first renders
-  /// When infinite scrolling
-  /// Using queryPageList API
-  ///
-  /// Receives [page] as the number of pagination
-  Future<void> getNotifications(int page) async {
-    if (_isLoading) {
-      return;
-    }
-    _isLoading = true;
-    try {
-      var response = await InboxServices().queryInboxPageList('$page');
-      if (response['status'] == '200') {
-        var data = response['data']['list'] as List;
-        setState(() {
-          if (data.length < 20) {
-            _noMoreData = true;
-          }
-
-          if (page == 1) {
-            _inboxes = data.map((e) => InboxModel.fromJson(e)).toList();
-          } else {
-            _inboxes.addAll(data.map((e) => InboxModel.fromJson(e)).toList());
-          }
-        });
-      }
-      _isLoading = false;
-
-      if (_isInitLoading) {
-        setState(() {
-          _isInitLoading = false;
-        });
-      }
-    } catch (e) {
-      _isLoading = false;
-      print('getNotifications fail');
-      throw e;
-    }
-  }
-
   /// Pull to refresh notifications
   Future<void> _onRefresh() async {
     try {
-      _isInitLoading = true;
-      _page = 1;
-      _inboxes = [];
-      await getNotifications(_page);
+      _pageLocal = 1;
+      await Provider.of<InboxProvider>(context, listen: false)
+          .refreshNotificationsProvider();
     } catch (e) {
       print("onRefresh Notification error");
     }
@@ -237,8 +195,11 @@ class _NotificationsBottomNavScreenState
           var maxScroll = _scrollController.position.maxScrollExtent;
           var pixels = _scrollController.position.pixels;
           if (maxScroll == pixels && !_noMoreData) {
-            _page++;
-            getNotifications(_page);
+            _pageLocal++;
+            Provider.of<InboxProvider>(context, listen: false)
+                .setNotificationPage(_pageLocal);
+            Provider.of<InboxProvider>(context, listen: false)
+                .queryNotificationsProvider();
           }
         });
       });
@@ -254,34 +215,19 @@ class _NotificationsBottomNavScreenState
         });
       });
     getMajorAnnouncements(_majorPage);
+    Provider.of<InboxProvider>(context, listen: false)
+        .refreshNotificationsProvider();
   }
 
   @override
   void didChangeDependencies() {
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
-    isLogin = Provider.of<AuthProvider>(context).isAuth;
-    // to trigger notification page refresh
-    Provider.of<InboxProvider>(context).unreadMessageCount;
-    if (isLogin) {
-      _isInitLoading = true;
-      _page = 1;
-      _inboxes = [];
-      getNotifications(_page);
-    }
+    _inboxes = Provider.of<InboxProvider>(context).inboxes;
+    _noMoreData = Provider.of<InboxProvider>(context).noMoreData;
     snackBar = SnackBar(
       content: Text(AppLocalization.of(context)!.translate('message_deleted')!),
     );
-    allMessageSnackBar = SnackBar(content: Text("All messages deleted!"));
-    bool deleteAll = Provider.of<InboxProvider>(context).deleteAll;
-    print(deleteAll);
-  }
-
-  @override
-  void didUpdateWidget(covariant NotificationsBottomNavScreen oldWidget) {
-    // TODO: implement didUpdateWidget
-    super.didUpdateWidget(oldWidget);
-    print("hello2");
   }
 
   @override
@@ -294,7 +240,7 @@ class _NotificationsBottomNavScreenState
 
   @override
   Widget build(BuildContext context) {
-    return isLogin
+    return Provider.of<AuthProvider>(context).isAuth
         ? Container(
             padding: const EdgeInsets.all(10.0),
             child: Column(
@@ -370,63 +316,69 @@ class _NotificationsBottomNavScreenState
                 ),
                 Expanded(
                   child: selected == 0
-                      ? ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: _majorAnnouncements.length,
-                          itemBuilder: ((context, index) {
-                            return ListTile(
-                              onTap: () {
-                                Navigator.of(context).pushNamed(
-                                  AnnouncementDetailScreen.routeName,
-                                  arguments: {
-                                    'id': _majorAnnouncements[index].sid,
-                                    'isMajor': true
+                      ? _majorAnnouncements.length == 0
+                          ? GlobalDialogHelper().buildCenterNoData(
+                              context,
+                              message: "No major announcements",
+                            )
+                          : ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: _majorAnnouncements.length,
+                              itemBuilder: ((context, index) {
+                                return ListTile(
+                                  onTap: () {
+                                    Navigator.of(context).pushNamed(
+                                      AnnouncementDetailScreen.routeName,
+                                      arguments: {
+                                        'id': _majorAnnouncements[index].sid,
+                                        'isMajor': true
+                                      },
+                                    ).then((value) {
+                                      if (value == true) {
+                                        Navigator.of(context).pop();
+                                      }
+                                    });
                                   },
-                                ).then((value) {
-                                  if (value == true) {
-                                    Navigator.of(context).pop();
-                                  }
-                                });
-                              },
-                              leading: Container(
-                                width: 40,
-                                height: 40,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .inversePrimary
-                                      .withOpacity(0.7),
-                                ),
-                                child: Icon(
-                                  Icons.announcement_outlined,
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                              ),
-                              title: Text(
-                                _majorAnnouncements[index].title,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              subtitle: Text(
-                                _majorAnnouncements[index].description,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w300,
-                                ),
-                              ),
-                              trailing: Text(
-                                dateFormat.format(DateTime.parse(
-                                    _majorAnnouncements[index].date)),
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            );
-                          }),
-                        )
+                                  leading: Container(
+                                    width: 40,
+                                    height: 40,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .inversePrimary
+                                          .withOpacity(0.7),
+                                    ),
+                                    child: Icon(
+                                      Icons.announcement_outlined,
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                    ),
+                                  ),
+                                  title: Text(
+                                    _majorAnnouncements[index].title,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  subtitle: Text(
+                                    _majorAnnouncements[index].description,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w300,
+                                    ),
+                                  ),
+                                  trailing: Text(
+                                    dateFormat.format(DateTime.parse(
+                                        _majorAnnouncements[index].date)),
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                );
+                              }),
+                            )
                       : _inboxes.length == 0
                           ? Column(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -448,80 +400,97 @@ class _NotificationsBottomNavScreenState
                           : RefreshIndicator(
                               onRefresh: _onRefresh,
                               child: ListView.builder(
+                                physics: const AlwaysScrollableScrollPhysics(),
                                 controller: _scrollController,
-                                shrinkWrap: true,
-                                itemCount: _inboxes.length,
+                                // shrinkWrap: true,
+                                itemCount: _inboxes.length + 1,
                                 itemBuilder: ((context, index) {
-                                  return Slidable(
-                                    endActionPane: ActionPane(
-                                      motion: const StretchMotion(),
-                                      extentRatio: 0.3,
-                                      children: [
-                                        SlidableAction(
-                                          label: AppLocalization.of(context)!
-                                              .translate('delete')!,
-                                          backgroundColor: Colors.red,
-                                          icon: Icons.delete,
-                                          onPressed: (BuildContext context) {
-                                            remove(index);
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                    child: ListTile(
-                                      onTap: () {
-                                        // TODO: Get message detail
-                                        inboxRead(index);
+                                  if (_inboxes.length == index) {
+                                    return GlobalDialogHelper()
+                                        .buildLinearProgressIndicator(
+                                      context: context,
+                                      currentLength: _inboxes.length,
+                                      noMoreData: _noMoreData,
+                                      handleLoadMore: () async {
+                                        await Provider.of<InboxProvider>(
+                                                context,
+                                                listen: false)
+                                            .queryNotificationsProvider();
                                       },
-                                      leading: Badge(
-                                        isLabelVisible:
-                                            _inboxes[index].msgReadStatus ==
-                                                "0",
-                                        smallSize: 8.0,
-                                        child: Container(
-                                          width: 40,
-                                          height: 40,
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .inversePrimary
-                                                .withOpacity(0.7),
+                                    );
+                                  } else {
+                                    return Slidable(
+                                      endActionPane: ActionPane(
+                                        motion: const StretchMotion(),
+                                        extentRatio: 0.3,
+                                        children: [
+                                          SlidableAction(
+                                            label: AppLocalization.of(context)!
+                                                .translate('delete')!,
+                                            backgroundColor: Colors.red,
+                                            icon: Icons.delete,
+                                            onPressed: (BuildContext context) {
+                                              remove(index);
+                                            },
                                           ),
-                                          child: Icon(
-                                            Icons.payment,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .primary,
+                                        ],
+                                      ),
+                                      child: ListTile(
+                                        onTap: () {
+                                          // Get message detail
+                                          inboxRead(index);
+                                        },
+                                        leading: Badge(
+                                          isLabelVisible:
+                                              _inboxes[index].msgReadStatus ==
+                                                  "0",
+                                          smallSize: 8.0,
+                                          child: Container(
+                                            width: 40,
+                                            height: 40,
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .inversePrimary
+                                                  .withOpacity(0.7),
+                                            ),
+                                            // TODO: change icon accordingly
+                                            child: Icon(
+                                              Icons.payment,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .primary,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      title: Text(
-                                        _inboxes[index].msgTitle,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                      subtitle: Text(
-                                          _inboxes[index].msgType == "1"
-                                              ? json.decode(_inboxes[index]
-                                                  .msgContext)["content"]
-                                              : json.decode(_inboxes[index]
-                                                  .msgContext)["title"],
+                                        title: Text(
+                                          _inboxes[index].msgTitle,
                                           overflow: TextOverflow.ellipsis,
                                           style: const TextStyle(
-                                            fontWeight: FontWeight.w300,
-                                          )),
-                                      trailing: Text(
-                                        dateFormat.format(DateTime.parse(
-                                            _inboxes[index].createTime)),
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                        subtitle: Text(
+                                            _inboxes[index].msgType == "1"
+                                                ? json.decode(_inboxes[index]
+                                                    .msgContext)["content"]
+                                                : json.decode(_inboxes[index]
+                                                    .msgContext)["title"],
+                                            overflow: TextOverflow.ellipsis,
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.w300,
+                                            )),
+                                        trailing: Text(
+                                          dateFormat.format(DateTime.parse(
+                                              _inboxes[index].createTime)),
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  );
+                                    );
+                                  }
                                 }),
                               ),
                             ),

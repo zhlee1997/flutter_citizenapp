@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../screens/reported_cases/emergency_cases_screen.dart';
 import '../../providers/emergency_provider.dart';
+import '../../providers/inbox_provider.dart';
 
 class EmergencyFinishFullBottomModal extends StatelessWidget {
   const EmergencyFinishFullBottomModal({super.key});
@@ -43,6 +44,8 @@ class EmergencyFinishFullBottomModal extends StatelessWidget {
                 onPressed: () {
                   Provider.of<EmergencyProvider>(context, listen: false)
                       .resetProvider();
+                  Provider.of<InboxProvider>(context, listen: false)
+                      .refreshNotificationsProvider();
                   Navigator.of(context).pushNamedAndRemoveUntil(
                     EmergencyCasesScreen.routeName,
                     (route) => route.isFirst,
@@ -55,6 +58,8 @@ class EmergencyFinishFullBottomModal extends StatelessWidget {
                 onPressed: () {
                   Provider.of<EmergencyProvider>(context, listen: false)
                       .resetProvider();
+                  Provider.of<InboxProvider>(context, listen: false)
+                      .refreshNotificationsProvider();
                   Navigator.of(context)
                       .popUntil(ModalRoute.withName('home-page-screen'));
                 },

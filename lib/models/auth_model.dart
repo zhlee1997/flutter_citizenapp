@@ -3,6 +3,7 @@ class AuthModel {
   late String userName;
   late String fullName;
   String? identityNumber;
+  // TODO: Passport case
   String? passportNumber;
   String? email;
   String? mobile;
@@ -10,6 +11,7 @@ class AuthModel {
   late bool vipStatus;
   String? vipDueDate;
   String? profileImage;
+  // NOT USED
   String? numberOfUnreadMessages;
 
   // model constructor

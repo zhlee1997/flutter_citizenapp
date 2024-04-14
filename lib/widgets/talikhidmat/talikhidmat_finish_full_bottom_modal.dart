@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../screens/reported_cases/talikhidmat_cases_screen.dart';
 import '../../providers/talikhidmat_provider.dart';
+import '../../providers/inbox_provider.dart';
 
 class TalikhidmatFinishFullBottomModal extends StatelessWidget {
   const TalikhidmatFinishFullBottomModal({super.key});
@@ -43,6 +44,8 @@ class TalikhidmatFinishFullBottomModal extends StatelessWidget {
                 onPressed: () {
                   Provider.of<TalikhidmatProvider>(context, listen: false)
                       .resetProvider();
+                  Provider.of<InboxProvider>(context, listen: false)
+                      .refreshNotificationsProvider();
                   Navigator.of(context).pushNamedAndRemoveUntil(
                     TalikhidmatCasesScreen.routeName,
                     (route) => route.isFirst,
@@ -55,6 +58,8 @@ class TalikhidmatFinishFullBottomModal extends StatelessWidget {
                 onPressed: () {
                   Provider.of<TalikhidmatProvider>(context, listen: false)
                       .resetProvider();
+                  Provider.of<InboxProvider>(context, listen: false)
+                      .refreshNotificationsProvider();
                   Navigator.of(context)
                       .popUntil(ModalRoute.withName('home-page-screen'));
                 },

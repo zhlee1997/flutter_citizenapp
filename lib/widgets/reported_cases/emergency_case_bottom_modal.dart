@@ -1,7 +1,6 @@
-import 'dart:io' show Platform;
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 
 import '../../utils/app_localization.dart';
 import '../../providers/emergency_provider.dart';
@@ -54,6 +53,40 @@ class EmergencyCaseBottomModal extends StatelessWidget {
     );
   }
 
+  String formatEmergencyCaseCategory(String caseCategory) {
+    String status;
+    switch (caseCategory) {
+      case "0":
+        status = "Harassment";
+        break;
+      case "1":
+        status = "Fire/Rescue";
+        break;
+      case "2":
+        status = "Traffic Accident/Injuries";
+        break;
+      case "3":
+        status = "Theft/Robbery";
+        break;
+      case "4":
+        status = "Physical Violence";
+      case "5":
+        status = "Others";
+      default:
+        status = "Voice Recording";
+    }
+    return status;
+  }
+
+  String formatDateTime(String dateTime) {
+    if (dateTime.isNotEmpty) {
+      final DateFormat formatter = DateFormat("dd MMMM yyyy, hh:mma");
+      final String formattedDate = formatter.format(DateTime.parse(dateTime));
+      return formattedDate;
+    }
+    return dateTime;
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
@@ -61,13 +94,9 @@ class EmergencyCaseBottomModal extends StatelessWidget {
     return Column(
       children: <Widget>[
         GestureDetector(
-          onTap: () {
-            Navigator.of(context).pop();
-          },
+          onTap: () => Navigator.of(context).pop(),
           child: Container(
-            height: Platform.isIOS
-                ? screenSize.height * 0.06
-                : screenSize.height * 0.06,
+            height: screenSize.height * 0.06,
             width: double.infinity,
             padding: const EdgeInsets.only(
               top: 10,
@@ -76,7 +105,7 @@ class EmergencyCaseBottomModal extends StatelessWidget {
             ),
             decoration: BoxDecoration(
               color: Theme.of(context).primaryColor,
-              borderRadius: BorderRadius.only(
+              borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(20.0),
                 topRight: Radius.circular(20.0),
               ),
@@ -106,37 +135,45 @@ class EmergencyCaseBottomModal extends StatelessWidget {
           child: Consumer<EmergencyProvider>(
             builder: (_, caseData, __) {
               return ListView(
-                padding: const EdgeInsets.all(10.0),
+                padding: const EdgeInsets.all(15.0),
                 physics: const AlwaysScrollableScrollPhysics(),
                 children: <Widget>[
+                  buildCaseStatusContainer(
+                      caseData.reportedCaseDetail!.eventStatus!),
                   CaseDetailBottomBar(
                     label: AppLocalization.of(context)!.translate('case_id')!,
                     value:
                         caseData.reportedCaseDetail!.eventId!.substring(0, 10),
                   ),
-                  CaseDetailBottomBar(
-                    label: AppLocalization.of(context)!.translate('case_s')!,
-                    value: handleCaseStatus(
-                      caseData.reportedCaseDetail!.eventStatus != null
-                          ? caseData.reportedCaseDetail!.eventStatus!
-                          : "",
-                      context,
-                    ),
-                  ),
-                  CaseDetailBottomBar(
-                    label: AppLocalization.of(context)!.translate('date_sub')!,
-                    value: caseData.reportedCaseDetail!.createTime ?? "",
-                  ),
+                  // CaseDetailBottomBar(
+                  //   label: AppLocalization.of(context)!.translate('case_s')!,
+                  //   value: handleCaseStatus(
+                  //     caseData.reportedCaseDetail!.eventStatus != null
+                  //         ? caseData.reportedCaseDetail!.eventStatus!
+                  //         : "",
+                  //     context,
+                  //   ),
+                  // ),
                   CaseDetailBottomBar(
                     label: AppLocalization.of(context)!.translate('case_loca')!,
                     value:
                         '${AppLocalization.of(context)!.translate('latitude')!}: ${caseData.reportedCaseDetail!.eventLatitude ?? ""}\n${AppLocalization.of(context)!.translate('longitude')!}: ${caseData.reportedCaseDetail!.eventLongitude ?? ""}',
                   ),
                   CaseDetailBottomBar(
-                    label: AppLocalization.of(context)!.translate('request_d')!,
+                    label: "Case Category",
+                    value: formatEmergencyCaseCategory(
+                        caseData.reportedCaseDetail!.eventTargetUrgent ?? ""),
+                  ),
+                  CaseDetailBottomBar(
+                    label: "Case Message",
                     value: caseData.reportedCaseDetail!.eventDesc ?? "",
                   ),
-                  // TODO: Emergency -> show recording player
+                  CaseDetailBottomBar(
+                    label: AppLocalization.of(context)!.translate('date_sub')!,
+                    value: formatDateTime(
+                        caseData.reportedCaseDetail!.createTime ?? ""),
+                  ),
+                  // Emergency -> show recording player
                   const SizedBox(
                     height: 15.0,
                   ),
@@ -164,5 +201,58 @@ class EmergencyCaseBottomModal extends StatelessWidget {
         )
       ],
     );
+  }
+
+  Widget buildCaseStatusContainer(String caseStatus) {
+    switch (caseStatus) {
+      case "0":
+        return Container(
+          padding: const EdgeInsets.all(4.0),
+          decoration: BoxDecoration(
+            color: Colors.red[100],
+            borderRadius: const BorderRadius.all(Radius.circular(5.0)),
+          ),
+          child: Text(
+            "NEW",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.red[800],
+            ),
+          ),
+        );
+      case "1":
+        return Container(
+          padding: const EdgeInsets.all(4.0),
+          decoration: BoxDecoration(
+            color: Colors.yellow[100],
+            borderRadius: const BorderRadius.all(Radius.circular(5.0)),
+          ),
+          child: Text(
+            "PENDING",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.yellow[800],
+            ),
+          ),
+        );
+      default:
+        return Container(
+          padding: const EdgeInsets.all(4.0),
+          decoration: BoxDecoration(
+            color: Colors.green[100],
+            borderRadius: const BorderRadius.all(Radius.circular(5.0)),
+          ),
+          child: Text(
+            "RESOLVED",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.green[800],
+            ),
+          ),
+        );
+    }
   }
 }

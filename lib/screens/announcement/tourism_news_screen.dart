@@ -140,49 +140,37 @@ class _TourismNewsScreenState extends State<TourismNewsScreen> {
                     ),
                   ),
                 ),
-                SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    childCount: _news.length,
-                    (context, index) {
+                SliverPadding(
+                  padding: EdgeInsets.all(8.0),
+                  sliver: SliverList.separated(
+                    itemCount: _news.length,
+                    itemBuilder: (context, index) {
                       AnnouncementModel news = _news[index];
                       List<AttachmentDtoList> tourismPhoto = news
                           .attachmentDtoList
                           .where((photo) => photo.attFileType == '2')
                           .toList();
-                      return Card(
-                        elevation: 3.0,
-                        margin: EdgeInsets.only(
-                          top: index == 0 ? 10.0 : 7.5,
-                          bottom: index == 19 ? 30.0 : 7.5,
-                          left: 10.0,
-                          right: 10.0,
-                        ),
+                      return Container(
+                        margin: EdgeInsets.only(top: 10.0),
                         child: ListTile(
-                          leading: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 3.0),
-                            child: SizedBox(
-                              width: screenSize.width * 0.22,
-                              height: screenSize.width * 0.22,
-                              child: tourismPhoto.isNotEmpty
-                                  ? Image.network(
-                                      tourismPhoto[0].attFilePath,
-                                      fit: BoxFit.cover,
-                                    )
-                                  : Image.asset(
-                                      "assets/images/icon/sioc.png",
-                                      fit: BoxFit.cover,
-                                    ),
-                            ),
+                          leading: SizedBox(
+                            width: screenSize.width * 0.25,
+                            height: screenSize.width * 0.25,
+                            child: tourismPhoto.isNotEmpty
+                                ? Image.network(
+                                    tourismPhoto[0].attFilePath,
+                                    fit: BoxFit.cover,
+                                  )
+                                : Image.asset(
+                                    "assets/images/icon/sioc.png",
+                                    fit: BoxFit.cover,
+                                  ),
                           ),
                           title: Text(
                             getAnnouncementTitle(index),
-                            maxLines: 3,
+                            maxLines: 2,
                             overflow: TextOverflow.ellipsis,
-                          ),
-                          trailing: Icon(
-                            Icons.arrow_forward,
-                            color: Theme.of(context).colorScheme.primary,
-                            size: 15.0,
+                            style: Theme.of(context).textTheme.titleSmall,
                           ),
                           onTap: () {
                             // navigate to announcement detail screen
@@ -191,6 +179,9 @@ class _TourismNewsScreenState extends State<TourismNewsScreen> {
                         ),
                       );
                     },
+                    separatorBuilder: (context, index) => const Divider(
+                      thickness: 0.5,
+                    ),
                   ),
                 )
               ],

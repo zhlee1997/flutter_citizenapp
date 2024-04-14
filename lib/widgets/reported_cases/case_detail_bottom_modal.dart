@@ -1,13 +1,12 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 
 import './case_detail_bottom_bar.dart';
-import './case_detail_attachments.dart';
+import './talikhidmat_attachment_full_bottom_modal.dart';
+// import './case_detail_attachments.dart';
 import '../../providers/talikhidmat_provider.dart';
 import '../../utils/app_localization.dart';
-import './talikhidmat_attachment_full_bottom_modal.dart';
 import '../../models/case_model.dart';
 
 class CaseDetailBottomModal extends StatefulWidget {
@@ -24,23 +23,23 @@ class _CaseDetailBottomModalState extends State<CaseDetailBottomModal> {
   ///
   /// Receives [caseStatus] as the case status code
   /// Returns case status
-  String handleCaseStatus(String caseStatus) {
-    String status;
-    switch (caseStatus) {
-      case "0":
-        status = AppLocalization.of(context)!.translate('new')!;
-        break;
-      case "1":
-        status = AppLocalization.of(context)!.translate('pending')!;
-        break;
-      case "2":
-        status = AppLocalization.of(context)!.translate('resolved')!;
-        break;
-      default:
-        status = '';
-    }
-    return status;
-  }
+  // String handleCaseStatus(String caseStatus) {
+  //   String status;
+  //   switch (caseStatus) {
+  //     case "0":
+  //       status = AppLocalization.of(context)!.translate('new')!;
+  //       break;
+  //     case "1":
+  //       status = AppLocalization.of(context)!.translate('pending')!;
+  //       break;
+  //     case "2":
+  //       status = AppLocalization.of(context)!.translate('resolved')!;
+  //       break;
+  //     default:
+  //       status = '';
+  //   }
+  //   return status;
+  // }
 
   Future<void> handleTalikhidmatFullBottomModal(
     int numberOfAttachment,
@@ -61,56 +60,71 @@ class _CaseDetailBottomModalState extends State<CaseDetailBottomModal> {
     );
   }
 
+  String formatDateTime(String dateTime) {
+    if (dateTime.isNotEmpty) {
+      final DateFormat formatter = DateFormat("dd MMMM yyyy, hh:mma");
+      final String formattedDate = formatter.format(DateTime.parse(dateTime));
+      return formattedDate;
+    }
+    return dateTime;
+  }
+
+  String formatCaseCategory(String caseCategory) {
+    switch (caseCategory) {
+      case "1":
+        return "Complaint";
+      case "2":
+        return "Request for Service";
+      case "3":
+        return "Compliment";
+      case "4":
+        return "Enquiry";
+      default:
+        return "Suggestion";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
 
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         GestureDetector(
-          onTap: () {
-            Navigator.of(context).pop();
-          },
+          onTap: () => Navigator.of(context).pop(),
           child: Container(
-            height: Platform.isIOS
-                ? screenSize.height * 0.06
-                : screenSize.height * 0.06,
+            height: screenSize.height * 0.06,
             width: double.infinity,
             padding: const EdgeInsets.only(
               top: 10,
               bottom: 10,
               left: 25,
-              right: 25,
+              right: 10,
             ),
             decoration: BoxDecoration(
               color: Theme.of(context).primaryColor,
-              borderRadius: BorderRadius.only(
+              borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(20.0),
                 topRight: Radius.circular(20.0),
               ),
             ),
             child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    Text(
-                      AppLocalization.of(context)!.translate('case_d')!,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: Colors.white,
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 5,
-                    ),
-                    const Icon(
-                      Icons.arrow_drop_down_circle_outlined,
-                      size: 20.0,
-                      color: Colors.white,
-                    ),
-                  ],
+                Text(
+                  AppLocalization.of(context)!.translate('case_d')!,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(
+                  width: 5,
+                ),
+                const Icon(
+                  Icons.arrow_drop_down_circle_outlined,
+                  size: 20.0,
+                  color: Colors.white,
                 ),
               ],
             ),
@@ -120,23 +134,21 @@ class _CaseDetailBottomModalState extends State<CaseDetailBottomModal> {
           child: Consumer<TalikhidmatProvider>(
             builder: (_, TalikhidmatProvider caseData, __) {
               return ListView(
-                padding: const EdgeInsets.all(10.0),
+                padding: const EdgeInsets.all(15.0),
                 children: <Widget>[
+                  buildCaseStatusContainer(
+                      caseData.reportedCaseDetail!.eventStatus!),
                   CaseDetailBottomBar(
                     label: AppLocalization.of(context)!.translate('case_id')!,
                     value: caseData.reportedCaseDetail!.talikhidmatCaseId ?? "",
                   ),
-                  CaseDetailBottomBar(
-                    label: AppLocalization.of(context)!.translate('case_s')!,
-                    value: handleCaseStatus(
-                        caseData.reportedCaseDetail!.eventStatus != null
-                            ? caseData.reportedCaseDetail!.eventStatus!
-                            : ""),
-                  ),
-                  CaseDetailBottomBar(
-                    label: AppLocalization.of(context)!.translate('date_sub')!,
-                    value: caseData.reportedCaseDetail!.createTime ?? "",
-                  ),
+                  // CaseDetailBottomBar(
+                  //   label: AppLocalization.of(context)!.translate('case_s')!,
+                  //   value: handleCaseStatus(
+                  //       caseData.reportedCaseDetail!.eventStatus != null
+                  //           ? caseData.reportedCaseDetail!.eventStatus!
+                  //           : ""),
+                  // ),
                   CaseDetailBottomBar(
                     label: AppLocalization.of(context)!.translate('case_loca')!,
                     value: caseData.reportedCaseDetail!.eventLocation != ""
@@ -144,14 +156,23 @@ class _CaseDetailBottomModalState extends State<CaseDetailBottomModal> {
                         : '${AppLocalization.of(context)!.translate('latitude')!}: ${caseData.reportedCaseDetail!.eventLatitude ?? ""}\n${AppLocalization.of(context)!.translate('longitude')!}: ${caseData.reportedCaseDetail!.eventLatitude ?? ""}',
                   ),
                   CaseDetailBottomBar(
-                    label: AppLocalization.of(context)!.translate('request_d')!,
+                    label: "Case Category",
+                    value: formatCaseCategory(
+                        caseData.reportedCaseDetail!.eventType ?? ""),
+                  ),
+                  CaseDetailBottomBar(
+                    label: "Case Message",
                     value: caseData.reportedCaseDetail!.eventDesc ?? "",
+                  ),
+                  CaseDetailBottomBar(
+                    label: AppLocalization.of(context)!.translate('date_sub')!,
+                    value: formatDateTime(
+                        caseData.reportedCaseDetail!.createTime ?? ""),
                   ),
                   const SizedBox(
                     height: 15.0,
                   ),
-                  // TODO: temp condition
-                  // TODO: Talikhidmat -> show attachement
+                  // Talikhidmat -> show attachement
                   if (caseData.reportCaseAttachmentList.isNotEmpty)
                     OutlinedButton.icon(
                       onPressed: () => handleTalikhidmatFullBottomModal(
@@ -166,9 +187,6 @@ class _CaseDetailBottomModalState extends State<CaseDetailBottomModal> {
                         ),
                       ),
                     ),
-                  // CaseDetailAttachments(
-                  //   imageList: caseData.reportCaseAttachmentList,
-                  // ),
                   const SizedBox(
                     height: 50,
                   )
@@ -179,5 +197,58 @@ class _CaseDetailBottomModalState extends State<CaseDetailBottomModal> {
         )
       ],
     );
+  }
+
+  Widget buildCaseStatusContainer(String caseStatus) {
+    switch (caseStatus) {
+      case "0":
+        return Container(
+          padding: const EdgeInsets.all(4.0),
+          decoration: BoxDecoration(
+            color: Colors.red[100],
+            borderRadius: const BorderRadius.all(Radius.circular(5.0)),
+          ),
+          child: Text(
+            "NEW",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.red[800],
+            ),
+          ),
+        );
+      case "1":
+        return Container(
+          padding: const EdgeInsets.all(4.0),
+          decoration: BoxDecoration(
+            color: Colors.yellow[100],
+            borderRadius: const BorderRadius.all(Radius.circular(5.0)),
+          ),
+          child: Text(
+            "PENDING",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.yellow[800],
+            ),
+          ),
+        );
+      default:
+        return Container(
+          padding: const EdgeInsets.all(4.0),
+          decoration: BoxDecoration(
+            color: Colors.green[100],
+            borderRadius: const BorderRadius.all(Radius.circular(5.0)),
+          ),
+          child: Text(
+            "RESOLVED",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.green[800],
+            ),
+          ),
+        );
+    }
   }
 }

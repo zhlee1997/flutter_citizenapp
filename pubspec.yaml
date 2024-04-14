@@ -81,6 +81,7 @@ dependencies:
   flutter_polyline_points: ^2.0.0
   flutter_slidable: ^3.1.0
   audio_waveforms: ^1.0.5
+  mobile_scanner: ^4.0.1
 
 dev_dependencies:
   flutter_test:
