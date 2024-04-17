@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../models/announcement_model.dart';
 import '../../services/announcement_services.dart';
@@ -17,7 +18,6 @@ class TourismNewsScreen extends StatefulWidget {
 }
 
 class _TourismNewsScreenState extends State<TourismNewsScreen> {
-  var _showBackToTopButton = false;
   var _isLoading = false;
   late bool _isInitLoading;
 
@@ -160,6 +160,12 @@ class _TourismNewsScreenState extends State<TourismNewsScreen> {
                                 ? Image.network(
                                     tourismPhoto[0].attFilePath,
                                     fit: BoxFit.cover,
+                                    errorBuilder: (context, url, error) =>
+                                        SvgPicture.asset(
+                                      "assets/images/svg/undraw_page_not_found.svg",
+                                      fit: BoxFit.cover,
+                                      semanticsLabel: 'Not Found Logo',
+                                    ),
                                   )
                                 : Image.asset(
                                     "assets/images/icon/sioc.png",

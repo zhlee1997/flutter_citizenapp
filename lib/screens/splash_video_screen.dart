@@ -14,7 +14,6 @@ import '../providers/announcement_provider.dart';
 
 import './home_screen.dart';
 import './onboarding_screen.dart';
-// import '../utils/general_helper.dart';
 import '../utils/app_constant.dart';
 import '../utils/notification/push_notification.dart';
 

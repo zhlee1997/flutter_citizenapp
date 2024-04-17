@@ -155,6 +155,10 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         child: NavigationBar(
           onDestinationSelected: (int index) {
+            if (index == _currentPageIndex) {
+              return;
+            }
+
             // Check for NotificationsBottomNavScreen (Page 3).
             if (index == 2) {
               _screens.removeAt(2);

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../screens/announcement/announcement_detail_screen.dart';
 
@@ -62,6 +63,11 @@ class HomepageTourismCard extends StatelessWidget {
                     : Image.network(
                         imageUrl,
                         fit: BoxFit.cover,
+                        errorBuilder: (context, url, error) => SvgPicture.asset(
+                          "assets/images/svg/undraw_page_not_found.svg",
+                          fit: BoxFit.cover,
+                          semanticsLabel: 'Not Found Logo',
+                        ),
                       ),
               ),
             ),

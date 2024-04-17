@@ -373,8 +373,53 @@ class AuthProvider with ChangeNotifier {
         sarawakId: sarawakId,
         ic: ic,
       );
-      if (response["status"] == "200") return true;
-      // notifyListeners();
+      if (response["status"] == "200") {
+        var refreshToken = response["data"]["refToken"] as String?;
+        if (refreshToken != sarawakToken) {
+          storage.write(
+            key: 'sarawakToken',
+            value: refreshToken ?? '',
+          );
+          print("refreshToken success. Able to update from SarawakID");
+        } else {
+          print("refreshToken similar. Unable to update from SarawakID");
+        }
+
+        _auth = AuthModel(
+          address: response['data']['address'] ?? '',
+          mobile: response['data']['mobile'] ?? '',
+          email: response['data']['email'] ?? '',
+          profileImage: GeneralHelper.flavorFormatImageUrl(
+            response['data']['facePhoto'] ?? '',
+            _flavor,
+          ),
+          identityNumber: response['data']['ic'] ?? '',
+          sId: response['data']['memberId'] ?? '',
+          userName: response['data']['sarawakId'] ?? '',
+          fullName: response['data']['nickName'] ?? '',
+          vipStatus: response['data']['vipStatus'] == "1",
+          vipDueDate: response['data']['vipDueDate'] ?? '',
+        );
+        prefs.setString("userEmail", response['data']['email'] ?? '');
+        prefs.setString(
+          "profileImage",
+          GeneralHelper.flavorFormatImageUrl(
+            response['data']['facePhoto'] ?? '',
+            _flavor,
+          ),
+        );
+        prefs.setString("identityNumber", response['data']['ic'] ?? '');
+        prefs.setString("userFullName", response['data']['nickName'] ?? '');
+        prefs.setString("userId", response['data']['memberId'] ?? '');
+        prefs.setString("userMobileNo", response['data']['mobile'] ?? '');
+        prefs.setString("userShortName", response['data']['sarawakId'] ?? '');
+        prefs.setString("userResAddr1", response['data']['address'] ?? '');
+        prefs.setBool("vipStatus", response['data']['vipStatus'] == "1");
+        prefs.setString("vipDueDate", response['data']['vipDueDate'] ?? '');
+
+        notifyListeners();
+        return true;
+      }
     } catch (e) {
       print('updateProfileInfoProvider fail: ${e.toString()}');
       throw e;

@@ -31,7 +31,8 @@ class InboxProvider with ChangeNotifier {
       var response = await InboxServices().queryInboxPageList('$_page');
       if (response['status'] == '200') {
         var data = response['data']['list'] as List;
-        if (data.length < 20) {
+        var total = response['data']['total'] as int;
+        if (total < (20 * _page)) {
           _noMoreData = true;
         }
 

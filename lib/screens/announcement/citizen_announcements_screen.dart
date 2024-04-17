@@ -1,7 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../models/announcement_model.dart';
 import '../../services/announcement_services.dart';
@@ -21,7 +20,6 @@ class CitizenAnnouncementsScreen extends StatefulWidget {
 
 class _CitizenAnnouncementsScreenState
     extends State<CitizenAnnouncementsScreen> {
-  var _showBackToTopButton = false;
   var _isLoading = false;
   late bool _isInitLoading;
 
@@ -146,7 +144,7 @@ class _CitizenAnnouncementsScreenState
                   ),
                 ),
                 SliverPadding(
-                  padding: EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(8.0),
                   sliver: SliverList.separated(
                     itemCount: _announcements.length,
                     itemBuilder: (context, index) {
@@ -157,7 +155,7 @@ class _CitizenAnnouncementsScreenState
                           .toList();
 
                       return Container(
-                        margin: EdgeInsets.only(top: 10.0),
+                        margin: const EdgeInsets.only(top: 10.0),
                         child: ListTile(
                           leading: SizedBox(
                             width: screenSize.width * 0.25,
@@ -166,6 +164,12 @@ class _CitizenAnnouncementsScreenState
                                 ? Image.network(
                                     citizenPhoto[0].attFilePath,
                                     fit: BoxFit.cover,
+                                    errorBuilder: (context, url, error) =>
+                                        SvgPicture.asset(
+                                      "assets/images/svg/undraw_page_not_found.svg",
+                                      fit: BoxFit.cover,
+                                      semanticsLabel: 'Not Found Logo',
+                                    ),
                                   )
                                 : Image.asset(
                                     "assets/images/icon/sioc.png",
@@ -189,7 +193,7 @@ class _CitizenAnnouncementsScreenState
                       thickness: 0.5,
                     ),
                   ),
-                )
+                ),
               ],
             ),
     );

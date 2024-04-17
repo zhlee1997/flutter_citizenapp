@@ -1,6 +1,6 @@
 **Privacy Policy**
 
-Chinasoft built the CitizenApp app as a Free app. This SERVICE is provided by Chinasoft at no cost and is intended for use as is.
+SMA built the CitizenApp app as a Free app. This SERVICE is provided by SMA at no cost and is intended for use as is.
 
 This page is used to inform visitors regarding my policies with the collection, use, and disclosure of Personal Information if anyone decided to use my Service.
 

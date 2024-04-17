@@ -9,7 +9,7 @@ import './app_exception.dart';
 import '../config/app_config.dart';
 
 class ApiBaseHelper {
-  final String _baseUrl = AppConfig().baseUrl;
+  final String _baseUrl = AppConfig().baseUrlTest;
 
   Future<dynamic> get(
     String url, {

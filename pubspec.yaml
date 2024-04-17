@@ -171,6 +171,7 @@ flutter:
     - assets/images/svg/no_data.svg
     - assets/images/svg/undraw_bus_stop.svg
     - assets/images/svg/undraw_online.svg
+    - assets/images/svg/undraw_page_not_found.svg
 
     # images/svg/onboarding
     - assets/images/svg/onboarding/

@@ -138,6 +138,8 @@ class _HomePageState extends State<HomePage> {
 
   /// Pull to refresh announcement and tourism information
   Future<void> _onRefresh() async {
+    await Provider.of<SubscriptionProvider>(context, listen: false)
+        .queryAndSetIsSubscriptionEnabled();
     await getCitizenAnn();
     await getTourismAnn();
   }

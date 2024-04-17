@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class HomepageCitizenCard extends StatelessWidget {
   final bool useDefaultImage;
@@ -18,6 +19,8 @@ class HomepageCitizenCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -32,15 +35,21 @@ class HomepageCitizenCard extends StatelessWidget {
               child: useDefaultImage
                   ? Image.asset(
                       imageUrl,
-                      height: 120,
+                      height: screenSize.width * 0.33,
                       width: double.infinity,
-                      fit: BoxFit.contain,
+                      fit: BoxFit.cover,
                     )
                   : Image.network(
                       imageUrl,
-                      height: 120,
+                      height: screenSize.width * 0.33,
                       width: double.infinity,
-                      fit: BoxFit.contain,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, url, error) => SvgPicture.asset(
+                        "assets/images/svg/undraw_page_not_found.svg",
+                        height: screenSize.width * 0.33,
+                        fit: BoxFit.cover,
+                        semanticsLabel: 'Not Found Logo',
+                      ),
                     ),
             ),
             Container(

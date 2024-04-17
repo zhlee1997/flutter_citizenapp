@@ -16,6 +16,12 @@ class SubscriptionProvider with ChangeNotifier {
   String _subscribeId = "";
   String get subscribeId => _subscribeId;
 
+  String _frequencyLimit = "";
+  String get frequencyLimit => _frequencyLimit;
+
+  String _playbackDuration = "";
+  String get playbackDuration => _playbackDuration;
+
   late String _paymentItem;
   String get paymentItem => _paymentItem;
 
@@ -48,7 +54,13 @@ class SubscriptionProvider with ChangeNotifier {
         List filteredList = subscribeList
             .where((element) => element["subscribeCode"] == "Default")
             .toList();
+        // assign subscribedId
         _subscribeId = filteredList[0]["subscribeId"];
+        // frequency limit
+        _frequencyLimit = filteredList[0]["frequencyLimit"];
+        // playback duration
+        _playbackDuration = filteredList[0]["playbackDuration"];
+        // check whether subscription service enabled
         if (filteredList[0]["subscriptionEnable"] == "0") {
           _isSubscriptionEnabled = false;
         } else {

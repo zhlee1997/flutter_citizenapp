@@ -1,6 +1,6 @@
 **Dasar Privasi**
 
-Chinasoft membina apl CitizenApp sebagai apl Percuma. PERKHIDMATAN ini disediakan oleh Chinasoft tanpa sebarang kos dan bertujuan untuk digunakan sebagaimana adanya.
+SMA membina apl CitizenApp sebagai apl Percuma. PERKHIDMATAN ini disediakan oleh SMA tanpa sebarang kos dan bertujuan untuk digunakan sebagaimana adanya.
 
 Halaman ini digunakan untuk memaklumkan pelawat mengenai dasar saya dengan pengumpulan, penggunaan dan pendedahan Maklumat Peribadi jika sesiapa memutuskan untuk menggunakan Perkhidmatan saya.
 

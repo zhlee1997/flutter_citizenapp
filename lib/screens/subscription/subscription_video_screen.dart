@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -28,13 +27,25 @@ class _SubscriptionVideoScreenState extends State<SubscriptionVideoScreen>
   final FijkPlayer player = FijkPlayer();
 
   late Timer timer;
+  late Timer videoTimer;
   late SubscriptionVideoScreenArguments args;
   TabController? tabController;
   List<CCTVSnapshotModel> _listCCTVSnapshotModel = [];
   late CCTVModelDetail? otherCCTVDetail;
+  late StreamSubscription _videoStreamSubscription;
 
-  void _timer() {
+  void _setTimer() {
     timer = Timer(const Duration(seconds: 7), () {
+      Fluttertoast.showToast(
+        msg: "Still loading... Please wait",
+        toastLength: Toast.LENGTH_LONG,
+        timeInSecForIosWeb: 5,
+      );
+    });
+  }
+
+  void _setVideoTimer(int minutes) {
+    videoTimer = Timer(Duration(seconds: minutes), () {
       Fluttertoast.showToast(
         msg: "Still loading... Please wait",
         toastLength: Toast.LENGTH_LONG,
@@ -77,7 +88,7 @@ class _SubscriptionVideoScreenState extends State<SubscriptionVideoScreen>
           label: "Retry",
           onPressed: (() {
             player.reset(); // player will be in state 0
-            _timer();
+            _setTimer();
           }),
         ),
         duration: const Duration(minutes: 1),
@@ -241,8 +252,29 @@ class _SubscriptionVideoScreenState extends State<SubscriptionVideoScreen>
       );
       player.addListener(_fijkValueListener);
     });
-    _timer();
+    _setTimer();
+    // TODO: get other cameras => API
     getOtherCamerasList();
+    // TODO: playback duration
+    _videoStreamSubscription =
+        player.onCurrentPosUpdate.listen((Duration duration) {
+      if (duration.inSeconds == 10) {
+        player.release();
+        Fluttertoast.cancel();
+        timer.cancel();
+
+        final videoSnackBar = SnackBar(
+          content: const Text('10-min playing duration reached.'),
+          action: SnackBarAction(
+            label: "Back",
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          duration: const Duration(minutes: 1),
+        );
+
+        ScaffoldMessenger.of(context).showSnackBar(videoSnackBar);
+      }
+    });
   }
 
   @override
