@@ -9,12 +9,6 @@ import 'package:path_provider/path_provider.dart';
 import '../utils/api_base_helper.dart';
 import '../config/app_config.dart';
 
-enum Flavor {
-  DEV,
-  STAGING,
-  PROD,
-}
-
 class GeneralHelper {
   /// Perform formatting of price input when in Bill Payment
   ///
@@ -110,24 +104,37 @@ class GeneralHelper {
       return false;
     } catch (e) {
       print('clearCache API fail: ${e.toString()}');
-      throw e;
+      return false;
+      // throw e;
     }
   }
 
   // https://pic.sioc.sma.gov.my/picture/20240409171742-804329712.jpg
-  static String flavorFormatImageUrl(String imageUrl, Flavor flavor) {
-    Uri uri = Uri.parse(imageUrl);
-    String path = uri.path;
+  static String flavorFormatImageUrl(String imageUrl) {
+    Flavor flavor = AppConfig.picFlavor;
 
-    if (flavor == Flavor.DEV) {
-      String newDomain = AppConfig().picBaseUrlDev;
-      return "$newDomain$path";
-    } else if (flavor == Flavor.STAGING) {
-      return "";
-    } else if (flavor == Flavor.PROD) {
-      return "";
+    if (imageUrl.isNotEmpty) {
+      Uri uri = Uri.parse(imageUrl);
+      String path = uri.path;
+      if (path.isNotEmpty) {
+        if (flavor == Flavor.dev) {
+          String newDomain = AppConfig().picBaseUrlDev;
+          return "$newDomain$path";
+        } else if (flavor == Flavor.test) {
+          String newDomain = AppConfig().picBaseUrlTest;
+          return "$newDomain$path";
+        } else if (flavor == Flavor.staging) {
+          return "";
+        } else if (flavor == Flavor.prod) {
+          return "";
+        } else {
+          return "";
+        }
+      } else {
+        return "";
+      }
     } else {
-      return imageUrl;
+      return "";
     }
   }
 }

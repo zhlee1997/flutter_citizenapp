@@ -67,11 +67,15 @@ class InboxProvider with ChangeNotifier {
   /// When submitting cases
   /// Using queryCnt API
   Future<void> refreshCount() async {
-    await GeneralHelper.clearCache('message');
-    var response = await InboxServices().queryCnt();
-    if (response['status'] == '200') {
-      _unreadMessageCount = response['data'];
-      notifyListeners();
+    try {
+      await GeneralHelper.clearCache('message');
+      var response = await InboxServices().queryCnt();
+      if (response['status'] == '200') {
+        _unreadMessageCount = response['data'];
+        notifyListeners();
+      }
+    } catch (e) {
+      print("refreshCount error: ${e.toString()}");
     }
   }
 

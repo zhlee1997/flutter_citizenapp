@@ -404,6 +404,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: <Widget>[
                     Consumer<AuthProvider>(
                       builder: (_, AuthProvider authProvider, __) {
+                        print(authProvider.auth.profileImage);
                         return Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[

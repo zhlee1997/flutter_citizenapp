@@ -12,6 +12,7 @@ import 'package:geolocator/geolocator.dart';
 import '../../arguments/subscription_video_screen_arguments.dart';
 import '../../providers/cctv_provider.dart';
 import '../../providers/location_provider.dart';
+import '../../providers/subscription_provider.dart';
 import '../../models/cctv_model.dart';
 import '../../utils/app_localization.dart';
 import '../../utils/global_dialog_helper.dart';
@@ -35,6 +36,7 @@ class _MapBottomSheetWidgetState extends State<MapBottomSheetWidget> {
   Uint8List? imageByteData;
 
   late CCTVProvider cctvProvider;
+  late SubscriptionProvider subscriptionProvider;
   late Timer timer;
 
   double _endLatitude = 0;
@@ -98,6 +100,8 @@ class _MapBottomSheetWidgetState extends State<MapBottomSheetWidget> {
   @override
   void didChangeDependencies() async {
     super.didChangeDependencies();
+    subscriptionProvider =
+        Provider.of<SubscriptionProvider>(context, listen: false);
     cctvProvider = Provider.of<CCTVProvider>(context, listen: false);
     LocationProvider locationProvider = Provider.of<LocationProvider>(context);
     if (locationProvider.currentLocation != null) {
@@ -246,6 +250,10 @@ class _MapBottomSheetWidgetState extends State<MapBottomSheetWidget> {
                   ),
                 ),
               ),
+              Text(
+                "Each video session is ${subscriptionProvider.playbackDuration} minutes",
+                style: Theme.of(context).textTheme.labelSmall,
+              ),
               const SizedBox(
                 height: 20.0,
               ),
@@ -311,7 +319,11 @@ class _MapBottomSheetWidgetState extends State<MapBottomSheetWidget> {
                       ),
                     ),
                   ),
-                )
+                ),
+                Text(
+                  "Each video session is ${subscriptionProvider.playbackDuration} minutes",
+                  style: Theme.of(context).textTheme.labelSmall,
+                ),
               ],
             );
           }
@@ -412,6 +424,10 @@ class _MapBottomSheetWidgetState extends State<MapBottomSheetWidget> {
                     ),
                   ),
                 ),
+              ),
+              Text(
+                "Each video session is ${subscriptionProvider.playbackDuration} minutes",
+                style: Theme.of(context).textTheme.labelSmall,
               ),
               const SizedBox(
                 height: 20.0,

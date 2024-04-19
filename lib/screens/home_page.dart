@@ -27,7 +27,7 @@ import '../screens/bill_payment/bill_payment_result_screen.dart';
 
 import '../providers/announcement_provider.dart';
 import '../providers/auth_provider.dart';
-import '../providers/inbox_provider.dart';
+import '../providers/location_provider.dart';
 import '../providers/subscription_provider.dart';
 import '../services/announcement_services.dart';
 import '../services/subscription_services.dart';
@@ -56,6 +56,9 @@ class _HomePageState extends State<HomePage> {
   List<AnnouncementModel> citizenAnnouncements = [];
   List<AnnouncementModel> tourismAnnouncements = [];
   int numberOfRequestLeft = 0;
+
+  double latitude = 0;
+  double longitude = 0;
 
   // Define the date format
   DateFormat dateFormat = DateFormat('dd MMMM yyyy');
@@ -291,7 +294,39 @@ class _HomePageState extends State<HomePage> {
     await Permission.location.onDeniedCallback(() {
       // Your code
     }).onGrantedCallback(() async {
-      Navigator.of(context).pushNamed(EmergencyScreen.routeName);
+      Provider.of<LocationProvider>(context, listen: false)
+          .getCurrentLocation()
+          .then((position) async {
+        if ((latitude != 0 && longitude != 0) ||
+            (position!.latitude != 0 && position.longitude != 0)) {
+          Navigator.of(context).pushNamed(EmergencyScreen.routeName);
+        } else {
+          await showDialog<bool>(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text('Require GPS to access'),
+                  content: const Text(
+                      "GPS location is not captured by your device somehow. Kindly check the location settings of your device in order to access."),
+                  actions: <Widget>[
+                    TextButton(
+                      child: const Text('Open Settings'),
+                      onPressed: () {
+                        Navigator.pop(context, false);
+                        openAppSettings();
+                      },
+                    ),
+                    TextButton(
+                      child: const Text('Cancel'),
+                      onPressed: () {
+                        Navigator.pop(context, false);
+                      },
+                    ),
+                  ],
+                );
+              });
+        }
+      });
 
       // if (numberOfRequestLeft != 0) {
       //   await _globalDialogHelper.showAlertDialog(
@@ -496,6 +531,8 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timestamp) async {
       getMajorAnn();
+      Provider.of<LocationProvider>(context, listen: false)
+          .getCurrentLocation();
     });
     _paymentStreamSubscription = eventChannel.receiveBroadcastStream().listen(
           _onData,
@@ -512,6 +549,8 @@ class _HomePageState extends State<HomePage> {
     isSubscribed = Provider.of<AuthProvider>(context).auth.vipStatus;
     isSubscription = Provider.of<SubscriptionProvider>(context).isSubscription;
     vipDueDate = Provider.of<AuthProvider>(context).auth.vipDueDate;
+    latitude = Provider.of<LocationProvider>(context).latitude;
+    longitude = Provider.of<LocationProvider>(context).longitude;
   }
 
   @override

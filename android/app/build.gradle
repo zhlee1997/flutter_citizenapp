@@ -51,7 +51,7 @@ android {
         applicationId "com.sioc.sma.flutter_citizenapp"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        minSdkVersion 21
+        minSdkVersion 24
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
@@ -83,6 +83,20 @@ android {
                     'proguard-rules.pro'
         }
     }
+
+    flavorDimensions "default"
+
+    productFlavors {
+        prod {
+            resValue "string", "app_name", "CitizenApp"
+        }
+
+        ut {
+            resValue "string", "app_name", "CitizenApp-test"
+            applicationIdSuffix ".test"
+        }
+    }
+
     repositories {
         flatDir {
             dirs 'libs'

@@ -73,6 +73,7 @@ class BusDetailMapBottom extends StatelessWidget {
               borderRadius: BorderRadius.circular(20),
             ),
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 if (currentValue != 0 &&
@@ -108,8 +109,8 @@ class BusDetailMapBottom extends StatelessWidget {
                   child: Text(
                     stationName,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: Platform.isIOS ? 20.0 : 20.0,
+                    style: const TextStyle(
+                      fontSize: 20.0,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -150,9 +151,9 @@ class BusDetailMapBottom extends StatelessWidget {
                                   dateString: stationDetailList[0].arrivalTime,
                                   format: 'HH : mm',
                                 ),
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontWeight: FontWeight.bold,
-                            fontSize: Platform.isIOS ? 20.0 : 20.0,
+                            fontSize: 20.0,
                           ),
                         ),
                       )
@@ -183,19 +184,16 @@ class BusDetailMapBottom extends StatelessWidget {
                                 dateString: stationDetailList[1].arrivalTime,
                                 format: 'HH : mm',
                               ),
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontWeight: FontWeight.w500,
-                          fontSize: Platform.isIOS ? 20.0 : 20.0,
+                          fontSize: 20.0,
                         ),
                       ),
                     )
                   ],
                 ),
-                const SizedBox(
-                  height: 5,
-                ),
                 SizedBox(
-                  height: screenSize.height * 0.06,
+                  // height: screenSize.height * 0.06,
                   width: screenSize.width * 0.9,
                   child: ElevatedButton(
                     onPressed: () => launchMapApp(context),
@@ -206,12 +204,7 @@ class BusDetailMapBottom extends StatelessWidget {
                         SizedBox(
                           width: 10,
                         ),
-                        Text(
-                          "Open Google Map",
-                          style: TextStyle(
-                            fontSize: 16,
-                          ),
-                        )
+                        Text("Google Maps")
                       ],
                     ),
                   ),
@@ -237,8 +230,8 @@ class BusDetailMapBottom extends StatelessWidget {
     if (currentValue == 0 && routeName == 'DS') {
       return Positioned(
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(40.0),
-          child: Container(
+          borderRadius: BorderRadius.circular(20.0),
+          child: SizedBox(
             width: 220,
             height: 120,
             child: Image.asset(
@@ -251,8 +244,8 @@ class BusDetailMapBottom extends StatelessWidget {
     } else if (currentValue == busStationList.length - 1 && routeName == 'DS') {
       return Positioned(
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(40.0),
-          child: Container(
+          borderRadius: BorderRadius.circular(20.0),
+          child: SizedBox(
             width: 220,
             height: 120,
             child: Image.asset(
@@ -265,8 +258,8 @@ class BusDetailMapBottom extends StatelessWidget {
     } else if (currentValue == 0 && routeName == 'SD') {
       return Positioned(
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(40.0),
-          child: Container(
+          borderRadius: BorderRadius.circular(20.0),
+          child: SizedBox(
             width: 220,
             height: 120,
             child: Image.asset(
@@ -279,8 +272,8 @@ class BusDetailMapBottom extends StatelessWidget {
     } else if (currentValue == busStationList.length - 1 && routeName == 'SD') {
       return Positioned(
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(40.0),
-          child: Container(
+          borderRadius: BorderRadius.circular(20.0),
+          child: SizedBox(
             width: 220,
             height: 120,
             child: Image.asset(

@@ -13,7 +13,6 @@ import "../utils/general_helper.dart";
 
 class AuthProvider with ChangeNotifier {
   // TODO: to configure flavor
-  Flavor _flavor = Flavor.DEV;
   AuthServices _authServices = AuthServices();
   NotificationServices _notificationServices = NotificationServices();
 
@@ -174,9 +173,7 @@ class AuthProvider with ChangeNotifier {
           mobile: response['data']['mobile'] ?? '',
           email: response['data']['email'] ?? '',
           profileImage: GeneralHelper.flavorFormatImageUrl(
-            response['data']['facePhoto'] ?? '',
-            _flavor,
-          ),
+              response['data']['facePhoto'] ?? ''),
           identityNumber: response['data']['ic'] ?? '',
           sId: response['data']['memberId'] ?? '',
           userName: response['data']['sarawakId'] ?? '',
@@ -188,9 +185,7 @@ class AuthProvider with ChangeNotifier {
         prefs.setString(
           "profileImage",
           GeneralHelper.flavorFormatImageUrl(
-            response['data']['facePhoto'] ?? '',
-            _flavor,
-          ),
+              response['data']['facePhoto'] ?? ''),
         );
         prefs.setString("identityNumber", response['data']['ic'] ?? '');
         prefs.setString("userFullName", response['data']['nickName'] ?? '');
@@ -306,7 +301,8 @@ class AuthProvider with ChangeNotifier {
               address: prefs.getString('userResAddr1') ?? '',
               mobile: prefs.getString('userMobileNo') ?? '',
               email: prefs.getString('userEmail') ?? '',
-              profileImage: prefs.getString('profileImage') ?? '',
+              profileImage: GeneralHelper.flavorFormatImageUrl(
+                  prefs.getString('profileImage') ?? ''),
               identityNumber: prefs.getString('identityNumber') ?? '',
               sId: prefs.getString('userId') ?? '',
               userName: prefs.getString('userShortName') ?? '',
@@ -319,7 +315,8 @@ class AuthProvider with ChangeNotifier {
             address: prefs.getString('userResAddr1') ?? '',
             mobile: prefs.getString('userMobileNo') ?? '',
             email: prefs.getString('userEmail') ?? '',
-            profileImage: prefs.getString('profileImage') ?? '',
+            profileImage: GeneralHelper.flavorFormatImageUrl(
+                prefs.getString('profileImage') ?? ''),
             identityNumber: prefs.getString('identityNumber') ?? '',
             sId: prefs.getString('userId') ?? '',
             userName: prefs.getString('userShortName') ?? '',
@@ -390,9 +387,7 @@ class AuthProvider with ChangeNotifier {
           mobile: response['data']['mobile'] ?? '',
           email: response['data']['email'] ?? '',
           profileImage: GeneralHelper.flavorFormatImageUrl(
-            response['data']['facePhoto'] ?? '',
-            _flavor,
-          ),
+              response['data']['facePhoto'] ?? ''),
           identityNumber: response['data']['ic'] ?? '',
           sId: response['data']['memberId'] ?? '',
           userName: response['data']['sarawakId'] ?? '',
@@ -404,9 +399,7 @@ class AuthProvider with ChangeNotifier {
         prefs.setString(
           "profileImage",
           GeneralHelper.flavorFormatImageUrl(
-            response['data']['facePhoto'] ?? '',
-            _flavor,
-          ),
+              response['data']['facePhoto'] ?? ''),
         );
         prefs.setString("identityNumber", response['data']['ic'] ?? '');
         prefs.setString("userFullName", response['data']['nickName'] ?? '');

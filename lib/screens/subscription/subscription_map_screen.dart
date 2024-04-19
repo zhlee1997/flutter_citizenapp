@@ -123,38 +123,42 @@ class _SubscriptionMapScreenState extends State<SubscriptionMapScreen> {
 
   /// Displays the markers of CCTV on Google Map when screen first renders
   Future<void> _renderMarker() async {
-    // TODO: vms/getCameraList => API
-    bool success = await Provider.of<CCTVProvider>(context, listen: false)
-        .getCctvCoordinatesProvider();
-    if (success) {
-      List<CCTVModel> cctvModel =
-          Provider.of<CCTVProvider>(context, listen: false).cctvModel;
+    try {
+      // TODO: vms/getCameraList => API
+      bool success = await Provider.of<CCTVProvider>(context, listen: false)
+          .getCctvCoordinatesProvider();
+      if (success) {
+        List<CCTVModel> cctvModel =
+            Provider.of<CCTVProvider>(context, listen: false).cctvModel;
 
-      final Uint8List markerIcon =
-          await getBytesFromAsset('assets/images/icon/cctv.png', 80);
-      cctvModel.forEach((cctv) {
-        setState(() {
-          _markers.add(
-            Marker(
-              markerId: MarkerId(cctv.cctvId),
-              position: LatLng(
-                convertStringToDouble(cctv.latitude),
-                convertStringToDouble(cctv.longitude),
+        final Uint8List markerIcon =
+            await getBytesFromAsset('assets/images/icon/cctv.png', 80);
+        cctvModel.forEach((cctv) {
+          setState(() {
+            _markers.add(
+              Marker(
+                markerId: MarkerId(cctv.cctvId),
+                position: LatLng(
+                  convertStringToDouble(cctv.latitude),
+                  convertStringToDouble(cctv.longitude),
+                ),
+                icon: BitmapDescriptor.fromBytes(markerIcon),
+                onTap: () async {
+                  setState(() {
+                    _isError = false;
+                  });
+                  await onPressCctvIcon(cctv);
+                },
               ),
-              icon: BitmapDescriptor.fromBytes(markerIcon),
-              onTap: () async {
-                setState(() {
-                  _isError = false;
-                });
-                await onPressCctvIcon(cctv);
-              },
-            ),
-          );
+            );
+          });
         });
-      });
-      setState(() {
-        _isLoading = false;
-      });
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      print("renderMarker error: ${e.toString()}");
     }
   }
 

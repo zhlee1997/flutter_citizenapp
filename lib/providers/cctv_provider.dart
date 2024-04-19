@@ -32,10 +32,11 @@ class CCTVProvider with ChangeNotifier {
         _cctvModel = cctvData.map((e) => CCTVModel.fromJson(e)).toList();
         return true;
       }
-      return false;
     } catch (e) {
-      throw e;
+      print("getCctvCoordinatesProvider error: ${e.toString()}");
+      // throw e;
     }
+    return false;
   }
 
   /// Get the CCTV detail and live URL when selecting on a CCTV

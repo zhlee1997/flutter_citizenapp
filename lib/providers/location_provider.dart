@@ -5,6 +5,12 @@ class LocationProvider with ChangeNotifier {
   Position? _currentLocation;
   Position? get currentLocation => _currentLocation;
 
+  double _latitude = 0;
+  double get latitude => _latitude;
+
+  double _longitude = 0;
+  double get longitude => _longitude;
+
   /// Determine the current position of the device.
   ///
   /// When the location services are not enabled or permissions
@@ -62,13 +68,21 @@ class LocationProvider with ChangeNotifier {
   /// When submitting cases
   Future<Position?> getCurrentLocation() async {
     Position position = await _determinePosition();
+
     if (position.latitude.isFinite && position.longitude.isFinite) {
       _currentLocation = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high);
+        desiredAccuracy: LocationAccuracy.high,
+      );
+      if (_currentLocation != null) {
+        _latitude = _currentLocation!.latitude;
+        _longitude = _currentLocation!.longitude;
+        notifyListeners();
+        return _currentLocation;
+      }
     } else {
       _currentLocation = null;
     }
     notifyListeners();
-    return _currentLocation;
+    return null;
   }
 }

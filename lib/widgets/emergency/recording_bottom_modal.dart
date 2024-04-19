@@ -1,13 +1,20 @@
 import 'dart:ui' as ui;
 import 'dart:typed_data';
 import 'dart:io';
+import 'dart:async';
 
+import 'package:ffmpeg_kit_flutter/session_state.dart';
 import 'package:flutter/material.dart';
 import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:provider/provider.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:ffmpeg_kit_flutter/ffmpeg_kit.dart';
+import 'package:ffmpeg_kit_flutter/return_code.dart';
+import 'package:ffmpeg_kit_flutter/session.dart';
+import 'package:ffmpeg_kit_flutter/statistics.dart';
+import 'package:ffmpeg_kit_flutter/log.dart';
 
 import '../../utils/global_dialog_helper.dart';
 import '../../services/upload_services.dart';
@@ -37,11 +44,49 @@ class _RecordingBottomModalState extends State<RecordingBottomModal> {
   late StopWatchTimer _stopWatchTimer;
   late StopWatchTimer _stopWatchRecordingTimer;
 
+  Future<String> _convertFile(String inputPath) async {
+    String outputPath = inputPath.substring(0, inputPath.length - 4);
+    String outputFile = "";
+
+    Completer<String> completer = Completer<String>(); // Create a Completer
+
+    FFmpegKit.executeAsync('-i $inputPath $outputPath.wav',
+        (Session session) async {
+      // CALLED WHEN SESSION IS EXECUTED
+      final returnCode = await session.getReturnCode();
+
+      if (ReturnCode.isSuccess(returnCode)) {
+        print("success");
+        final state = await session.getState();
+        if (state == SessionState.completed) {
+          print("converted audio path: $outputPath.wav");
+          outputFile = "$outputPath.wav";
+          completer.complete(outputFile);
+        }
+
+        // SUCCESS
+      } else if (ReturnCode.isCancel(returnCode)) {
+        print("cancel");
+
+        // CANCEL
+      } else {
+        print("error");
+
+        // ERROR
+      }
+    }, (Log log) {
+      // CALLED WHEN SESSION PRINTS LOGS
+      print(log.getMessage());
+    }, (Statistics statistics) {
+      // CALLED WHEN SESSION GENERATES STATISTICS
+    });
+
+    return completer.future;
+  }
+
   Future<void> startRecording() async {
     try {
-      await recorderController.record(
-          // path: 'path',
-          ); // Record (path is optional)
+      await recorderController.record(); // Record (path is optional)
     } catch (e) {
       print("startRecording error: ${e.toString()}");
     }
@@ -59,12 +104,10 @@ class _RecordingBottomModalState extends State<RecordingBottomModal> {
         await recorderController.stop(); // Stop recording and get the path
     print("audio path: $path");
     if (path != null) {
-      // close the voice recording bottom modal
-      // Navigator.of(context).pop();
-      await _uploadRecording(path);
+      _convertFile(path).then((output) => _uploadRecording(output).then((_) =>
+          // pop() the screen and currentStep +1 to go next step
+          widget.handleProceedNext()));
     }
-    // pop() the screen and currentStep +1 to go next step
-    widget.handleProceedNext();
   }
 
   Future<void> _uploadRecording(String audioPath) async {

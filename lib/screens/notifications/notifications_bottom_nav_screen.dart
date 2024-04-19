@@ -366,7 +366,7 @@ class _NotificationsBottomNavScreenState
                                               .withOpacity(0.7),
                                         ),
                                         child: Icon(
-                                          Icons.announcement_outlined,
+                                          Icons.notification_important_outlined,
                                           color: Theme.of(context)
                                               .colorScheme
                                               .primary,
@@ -466,23 +466,18 @@ class _NotificationsBottomNavScreenState
                                                   "0",
                                               smallSize: 8.0,
                                               child: Container(
-                                                width: 40,
-                                                height: 40,
-                                                decoration: BoxDecoration(
-                                                  shape: BoxShape.circle,
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .inversePrimary
-                                                      .withOpacity(0.7),
-                                                ),
-                                                // TODO: change icon accordingly
-                                                child: Icon(
-                                                  Icons.payment,
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .primary,
-                                                ),
-                                              ),
+                                                  width: 40,
+                                                  height: 40,
+                                                  decoration: BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .inversePrimary
+                                                        .withOpacity(0.7),
+                                                  ),
+                                                  // TODO: change icon accordingly
+                                                  child: buildNotificationsIcon(
+                                                      _inboxes[index].msgType)),
                                             ),
                                             title: Text(
                                               _inboxes[index].msgTitle,
@@ -546,5 +541,45 @@ class _NotificationsBottomNavScreenState
               ],
             ),
           );
+  }
+
+  Icon buildNotificationsIcon(String msgType) {
+    switch (msgType) {
+      case "1":
+        return Icon(
+          Icons.feedback_outlined,
+          color: Theme.of(context).colorScheme.primary,
+        );
+      case "2":
+        return Icon(
+          Icons.sos_outlined,
+          color: Theme.of(context).colorScheme.primary,
+        );
+      case "3":
+        return Icon(
+          Icons.sos_outlined,
+          color: Theme.of(context).colorScheme.primary,
+        );
+      case "4":
+        return Icon(
+          Icons.receipt_long_outlined,
+          color: Theme.of(context).colorScheme.primary,
+        );
+      case "5":
+        return Icon(
+          Icons.subscriptions,
+          color: Theme.of(context).colorScheme.primary,
+        );
+      case "6":
+        return Icon(
+          Icons.sos_outlined,
+          color: Theme.of(context).colorScheme.primary,
+        );
+      default:
+        return Icon(
+          Icons.notifications,
+          color: Theme.of(context).colorScheme.primary,
+        );
+    }
   }
 }

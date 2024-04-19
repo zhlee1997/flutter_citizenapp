@@ -14,40 +14,44 @@ class AnnouncementProvider with ChangeNotifier {
   /// Using queryPageList API
   Future<void> queryandSetMajorAnnouncementProvider(
       BuildContext context) async {
-    final f = DateFormat('yyyy-MM-dd');
-    var response = await AnnouncementServices().queryPageList(
-      '1',
-      annType: '3',
-      nowTime: f.format(DateTime.now()),
-    );
+    try {
+      final f = DateFormat('yyyy-MM-dd');
+      var response = await AnnouncementServices().queryPageList(
+        '1',
+        annType: '3',
+        nowTime: f.format(DateTime.now()),
+      );
 
-    if (response['status'] == '200') {
-      var data = response['data']['list'] as List;
-      List announcements =
-          data.map((e) => AnnouncementModel.fromJson(e)).toList();
+      if (response['status'] == '200') {
+        var data = response['data']['list'] as List;
+        List announcements =
+            data.map((e) => AnnouncementModel.fromJson(e)).toList();
 
-      List<MajorAnnouncementModel> majorAnnouncementList = [];
-      announcements.forEach((element) {
-        var m = MajorAnnouncementModel(
-          sid: element.annId,
-          image: element.attachmentDtoList.length > 0
-              ? element.attachmentDtoList[0].attFilePath.toString()
-              : '',
-          title: AnnouncementModel.getAnnouncementTitle(
-            context,
-            element,
-            isMajorAnnouncement: true,
-          ),
-          description: AnnouncementModel.getAnnouncementContent(
-            context,
-            element,
-            isMajorAnnouncement: true,
-          ),
-        );
-        majorAnnouncementList.add(m);
-      });
-      _majorAnnouncementList = majorAnnouncementList;
-      notifyListeners();
+        List<MajorAnnouncementModel> majorAnnouncementList = [];
+        announcements.forEach((element) {
+          var m = MajorAnnouncementModel(
+            sid: element.annId,
+            image: element.attachmentDtoList.length > 0
+                ? element.attachmentDtoList[0].attFilePath.toString()
+                : '',
+            title: AnnouncementModel.getAnnouncementTitle(
+              context,
+              element,
+              isMajorAnnouncement: true,
+            ),
+            description: AnnouncementModel.getAnnouncementContent(
+              context,
+              element,
+              isMajorAnnouncement: true,
+            ),
+          );
+          majorAnnouncementList.add(m);
+        });
+        _majorAnnouncementList = majorAnnouncementList;
+        notifyListeners();
+      }
+    } catch (e) {
+      print("queryandSetMajorAnnouncementProvider error: ${e.toString()}");
     }
   }
 }

@@ -13,22 +13,26 @@ class OnboardingScreen extends StatelessWidget {
   const OnboardingScreen({super.key});
 
   Future<void> _handlePermissions(BuildContext context) async {
-    // You can request multiple permissions at once.
-    // TODO: Open Camera permission
-    // TODO: Access to photo gallery permission
-    Map<Permission, PermissionStatus> statuses = await [
-      Permission.location,
-      Permission.microphone,
-      Permission.notification,
-      Permission.camera,
-      Permission.photos,
-    ].request();
-    print("Location permission: ${statuses[Permission.location]}");
-    print("Microphone permission: ${statuses[Permission.microphone]}");
-    print("Notification permission: ${statuses[Permission.notification]}");
-    print("Camera permission: ${statuses[Permission.camera]}");
-    print("Photo permission: ${statuses[Permission.photos]}");
-    Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
+    try {
+      // You can request multiple permissions at once.
+      // TODO: Open Camera permission
+      // TODO: Access to photo gallery permission
+      Map<Permission, PermissionStatus> statuses = await [
+        Permission.location,
+        Permission.microphone,
+        Permission.notification,
+        Permission.camera,
+        Permission.photos,
+      ].request();
+      print("Location permission: ${statuses[Permission.location]}");
+      print("Microphone permission: ${statuses[Permission.microphone]}");
+      print("Notification permission: ${statuses[Permission.notification]}");
+      print("Camera permission: ${statuses[Permission.camera]}");
+      print("Photo permission: ${statuses[Permission.photos]}");
+      Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
+    } catch (e) {
+      print("handlePermission: ${e.toString()}");
+    }
   }
 
   @override

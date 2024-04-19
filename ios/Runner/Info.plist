@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Flutter Citizenapp</string>
+	<string>$(PRODUCT_NAME)</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -55,9 +55,11 @@
 	<key>NSCameraUsageDescription</key>
 	<string>Please allow this permision, to take photo for form submission</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>detect current location</string>
+	<string>to capture user current location</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>detect current location</string>
+	<string>to capture user current location</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>to capture user current location</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>This permission is required for voice recording</string>
 	<key>NSPhotoLibraryUsageDescription</key>

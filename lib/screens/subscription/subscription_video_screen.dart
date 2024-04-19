@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:fijkplayer/fijkplayer.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../utils/app_localization.dart';
@@ -11,6 +12,7 @@ import '../../arguments/subscription_video_screen_arguments.dart';
 import '../../models/cctv_model.dart';
 import '../../services/cctv_services.dart';
 import '../../utils/app_constant.dart';
+import '../../providers/subscription_provider.dart';
 
 class SubscriptionVideoScreen extends StatefulWidget {
   static const String routeName = "subscription-video-screen";
@@ -251,30 +253,36 @@ class _SubscriptionVideoScreenState extends State<SubscriptionVideoScreen>
         showCover: true,
       );
       player.addListener(_fijkValueListener);
+
+      // Playback duration limit
+      var playbackDurationLimit =
+          Provider.of<SubscriptionProvider>(context, listen: false)
+              .playbackDuration;
+      _videoStreamSubscription =
+          player.onCurrentPosUpdate.listen((Duration duration) {
+        // TODO: need to change in minutes
+        if (duration.inSeconds == int.parse(playbackDurationLimit)) {
+          player.release();
+          Fluttertoast.cancel();
+          timer.cancel();
+
+          final videoSnackBar = SnackBar(
+            content:
+                Text('$playbackDurationLimit-min playing duration reached.'),
+            action: SnackBarAction(
+              label: "Back",
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            duration: const Duration(minutes: 1),
+          );
+
+          ScaffoldMessenger.of(context).showSnackBar(videoSnackBar);
+        }
+      });
     });
     _setTimer();
     // TODO: get other cameras => API
     getOtherCamerasList();
-    // TODO: playback duration
-    _videoStreamSubscription =
-        player.onCurrentPosUpdate.listen((Duration duration) {
-      if (duration.inSeconds == 10) {
-        player.release();
-        Fluttertoast.cancel();
-        timer.cancel();
-
-        final videoSnackBar = SnackBar(
-          content: const Text('10-min playing duration reached.'),
-          action: SnackBarAction(
-            label: "Back",
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-          duration: const Duration(minutes: 1),
-        );
-
-        ScaffoldMessenger.of(context).showSnackBar(videoSnackBar);
-      }
-    });
   }
 
   @override

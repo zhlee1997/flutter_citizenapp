@@ -4,6 +4,7 @@ import 'package:geolocator/geolocator.dart';
 
 import '../../utils/app_localization.dart';
 import '../../providers/location_provider.dart';
+import '../../providers/subscription_provider.dart';
 import '../../screens/subscription/subscription_video_screen.dart';
 import '../../arguments/subscription_video_screen_arguments.dart';
 
@@ -52,6 +53,8 @@ class ListBottomSheetWidget extends StatelessWidget {
     String distanceInBetween = "";
 
     LocationProvider locationProvider = Provider.of<LocationProvider>(context);
+    SubscriptionProvider subscriptionProvider =
+        Provider.of<SubscriptionProvider>(context, listen: false);
     if (locationProvider.currentLocation != null) {
       endLatitude = locationProvider.currentLocation!.latitude;
       endLongitude = locationProvider.currentLocation!.longitude;
@@ -153,6 +156,10 @@ class ListBottomSheetWidget extends StatelessWidget {
               ),
             ),
           ),
+        ),
+        Text(
+          "Each video session is ${subscriptionProvider.playbackDuration} minutes",
+          style: Theme.of(context).textTheme.labelSmall,
         ),
         const SizedBox(
           height: 20.0,

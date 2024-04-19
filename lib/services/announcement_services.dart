@@ -38,10 +38,10 @@ class AnnouncementServices {
       print("queryPageList API success: $response");
       return response;
     } catch (e) {
-      print('get announcement page list fail');
+      print('get announcement page list fail: ${e.toString()}');
       // TODO: Error handling
       // throw e;
-      rethrow;
+      // rethrow;
     }
   }
 

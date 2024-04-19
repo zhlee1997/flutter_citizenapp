@@ -36,19 +36,6 @@ import 'firebase_options.dart';
 
 import './routes.dart';
 
-Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-  runApp(const MyApp());
-  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    statusBarColor: Colors.transparent,
-  ));
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-}
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
