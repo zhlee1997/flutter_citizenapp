@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_citizenapp/providers/settings_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../providers/auth_provider.dart';
 import '../../providers/language_provider.dart';
+import '../../providers/settings_provider.dart';
 import '../../widgets/sarawakid/login_full_bottom_modal.dart';
 import '../../screens/support/privacy_policy_screen.dart';
 import '../../screens/support/terms_and_conditions_screen.dart';
@@ -14,6 +14,7 @@ import '../../screens/reported_cases/emergency_cases_screen.dart';
 import '../../screens/reported_cases/talikhidmat_cases_screen.dart';
 import '../../screens/transaction/transaction_history_screen.dart';
 import '../../utils/notification/push_notification.dart';
+import '../../utils/app_localization.dart';
 
 class ProfileBottomNavScreen extends StatefulWidget {
   static const String routeName = 'profile-bottom-nav-screen';
@@ -209,16 +210,20 @@ class _ProfileBottomNavScreenState extends State<ProfileBottomNavScreen> {
             ),
           if (isLogin)
             Container(
-              padding: const EdgeInsets.all(10.0),
+              padding: const EdgeInsets.only(
+                bottom: 10.0,
+                left: 10.0,
+                right: 10.0,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Container(
-                    margin: const EdgeInsets.symmetric(
-                      vertical: 10.0,
+                    margin: const EdgeInsets.only(
+                      bottom: 10.0,
                     ),
                     child: Text(
-                      "App Services",
+                      AppLocalization.of(context)!.translate('app_services')!,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize:
@@ -244,7 +249,8 @@ class _ProfileBottomNavScreenState extends State<ProfileBottomNavScreen> {
                               width: 15.0,
                             ),
                             Text(
-                              "Reported Cases",
+                              AppLocalization.of(context)!
+                                  .translate('reported_cases')!,
                               style: Theme.of(context).textTheme.bodyMedium,
                             ),
                           ],
@@ -275,7 +281,8 @@ class _ProfileBottomNavScreenState extends State<ProfileBottomNavScreen> {
                               width: 15.0,
                             ),
                             Text(
-                              "Transaction History",
+                              AppLocalization.of(context)!
+                                  .translate('transaction_hist')!,
                               style: Theme.of(context).textTheme.bodyMedium,
                             ),
                           ],
@@ -305,7 +312,7 @@ class _ProfileBottomNavScreenState extends State<ProfileBottomNavScreen> {
                     vertical: 10.0,
                   ),
                   child: Text(
-                    "App Settings",
+                    AppLocalization.of(context)!.translate('app_settings')!,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize:
@@ -327,7 +334,8 @@ class _ProfileBottomNavScreenState extends State<ProfileBottomNavScreen> {
                             width: 15.0,
                           ),
                           Text(
-                            "Push Notifications",
+                            AppLocalization.of(context)!
+                                .translate('push_notifications')!,
                             style: Theme.of(context).textTheme.bodyMedium,
                           ),
                         ],
@@ -386,7 +394,8 @@ class _ProfileBottomNavScreenState extends State<ProfileBottomNavScreen> {
                           width: 15.0,
                         ),
                         Text(
-                          "Screen Music",
+                          AppLocalization.of(context)!
+                              .translate('screen_music')!,
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                       ],
@@ -426,7 +435,7 @@ class _ProfileBottomNavScreenState extends State<ProfileBottomNavScreen> {
                           width: 15.0,
                         ),
                         Text(
-                          "Language",
+                          AppLocalization.of(context)!.translate('language')!,
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                       ],
@@ -499,7 +508,7 @@ class _ProfileBottomNavScreenState extends State<ProfileBottomNavScreen> {
                     vertical: 10.0,
                   ),
                   child: Text(
-                    "App Support",
+                    AppLocalization.of(context)!.translate('app_support')!,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize:
@@ -514,16 +523,17 @@ class _ProfileBottomNavScreenState extends State<ProfileBottomNavScreen> {
                     margin: const EdgeInsets.symmetric(
                       vertical: 10.0,
                     ),
-                    child: const Row(
+                    child: Row(
                       children: <Widget>[
-                        Icon(
+                        const Icon(
                           Icons.star_border_outlined,
                           size: 30.0,
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 15.0,
                         ),
-                        Text("Send Feedback")
+                        Text(AppLocalization.of(context)!
+                            .translate('send_feedback')!)
                       ],
                     ),
                   ),
@@ -536,16 +546,17 @@ class _ProfileBottomNavScreenState extends State<ProfileBottomNavScreen> {
                     margin: const EdgeInsets.symmetric(
                       vertical: 10.0,
                     ),
-                    child: const Row(
+                    child: Row(
                       children: <Widget>[
-                        Icon(
+                        const Icon(
                           Icons.description_outlined,
                           size: 30.0,
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 15.0,
                         ),
-                        Text("Terms and Conditions")
+                        Text(AppLocalization.of(context)!
+                            .translate('terms_cond')!)
                       ],
                     ),
                   ),
@@ -558,16 +569,17 @@ class _ProfileBottomNavScreenState extends State<ProfileBottomNavScreen> {
                     margin: const EdgeInsets.symmetric(
                       vertical: 10.0,
                     ),
-                    child: const Row(
+                    child: Row(
                       children: <Widget>[
-                        Icon(
+                        const Icon(
                           Icons.remove_red_eye_outlined,
                           size: 30.0,
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 15.0,
                         ),
-                        Text("Privacy Policy")
+                        Text(AppLocalization.of(context)!
+                            .translate('privacy_poli')!)
                       ],
                     ),
                   ),
@@ -593,16 +605,17 @@ class _ProfileBottomNavScreenState extends State<ProfileBottomNavScreen> {
                     margin: const EdgeInsets.symmetric(
                       vertical: 10.0,
                     ),
-                    child: const Row(
+                    child: Row(
                       children: <Widget>[
-                        Icon(
+                        const Icon(
                           Icons.info_outline,
                           size: 30.0,
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 15.0,
                         ),
-                        Text("About CitizenApp")
+                        Text(AppLocalization.of(context)!
+                            .translate('about_app')!)
                       ],
                     ),
                   ),
@@ -615,16 +628,17 @@ class _ProfileBottomNavScreenState extends State<ProfileBottomNavScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      const Row(
+                      Row(
                         children: <Widget>[
-                          Icon(
+                          const Icon(
                             Icons.copy,
                             size: 30.0,
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 15.0,
                           ),
-                          Text("App Version")
+                          Text(AppLocalization.of(context)!
+                              .translate('app_vers')!)
                         ],
                       ),
                       Text(

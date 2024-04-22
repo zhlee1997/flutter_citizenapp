@@ -26,6 +26,7 @@ import './providers/settings_provider.dart';
 import './providers/bus_provider.dart';
 import './providers/inbox_provider.dart';
 import './providers/bill_provider.dart';
+import './providers/camera_subscription_provider.dart';
 
 // language settings
 import './utils/app_localization.dart';
@@ -82,6 +83,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (ctx) => BillProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (ctx) => CameraSubscriptionProvider(),
         ),
       ],
       child: Consumer<LanguageProvider>(

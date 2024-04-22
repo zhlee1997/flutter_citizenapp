@@ -17,6 +17,7 @@ class ImageNetworkHelper {
     BoxFit? fit,
     double? height,
     double? width,
+    bool isCamera = false,
   }) {
     return url == null
         ? Image.asset(
@@ -48,8 +49,19 @@ class ImageNetworkHelper {
               width: width,
               height: height,
               child: Center(
-                child: Text(AppLocalization.of(context)!
-                    .translate('camera_is_not_available')!),
+                child: isCamera
+                    ? Text(AppLocalization.of(context)!
+                        .translate('camera_is_not_available')!)
+                    : const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.error),
+                          SizedBox(
+                            width: 5.0,
+                          ),
+                          Text("Image unavailable")
+                        ],
+                      ),
               ),
             ),
           );

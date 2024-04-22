@@ -291,7 +291,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                       "assets/animations/lottie_premium.json",
                       width: MediaQuery.of(context).size.width * 0.125,
                       height: MediaQuery.of(context).size.width * 0.125,
-                      fit: BoxFit.fill,
+                      fit: BoxFit.cover,
                     ),
                   )
               ],
@@ -299,28 +299,28 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
             const SizedBox(
               height: 10,
             ),
-            _isSubscribe
-                ? Container()
-                : ActionChip(
-                    side: BorderSide(
-                      color: Theme.of(context).primaryColor,
-                    ),
-                    avatar: Icon(
-                      Icons.verified_user,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                    label: Text(
-                      "Get Premium",
-                      style: TextStyle(
-                        color: Theme.of(context).primaryColor,
-                      ),
-                    ),
-                    backgroundColor: Theme.of(context).colorScheme.background,
-                    onPressed: () {
-                      // Navigator.of(context)
-                      //     .pushNamed(SubscribeScreen.routeName);
-                    },
-                  ),
+            // _isSubscribe
+            //     ? Container()
+            //     : ActionChip(
+            //         side: BorderSide(
+            //           color: Theme.of(context).primaryColor,
+            //         ),
+            //         avatar: Icon(
+            //           Icons.verified_user,
+            //           color: Theme.of(context).primaryColor,
+            //         ),
+            //         label: Text(
+            //           "Get Premium",
+            //           style: TextStyle(
+            //             color: Theme.of(context).primaryColor,
+            //           ),
+            //         ),
+            //         backgroundColor: Theme.of(context).colorScheme.background,
+            //         onPressed: () {
+            //           // Navigator.of(context)
+            //           //     .pushNamed(SubscribeScreen.routeName);
+            //         },
+            //       ),
             if (_isSubscribe)
               Container(
                 margin: const EdgeInsets.symmetric(

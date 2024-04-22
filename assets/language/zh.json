@@ -1,361 +1,189 @@
 {
   "login": "登录",
-
   "logout": "登出",
-
   "please_login": "请登入以使用Talikhidmat、紧急按钮、实时视频和缴费功能等。",
-
   "close": "关闭",
-
   "services": "服务",
-
   "talikhidmat": "Talikhidmat",
-
   "new_case": "新案例",
-
   "case_location": "案例地址",
-
   "get": "定位",
-
   "category": "类别",
-
   "latitude": "维度",
-
   "longitude": "经度",
-
   "complaint": "投诉",
-
   "compliment": "赞扬",
-
   "enquiry": "询问",
-
   "request_for_service": "请求服务",
-
   "suggestion": "建议",
-
   "message": "信息",
-
   "a_pothole": "在休闲跑道上发现坑洞",
-
   "please_enter_messages": "请输入信息",
-
   "photo_library": "相册",
-
   "camera": "相机",
-
   "submit_c": "上报案件",
-
   "are_you": "您确定要上报此案件吗？",
-
   "yes": "是",
-
   "no": "不",
-
   "submit_successful": "成功发送！",
-
   "thank_you_for_your_feedback": "感谢您的反馈。",
-
   "great": "OK",
-
   "emergency_button": "紧急按钮",
-
   "note": "温馨提醒：请谨慎使用此服务。此紧急按钮将会索取用户个人资料和当前位置以发出求救。",
-
   "harassment": "骚扰",
-
   "fire/rescue": "消防/救援",
-
   "traffic_accident/injuries": "交通事故/受伤",
-
   "theft/robbery": "盗窃/抢劫",
-
   "physical_violence": "暴力",
-
   "others": "其他",
-
   "caution": "注意!",
-
   "do_you": "您确定要发送此请求:",
-
   "location_recorded": "您的位置已定位",
-
   "your_emergency": "您的紧急上报已被处理中。",
-
   "ok": "好的。",
-
   "state_an_emergency": "详述紧急类型",
-
   "type_here": "在此输入",
-
   "Please enter some text": "请输入内容",
-
   "cancel": "取消",
-
   "send": "发送",
-
   "traffic_images": "交通图片",
-
   "updated_on": "更新于:",
-
   "tourism_information": "旅游信息",
-
   "information_detail": "信息详情",
-
   "live_video": "直播视频",
-
   "subscription": "(订阅)",
-
   "cctv_map": "CCTV 地图",
-
   "play_now": "播放",
-
   "live_cctv": "CCTV 直播",
-
   "nearby_cctv": "附近的 CCTV",
-
   "bill_payment": "缴费",
-
   "assessment_rate": "门牌税",
-
   "please_refer": "请参阅账单以了解账户详情",
-
   "account_number": "账号",
-
   "enter_account_number": "输入账号",
-
   "bill_amount": "账单金额",
-
   "enter_bill_amount": "输入账单金额",
-
   "please_allow": "付款后将在三个工作日更新您的账户。",
-
   "proceed_to": "进行结算",
-
   "checkout": "结算",
-
   "payment_details": "付款详情",
-
   "payment_descrip": "付款说明",
-
   "pay_with": "以 S Pay Global 付款",
-
   "success_transact": "付款交易成功",
-
   "fail_transact": "付款交易失败",
-
   "your_payment_success": "你的交易已经成功",
-
   "your_payment_fail": "你的交易已经失败",
-
   "done": "完成",
-
   "bus_schedule": "公车时刻表",
-
   "bus_map": "公车地图",
-
   "select": "选择",
-
   "choose_l": "选择路线",
-
   "choose": "选择",
-
   "loading": "加载中",
-
   "103_bus_route": "103 - 公车路线",
-
   "bus_stop": "公车站",
-
   "bus_station": "公车站",
-
   "scheduled_a": "预测抵达时间",
-
   "next_a": "下一趟抵达",
-
   "direction": "指导",
-
   "announcement": "通告",
-
   "view_all": "查看全部",
-
   "announcement_detail": "通告详情",
-
   "inbox": "收件箱",
-
   "mark_all": "标记为已读",
-
   "inbox_detail": "收件箱详情",
-
   "reported_cases": "举报案列",
-
   "emergency_cases": "紧急案件",
-
   "new": "新案例",
-
   "pending": "待办",
-
   "resolved": "解决",
-
   "no_data": "无数据",
-
   "end_of": "尾页",
-
   "case_d": "案例详情",
-
   "case_n": "案例编号",
-
   "case_s": "案例状态",
-
   "case_id": "案例ID",
-
   "date_sub": "提交日期",
-
   "case_loca": "案例地点",
-
   "request_d": "请求详情",
-
   "attachments": "附件",
-
   "load_m": "加载",
-
   "my_transactions": "我的交易",
-
   "no_transactions": "暂无交易",
-
   "no_tran_his": "无交易记录",
-
   "monthly_transac": "每月交易",
-
   "transaction_hist": "交易记录",
-
   "transaction_d": "交易详情",
-
   "transaction_n": "交易编号 ",
-
   "my_profile": "用户",
-
   "upgrad": "升级",
-
   "normal_mem": "普通会员",
-
   "vip_m": "VIP 会员直到",
-
   "email_add": "邮箱地址",
-
   "mobile_num": "手机号码",
-
   "address": "住家地址",
-
   "to_edit": "如要编辑个人资料，请访问 ",
-
   "upgrade_p": "升级配套",
-
   "benefits": "优惠",
-
   "cctv_streaming": "浏览CCTV视频",
-
   "no_ads": "无广告",
-
   "fee_month": "RM 5.00 /月",
-
   "subscribe": "订阅",
-
   "settings": "设置",
-
   "splash": "启动页面音乐",
-
   "enabled": "启用",
-
   "disabled": "禁用",
-
   "support": "帮助",
-
   "terms_cond": "条款和条件",
-
   "privacy_poli": "隐私政策",
-
   "about_app": "关于 CitizenApp",
-
   "find_out": "了解更多",
-
   "app_vers": "App 版本号",
-
   "unknown_location": "不明位置",
-
   "to_detect": "请检查是否启用了 GPS 服务或位置权限, 以获取当前位置",
-
   "no_announcement_data": "无通告信息",
-
   "login_error": "登录无效",
-
   "no_inbox_data": "无收件箱信息",
-
   "delete": "删除",
-
   "payment_failed": "支付失败",
-
   "payment_in_progress": "支付中",
-
   "upload_photo": "上载照片中",
-
   "upload_fail": "上载失败",
-
   "submit_fail": "上传失败",
-
   "warning": "警告",
-
   "do_you_discard": "确定清空这些数据吗？",
-
   "please_enter_case_location": "输入案例位置",
-
   "no_reported_case": "无举报案列",
-
   "no_tourism_data": "无旅游信息",
-
   "google_maps_required": "需要谷歌地图",
-
   "more_info": "更多",
-
   "routing_agencies": "处理机构",
-
   "case_timeline": "案例时间线",
-
   "do_you_logout": "您确定要登出？",
-
   "logging_out": "登出中",
-
   "capturing_video": "获取摄像头中",
-
   "greater_than_0": "须大于 0.00",
-
   "image_not_found": "无法加载照片",
-
   "eg_flood": "例：水灾",
-
   "please_install_spay": "需下载 S Pay Global",
-
   "cctv_not_found": "无法显示摄像头",
-
   "bus_map_not_loaded": "无法显示公车地图",
-
   "subscription_1": "订阅",
-
   "message_deleted": "信息已删除",
-
   "bus_stop_not_found": "无法显示公车站",
-
   "unauthorized_access": "未经授权访问",
-
   "signed_out": "已注销。",
-
   "want_to_have_full": "想完全使用app服务？\n订阅即可享受 VIP 优惠",
-
   "sign_out_failed": "注销失败",
-
   "please_try_again": "请再尝试",
-
   "image_less_than_10": "上传照片少于10MB",
-
   "could_not_network": "无法连接到网络",
-
-  "camera_is_not_available": "相机不可用"
+  "camera_is_not_available": "相机不可用",
+  "send_feedback": "发送反馈",
+  "app_support": "应用支持",
+  "language": "语言",
+  "screen_music": "银幕音乐",
+  "push_notifications": "推送通知",
+  "app_settings": "应用设置",
+  "app_services": "应用服务"
 }

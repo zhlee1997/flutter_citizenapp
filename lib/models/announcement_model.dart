@@ -18,14 +18,7 @@ class AnnouncementModel {
   late String delFlag;
 
   // modify title of announcement
-  static String getAnnouncementTitle(
-    context,
-    element, {
-    bool isMajorAnnouncement = false,
-  }) {
-    if (isMajorAnnouncement) {
-      return element.annTitleMs;
-    }
+  static String getAnnouncementTitle(context, element) {
     String languageCode = Provider.of<LanguageProvider>(context, listen: false)
         .locale
         .languageCode;
@@ -39,14 +32,7 @@ class AnnouncementModel {
   }
 
   // modify content of announcement
-  static String getAnnouncementContent(
-    context,
-    element, {
-    bool isMajorAnnouncement = false,
-  }) {
-    if (isMajorAnnouncement) {
-      return element.annMessageMs;
-    }
+  static String getAnnouncementContent(context, element) {
     String languageCode = Provider.of<LanguageProvider>(context, listen: false)
         .locale
         .languageCode;

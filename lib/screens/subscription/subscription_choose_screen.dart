@@ -1,18 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../screens/subscription/subscription_map_screen.dart';
 import '../../screens/subscription/subscription_list_screen.dart';
+import '../../providers/camera_subscription_provider.dart';
+import '../../providers/subscription_provider.dart';
 
-class SubscriptionChooseScreen extends StatelessWidget {
+class SubscriptionChooseScreen extends StatefulWidget {
   static const String routeName = "subscription-choose-screen";
 
   const SubscriptionChooseScreen({super.key});
 
+  @override
+  State<SubscriptionChooseScreen> createState() =>
+      _SubscriptionChooseScreenState();
+}
+
+class _SubscriptionChooseScreenState extends State<SubscriptionChooseScreen> {
   void _handleNavigateToSubscriptionMapScreen(BuildContext context) =>
       Navigator.of(context).pushNamed(SubscriptionMapScreen.routeName);
 
   void _handleNavigateToSubscriptionListScreen(BuildContext context) =>
       Navigator.of(context).pushNamed(SubscriptionListScreen.routeName);
+
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    final subscribeId = Provider.of<SubscriptionProvider>(context).subscribeId;
+    Provider.of<CameraSubscriptionProvider>(context, listen: false)
+        .getDevicesListByPackageIdProvider(subscribeId);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +54,7 @@ class SubscriptionChooseScreen extends StatelessWidget {
                 _handleNavigateToSubscriptionMapScreen(context);
               },
               child: Container(
-                height: screenSize.height * 0.2,
+                height: screenSize.height * 0.225,
                 width: screenSize.width * 0.9,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10.0),
@@ -122,7 +140,7 @@ class SubscriptionChooseScreen extends StatelessWidget {
                 _handleNavigateToSubscriptionListScreen(context);
               },
               child: Container(
-                height: screenSize.height * 0.2,
+                height: screenSize.height * 0.225,
                 width: screenSize.width * 0.9,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10.0),

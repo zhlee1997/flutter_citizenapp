@@ -37,12 +37,10 @@ class AnnouncementProvider with ChangeNotifier {
             title: AnnouncementModel.getAnnouncementTitle(
               context,
               element,
-              isMajorAnnouncement: true,
             ),
             description: AnnouncementModel.getAnnouncementContent(
               context,
               element,
-              isMajorAnnouncement: true,
             ),
           );
           majorAnnouncementList.add(m);

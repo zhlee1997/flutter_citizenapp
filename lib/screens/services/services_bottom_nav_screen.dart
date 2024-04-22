@@ -192,6 +192,18 @@ class _ServicesBottomNavScreenState extends State<ServicesBottomNavScreen> {
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (mounted) {
+        await Provider.of<SubscriptionProvider>(context, listen: false)
+            .queryAndSetIsSubscriptionEnabled();
+      }
+    });
+  }
+
+  @override
   void didChangeDependencies() {
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
@@ -283,43 +295,41 @@ class _ServicesBottomNavScreenState extends State<ServicesBottomNavScreen> {
               ),
             ),
           ),
-          if (isSubscriptionEnabled)
-            GestureDetector(
-              onTap: () => _handleNavigateToSubscription(context),
-              child: Card(
-                color: const Color.fromARGB(255, 227, 255, 235),
-                elevation: 5.0,
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10.0),
-                    // image: DecorationImage(
-                    //   image: AssetImage(
-                    //       "assets/images/pictures/subscription_image.jpg"),
-                    //   fit: BoxFit.cover,
-                    //   opacity: 0.2,
-                    // ),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      const Icon(
-                        Icons.subscriptions,
-                        size: 50.0,
-                        color: Colors.green,
-                      ),
-                      const SizedBox(
-                        height: 10.0,
-                      ),
-                      Text(
-                        "Premium Subscription",
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      )
-                    ],
-                  ),
+          GestureDetector(
+            onTap: () => _handleNavigateToBusSchedule(context),
+            child: Card(
+              color: Color.fromARGB(255, 227, 255, 235),
+              elevation: 5.0,
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10.0),
+                  // image: DecorationImage(
+                  //   image: AssetImage("assets/images/pictures/bus_image.jpg"),
+                  //   fit: BoxFit.cover,
+                  //   opacity: 0.2,
+                  // ),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    const Icon(
+                      Icons.bus_alert_outlined,
+                      size: 50.0,
+                      color: Colors.green,
+                    ),
+                    const SizedBox(
+                      height: 10.0,
+                    ),
+                    Text(
+                      "Bus Schedule",
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    )
+                  ],
                 ),
               ),
             ),
+          ),
           GestureDetector(
             onTap: () => _handleNavigateToTrafficImages(context),
             child: Card(
@@ -427,40 +437,42 @@ class _ServicesBottomNavScreenState extends State<ServicesBottomNavScreen> {
               ),
             ),
           ),
-          GestureDetector(
-            onTap: () => _handleNavigateToBusSchedule(context),
-            child: Card(
-              elevation: 5.0,
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10.0),
-                  // image: DecorationImage(
-                  //   image: AssetImage("assets/images/pictures/bus_image.jpg"),
-                  //   fit: BoxFit.cover,
-                  //   opacity: 0.2,
-                  // ),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    const Icon(
-                      Icons.bus_alert_outlined,
-                      size: 50.0,
-                      color: Colors.deepPurple,
-                    ),
-                    const SizedBox(
-                      height: 10.0,
-                    ),
-                    Text(
-                      "Bus Schedule",
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    )
-                  ],
+          if (isSubscriptionEnabled)
+            GestureDetector(
+              onTap: () => _handleNavigateToSubscription(context),
+              child: Card(
+                elevation: 5.0,
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.0),
+                    // image: DecorationImage(
+                    //   image: AssetImage(
+                    //       "assets/images/pictures/subscription_image.jpg"),
+                    //   fit: BoxFit.cover,
+                    //   opacity: 0.2,
+                    // ),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      const Icon(
+                        Icons.subscriptions,
+                        size: 50.0,
+                        color: Colors.deepPurple,
+                      ),
+                      const SizedBox(
+                        height: 10.0,
+                      ),
+                      Text(
+                        "Premium Subscription",
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),
-          )
         ],
       ),
     );

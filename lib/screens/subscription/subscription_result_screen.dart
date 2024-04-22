@@ -93,151 +93,153 @@ class SubscriptionResultScreen extends StatelessWidget {
           automaticallyImplyLeading: false,
           centerTitle: true,
         ),
-        body: Container(
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: 15.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SubscriptionResultWidget(),
-              const Divider(),
-              SizedBox(
-                height: screenSize.height * 0.01,
-              ),
-              const Text("PAYMENT DETAILS"),
-              const SizedBox(
-                height: 10.0,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text("Receipt Number"),
-                  Text(
-                    subscriptionProvider.receiptNumber,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  )
-                ],
-              ),
-              const SizedBox(
-                height: 5.0,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  const Text("Paid Amount"),
-                  Text(
-                    "RM ${args.orderAmt}",
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  )
-                ],
-              ),
-              const SizedBox(
-                height: 5.0,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text("Payment Item"),
-                  Text(
-                    subscriptionProvider.paymentItem,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  )
-                ],
-              ),
-              const SizedBox(
-                height: 5.0,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  const Text("Payment Date"),
-                  Text(
-                    // "03 Mar, 2024",
-                    args.orderDate ?? "",
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  )
-                ],
-              ),
-              const SizedBox(
-                height: 5.0,
-              ),
-              const Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text("Payment Method"),
-                  Text(
-                    "S Pay Global",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  )
-                ],
-              ),
-              const SizedBox(
-                height: 5.0,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text("Reference Number"),
-                  Text(
-                    subscriptionProvider.referenceNumber.substring(0, 9),
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  )
-                ],
-              ),
-              SizedBox(
-                height: screenSize.height * 0.03,
-              ),
-              MaterialBanner(
-                elevation: 5.0,
-                leading: Icon(Icons.wallet_membership_outlined),
-                content: Text(
-                  "You are now a Premium member! Would you like to?",
-                  style: Theme.of(context).textTheme.bodyLarge,
+        body: SingleChildScrollView(
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 15.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SubscriptionResultWidget(),
+                const Divider(),
+                SizedBox(
+                  height: screenSize.height * 0.01,
                 ),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context)
-                          .popUntil(ModalRoute.withName('home-page-screen'));
-                    },
-                    child: Text(
-                      "Back to home",
+                const Text("PAYMENT DETAILS"),
+                const SizedBox(
+                  height: 10.0,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text("Receipt Number"),
+                    Text(
+                      subscriptionProvider.receiptNumber,
                       style: TextStyle(
-                        fontSize:
-                            Theme.of(context).textTheme.bodyLarge!.fontSize,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    )
+                  ],
+                ),
+                const SizedBox(
+                  height: 5.0,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    const Text("Paid Amount"),
+                    Text(
+                      "RM ${args.orderAmt}",
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    )
+                  ],
+                ),
+                const SizedBox(
+                  height: 5.0,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text("Payment Item"),
+                    Text(
+                      subscriptionProvider.paymentItem,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    )
+                  ],
+                ),
+                const SizedBox(
+                  height: 5.0,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    const Text("Payment Date"),
+                    Text(
+                      // "03 Mar, 2024",
+                      args.orderDate ?? "",
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    )
+                  ],
+                ),
+                const SizedBox(
+                  height: 5.0,
+                ),
+                const Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text("Payment Method"),
+                    Text(
+                      "S Pay Global",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    )
+                  ],
+                ),
+                const SizedBox(
+                  height: 5.0,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text("Reference Number"),
+                    Text(
+                      subscriptionProvider.referenceNumber.substring(0, 9),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    )
+                  ],
+                ),
+                SizedBox(
+                  height: screenSize.height * 0.03,
+                ),
+                MaterialBanner(
+                  elevation: 5.0,
+                  leading: Icon(Icons.wallet_membership_outlined),
+                  content: Text(
+                    "You are now a Premium member! Would you like to?",
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context)
+                            .popUntil(ModalRoute.withName('home-page-screen'));
+                      },
+                      child: Text(
+                        "Back to home",
+                        style: TextStyle(
+                          fontSize:
+                              Theme.of(context).textTheme.bodyLarge!.fontSize,
+                        ),
                       ),
                     ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pushNamedAndRemoveUntil(
-                        SubscriptionChooseScreen.routeName,
-                        (route) => route.isFirst,
-                      );
-                    },
-                    child: Text(
-                      "Watch now",
-                      style: TextStyle(
-                        fontSize:
-                            Theme.of(context).textTheme.bodyLarge!.fontSize,
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                          SubscriptionChooseScreen.routeName,
+                          (route) => route.isFirst,
+                        );
+                      },
+                      child: Text(
+                        "Watch now",
+                        style: TextStyle(
+                          fontSize:
+                              Theme.of(context).textTheme.bodyLarge!.fontSize,
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

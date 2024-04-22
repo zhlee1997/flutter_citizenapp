@@ -93,162 +93,164 @@ class BillPaymentResultScreen extends StatelessWidget {
           automaticallyImplyLeading: false,
           centerTitle: true,
         ),
-        body: Container(
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: 15.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const BillPaymentResultWidget(),
-              const Divider(),
-              SizedBox(
-                height: screenSize.height * 0.01,
-              ),
-              const Text("PAYMENT DETAILS"),
-              const SizedBox(
-                height: 10.0,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text("Receipt Number"),
-                  Text(
-                    billProvider.receiptNumber,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  )
-                ],
-              ),
-              const SizedBox(
-                height: 5.0,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  const Text("Paid Amount"),
-                  Text(
-                    "RM ${args.orderAmt}",
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  )
-                ],
-              ),
-              const SizedBox(
-                height: 5.0,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text("Payment Item"),
-                  Text(
-                    billProvider.paymentItem,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  )
-                ],
-              ),
-              const SizedBox(
-                height: 5.0,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  const Text("Payment Date"),
-                  Text(
-                    // "03 Mar, 2024",
-                    args.orderDate ?? "",
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  )
-                ],
-              ),
-              const SizedBox(
-                height: 5.0,
-              ),
-              const Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text("Payment Method"),
-                  Text(
-                    "S Pay Global",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  )
-                ],
-              ),
-              const SizedBox(
-                height: 5.0,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text("Reference Number"),
-                  Text(
-                    billProvider.referenceNumber.substring(0, 9),
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  )
-                ],
-              ),
-              SizedBox(
-                height: screenSize.height * 0.03,
-              ),
-              SizedBox(
-                height: screenSize.height * 0.025,
-              ),
-              SizedBox(
-                width: screenSize.width * 0.7,
-                child: OutlinedButton(
-                  onPressed: () {
-                    Provider.of<InboxProvider>(context, listen: false)
-                        .refreshCount();
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                      TransactionHistoryScreen.routeName,
-                      (route) => route.isFirst,
-                    );
-                  },
-                  style: ButtonStyle(
-                    side: MaterialStateProperty.all(
-                      BorderSide(
-                        color: Theme.of(context).primaryColor,
+        body: SingleChildScrollView(
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 15.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const BillPaymentResultWidget(),
+                const Divider(),
+                SizedBox(
+                  height: screenSize.height * 0.01,
+                ),
+                const Text("PAYMENT DETAILS"),
+                const SizedBox(
+                  height: 10.0,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text("Receipt Number"),
+                    Text(
+                      billProvider.receiptNumber,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
                       ),
-                    ), // Set border color
-                  ),
-                  child: const Text(
-                    "View transactions",
-                    style: TextStyle(
-                      fontSize: 18,
+                    )
+                  ],
+                ),
+                const SizedBox(
+                  height: 5.0,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    const Text("Paid Amount"),
+                    Text(
+                      "RM ${args.orderAmt}",
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    )
+                  ],
+                ),
+                const SizedBox(
+                  height: 5.0,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text("Payment Item"),
+                    Text(
+                      billProvider.paymentItem,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    )
+                  ],
+                ),
+                const SizedBox(
+                  height: 5.0,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    const Text("Payment Date"),
+                    Text(
+                      // "03 Mar, 2024",
+                      args.orderDate ?? "",
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    )
+                  ],
+                ),
+                const SizedBox(
+                  height: 5.0,
+                ),
+                const Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text("Payment Method"),
+                    Text(
+                      "S Pay Global",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    )
+                  ],
+                ),
+                const SizedBox(
+                  height: 5.0,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text("Reference Number"),
+                    Text(
+                      billProvider.referenceNumber.substring(0, 9),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    )
+                  ],
+                ),
+                SizedBox(
+                  height: screenSize.height * 0.03,
+                ),
+                SizedBox(
+                  height: screenSize.height * 0.025,
+                ),
+                SizedBox(
+                  width: screenSize.width * 0.7,
+                  child: OutlinedButton(
+                    onPressed: () {
+                      Provider.of<InboxProvider>(context, listen: false)
+                          .refreshCount();
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                        TransactionHistoryScreen.routeName,
+                        (route) => route.isFirst,
+                      );
+                    },
+                    style: ButtonStyle(
+                      side: MaterialStateProperty.all(
+                        BorderSide(
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      ), // Set border color
+                    ),
+                    child: const Text(
+                      "View transactions",
+                      style: TextStyle(
+                        fontSize: 18,
+                      ),
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              SizedBox(
-                width: screenSize.width * 0.7,
-                child: OutlinedButton(
-                  onPressed: () {
-                    Provider.of<InboxProvider>(context, listen: false)
-                        .refreshCount();
-                    Navigator.of(context)
-                        .popUntil(ModalRoute.withName('home-page-screen'));
-                  },
-                  child: const Text(
-                    "Back to home",
-                    style: TextStyle(
-                      fontSize: 18,
+                const SizedBox(
+                  height: 10,
+                ),
+                SizedBox(
+                  width: screenSize.width * 0.7,
+                  child: OutlinedButton(
+                    onPressed: () {
+                      Provider.of<InboxProvider>(context, listen: false)
+                          .refreshCount();
+                      Navigator.of(context)
+                          .popUntil(ModalRoute.withName('home-page-screen'));
+                    },
+                    child: const Text(
+                      "Back to home",
+                      style: TextStyle(
+                        fontSize: 18,
+                      ),
                     ),
                   ),
-                ),
-              )
-            ],
+                )
+              ],
+            ),
           ),
         ),
       ),

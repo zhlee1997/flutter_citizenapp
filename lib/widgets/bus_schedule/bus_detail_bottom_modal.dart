@@ -72,52 +72,96 @@ class BusDetailMapBottom extends StatelessWidget {
               color: Colors.white,
               borderRadius: BorderRadius.circular(20),
             ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                if (currentValue != 0 &&
-                    currentValue != busStationList.length - 1)
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        AppLocalization.of(context)!.translate('bus_station')!,
-                        style: TextStyle(
-                          fontSize: Platform.isIOS ? 20.0 : 15.0,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  if (currentValue != 0 &&
+                      currentValue != busStationList.length - 1)
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          AppLocalization.of(context)!
+                              .translate('bus_station')!,
+                          style: TextStyle(
+                            fontSize: Platform.isIOS ? 20.0 : 15.0,
+                          ),
                         ),
-                      ),
-                      const SizedBox(
-                        height: 5.0,
-                      ),
-                      Text(
-                        routeName == 'DS'
-                            ? 'DUN to Semenggoh'
-                            : 'Semenggoh to DUN',
-                        style: TextStyle(
-                          fontSize: Platform.isIOS ? 18.0 : 15.0,
-                          fontStyle: FontStyle.italic,
-                          color: Colors.grey,
+                        const SizedBox(
+                          height: 5.0,
                         ),
-                      )
-                    ],
-                  ),
-                Container(
-                  margin: const EdgeInsets.symmetric(
-                    vertical: 7.5,
-                  ),
-                  child: Text(
-                    stationName,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.bold,
+                        Text(
+                          routeName == 'DS'
+                              ? 'DUN to Semenggoh'
+                              : 'Semenggoh to DUN',
+                          style: TextStyle(
+                            fontSize: 15.0,
+                            color: Colors.grey,
+                          ),
+                        )
+                      ],
+                    ),
+                  Container(
+                    margin: const EdgeInsets.symmetric(
+                      vertical: 7.5,
+                    ),
+                    child: Text(
+                      stationName,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                ),
-                Container(
-                  margin: const EdgeInsets.only(top: 5.0),
-                  child: Row(
+                  Container(
+                    margin: const EdgeInsets.only(top: 5.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10.0,
+                          ),
+                          child: Text(
+                            AppLocalization.of(context)!
+                                .translate('scheduled_a')!,
+                            style: TextStyle(
+                              fontSize: 15.0,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 10.0,
+                            horizontal: 15.0,
+                          ),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Theme.of(context).primaryColor,
+                              width: 1.5,
+                            ),
+                          ),
+                          child: Text(
+                            stationDetailList.length == 0
+                                ? '-'
+                                : GeneralHelper.formatDateTime(
+                                    dateString:
+                                        stationDetailList[0].arrivalTime,
+                                    format: 'HH : mm',
+                                  ),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20.0,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Container(
@@ -125,91 +169,48 @@ class BusDetailMapBottom extends StatelessWidget {
                           horizontal: 10.0,
                         ),
                         child: Text(
-                          AppLocalization.of(context)!
-                              .translate('scheduled_a')!,
+                          AppLocalization.of(context)!.translate('next_a')!,
                           style: TextStyle(
-                            fontSize: Platform.isIOS ? 18.0 : 15.0,
-                            fontStyle: FontStyle.italic,
+                            fontSize: 15.0,
                           ),
                         ),
                       ),
                       Container(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 10.0,
-                          horizontal: 15.0,
-                        ),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Theme.of(context).primaryColor,
-                            width: 1.5,
-                          ),
-                        ),
+                        padding: const EdgeInsets.all(10.0),
                         child: Text(
-                          stationDetailList.length == 0
+                          stationDetailList.length <= 1
                               ? '-'
                               : GeneralHelper.formatDateTime(
-                                  dateString: stationDetailList[0].arrivalTime,
+                                  dateString: stationDetailList[1].arrivalTime,
                                   format: 'HH : mm',
                                 ),
                           style: const TextStyle(
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w500,
                             fontSize: 20.0,
                           ),
                         ),
                       )
                     ],
                   ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10.0,
-                      ),
-                      child: Text(
-                        AppLocalization.of(context)!.translate('next_a')!,
-                        style: TextStyle(
-                          fontSize: Platform.isIOS ? 18.0 : 15.0,
-                          fontStyle: FontStyle.italic,
-                        ),
+                  SizedBox(
+                    // height: screenSize.height * 0.06,
+                    width: screenSize.width * 0.9,
+                    child: ElevatedButton(
+                      onPressed: () => launchMapApp(context),
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Icon(Icons.map_outlined),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Text("Google Maps")
+                        ],
                       ),
                     ),
-                    Container(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Text(
-                        stationDetailList.length <= 1
-                            ? '-'
-                            : GeneralHelper.formatDateTime(
-                                dateString: stationDetailList[1].arrivalTime,
-                                format: 'HH : mm',
-                              ),
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 20.0,
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-                SizedBox(
-                  // height: screenSize.height * 0.06,
-                  width: screenSize.width * 0.9,
-                  child: ElevatedButton(
-                    onPressed: () => launchMapApp(context),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Icon(Icons.map_outlined),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Text("Google Maps")
-                      ],
-                    ),
-                  ),
-                )
-              ],
+                  )
+                ],
+              ),
             ),
           ),
           buildBusPhoto(context, screenSize),

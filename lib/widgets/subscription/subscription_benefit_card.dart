@@ -35,8 +35,8 @@ class SubscriptionBenefitCard extends StatelessWidget {
                   children: <Widget>[
                     Icon(
                       Icons.check_circle,
-                      // size: 25.0,
-                      size: screenSize.width * 0.05,
+                      size: 25.0,
+                      // size: screenSize.width * 0.05,
                       color: Colors.green,
                     ),
                     const SizedBox(
@@ -45,8 +45,8 @@ class SubscriptionBenefitCard extends StatelessWidget {
                     Text(
                       e,
                       style: TextStyle(
-                        // fontSize: 17,
-                        fontSize: screenSize.width * 0.04,
+                        fontSize: 17,
+                        // fontSize: screenSize.width * 0.04,
                         color: Colors.black,
                         fontWeight: FontWeight.w500,
                       ),

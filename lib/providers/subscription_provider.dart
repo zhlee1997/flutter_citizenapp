@@ -75,7 +75,6 @@ class SubscriptionProvider with ChangeNotifier {
 
   Future<bool> queryAndSetIsWhitelisted(String memberId) async {
     try {
-      // TODO: Temp use Lucy, to get nickName from auth model
       var response = await _subscriptionServices.querySubscriptionWhitelisted(
         subscribeId: _subscribeId,
         memberId: memberId,

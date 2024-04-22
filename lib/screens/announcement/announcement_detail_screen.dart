@@ -87,12 +87,12 @@ class _AnnouncementDetailScreenState extends State<AnnouncementDetailScreen> {
       return _announcement!.annMessageEn;
     } else if (languageCode == 'zh') {
       return _announcement!.annMessageZh != ''
-          ? _announcement!.annTitleZh
-          : _announcement!.annTitleEn;
+          ? _announcement!.annMessageZh
+          : _announcement!.annMessageEn;
     } else {
       return _announcement!.annMessageMs != ''
-          ? _announcement!.annTitleMs
-          : _announcement!.annTitleEn;
+          ? _announcement!.annMessageMs
+          : _announcement!.annMessageEn;
     }
   }
 
@@ -178,6 +178,16 @@ class _AnnouncementDetailScreenState extends State<AnnouncementDetailScreen> {
                                 borderRadius: BorderRadius.circular(30),
                                 child: CachedNetworkImage(
                                   imageUrl: iconPath!,
+                                  errorWidget: (context, url, error) =>
+                                      CircleAvatar(
+                                    radius: 23.0,
+                                    child: Icon(
+                                      Icons.error,
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                      size: 28.0,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),

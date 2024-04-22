@@ -35,6 +35,22 @@ class HomepageCitizenAnnouncement extends StatelessWidget {
     }
   }
 
+  String getAnnouncementContent(int idx, BuildContext context) {
+    String languageCode =
+        Provider.of<LanguageProvider>(context).locale.languageCode;
+    if (languageCode == 'en') {
+      return citizenAnnouncements[idx].annMessageEn;
+    } else if (languageCode == 'zh') {
+      return citizenAnnouncements[idx].annMessageZh != ''
+          ? citizenAnnouncements[idx].annMessageZh
+          : citizenAnnouncements[idx].annMessageEn;
+    } else {
+      return citizenAnnouncements[idx].annMessageMs != ''
+          ? citizenAnnouncements[idx].annMessageMs
+          : citizenAnnouncements[idx].annMessageEn;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
@@ -92,7 +108,7 @@ class HomepageCitizenAnnouncement extends StatelessWidget {
                 useDefaultImage: true,
                 imageUrl: "assets/images/icon/sioc.png",
                 title: getAnnouncementTitle(i, context),
-                subtitle: citizenAnnouncements[i].annMessageEn,
+                subtitle: getAnnouncementContent(i, context),
                 onTap: () => Navigator.of(context).pushNamed(
                   AnnouncementDetailScreen.routeName,
                   arguments: {
@@ -105,7 +121,7 @@ class HomepageCitizenAnnouncement extends StatelessWidget {
                 imageUrl:
                     citizenAnnouncements[i].attachmentDtoList[0].attFilePath,
                 title: getAnnouncementTitle(i, context),
-                subtitle: citizenAnnouncements[i].annMessageEn,
+                subtitle: getAnnouncementContent(i, context),
                 onTap: () => Navigator.of(context).pushNamed(
                   AnnouncementDetailScreen.routeName,
                   arguments: {

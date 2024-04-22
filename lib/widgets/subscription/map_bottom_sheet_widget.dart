@@ -144,134 +144,195 @@ class _MapBottomSheetWidgetState extends State<MapBottomSheetWidget> {
       future: _loadWatermark(),
       builder: (_, AsyncSnapshot snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              SizedBox(
-                width: double.infinity,
-                height: screenSize.height * 0.25,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    const CircularProgressIndicator(),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    RichText(
-                      textAlign: TextAlign.center,
-                      text: const TextSpan(
-                        children: [
-                          TextSpan(
-                            text: "Loading image...",
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 15,
+          return SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                SizedBox(
+                  width: double.infinity,
+                  height: screenSize.height * 0.25,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      const CircularProgressIndicator(),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      RichText(
+                        textAlign: TextAlign.center,
+                        text: const TextSpan(
+                          children: [
+                            TextSpan(
+                              text: "Loading image...",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 15,
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              Container(
-                margin: const EdgeInsets.only(
-                  top: 20.0,
-                  left: 20.0,
-                  right: 20.0,
-                  bottom: 10.0,
-                ),
-                // width: double.infinity,
-                child: Text(
-                  cctvDetail!.location,
-                  style: const TextStyle(
-                    fontSize: 18.0,
-                    fontWeight: FontWeight.bold,
+                          ],
+                        ),
+                      )
+                    ],
                   ),
                 ),
-              ),
-              Container(
-                margin: const EdgeInsets.only(
-                  left: 20.0,
-                  right: 20.0,
-                  bottom: 20.0,
-                ),
-                // width: double.infinity,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      cctvDetail.name,
-                      softWrap: true,
-                    ),
-                    const SizedBox(
-                      width: 10.0,
-                    ),
-                    const Text(
-                      "|",
-                    ),
-                    const SizedBox(
-                      width: 10.0,
-                    ),
-                    Text(
-                      "${_distanceInBetween}KM from you",
-                    )
-                  ],
-                ),
-              ),
-              SizedBox(
-                width: screenSize.width * 0.9,
-                // height: screenSize.height * 0.06,
-                child: ElevatedButton(
-                  onPressed: () async {
-                    timer.cancel();
-                    Fluttertoast.cancel();
-                    Navigator.of(context).pop();
-                    Navigator.pushNamed(
-                      context,
-                      SubscriptionVideoScreen.routeName,
-                      arguments: SubscriptionVideoScreenArguments(
-                        cctvDetail.liveUrl,
-                        cctvDetail.name,
-                        cctvDetail.location,
-                        _distanceInBetween,
-                      ),
-                    );
-                  },
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(
-                        Theme.of(context).colorScheme.secondary),
+                Container(
+                  margin: const EdgeInsets.only(
+                    top: 20.0,
+                    left: 20.0,
+                    right: 20.0,
+                    bottom: 10.0,
                   ),
+                  // width: double.infinity,
                   child: Text(
-                    AppLocalization.of(context)!.translate('play_now')!,
+                    cctvDetail!.location,
                     style: const TextStyle(
+                      fontSize: 18.0,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
-              ),
-              Text(
-                "Each video session is ${subscriptionProvider.playbackDuration} minutes",
-                style: Theme.of(context).textTheme.labelSmall,
-              ),
-              const SizedBox(
-                height: 20.0,
-              ),
-            ],
+                Container(
+                  margin: const EdgeInsets.only(
+                    left: 20.0,
+                    right: 20.0,
+                    bottom: 5.0,
+                  ),
+                  // width: double.infinity,
+                  child: Text(
+                    cctvDetail.name,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                SizedBox(
+                  width: screenSize.width * 0.9,
+                  // height: screenSize.height * 0.06,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      timer.cancel();
+                      Fluttertoast.cancel();
+                      Navigator.of(context).pop();
+                      Navigator.pushNamed(
+                        context,
+                        SubscriptionVideoScreen.routeName,
+                        arguments: SubscriptionVideoScreenArguments(
+                          cctvDetail.liveUrl,
+                          cctvDetail.name,
+                          cctvDetail.location,
+                          _distanceInBetween,
+                        ),
+                      );
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(
+                          Theme.of(context).colorScheme.secondary),
+                    ),
+                    child: Text(
+                      AppLocalization.of(context)!.translate('play_now')!,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+                Text(
+                  "Each video session is ${subscriptionProvider.playbackDuration} minutes",
+                  style: Theme.of(context).textTheme.labelSmall,
+                ),
+                const SizedBox(
+                  height: 20.0,
+                ),
+              ],
+            ),
           );
         } else {
           if (imageByteData == null) {
-            return Column(
+            return SingleChildScrollView(
+              child: Column(
+                children: <Widget>[
+                  Center(
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: screenSize.height * 0.25,
+                      child: Center(
+                        child: Text(
+                          AppLocalization.of(context)!
+                              .translate('camera_is_not_available')!,
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(
+                      top: 20.0,
+                      left: 20.0,
+                      right: 20.0,
+                      bottom: 10.0,
+                    ),
+                    width: double.infinity,
+                    child: Text(
+                      cctvDetail!.location,
+                      style: TextStyle(
+                        fontSize: Platform.isIOS ? 18.0 : 18.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(
+                      left: 20.0,
+                      right: 20.0,
+                      bottom: 20.0,
+                    ),
+                    width: double.infinity,
+                    child: Text(
+                      cctvDetail.name,
+                      softWrap: true,
+                      style: TextStyle(
+                        fontSize: Platform.isIOS ? 18.0 : 15.0,
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: screenSize.width * 0.9,
+                    height: screenSize.height * 0.06,
+                    child: ElevatedButton(
+                      onPressed: null,
+                      child: Text(
+                        AppLocalization.of(context)!.translate('play_now')!,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Text(
+                    "Each video session is ${subscriptionProvider.playbackDuration} minutes",
+                    style: Theme.of(context).textTheme.labelSmall,
+                  ),
+                ],
+              ),
+            );
+          }
+
+          return SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                Center(
-                  child: SizedBox(
+                GestureDetector(
+                  onTap: () => GlobalDialogHelper()
+                      .showMemoryPhotoGallery(context, imageByteData!),
+                  child: Image.memory(
+                    imageByteData!,
                     width: double.infinity,
                     height: screenSize.height * 0.25,
-                    child: Center(
-                      child: Text(
-                        AppLocalization.of(context)!
-                            .translate('camera_is_not_available')!,
-                        textAlign: TextAlign.center,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => SizedBox(
+                      width: double.infinity,
+                      height: screenSize.height * 0.25,
+                      child: Center(
+                        child: Text(AppLocalization.of(context)!
+                            .translate('camera_is_not_available')!),
                       ),
                     ),
                   ),
@@ -283,11 +344,11 @@ class _MapBottomSheetWidgetState extends State<MapBottomSheetWidget> {
                     right: 20.0,
                     bottom: 10.0,
                   ),
-                  width: double.infinity,
+                  // width: double.infinity,
                   child: Text(
                     cctvDetail!.location,
-                    style: TextStyle(
-                      fontSize: Platform.isIOS ? 18.0 : 18.0,
+                    style: const TextStyle(
+                      fontSize: 18.0,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -296,25 +357,40 @@ class _MapBottomSheetWidgetState extends State<MapBottomSheetWidget> {
                   margin: const EdgeInsets.only(
                     left: 20.0,
                     right: 20.0,
-                    bottom: 20.0,
+                    bottom: 5.0,
                   ),
-                  width: double.infinity,
+                  // width: double.infinity,
                   child: Text(
                     cctvDetail.name,
-                    softWrap: true,
-                    style: TextStyle(
-                      fontSize: Platform.isIOS ? 18.0 : 15.0,
-                    ),
+                    textAlign: TextAlign.center,
                   ),
                 ),
                 SizedBox(
                   width: screenSize.width * 0.9,
-                  height: screenSize.height * 0.06,
+                  // height: screenSize.height * 0.06,
                   child: ElevatedButton(
-                    onPressed: null,
+                    onPressed: () async {
+                      timer.cancel();
+                      Fluttertoast.cancel();
+                      Navigator.of(context).pop();
+                      Navigator.pushNamed(
+                        context,
+                        SubscriptionVideoScreen.routeName,
+                        arguments: SubscriptionVideoScreenArguments(
+                          cctvDetail.liveUrl,
+                          cctvDetail.name,
+                          cctvDetail.location,
+                          _distanceInBetween,
+                        ),
+                      );
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(
+                          Theme.of(context).colorScheme.secondary),
+                    ),
                     child: Text(
                       AppLocalization.of(context)!.translate('play_now')!,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -324,115 +400,11 @@ class _MapBottomSheetWidgetState extends State<MapBottomSheetWidget> {
                   "Each video session is ${subscriptionProvider.playbackDuration} minutes",
                   style: Theme.of(context).textTheme.labelSmall,
                 ),
+                const SizedBox(
+                  height: 20.0,
+                )
               ],
-            );
-          }
-
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              GestureDetector(
-                onTap: () => GlobalDialogHelper()
-                    .showMemoryPhotoGallery(context, imageByteData!),
-                child: Image.memory(
-                  imageByteData!,
-                  width: double.infinity,
-                  height: screenSize.height * 0.25,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => SizedBox(
-                    width: double.infinity,
-                    height: screenSize.height * 0.25,
-                    child: Center(
-                      child: Text(AppLocalization.of(context)!
-                          .translate('camera_is_not_available')!),
-                    ),
-                  ),
-                ),
-              ),
-              Container(
-                margin: const EdgeInsets.only(
-                  top: 20.0,
-                  left: 20.0,
-                  right: 20.0,
-                  bottom: 10.0,
-                ),
-                // width: double.infinity,
-                child: Text(
-                  cctvDetail!.location,
-                  style: const TextStyle(
-                    fontSize: 18.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              Container(
-                margin: const EdgeInsets.only(
-                  left: 20.0,
-                  right: 20.0,
-                  bottom: 20.0,
-                ),
-                // width: double.infinity,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      cctvDetail.name,
-                      softWrap: true,
-                    ),
-                    const SizedBox(
-                      width: 10.0,
-                    ),
-                    const Text(
-                      "|",
-                    ),
-                    const SizedBox(
-                      width: 10.0,
-                    ),
-                    Text(
-                      "${_distanceInBetween}KM from you",
-                    )
-                  ],
-                ),
-              ),
-              SizedBox(
-                width: screenSize.width * 0.9,
-                // height: screenSize.height * 0.06,
-                child: ElevatedButton(
-                  onPressed: () async {
-                    timer.cancel();
-                    Fluttertoast.cancel();
-                    Navigator.of(context).pop();
-                    Navigator.pushNamed(
-                      context,
-                      SubscriptionVideoScreen.routeName,
-                      arguments: SubscriptionVideoScreenArguments(
-                        cctvDetail.liveUrl,
-                        cctvDetail.name,
-                        cctvDetail.location,
-                        _distanceInBetween,
-                      ),
-                    );
-                  },
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(
-                        Theme.of(context).colorScheme.secondary),
-                  ),
-                  child: Text(
-                    AppLocalization.of(context)!.translate('play_now')!,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-              Text(
-                "Each video session is ${subscriptionProvider.playbackDuration} minutes",
-                style: Theme.of(context).textTheme.labelSmall,
-              ),
-              const SizedBox(
-                height: 20.0,
-              )
-            ],
+            ),
           );
         }
       },

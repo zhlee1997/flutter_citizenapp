@@ -1,361 +1,189 @@
 {
   "login": "Login",
-
   "logout": "Logout",
-
   "please_login": "Please login for more functionalities (e.g. TaliKhidmat, Emergency Button etc.)",
-
   "close": "Close",
-
   "services": "Services",
-
   "talikhidmat": "Talikhidmat",
-
   "new_case": "New Case",
-
   "case_location": "Case Location",
-
   "get": "Get",
-
   "category": "Category",
-
   "latitude": "Latitude",
-
   "longitude": "Longitude",
-
   "complaint": "Complaint",
-
   "compliment": "Compliment",
-
   "enquiry": "Enquiry",
-
   "request_for_service": "Request for Service",
-
   "suggestion": "Suggestion",
-
   "message": "Message",
-
   "a_pothole": "A pothole found on the jogging track",
-
   "please_enter_messages": "Please enter messages",
-
   "photo_library": "Photo Library",
-
   "camera": "Camera",
-
   "submit_c": "Submit Case",
-
   "are_you": "Are you sure you want to submit?",
-
   "yes": "Yes",
-
   "no": "No",
-
   "submit_successful": "Successful!",
-
   "thank_you_for_your_feedback": "Thank you for your feedback.",
-
   "great": "OK",
-
   "emergency_button": "Emergency Button",
-
   "note": "Note: Use this service request with care. An emergency request is made with your user profile and current location details by confirming below.",
-
   "harassment": "Harassment",
-
   "fire/rescue": "Fire/Rescue",
-
   "traffic_accident/injuries": "Traffic Accident/Injuries",
-
   "theft/robbery": "Theft/Robbery",
-
   "physical_violence": "Physical Violence",
-
   "others": "Others",
-
   "caution": "Caution!",
-
   "do_you": "Do you want to send this request:",
-
   "location_recorded": "Location recorded",
-
   "your_emergency": "Your request has been successfully submitted.",
-
   "ok": "OK",
-
   "state_an_emergency": "State an emergency",
-
   "type_here": "Type Here",
-
   "Please enter some text": "Please enter some text",
-
   "cancel": "Cancel",
-
   "send": "Send",
-
   "traffic_images": "Traffic Images",
-
   "updated_on": "Updated on:",
-
   "tourism_information": "Tourism Information",
-
   "information_detail": "Information Detail",
-
   "live_video": "Live Video",
-
   "subscription": "(Subscription)",
-
   "cctv_map": "CCTV Map",
-
   "play_now": "PLAY NOW",
-
   "live_cctv": "Live CCTV",
-
   "nearby_cctv": "Nearby CCTV",
-
   "bill_payment": "Bill Payment",
-
   "assessment_rate": "Assessment Rate",
-
   "please_refer": "Please refer to your bill for account details",
-
   "account_number": "Account Number",
-
   "enter_account_number": "Enter Account Number",
-
   "bill_amount": "Bill Amount",
-
   "enter_bill_amount": "Enter Bill Amount",
-
   "please_allow": "Please allow 3 working days for payment details to be updated in your account.",
-
   "proceed_to": "Proceed to Checkout",
-
   "checkout": "Checkout",
-
   "payment_details": "Payment Details",
-
   "payment_descrip": "Payment Description",
-
   "pay_with": "Pay with S Pay Global",
-
   "success_transact": "Successful Transaction",
-
   "fail_transact": "Failed Transaction",
-
   "your_payment_success": "Your payment was done successfully",
-
   "your_payment_fail": "Your payment was failed",
-
   "done": "Done",
-
   "bus_schedule": "Bus Schedule",
-
   "bus_map": "Bus Map",
-
   "select": "Select",
-
   "choose_l": "Choose Lines",
-
   "choose": "Choose",
-
   "loading": "Loading",
-
   "103_bus_route": "103 - Bus Route",
-
   "bus_stop": "Bus Stop",
-
   "bus_station": "Bus Station",
-
   "scheduled_a": "Scheduled Arrival",
-
   "next_a": "Next Arrival",
-
   "direction": "Direction",
-
   "announcement": "Announcements",
-
   "view_all": "View All",
-
   "announcement_detail": "Announcement Detail",
-
   "inbox": "Inbox",
-
   "mark_all": "Mark all as read",
-
   "inbox_detail": "Inbox Detail",
-
   "reported_cases": "Reported Cases",
-
   "emergency_cases": "Emergency Cases",
-
   "new": "New",
-
   "pending": "Pending",
-
   "resolved": "Resolved",
-
   "no_data": "No Data",
-
   "end_of": "End of Page",
-
   "case_d": "Case Detail",
-
   "case_n": "Case Number",
-
   "case_s": "Case Status",
-
   "case_id": "Case ID",
-
   "date_sub": "Date Submitted",
-
   "case_loca": "Case Location",
-
   "request_d": "Request Details",
-
   "attachments": "Attachments",
-
   "load_m": "Load More",
-
   "my_transactions": "My Transactions",
-
   "no_transactions": "No Transactions",
-
   "no_tran_his": "No Transaction History",
-
   "monthly_transac": "Monthly Transactions",
-
   "transaction_hist": "Transaction History",
-
   "transaction_d": "Transaction Details",
-
   "transaction_n": "Transaction No. ",
-
   "my_profile": "My Profile",
-
   "upgrad": "UPGRADE",
-
   "normal_mem": "Normal Member",
-
   "vip_m": "VIP Member until",
-
   "email_add": "Email Address",
-
   "mobile_num": "Mobile Number",
-
   "address": "Home Address",
-
   "to_edit": "To edit profile, please visit ",
-
   "upgrade_p": "Upgrade Plan",
-
   "benefits": "Benefits",
-
   "cctv_streaming": "CCTV streaming",
-
   "no_ads": "No Advertisement",
-
   "fee_month": "RM 5.00 /Month",
-
   "subscribe": "SUBSCRIBE",
-
   "settings": "Settings",
-
   "splash": "Splash screen music",
-
   "enabled": "Enable",
-
   "disabled": "Disable",
-
   "support": "Support",
-
   "terms_cond": "Terms and Conditions",
-
   "privacy_poli": "Privacy Policy",
-
   "about_app": "About CitizenApp",
-
   "find_out": "Find Out More",
-
   "app_vers": "App Version",
-
   "unknown_location": "Unknown Location",
-
   "to_detect": "To detect current location, kindly check if GPS service or location permission is enabled",
-
   "no_announcement_data": "No Announcement Data",
-
   "login_error": "Login Error",
-
   "no_inbox_data": "No Inbox Data",
-
   "delete": "Delete",
-
   "payment_failed": "Payment failed",
-
   "payment_in_progress": "Payment In Progress",
-
   "upload_photo": "Uploading Photo",
-
   "upload_fail": "Upload Failed",
-
   "submit_fail": "Submit Failed",
-
   "warning": "Warning",
-
   "do_you_discard": "Do you want to discard these data?",
-
   "please_enter_case_location": "Please enter case location",
-
   "no_reported_case": "No Reported Cases",
-
   "no_tourism_data": "No Tourism Data",
-
   "google_maps_required": "Google Maps is required",
-
   "more_info": "More Info",
-
   "routing_agencies": "Routing Agencies",
-
   "case_timeline": "Case Timeline",
-
   "do_you_logout": "Do you want to logout?",
-
   "logging_out": "Logging Out",
-
   "capturing_video": "Video Capturing",
-
   "greater_than_0": "Greater than 0.00",
-
   "image_not_found": "Image Not Found",
-
   "eg_flood": "eg. Flood",
-
   "please_install_spay": "Please install S Pay Global",
-
   "cctv_not_found": "CCTV not found",
-
   "bus_map_not_loaded": "Bus Map not loaded",
-
   "subscription_1": "Subscription",
-
   "message_deleted": "Message deleted",
-
   "bus_stop_not_found": "Bus stop not found",
-
   "unauthorized_access": "Unauthorized Access",
-
   "signed_out": "Signed out.",
-
   "want_to_have_full": "Want to have full access?\nSubscribe to enjoy VIP benefits",
-
   "sign_out_failed": "Sign out failed",
-
   "please_try_again": "Please try again",
-
   "image_less_than_10": "Image must be less than 10MB",
-
   "could_not_network": "Could not connect to network",
-
-  "camera_is_not_available": "Camera is not available"
+  "camera_is_not_available": "Camera is not available",
+  "send_feedback": "Send Feedback",
+  "app_support": "App Support",
+  "language": "Language",
+  "screen_music": "Screen Music",
+  "push_notifications": "Push Notifications",
+  "app_settings": "App Settings",
+  "app_services": "App Services"
 }

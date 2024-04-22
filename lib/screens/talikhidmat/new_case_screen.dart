@@ -29,6 +29,7 @@ class _NewCaseScreenState extends State<NewCaseScreen> {
   // To submit attachments => API
   List<Map> _imagesAttachCreate = [];
 
+  late TalikhidmatProvider _talikhidmatProvider;
   final EventServices _eventServices = EventServices();
   static final _formKey = GlobalKey<FormState>();
 
@@ -116,6 +117,7 @@ class _NewCaseScreenState extends State<NewCaseScreen> {
   void didChangeDependencies() {
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
+    _talikhidmatProvider = Provider.of<TalikhidmatProvider>(context);
 
     // final Position? position =
     //     Provider.of<LocationProvider>(context).currentLocation;
@@ -128,11 +130,11 @@ class _NewCaseScreenState extends State<NewCaseScreen> {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
-    final TalikhidmatProvider talikhidmatProvider =
-        Provider.of<TalikhidmatProvider>(context, listen: false);
 
     return PopScope(
-      canPop: !(_message.isNotEmpty || talikhidmatProvider.message.isNotEmpty),
+      canPop: !(_message.isNotEmpty ||
+          _talikhidmatProvider.message.isNotEmpty ||
+          _talikhidmatProvider.attachments.isNotEmpty),
       onPopInvoked: (bool didPop) async {
         if (didPop) {
           return;
@@ -140,7 +142,8 @@ class _NewCaseScreenState extends State<NewCaseScreen> {
         await GlobalDialogHelper().showAlertDialog(
           context: context,
           yesButtonFunc: () {
-            talikhidmatProvider.resetProvider();
+            Provider.of<TalikhidmatProvider>(context, listen: false)
+                .resetProvider();
             Navigator.of(context)
                 .popUntil(ModalRoute.withName('home-page-screen'));
           },
@@ -150,10 +153,9 @@ class _NewCaseScreenState extends State<NewCaseScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Submit Feedback'),
+          title: Text('Submit Report'),
         ),
         body: Stepper(
-          physics: const NeverScrollableScrollPhysics(),
           type: StepperType.horizontal,
           steps: getSteps(context, screenSize),
           currentStep: currentStep,
@@ -222,7 +224,8 @@ class _NewCaseScreenState extends State<NewCaseScreen> {
                 if (!_formKey.currentState!.validate()) {
                   return;
                 }
-                talikhidmatProvider.setCategoryAndMessage(
+                Provider.of<TalikhidmatProvider>(context, listen: false)
+                    .setCategoryAndMessage(
                   category: _category,
                   message: _message,
                 );

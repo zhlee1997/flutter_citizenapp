@@ -206,7 +206,7 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
             ),
           ),
           child: Stepper(
-            physics: const NeverScrollableScrollPhysics(),
+            // physics: const NeverScrollableScrollPhysics(),
             type: StepperType.horizontal,
             steps: getSteps(context, screenSize),
             currentStep: currentStep,

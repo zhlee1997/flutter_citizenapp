@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 
 import '../../models/cctv_model.dart';
+import '../../models/camera_subscription_model.dart';
 import '../../utils/global_dialog_helper.dart';
 import '../../services/cctv_services.dart';
 import '../../widgets/subscription/list_bottom_sheet_widget.dart';
+import '../../providers/camera_subscription_provider.dart';
 
 class SubscriptionListScreen extends StatefulWidget {
   static const String routeName = "subscription-list-screen";
@@ -15,116 +20,18 @@ class SubscriptionListScreen extends StatefulWidget {
 }
 
 class _SubscriptionListScreenState extends State<SubscriptionListScreen> {
-  List<CCTVListModel> _cctvListModelList = [];
+  List<CameraSubscriptionModel> _cameraListModelList = [];
   bool _isLoading = false;
   bool _noMoreLoad = true;
 
   final GlobalDialogHelper _globalDialogHelper = GlobalDialogHelper();
 
-  // TODO: Get Snapshots API
-  // TODO: infinite scrolling
-  // TODO: show total number of CCTVs in the bottom of list
-  Future<void> getSnapshotList(Map<String, dynamic> data) async {
-    final CCTVServices cctvServices = CCTVServices();
+  String get returnCurrentTime =>
+      DateFormat("yyyy/MM/dd hh:mm:ss a").format(DateTime.now());
 
-    try {
-      var response = await cctvServices.queryCCTVSnapshotList(data);
-      if (response["status"] == "200") {
-        setState(() {
-          _cctvListModelList = response["obj"];
-        });
-      }
-    } catch (e) {
-      print("getSnapshotList fail: ${e.toString()}");
-    }
-  }
-
-  Future<void> _initCCTVList() async {
-    setState(() {
-      _isLoading = true;
-    });
-    setState(() {
-      _cctvListModelList = [
-        CCTVListModel(
-          cctvId: "1",
-          name: "SIOC CCTV 1",
-          location: "Bangunan Baitulmakmur 1",
-          latitude: "1.552111111",
-          longitude: "110.3352278",
-          image:
-              "https://images.lifestyleasia.com/wp-content/uploads/sites/5/2022/07/15175110/Hero_Sarawak_River-1600x900.jpg",
-          updateTime: "02/03/2024 12:17:12 AM",
-          liveUrl:
-              "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-        ),
-        CCTVListModel(
-          cctvId: "2",
-          name: "SIOC CCTV 2",
-          location: "Bangunan Baitulmakmur 2",
-          latitude: "1.559844444",
-          longitude: "110.3456778",
-          image:
-              "https://static.vecteezy.com/system/resources/previews/032/079/941/large_2x/aerial-view-of-bandaraya-kuching-mosque-in-kuching-sarawak-east-malaysia-photo.jpg",
-          updateTime: "02/03/2024 12:17:12 AM",
-          liveUrl:
-              "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
-        ),
-        CCTVListModel(
-          cctvId: "3",
-          name: "SIOC CCTV 3",
-          location: "Bangunan Baitulmakmur 3",
-          latitude: "1.552111111",
-          longitude: "110.3352278",
-          image:
-              "https://www.globeguide.ca/wp-content/uploads/2020/02/Malaysia-Sarawak-Kuching-city-view.jpg",
-          updateTime: "02/03/2024 12:17:12 AM",
-          liveUrl:
-              "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-        ),
-        CCTVListModel(
-          cctvId: "4",
-          name: "SIOC CCTV 4",
-          location: "Bangunan Baitulmakmur 4",
-          latitude: "1.559844444",
-          longitude: "110.3456778",
-          image:
-              "https://cdn.audleytravel.com/3602/2573/79/15979011-kuching-borneo.jpg",
-          updateTime: "02/03/2024 12:17:12 AM",
-          liveUrl:
-              "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
-        ),
-        CCTVListModel(
-          cctvId: "5",
-          name: "SIOC CCTV 5",
-          location: "Bangunan Baitulmakmur 5",
-          latitude: "1.552111111",
-          longitude: "110.3352278",
-          image:
-              "https://media.tacdn.com/media/attractions-splice-spp-674x446/07/18/2a/dc.jpg",
-          updateTime: "02/03/2024 12:17:12 AM",
-          liveUrl:
-              "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
-        ),
-        CCTVListModel(
-          cctvId: "",
-          name: "",
-          location: "",
-          latitude: "",
-          longitude: "",
-          image: "",
-          updateTime: "",
-          liveUrl: "",
-        )
-      ];
-    });
-    setState(() {
-      _isLoading = false;
-    });
-  }
-
-  Future<void> onPressCCCTVSnapshotImage({
+  Future<void> onPressCCTVSnapshotImage({
     required String imageUrl,
-    required String liveUrl,
+    // required String liveUrl,
     required String name,
     required String location,
     required String latitide,
@@ -140,7 +47,7 @@ class _SubscriptionListScreenState extends State<SubscriptionListScreen> {
           cctvLatitude: latitide,
           cctvLongitude: longitude,
           imageUrl: imageUrl,
-          liveUrl: liveUrl,
+          // liveUrl: liveUrl,
         );
       },
     );
@@ -150,7 +57,28 @@ class _SubscriptionListScreenState extends State<SubscriptionListScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _initCCTVList();
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      setState(() {
+        _isLoading = true;
+      });
+      _cameraListModelList.addAll(
+          Provider.of<CameraSubscriptionProvider>(context, listen: false)
+              .cameraSubscription);
+      _cameraListModelList.add(CameraSubscriptionModel(
+        channel: "",
+        deviceCode: "",
+        deviceName: "",
+        id: "",
+        latitude: "",
+        longitude: "",
+        location: "",
+        picUrl: "",
+      ));
+      print(_cameraListModelList);
+      setState(() {
+        _isLoading = false;
+      });
+    });
   }
 
   @override
@@ -167,9 +95,9 @@ class _SubscriptionListScreenState extends State<SubscriptionListScreen> {
           : ListView.builder(
               padding: EdgeInsets.all(10.0),
               shrinkWrap: true,
-              itemCount: _cctvListModelList.length,
+              itemCount: _cameraListModelList.length,
               itemBuilder: ((context, index) {
-                if (_cctvListModelList.length == index + 1) {
+                if (_cameraListModelList.length == index + 1) {
                   if (_noMoreLoad) {
                     return Center(
                       child: Container(
@@ -178,13 +106,13 @@ class _SubscriptionListScreenState extends State<SubscriptionListScreen> {
                         ),
                         child: Text(
                             // Extra last empty element in array, so need to minus 1
-                            "Number of CCTVs: ${_cctvListModelList.length - 1}"),
+                            "Number of CCTVs: ${_cameraListModelList.length - 1}"),
                       ),
                     );
                   }
                 } else {
                   // to detect the last empty element
-                  if (_cctvListModelList[index].cctvId.isNotEmpty) {
+                  if (_cameraListModelList[index].id.isNotEmpty) {
                     return Card(
                       child: Column(
                         children: [
@@ -192,26 +120,31 @@ class _SubscriptionListScreenState extends State<SubscriptionListScreen> {
                             width: double.infinity,
                             padding: EdgeInsets.all(8.0),
                             child: Text(
-                              _cctvListModelList[index].name,
+                              _cameraListModelList[index].deviceName,
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                           ),
                           GestureDetector(
-                            onTap: () => onPressCCCTVSnapshotImage(
-                              imageUrl: _cctvListModelList[index].image,
-                              liveUrl: _cctvListModelList[index].liveUrl,
-                              name: _cctvListModelList[index].name,
-                              location: _cctvListModelList[index].location,
-                              latitide: _cctvListModelList[index].latitude,
-                              longitude: _cctvListModelList[index].longitude,
+                            onTap: () => onPressCCTVSnapshotImage(
+                              imageUrl: _cameraListModelList[index].picUrl,
+                              // liveUrl: _cameraListModelList[index].liveUrl,
+                              name: _cameraListModelList[index].deviceName,
+                              location: _cameraListModelList[index].location,
+                              latitide: _cameraListModelList[index].latitude,
+                              longitude: _cameraListModelList[index].longitude,
                             ),
                             child: SizedBox(
                               width: double.infinity,
                               height: screenSize.height * 0.3,
                               child: Image.network(
-                                _cctvListModelList[index].image,
+                                _cameraListModelList[index].picUrl,
+                                errorBuilder: (context, error, stackTrace) =>
+                                    Image.asset(
+                                  "assets/images/icon/sioc.png",
+                                  fit: BoxFit.cover,
+                                ),
                                 width: double.infinity,
                                 height: screenSize.height * 0.3,
                                 fit: BoxFit.cover,
@@ -223,7 +156,8 @@ class _SubscriptionListScreenState extends State<SubscriptionListScreen> {
                             padding: EdgeInsets.all(8.0),
                             alignment: Alignment.centerRight,
                             child: Text(
-                              _cctvListModelList[index].updateTime,
+                              returnCurrentTime,
+                              // _cameraListModelList[index].updateTime,
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                               ),

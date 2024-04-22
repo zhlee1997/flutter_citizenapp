@@ -29,6 +29,7 @@ import '../providers/announcement_provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/location_provider.dart';
 import '../providers/subscription_provider.dart';
+import '../providers/language_provider.dart';
 import '../services/announcement_services.dart';
 import '../services/subscription_services.dart';
 import '../services/event_services.dart';
@@ -525,6 +526,38 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  String getTourismTitle(int idx, BuildContext context) {
+    String languageCode =
+        Provider.of<LanguageProvider>(context).locale.languageCode;
+    if (languageCode == 'en') {
+      return tourismAnnouncements[idx].annTitleEn;
+    } else if (languageCode == 'zh') {
+      return tourismAnnouncements[idx].annTitleZh != ''
+          ? tourismAnnouncements[idx].annTitleZh
+          : tourismAnnouncements[idx].annTitleEn;
+    } else {
+      return tourismAnnouncements[idx].annTitleMs != ''
+          ? tourismAnnouncements[idx].annTitleMs
+          : tourismAnnouncements[idx].annTitleEn;
+    }
+  }
+
+  String getTourismContent(int idx, BuildContext context) {
+    String languageCode =
+        Provider.of<LanguageProvider>(context).locale.languageCode;
+    if (languageCode == 'en') {
+      return tourismAnnouncements[idx].annMessageEn;
+    } else if (languageCode == 'zh') {
+      return tourismAnnouncements[idx].annMessageZh != ''
+          ? tourismAnnouncements[idx].annMessageZh
+          : tourismAnnouncements[idx].annMessageEn;
+    } else {
+      return tourismAnnouncements[idx].annMessageMs != ''
+          ? tourismAnnouncements[idx].annMessageMs
+          : tourismAnnouncements[idx].annMessageEn;
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -1010,24 +1043,29 @@ class _HomePageState extends State<HomePage> {
                                           subtitle: "Loading...",
                                         ),
                                       ))
-                              : tourismAnnouncements
-                                  .map((e) => e.attachmentDtoList.isEmpty
+                              : tourismAnnouncements.map((e) {
+                                  int index = tourismAnnouncements.indexOf(e);
+                                  return e.attachmentDtoList.isEmpty
                                       ? HomepageTourismCard(
                                           useDefault: true,
                                           annId: e.annId,
                                           imageUrl:
                                               "assets/images/icon/sioc.png",
-                                          title: e.annTitleEn,
-                                          subtitle: e.annMessageEn,
+                                          title:
+                                              getTourismTitle(index, context),
+                                          subtitle:
+                                              getTourismContent(index, context),
                                         )
                                       : HomepageTourismCard(
                                           annId: e.annId,
                                           imageUrl: e
                                               .attachmentDtoList[0].attFilePath,
-                                          title: e.annTitleEn,
-                                          subtitle: e.annMessageEn,
-                                        ))
-                                  .toList(),
+                                          title:
+                                              getTourismTitle(index, context),
+                                          subtitle:
+                                              getTourismContent(index, context),
+                                        );
+                                }).toList(),
                         ),
                 ),
                 Container(

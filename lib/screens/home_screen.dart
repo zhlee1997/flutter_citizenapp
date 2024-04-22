@@ -25,6 +25,9 @@ class _HomeScreenState extends State<HomeScreen> {
   int _currentPageIndex = 0;
   bool isNotificationsSelected = true;
 
+  /// Creating a navigation key to control tab bar navigation
+  final _navigationKey = GlobalKey();
+
   void setNotificationsState(bool isSelected) {
     setState(() {
       isNotificationsSelected = isSelected;
@@ -159,6 +162,18 @@ class _HomeScreenState extends State<HomeScreen> {
               return;
             }
 
+            // Check for ServicessBottomNavScreen (Page 2).
+            if (index == 1) {
+              _screens.removeAt(1);
+              // Pass a UniqueKey as key to force the widget lifecycle to start over.
+              _screens.insert(
+                1,
+                ServicesBottomNavScreen(
+                  key: UniqueKey(),
+                ),
+              );
+            }
+
             // Check for NotificationsBottomNavScreen (Page 3).
             if (index == 2) {
               _screens.removeAt(2);
@@ -177,6 +192,7 @@ class _HomeScreenState extends State<HomeScreen> {
             });
           },
           selectedIndex: _currentPageIndex,
+          key: _navigationKey,
           destinations: <Widget>[
             NavigationDestination(
               selectedIcon: Icon(
@@ -346,8 +362,10 @@ class _HomeScreenState extends State<HomeScreen> {
       case 3:
         return Provider.of<AuthProvider>(context).isAuth
             ? _appBar(
-                AppBar().preferredSize.height,
-                () => handleNavigateToProfileDetailsScreen(),
+                screenSize: screenSize,
+                height: AppBar().preferredSize.height,
+                handleNavigateToProfileDetailsScreen: () =>
+                    handleNavigateToProfileDetailsScreen(),
               )
             : AppBar(
                 title: const Text("Profile"),
@@ -357,11 +375,16 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  _appBar(height, handleNavigateToProfileDetailsScreen) => PreferredSize(
+  _appBar({
+    required Size screenSize,
+    required double height,
+    required void Function() handleNavigateToProfileDetailsScreen,
+  }) =>
+      PreferredSize(
         preferredSize: Size(
           MediaQuery.of(context).size.width,
           // TODO: Adjust appbar height
-          height + 130,
+          height + screenSize.height * 0.22,
         ),
         child: Stack(
           children: <Widget>[
@@ -369,10 +392,12 @@ class _HomeScreenState extends State<HomeScreen> {
               // Background
               color: Theme.of(context).primaryColor,
               // TODO: Adjust appbar height
-              height: height + 90,
-              width: MediaQuery.of(context).size.width,
-              child: const Center(
-                child: Text(
+              height: height + screenSize.height * 0.13,
+              width: screenSize.width,
+              child: Container(
+                margin: EdgeInsets.only(top: screenSize.height * 0.06),
+                alignment: Alignment.topCenter,
+                child: const Text(
                   "Profile",
                   style: TextStyle(
                     fontSize: 20.0,
@@ -392,7 +417,7 @@ class _HomeScreenState extends State<HomeScreen> {
               right: 20.0,
               child: AppBar(
                 // TODO: Adjust appbar height
-                toolbarHeight: 120.0,
+                toolbarHeight: screenSize.height * 0.17,
                 shape: Border.all(
                   width: 0.5,
                   color: Colors.grey,
@@ -404,7 +429,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: <Widget>[
                     Consumer<AuthProvider>(
                       builder: (_, AuthProvider authProvider, __) {
-                        print(authProvider.auth.profileImage);
                         return Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
@@ -422,7 +446,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   Text(
                                     authProvider.auth.mobile ?? "",
                                     style: TextStyle(
-                                      color: Colors.grey,
+                                      color: Colors.black54,
                                       fontSize: Theme.of(context)
                                           .textTheme
                                           .bodyMedium!

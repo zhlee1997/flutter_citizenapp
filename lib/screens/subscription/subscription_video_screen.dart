@@ -225,6 +225,8 @@ class _SubscriptionVideoScreenState extends State<SubscriptionVideoScreen>
       liveUrl:
           "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
     );
+
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
     // TODO: To calculate distance in between for other cameras
     Navigator.of(context).pushReplacementNamed(
       SubscriptionVideoScreen.routeName,
@@ -348,129 +350,137 @@ class _SubscriptionVideoScreenState extends State<SubscriptionVideoScreen>
                       vertical: 15.0,
                       horizontal: 15.0,
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Column(
-                          children: <Widget>[
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
-                                const Icon(Icons.location_pin),
-                                const SizedBox(
-                                  width: 10.0,
-                                ),
-                                Flexible(
-                                  child: Text(
-                                    args.address,
-                                    style:
-                                        Theme.of(context).textTheme.bodyLarge,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 15,
-                            ),
-                            Row(
-                              children: <Widget>[
-                                const Icon(Icons.camera_outdoor),
-                                const SizedBox(
-                                  width: 10.0,
-                                ),
-                                Text(
-                                  args.name,
-                                  style: Theme.of(context).textTheme.bodyLarge,
-                                ),
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 15,
-                            ),
-                            Row(
-                              children: <Widget>[
-                                const Icon(Icons.directions_walk_outlined),
-                                const SizedBox(
-                                  width: 10.0,
-                                ),
-                                Text(
-                                  "${args.distanceInBetween}KM from you",
-                                  style: Theme.of(context).textTheme.bodyLarge,
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        Column(
-                          children: [
-                            Container(
-                              width: screenSize.width * 0.9,
-                              margin: const EdgeInsets.only(
-                                bottom: 10.0,
-                              ),
-                              padding: const EdgeInsets.all(15.0),
-                              decoration: BoxDecoration(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .secondaryContainer,
-                                borderRadius: const BorderRadius.all(
-                                    Radius.circular(10.0)),
-                              ),
-                              child: Column(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Column(
+                            children: <Widget>[
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: <Widget>[
-                                  Row(
-                                    children: <Widget>[
-                                      CircleAvatar(
-                                        backgroundColor: Theme.of(context)
-                                            .colorScheme
-                                            .background,
-                                        radius: 16.0,
-                                        child: Icon(
-                                          Icons.tips_and_updates,
-                                          size: 18.0,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary,
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        width: 10.0,
-                                      ),
-                                      const Text(
-                                        "Note",
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                                  const Icon(Icons.location_pin),
                                   const SizedBox(
-                                    height: 5.0,
+                                    width: 10.0,
                                   ),
-                                  const Text(
-                                    "You can open the Google Maps if installed. Otherwise, open map browser to pinpoint the camera location.",
-                                    style: TextStyle(
-                                      fontSize: 13.0,
+                                  Flexible(
+                                    child: Text(
+                                      args.address,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium,
                                     ),
                                   ),
                                 ],
                               ),
-                            ),
-                            Container(
-                              width: screenSize.width * 0.9,
-                              margin: const EdgeInsets.only(
-                                bottom: 5.0,
+                              const SizedBox(
+                                height: 15,
                               ),
-                              child: ElevatedButton.icon(
-                                onPressed: _launchGoogleMaps,
-                                icon: const Icon(Icons.map_outlined),
-                                label: const Text("Google Maps"),
+                              Row(
+                                children: <Widget>[
+                                  const Icon(Icons.camera_outdoor),
+                                  const SizedBox(
+                                    width: 10.0,
+                                  ),
+                                  Flexible(
+                                    child: Text(
+                                      args.name,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium,
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ),
-                          ],
-                        )
-                      ],
+                              const SizedBox(
+                                height: 15,
+                              ),
+                              Row(
+                                children: <Widget>[
+                                  const Icon(Icons.directions_walk_outlined),
+                                  const SizedBox(
+                                    width: 10.0,
+                                  ),
+                                  Text(
+                                    "${args.distanceInBetween}KM from you",
+                                    style:
+                                        Theme.of(context).textTheme.bodyMedium,
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          Column(
+                            children: [
+                              Container(
+                                width: screenSize.width * 0.9,
+                                margin: const EdgeInsets.only(
+                                  bottom: 10.0,
+                                ),
+                                padding: const EdgeInsets.all(15.0),
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .secondaryContainer,
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(10.0)),
+                                ),
+                                child: Column(
+                                  children: <Widget>[
+                                    Row(
+                                      children: <Widget>[
+                                        CircleAvatar(
+                                          backgroundColor: Theme.of(context)
+                                              .colorScheme
+                                              .background,
+                                          radius: 16.0,
+                                          child: Icon(
+                                            Icons.tips_and_updates,
+                                            size: 18.0,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary,
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          width: 10.0,
+                                        ),
+                                        const Text(
+                                          "Note",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(
+                                      height: 5.0,
+                                    ),
+                                    const Text(
+                                      "You can open the Google Maps if installed. Otherwise, open map browser to pinpoint the camera location.",
+                                      style: TextStyle(
+                                        fontSize: 13.0,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                width: screenSize.width * 0.9,
+                                margin: const EdgeInsets.only(
+                                  bottom: 5.0,
+                                ),
+                                child: ElevatedButton.icon(
+                                  onPressed: _launchGoogleMaps,
+                                  icon: const Icon(Icons.map_outlined),
+                                  label: const Text("Google Maps"),
+                                ),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
                     ),
                   ),
                   ListView.builder(

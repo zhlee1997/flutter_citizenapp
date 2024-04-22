@@ -4,6 +4,8 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_citizenapp/models/camera_subscription_model.dart';
+import 'package:flutter_citizenapp/providers/camera_subscription_provider.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -55,7 +57,7 @@ class _SubscriptionMapScreenState extends State<SubscriptionMapScreen> {
     return double.parse(value);
   }
 
-  Future<void> onPressCctvIcon(CCTVModel cctv) async {
+  Future<void> onPressCctvIcon(CameraSubscriptionModel cctv) async {
     Future<void> handleFuture() async {
       try {
         await Provider.of<CCTVProvider>(context, listen: false)
@@ -68,7 +70,7 @@ class _SubscriptionMapScreenState extends State<SubscriptionMapScreen> {
 
       Map<String, dynamic> data = {
         "channel": "02",
-        "thridDeviceId": cctv.cctvId,
+        "thridDeviceId": cctv.id,
       };
       try {
         await Provider.of<CCTVProvider>(context, listen: false)
@@ -125,22 +127,22 @@ class _SubscriptionMapScreenState extends State<SubscriptionMapScreen> {
   Future<void> _renderMarker() async {
     try {
       // TODO: vms/getCameraList => API
-      bool success = await Provider.of<CCTVProvider>(context, listen: false)
-          .getCctvCoordinatesProvider();
-      if (success) {
-        List<CCTVModel> cctvModel =
-            Provider.of<CCTVProvider>(context, listen: false).cctvModel;
 
-        final Uint8List markerIcon =
-            await getBytesFromAsset('assets/images/icon/cctv.png', 80);
-        cctvModel.forEach((cctv) {
+      List<CameraSubscriptionModel> cctvModel =
+          Provider.of<CameraSubscriptionProvider>(context, listen: false)
+              .cameraSubscription;
+
+      final Uint8List markerIcon =
+          await getBytesFromAsset('assets/images/icon/cctv.png', 80);
+      cctvModel.forEach((cctv) {
+        if (cctv.latitude.isNotEmpty && cctv.longitude.isNotEmpty) {
           setState(() {
             _markers.add(
               Marker(
-                markerId: MarkerId(cctv.cctvId),
+                markerId: MarkerId(cctv.id),
                 position: LatLng(
-                  convertStringToDouble(cctv.latitude),
-                  convertStringToDouble(cctv.longitude),
+                  double.parse(cctv.latitude),
+                  double.parse(cctv.longitude),
                 ),
                 icon: BitmapDescriptor.fromBytes(markerIcon),
                 onTap: () async {
@@ -152,11 +154,11 @@ class _SubscriptionMapScreenState extends State<SubscriptionMapScreen> {
               ),
             );
           });
-        });
-        setState(() {
-          _isLoading = false;
-        });
-      }
+        }
+      });
+      setState(() {
+        _isLoading = false;
+      });
     } catch (e) {
       print("renderMarker error: ${e.toString()}");
     }

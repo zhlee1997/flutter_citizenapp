@@ -42,13 +42,13 @@ class _ReportScreenState extends State<ReportScreen> {
   /// Delete images
   ///
   /// Receives [imagePath] as the file image path
-  void _removePhoto(String imagePath) {
+  void _removePhoto(String imagePath, String uploadPath) {
     setState(() {
       _images.removeWhere((img) => img['file'].path == imagePath);
     });
     // TODO: new added provider for images
     Provider.of<TalikhidmatProvider>(context, listen: false).removeAttachement(
-      attachment: imagePath,
+      attachment: uploadPath,
     );
   }
 
@@ -289,7 +289,7 @@ class _ReportScreenState extends State<ReportScreen> {
             ),
           ),
           Container(
-            height: screenSize.height * 0.13,
+            height: screenSize.height * 0.16,
             margin: const EdgeInsets.only(
               top: 10.0,
             ),
@@ -332,7 +332,7 @@ class _ReportScreenState extends State<ReportScreen> {
             margin: const EdgeInsets.only(
               top: 15.0,
             ),
-            height: screenSize.height * 0.1,
+            height: screenSize.height * 0.125,
             child: _images.length == 0
                 ? GestureDetector(
                     onTap: _showPhotoModal,
@@ -362,7 +362,6 @@ class _ReportScreenState extends State<ReportScreen> {
                 : ListView(
                     scrollDirection: Axis.horizontal,
                     children: <Widget>[
-                      ..._returnImageWidget(),
                       _images.length == 5
                           ? Container()
                           : GestureDetector(
@@ -391,6 +390,7 @@ class _ReportScreenState extends State<ReportScreen> {
                                 ),
                               ),
                             ),
+                      ..._returnImageWidget(),
                     ],
                   ),
           ),
@@ -431,7 +431,7 @@ class _ReportScreenState extends State<ReportScreen> {
                 right: 0,
                 child: GestureDetector(
                   onTap: () {
-                    _removePhoto(e['file'].path);
+                    _removePhoto(e['file'].path, e['imgUrl']["filePath"]);
                   },
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(200),

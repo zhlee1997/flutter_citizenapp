@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -112,16 +114,19 @@ class _LocationScreenState extends State<LocationScreen> {
           child: Stack(
             children: <Widget>[
               GoogleMap(
-                initialCameraPosition: _cameraPosition,
-                onMapCreated: (GoogleMapController controller) {
-                  _controller.complete(controller);
-                },
-                myLocationEnabled: true,
-                onCameraMove: _handleCameraMove,
-                onCameraIdle: () {
-                  _geocodeAddress(_latitude, _longitude);
-                },
-              ),
+                  initialCameraPosition: _cameraPosition,
+                  onMapCreated: (GoogleMapController controller) {
+                    _controller.complete(controller);
+                  },
+                  myLocationEnabled: true,
+                  onCameraMove: _handleCameraMove,
+                  onCameraIdle: () {
+                    _geocodeAddress(_latitude, _longitude);
+                  },
+                  gestureRecognizers: const {
+                    Factory<OneSequenceGestureRecognizer>(
+                        EagerGestureRecognizer.new),
+                  }),
               Align(
                 alignment: Alignment.center,
                 child: Icon(

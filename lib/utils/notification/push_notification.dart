@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import './show_notification.dart';
 import '../navigation_service.dart';
@@ -62,9 +63,14 @@ class PushNotification {
     if (isFCMRequired) {
       getFcmToken();
     } else {
-      print("Delete FCM Token");
-      await _firebaseMessaging.deleteToken();
-      return;
+      try {
+        await _firebaseMessaging.deleteToken();
+        print("Delete FCM Token (Firebase service)");
+        return;
+      } catch (e) {
+        print("Firebase service unavailable");
+        Fluttertoast.showToast(msg: "Firebase service unavailable");
+      }
     }
 
     // todo: initialise the plugin. app_icon needs to be a added as a drawable resource to the Android head project

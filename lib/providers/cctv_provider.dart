@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_citizenapp/models/camera_subscription_model.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../models/cctv_model.dart';
@@ -43,18 +44,18 @@ class CCTVProvider with ChangeNotifier {
   /// Using getCctvDetail API
   ///
   /// Receives [data] as the CCTV information
-  Future<void> getCctvDetailProvider(CCTVModel data) async {
+  Future<void> getCctvDetailProvider(CameraSubscriptionModel data) async {
     try {
       Map<String, dynamic> map = {
         "channel": data.channel,
-        "thridDeviceId": data.cctvId,
+        "thridDeviceId": data.id,
         "urlType": AppConstant
             .urlType, // video type：1.rtsp、2.hls、3.rtmp、4.flv-http、5.dash
       };
       var response = await CCTVServices().getCctvDetail(map);
       if (response['status'] == 200) {
         _cctvModelDetail = CCTVModelDetail(
-          id: data.cctvId,
+          id: data.id,
           name: data.deviceName,
           location: data.location,
           image: '',

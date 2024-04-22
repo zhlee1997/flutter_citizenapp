@@ -7,6 +7,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 
 import '../../providers/auth_provider.dart';
 import '../../providers/inbox_provider.dart';
+import '../../providers/language_provider.dart';
 import '../../widgets/sarawakid/login_full_bottom_modal.dart';
 import '../../services/inbox_services.dart';
 import '../../services/announcement_services.dart';
@@ -124,6 +125,42 @@ class _NotificationsBottomNavScreenState
     );
   }
 
+  String getMajorTitle(
+      AnnouncementModel announcementModel, BuildContext context) {
+    String languageCode = Provider.of<LanguageProvider>(context, listen: false)
+        .locale
+        .languageCode;
+    if (languageCode == 'en') {
+      return announcementModel.annTitleEn;
+    } else if (languageCode == 'zh') {
+      return announcementModel.annTitleZh != ''
+          ? announcementModel.annTitleZh
+          : announcementModel.annTitleEn;
+    } else {
+      return announcementModel.annTitleMs != ''
+          ? announcementModel.annTitleMs
+          : announcementModel.annTitleEn;
+    }
+  }
+
+  String getMajorContent(
+      AnnouncementModel announcementModel, BuildContext context) {
+    String languageCode = Provider.of<LanguageProvider>(context, listen: false)
+        .locale
+        .languageCode;
+    if (languageCode == 'en') {
+      return announcementModel.annMessageEn;
+    } else if (languageCode == 'zh') {
+      return announcementModel.annMessageZh != ''
+          ? announcementModel.annMessageZh
+          : announcementModel.annMessageEn;
+    } else {
+      return announcementModel.annMessageMs != ''
+          ? announcementModel.annMessageMs
+          : announcementModel.annMessageEn;
+    }
+  }
+
   // Announcement API => announcement/queryPageList (annType = 3)
   Future<void> getMajorAnnouncements(int page) async {
     if (_majorIsLoading) {
@@ -152,16 +189,8 @@ class _NotificationsBottomNavScreenState
               image: element.attachmentDtoList.length > 0
                   ? element.attachmentDtoList[0].attFilePath.toString()
                   : '',
-              title: AnnouncementModel.getAnnouncementTitle(
-                context,
-                element,
-                isMajorAnnouncement: true,
-              ),
-              description: AnnouncementModel.getAnnouncementContent(
-                context,
-                element,
-                isMajorAnnouncement: true,
-              ),
+              title: getMajorTitle(element, context),
+              description: getMajorContent(element, context),
               date: element.annStartDate,
             );
             _majorAnnouncements.add(m);
@@ -517,7 +546,7 @@ class _NotificationsBottomNavScreenState
               ),
               if (_isLoading)
                 const Opacity(
-                  opacity: 0.5,
+                  opacity: 0.25,
                   child: ModalBarrier(dismissible: false, color: Colors.black),
                 ),
               if (_isLoading)
