@@ -37,6 +37,7 @@ class _NotificationsBottomNavScreenState
   // Default: select Notifications Tab
   int selected = 1;
   bool _isLoading = false;
+  bool _isLogin = false;
 
   bool _noMoreData = false;
   List<InboxModel> _inboxes = [];
@@ -113,7 +114,7 @@ class _NotificationsBottomNavScreenState
   }
 
   Future<void> _handleFullScreenLoginBottomModal(BuildContext context) async {
-    await showModalBottomSheet(
+    showModalBottomSheet(
       barrierColor: Theme.of(context).colorScheme.onInverseSurface,
       useSafeArea: true,
       enableDrag: false,
@@ -122,7 +123,21 @@ class _NotificationsBottomNavScreenState
       builder: (BuildContext context) {
         return const LoginFullBottomModal();
       },
-    );
+    ).whenComplete(() async {
+      print('Hey there, I\'m calling after hide bottomSheet');
+      bool isLogin = Provider.of<AuthProvider>(context, listen: false).isAuth;
+      if (isLogin) {
+        setState(() {
+          _isLoading = true;
+        });
+        await getMajorAnnouncements(_majorPage);
+        await Provider.of<InboxProvider>(context, listen: false)
+            .refreshNotificationsProvider();
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    });
   }
 
   String getMajorTitle(
@@ -280,6 +295,8 @@ class _NotificationsBottomNavScreenState
 
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+
     return Provider.of<AuthProvider>(context).isAuth
         ? Stack(
             children: [
@@ -384,25 +401,31 @@ class _NotificationsBottomNavScreenState
                                           }
                                         });
                                       },
-                                      leading: Container(
-                                        width: 40,
-                                        height: 40,
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .inversePrimary
-                                              .withOpacity(0.7),
-                                        ),
-                                        child: Icon(
-                                          Icons.notification_important_outlined,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary,
-                                        ),
+                                      leading: SizedBox(
+                                        width: screenSize.width * 0.25,
+                                        height: screenSize.width * 0.25,
+                                        child: _majorAnnouncements[index]
+                                                .image
+                                                .isNotEmpty
+                                            ? Image.network(
+                                                _majorAnnouncements[index]
+                                                    .image,
+                                                fit: BoxFit.cover,
+                                                errorBuilder:
+                                                    (context, url, error) =>
+                                                        Image.asset(
+                                                  "assets/images/icon/sioc.png",
+                                                  fit: BoxFit.fill,
+                                                ),
+                                              )
+                                            : Image.asset(
+                                                "assets/images/icon/sioc.png",
+                                                fit: BoxFit.cover,
+                                              ),
                                       ),
                                       title: Text(
                                         _majorAnnouncements[index].title,
+                                        maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
                                         style: const TextStyle(
                                           fontWeight: FontWeight.w500,
@@ -415,13 +438,13 @@ class _NotificationsBottomNavScreenState
                                           fontWeight: FontWeight.w300,
                                         ),
                                       ),
-                                      trailing: Text(
-                                        dateFormat.format(DateTime.parse(
-                                            _majorAnnouncements[index].date)),
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
+                                      // trailing: Text(
+                                      //   dateFormat.format(DateTime.parse(
+                                      //       _majorAnnouncements[index].date)),
+                                      //   style: TextStyle(
+                                      //     fontWeight: FontWeight.bold,
+                                      //   ),
+                                      // ),
                                     );
                                   }),
                                 )

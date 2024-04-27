@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:logger/logger.dart';
+
+var logger = Logger(
+  printer: PrettyPrinter(),
+);
 
 class SettingsProvider with ChangeNotifier {
   late bool _isSplashScreenMusicEnabled;
@@ -29,10 +34,10 @@ class SettingsProvider with ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     if (prefs.getBool('enableSplashScreenMusic') != null) {
       _isSplashScreenMusicEnabled = prefs.getBool('enableSplashScreenMusic')!;
-      print('checkSettings: $_isSplashScreenMusicEnabled');
+      logger.d('checkSettings: $_isSplashScreenMusicEnabled');
     } else {
       _isSplashScreenMusicEnabled = true;
-      print('checkSettings: null');
+      logger.d('checkSettings: null');
     }
     notifyListeners();
   }
@@ -58,10 +63,10 @@ class SettingsProvider with ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     if (prefs.getBool('enablePushNotification') != null) {
       _isPushNotificationEnabled = prefs.getBool('enablePushNotification')!;
-      print('checkPushNotification: $_isPushNotificationEnabled');
+      logger.d('checkPushNotification: $_isPushNotificationEnabled');
     } else {
       _isPushNotificationEnabled = true;
-      print('checkPushNotification: null');
+      logger.d('checkPushNotification: null');
     }
     notifyListeners();
     return _isPushNotificationEnabled;

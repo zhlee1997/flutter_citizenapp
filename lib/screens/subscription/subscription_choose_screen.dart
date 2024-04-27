@@ -17,19 +17,39 @@ class SubscriptionChooseScreen extends StatefulWidget {
 }
 
 class _SubscriptionChooseScreenState extends State<SubscriptionChooseScreen> {
+  late SnackBar _snackBar;
+
   void _handleNavigateToSubscriptionMapScreen(BuildContext context) =>
       Navigator.of(context).pushNamed(SubscriptionMapScreen.routeName);
 
   void _handleNavigateToSubscriptionListScreen(BuildContext context) =>
       Navigator.of(context).pushNamed(SubscriptionListScreen.routeName);
 
+  Future<void> getSubscriptionDevicesList(String subscribeId) async {
+    bool success =
+        await Provider.of<CameraSubscriptionProvider>(context, listen: false)
+            .getDevicesListByPackageIdProvider(subscribeId);
+    if (!success) {
+      ScaffoldMessenger.of(context).showSnackBar(_snackBar);
+    }
+  }
+
   @override
   void didChangeDependencies() {
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
     final subscribeId = Provider.of<SubscriptionProvider>(context).subscribeId;
-    Provider.of<CameraSubscriptionProvider>(context, listen: false)
-        .getDevicesListByPackageIdProvider(subscribeId);
+    getSubscriptionDevicesList(subscribeId);
+    _snackBar = SnackBar(
+      content: const Text('Get CCTV List unsuccessful. Try again'),
+      action: SnackBarAction(
+        label: "Retry",
+        onPressed: () {
+          getSubscriptionDevicesList(subscribeId);
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        },
+      ),
+    );
   }
 
   @override

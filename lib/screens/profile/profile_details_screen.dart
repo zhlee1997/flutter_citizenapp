@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
+import 'package:flutter_citizenapp/providers/inbox_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -134,16 +135,19 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
 
   @override
   void didChangeDependencies() {
-    _authData = Provider.of<AuthProvider>(context).auth;
-    _vipDueDate = _authData.vipDueDate ?? '---';
-    _username = _authData.userName;
-    _fullName = _authData.fullName;
-    _isSubscribe = _authData.vipStatus;
-    _emailAddress = _authData.email;
-    _mobile = _authData.mobile;
-    _address = _authData.address;
-    _profileImage = _authData.profileImage;
-    _identityNumber = _authData.identityNumber;
+    if (Provider.of<AuthProvider>(context).auth != null) {
+      _authData = Provider.of<AuthProvider>(context).auth!;
+      _vipDueDate = _authData.vipDueDate ?? '---';
+      _username = _authData.userName;
+      _fullName = _authData.fullName;
+      _isSubscribe = _authData.vipStatus;
+      _emailAddress = _authData.email;
+      _mobile = _authData.mobile;
+      _address = _authData.address;
+      _profileImage = _authData.profileImage;
+      _identityNumber = _authData.identityNumber;
+    }
+
     super.didChangeDependencies();
   }
 
@@ -536,8 +540,9 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
             Consumer<AuthProvider>(
               builder: (BuildContext ctx, AuthProvider authProvider, child) {
                 if (authProvider.isAuth &&
-                    authProvider.auth.fullName.isNotEmpty &&
-                    authProvider.auth.email!.isNotEmpty) {
+                    authProvider.auth != null &&
+                    authProvider.auth!.fullName.isNotEmpty &&
+                    authProvider.auth!.email!.isNotEmpty) {
                   return TextButton(
                     onPressed: () {
                       GlobalDialogHelper().showAlertDialog(
@@ -563,6 +568,9 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                 Provider.of<SettingsProvider>(context,
                                         listen: false)
                                     .enablePushNotification();
+                                Provider.of<InboxProvider>(context,
+                                        listen: false)
+                                    .deleteInbox();
                                 Navigator.of(context).popUntil(
                                     ModalRoute.withName('home-page-screen'));
                                 ScaffoldMessenger.of(context).showSnackBar(

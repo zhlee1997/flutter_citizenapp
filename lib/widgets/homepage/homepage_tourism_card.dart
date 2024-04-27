@@ -37,7 +37,7 @@ class HomepageTourismCard extends StatelessWidget {
           : null,
       child: Container(
         margin: const EdgeInsets.only(
-          bottom: 15.0,
+          bottom: 10.0,
         ),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10.0), // Set the border radius
@@ -50,25 +50,27 @@ class HomepageTourismCard extends StatelessWidget {
           children: <Widget>[
             Flexible(
               flex: 1,
-              child: ClipRRect(
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(10.0),
-                  bottomLeft: Radius.circular(10.0),
-                ),
-                child: useDefault
-                    ? Image.asset(
-                        imageUrl,
-                        fit: BoxFit.cover,
-                      )
-                    : Image.network(
-                        imageUrl,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, url, error) => SvgPicture.asset(
-                          "assets/images/svg/undraw_page_not_found.svg",
+              child: SizedBox(
+                height: screenSize.height * 0.175,
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(10.0),
+                    bottomLeft: Radius.circular(10.0),
+                  ),
+                  child: useDefault
+                      ? Image.asset(
+                          imageUrl,
                           fit: BoxFit.cover,
-                          semanticsLabel: 'Not Found Logo',
+                        )
+                      : Image.network(
+                          imageUrl,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, url, error) => Image.asset(
+                            "assets/images/icon/sioc.png",
+                            fit: BoxFit.fill,
+                          ),
                         ),
-                      ),
+                ),
               ),
             ),
             Flexible(
@@ -93,7 +95,7 @@ class HomepageTourismCard extends StatelessWidget {
                         subtitle,
                         overflow: TextOverflow.ellipsis,
                         maxLines: 2,
-                        style: Theme.of(context).textTheme.labelSmall,
+                        style: Theme.of(context).textTheme.bodySmall,
                       ),
                     )
                   ],

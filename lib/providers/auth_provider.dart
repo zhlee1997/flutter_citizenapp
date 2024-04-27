@@ -12,7 +12,6 @@ import "../../services/notification_services.dart";
 import "../utils/general_helper.dart";
 
 class AuthProvider with ChangeNotifier {
-  // TODO: to configure flavor
   AuthServices _authServices = AuthServices();
   NotificationServices _notificationServices = NotificationServices();
 
@@ -31,20 +30,12 @@ class AuthProvider with ChangeNotifier {
   // String? get vipDueDate => _vipDueDate;
 
   AuthModel? _auth;
-  AuthModel get auth =>
-      _auth ??
-      AuthModel(
-        address: '',
-        mobile: '',
-        email: '',
-        profileImage: '',
-        identityNumber: '',
-        sId: '',
-        userName: '',
-        fullName: '',
-        vipStatus: false,
-        vipDueDate: '',
-      );
+  AuthModel? get auth => _auth;
+
+  void removeAuthByForce() {
+    _isAuth = false;
+    _auth = null;
+  }
 
   /// Sign in.
   /// Using signIn API.
@@ -75,19 +66,13 @@ class AuthProvider with ChangeNotifier {
           key: 'sarawakToken',
           value: data['sarawakToken'] ?? '',
         );
-
-        // _isShow = true;
-        _isAuth = true;
-        notifyListeners();
         return data;
       } else {
         _auth = null;
-        _isAuth = false;
         return null;
       }
     } catch (e) {
       _auth = null;
-      _isAuth = false;
       return null;
     }
   }
@@ -117,7 +102,6 @@ class AuthProvider with ChangeNotifier {
         // reset the isAppFirstStart after clear all
         prefs.setBool('isAppFirstStart', true);
         await storage.deleteAll();
-        // _isShow = true;
         _isAuth = false;
         _auth = null;
         notifyListeners();
@@ -166,6 +150,7 @@ class AuthProvider with ChangeNotifier {
       final prefs = await SharedPreferences.getInstance();
 
       var response = await _authServices.queryUserInfo(userId);
+
       if (response['status'] == '200') {
         // User Information
         _auth = AuthModel(
@@ -196,26 +181,21 @@ class AuthProvider with ChangeNotifier {
         prefs.setBool("vipStatus", response['data']['vipStatus'] == "1");
         // double assure in case vipDueDate is not insert into prefs in "signInProvider" due to "isSubscribed" == false
         prefs.setString("vipDueDate", response['data']['vipDueDate'] ?? '');
+
+        _isAuth = true;
         notifyListeners();
         return true;
       } else {
-        _auth = AuthModel(
-          address: '',
-          mobile: '',
-          email: '',
-          profileImage: '',
-          identityNumber: '',
-          sId: '',
-          userName: '',
-          fullName: '',
-          vipStatus: false,
-        );
+        _auth = null;
+        _isAuth = false;
         notifyListeners();
         return false;
       }
     } catch (e) {
-      print(e.toString());
-      print('queryLoginUserInfo fail');
+      _auth = null;
+      _isAuth = false;
+      notifyListeners();
+      print('queryLoginUserInfo fail: ${e.toString()}');
       throw e;
     }
   }
@@ -275,6 +255,17 @@ class AuthProvider with ChangeNotifier {
     print("sarawakTokenLocal: $sarawakToken");
     print("expireLocal: $expire");
 
+    String? address = prefs.getString('userResAddr1');
+    String? mobile = prefs.getString('userMobileNo');
+    String? email = prefs.getString('userEmail');
+    String? profileImage = prefs.getString('profileImage');
+    String? identityNumber = prefs.getString('identityNumber');
+    String? sId = prefs.getString('userId');
+    String? userName = prefs.getString('userShortName');
+    String? fullName = prefs.getString('userFullName');
+    bool? vipStatus = prefs.getBool('vipStatus');
+    String? vipDueDate = prefs.getString('vipDueDate');
+
     if (expire != null &&
         !expire.isNaN &&
         siocToken != null &&
@@ -285,49 +276,62 @@ class AuthProvider with ChangeNotifier {
         print("Sign out due to exceeds valid refresh period");
         signOutProvider(context);
       } else {
-        isTokenOk = true;
-        bool subscriptionOverdueStatus = await checkSubscribeOverdue();
+        if (sId != null && userName != null && fullName != null) {
+          isTokenOk = true;
+          bool subscriptionOverdueStatus = await checkSubscribeOverdue();
 
-        // TODO: FIRST => check _isSubscriptionEnabled
-        // _isSubscriptionEnabled = true;
+          // TODO: FIRST => check _isSubscriptionEnabled
+          // _isSubscriptionEnabled = true;
 
-        // TODO: SECOND => check _isWhitelisted
-        // _isWhitelisted = true;
+          // TODO: SECOND => check _isWhitelisted
+          // _isWhitelisted = true;
 
-        // THIRD => check subscription date
-        if (subscriptionOverdueStatus) {
-          // within due date
-          _auth = AuthModel(
-              address: prefs.getString('userResAddr1') ?? '',
-              mobile: prefs.getString('userMobileNo') ?? '',
-              email: prefs.getString('userEmail') ?? '',
-              profileImage: GeneralHelper.flavorFormatImageUrl(
-                  prefs.getString('profileImage') ?? ''),
-              identityNumber: prefs.getString('identityNumber') ?? '',
-              sId: prefs.getString('userId') ?? '',
-              userName: prefs.getString('userShortName') ?? '',
-              fullName: prefs.getString('userFullName') ?? '',
-              vipStatus: prefs.getBool('vipStatus') ?? false,
-              vipDueDate: prefs.getString('vipDueDate') ?? '');
+          // THIRD => check subscription date
+          if (subscriptionOverdueStatus) {
+            // within due date
+            _auth = AuthModel(
+              address: address,
+              mobile: mobile,
+              email: email,
+              profileImage:
+                  GeneralHelper.flavorFormatImageUrl(profileImage ?? ""),
+              identityNumber: identityNumber,
+              sId: sId,
+              userName: userName,
+              fullName: fullName,
+              vipStatus: vipStatus ?? false,
+              vipDueDate: vipDueDate,
+            );
+          } else {
+            // out of due date (subscription expired)
+            _auth = AuthModel(
+              address: address,
+              mobile: mobile,
+              email: email,
+              profileImage:
+                  GeneralHelper.flavorFormatImageUrl(profileImage ?? ''),
+              identityNumber: identityNumber,
+              sId: sId,
+              userName: userName,
+              fullName: fullName,
+              vipStatus: false,
+              vipDueDate: null,
+            );
+            prefs.setBool("vipStatus", false);
+            prefs.setString("vipDueDate", '');
+          }
         } else {
-          // out of due date (subscription expired)
-          _auth = AuthModel(
-            address: prefs.getString('userResAddr1') ?? '',
-            mobile: prefs.getString('userMobileNo') ?? '',
-            email: prefs.getString('userEmail') ?? '',
-            profileImage: GeneralHelper.flavorFormatImageUrl(
-                prefs.getString('profileImage') ?? ''),
-            identityNumber: prefs.getString('identityNumber') ?? '',
-            sId: prefs.getString('userId') ?? '',
-            userName: prefs.getString('userShortName') ?? '',
-            fullName: prefs.getString('userFullName') ?? '',
-            vipStatus: false,
-            vipDueDate: '',
-          );
-          prefs.setBool("vipStatus", false);
-          prefs.setString("vipDueDate", '');
+          print("Sign out due to SarawakID or name is empty");
+          _isAuth = false;
+          _auth = null;
+          isTokenOk = false;
         }
       }
+    } else {
+      print("Sign out due to siocToken or sarawakToken is empty");
+      _isAuth = false;
+      _auth = null;
+      isTokenOk = false;
     }
 
     if (isTokenOk) {

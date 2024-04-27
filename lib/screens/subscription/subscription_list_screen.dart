@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../models/cctv_model.dart';
 import '../../models/camera_subscription_model.dart';
@@ -9,6 +10,8 @@ import '../../utils/global_dialog_helper.dart';
 import '../../services/cctv_services.dart';
 import '../../widgets/subscription/list_bottom_sheet_widget.dart';
 import '../../providers/camera_subscription_provider.dart';
+import '../../providers/cctv_provider.dart';
+import '../../utils/app_localization.dart';
 
 class SubscriptionListScreen extends StatefulWidget {
   static const String routeName = "subscription-list-screen";
@@ -23,6 +26,7 @@ class _SubscriptionListScreenState extends State<SubscriptionListScreen> {
   List<CameraSubscriptionModel> _cameraListModelList = [];
   bool _isLoading = false;
   bool _noMoreLoad = true;
+  bool _isError = false;
 
   final GlobalDialogHelper _globalDialogHelper = GlobalDialogHelper();
 
@@ -31,23 +35,63 @@ class _SubscriptionListScreenState extends State<SubscriptionListScreen> {
 
   Future<void> onPressCCTVSnapshotImage({
     required String imageUrl,
-    // required String liveUrl,
     required String name,
     required String location,
     required String latitide,
     required String longitude,
+    required CameraSubscriptionModel cameraSubscriptionModel,
   }) async {
+    Future<void> handleFuture() async {
+      try {
+        await Provider.of<CCTVProvider>(context, listen: false)
+            .getCctvDetailProvider(cameraSubscriptionModel);
+      } catch (e) {
+        setState(() {
+          _isError = true;
+        });
+      }
+    }
+
     await showModalBottomSheet(
       context: context,
       showDragHandle: true,
       builder: (_) {
-        return ListBottomSheetWidget(
-          cctvName: name,
-          cctvLocation: location,
-          cctvLatitude: latitide,
-          cctvLongitude: longitude,
-          imageUrl: imageUrl,
-          // liveUrl: liveUrl,
+        return FutureBuilder(
+          future: handleFuture(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            } else {
+              if (_isError) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        height: 150,
+                        child:
+                            SvgPicture.asset('assets/images/undraw_online.svg'),
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Text(AppLocalization.of(context)!
+                          .translate('camera_is_not_available')!),
+                    ],
+                  ),
+                );
+              }
+              return ListBottomSheetWidget(
+                cctvName: name,
+                cctvLocation: location,
+                cctvLatitude: latitide,
+                cctvLongitude: longitude,
+                imageUrl: imageUrl,
+              );
+            }
+          },
         );
       },
     );
@@ -129,11 +173,12 @@ class _SubscriptionListScreenState extends State<SubscriptionListScreen> {
                           GestureDetector(
                             onTap: () => onPressCCTVSnapshotImage(
                               imageUrl: _cameraListModelList[index].picUrl,
-                              // liveUrl: _cameraListModelList[index].liveUrl,
                               name: _cameraListModelList[index].deviceName,
                               location: _cameraListModelList[index].location,
                               latitide: _cameraListModelList[index].latitude,
                               longitude: _cameraListModelList[index].longitude,
+                              cameraSubscriptionModel:
+                                  _cameraListModelList[index],
                             ),
                             child: SizedBox(
                               width: double.infinity,

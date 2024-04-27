@@ -17,6 +17,14 @@ class InboxProvider with ChangeNotifier {
   List<InboxModel> _inboxes = [];
   List<InboxModel> get inboxes => _inboxes;
 
+  void deleteInbox() {
+    _unreadMessageCount = 0;
+    _page = 1;
+    _noMoreData = false;
+    _inboxes = [];
+    notifyListeners();
+  }
+
   void setNotificationPage(int page) {
     _page = page;
   }

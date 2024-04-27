@@ -25,6 +25,7 @@ class HomepageCitizenCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
+          // color: Colors.red,
           borderRadius: BorderRadius.circular(10.0),
         ),
         child: Column(
@@ -44,11 +45,9 @@ class HomepageCitizenCard extends StatelessWidget {
                       height: screenSize.width * 0.33,
                       width: double.infinity,
                       fit: BoxFit.cover,
-                      errorBuilder: (context, url, error) => SvgPicture.asset(
-                        "assets/images/svg/undraw_page_not_found.svg",
-                        height: screenSize.width * 0.33,
-                        fit: BoxFit.cover,
-                        semanticsLabel: 'Not Found Logo',
+                      errorBuilder: (context, url, error) => Image.asset(
+                        "assets/images/icon/sioc.png",
+                        fit: BoxFit.fill,
                       ),
                     ),
             ),

@@ -215,11 +215,13 @@ class _MapBottomSheetWidgetState extends State<MapBottomSheetWidget> {
                         context,
                         SubscriptionVideoScreen.routeName,
                         arguments: SubscriptionVideoScreenArguments(
-                          cctvDetail.liveUrl,
-                          cctvDetail.name,
-                          cctvDetail.location,
-                          _distanceInBetween,
-                        ),
+                            cctvDetail.id,
+                            cctvDetail.liveUrl,
+                            cctvDetail.name,
+                            cctvDetail.location,
+                            _distanceInBetween,
+                            widget.cctvLatitude,
+                            widget.cctvLongitude),
                       );
                     },
                     style: ButtonStyle(
@@ -377,10 +379,13 @@ class _MapBottomSheetWidgetState extends State<MapBottomSheetWidget> {
                         context,
                         SubscriptionVideoScreen.routeName,
                         arguments: SubscriptionVideoScreenArguments(
+                          cctvDetail.id,
                           cctvDetail.liveUrl,
                           cctvDetail.name,
                           cctvDetail.location,
                           _distanceInBetween,
+                          widget.cctvLatitude,
+                          widget.cctvLongitude,
                         ),
                       );
                     },

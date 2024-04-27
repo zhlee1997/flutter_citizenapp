@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_citizenapp/widgets/subscription/subscription_frequency_bottom_modal.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -52,6 +53,7 @@ class _HomePageState extends State<HomePage> {
   bool isSubscription = false;
   String? vipDueDate;
 
+  bool _isLoading = false;
   bool citizenShimmer = false;
   bool tourismShimmer = false;
   List<AnnouncementModel> citizenAnnouncements = [];
@@ -142,10 +144,20 @@ class _HomePageState extends State<HomePage> {
 
   /// Pull to refresh announcement and tourism information
   Future<void> _onRefresh() async {
+    setState(() {
+      _isLoading = true;
+    });
+    if (Provider.of<AuthProvider>(context, listen: false).isAuth) {
+      Provider.of<AuthProvider>(context, listen: false)
+          .checkIsAuthAndSubscribeOverdue(context);
+    }
     await Provider.of<SubscriptionProvider>(context, listen: false)
         .queryAndSetIsSubscriptionEnabled();
     await getCitizenAnn();
     await getTourismAnn();
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   String returnPackageName(String packageName) {
@@ -273,6 +285,21 @@ class _HomePageState extends State<HomePage> {
         return SubscriptionWhitelistBottomModal(
           handleNavigateToChooseScreen: () => Navigator.of(context)
               .pushNamed(SubscriptionChooseScreen.routeName),
+        );
+      },
+    );
+  }
+
+  Future<void> _handleSubscriptionFrequencyBottomModal({
+    required BuildContext context,
+    required VoidCallback handleProceedNow,
+  }) async {
+    await showModalBottomSheet(
+      showDragHandle: true,
+      context: context,
+      builder: (BuildContext context) {
+        return SubscriptionFrequencyBottomModal(
+          handleProceedNow: handleProceedNow,
         );
       },
     );
@@ -413,17 +440,35 @@ class _HomePageState extends State<HomePage> {
     final SubscriptionProvider subscriptionProvider =
         Provider.of<SubscriptionProvider>(context, listen: false);
 
-    if (authProvider.isAuth) {
+    if (authProvider.isAuth && authProvider.auth != null) {
       _globalDialogHelper.buildCircularProgressCenter(context: context);
       bool isWhitelisted = await subscriptionProvider
-          .queryAndSetIsWhitelisted(authProvider.auth.sId);
+          .queryAndSetIsWhitelisted(authProvider.auth!.sId);
+      bool isSubscriptionEnabled =
+          await subscriptionProvider.queryAndSetIsSubscriptionEnabled();
       Navigator.of(context).pop();
+      if (!isSubscriptionEnabled) {
+        Fluttertoast.showToast(msg: "Subscription is disabled");
+        return;
+      }
       if (isWhitelisted) {
         // show bottom modal
         _handleSubscriptionWhitelistBottomModal(context);
       } else {
         if (isSubscribed) {
-          Navigator.of(context).pushNamed(SubscriptionChooseScreen.routeName);
+          _handleSubscriptionFrequencyBottomModal(
+            context: context,
+            handleProceedNow: () async {
+              bool canProceed = await subscriptionProvider.setFrequencyLimit();
+              if (canProceed) {
+                Navigator.of(context).pop();
+                Navigator.of(context)
+                    .pushNamed(SubscriptionChooseScreen.routeName);
+              } else {
+                Fluttertoast.showToast(msg: "No more access left");
+              }
+            },
+          );
         } else {
           _showSubscriptionIntroDialog(context);
         }
@@ -433,8 +478,26 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  void _handleNavigateToTrafficImages(BuildContext context) =>
+  void _handleNavigateToTrafficImages(BuildContext context) async {
+    final AuthProvider authProvider =
+        Provider.of<AuthProvider>(context, listen: false);
+    final SubscriptionProvider subscriptionProvider =
+        Provider.of<SubscriptionProvider>(context, listen: false);
+
+    if (authProvider.isAuth) {
+      _globalDialogHelper.buildCircularProgressCenter(context: context);
+      bool isSubscriptionEnabled =
+          await subscriptionProvider.queryAndSetIsSubscriptionEnabled();
+      Navigator.of(context).pop();
+      if (isSubscriptionEnabled) {
+        Fluttertoast.showToast(msg: "Subscription is enabled");
+        return;
+      }
       Navigator.of(context).pushNamed(TrafficImagesListScreen.routeName);
+    } else {
+      Navigator.of(context).pushNamed(TrafficImagesListScreen.routeName);
+    }
+  }
 
   void _handleNavigateToPayment(BuildContext context) =>
       Provider.of<AuthProvider>(context, listen: false).isAuth
@@ -563,25 +626,28 @@ class _HomePageState extends State<HomePage> {
     // TODO: implement initState
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timestamp) async {
-      getMajorAnn();
+      // getMajorAnn();
       Provider.of<LocationProvider>(context, listen: false)
           .getCurrentLocation();
     });
-    _paymentStreamSubscription = eventChannel.receiveBroadcastStream().listen(
-          _onData,
-          onError: _onError,
-        );
-    getCitizenAnn();
-    getTourismAnn();
+    // _paymentStreamSubscription = eventChannel.receiveBroadcastStream().listen(
+    //       _onData,
+    //       onError: _onError,
+    //     );
+    // getCitizenAnn();
+    // getTourismAnn();
+    _onRefresh();
   }
 
   @override
   void didChangeDependencies() {
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
-    isSubscribed = Provider.of<AuthProvider>(context).auth.vipStatus;
+    if (Provider.of<AuthProvider>(context).auth != null) {
+      isSubscribed = Provider.of<AuthProvider>(context).auth!.vipStatus;
+      vipDueDate = Provider.of<AuthProvider>(context).auth!.vipDueDate;
+    }
     isSubscription = Provider.of<SubscriptionProvider>(context).isSubscription;
-    vipDueDate = Provider.of<AuthProvider>(context).auth.vipDueDate;
     latitude = Provider.of<LocationProvider>(context).latitude;
     longitude = Provider.of<LocationProvider>(context).longitude;
   }
@@ -600,488 +666,526 @@ class _HomePageState extends State<HomePage> {
     final screenSize = MediaQuery.of(context).size;
 
     return PopScope(
-      canPop: false,
-      child: RefreshIndicator.adaptive(
-        onRefresh: _onRefresh,
-        child: SingleChildScrollView(
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(
-              horizontal: 15.0,
-              vertical: 10.0,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                if (isSubscribed)
-                  GestureDetector(
-                    onTap: getSubscriptionPackageOption,
-                    child: Container(
-                      margin: const EdgeInsets.only(bottom: 15.0, top: 5.0),
-                      width: double.infinity,
-                      height: screenSize.height * 0.13,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10.0),
-                        border: Border.all(
-                          width: 2.0,
-                          color: Colors.grey.shade300,
-                        ),
-                      ),
-                      child: Stack(
-                        children: <Widget>[
-                          SizedBox(
-                            width: double.infinity,
-                            child: Image.asset(
-                              "assets/images/pictures/premium/premium_image.png",
-                              opacity: const AlwaysStoppedAnimation(0.15),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          Container(
-                            alignment: Alignment.centerRight,
-                            width: double.infinity,
-                            child: Image.asset(
-                              "assets/images/pictures/premium/premium_image_bg.png",
-                              width: screenSize.width * 0.2,
-                              height: screenSize.width * 0.2,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          Container(
-                            width: double.infinity,
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 10.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                if (calculateRemainingDays(vipDueDate) <= 10)
-                                  Text(
-                                    "${calculateRemainingDays(vipDueDate)} days left !",
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.red,
-                                    ),
-                                  ),
-                                Text(
-                                  "You are subscribed",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: Theme.of(context)
-                                        .textTheme
-                                        .titleLarge!
-                                        .fontSize,
-                                  ),
-                                ),
-                                const SizedBox(height: 3.0),
-                                Text(
-                                    "Due date:  ${vipDueDate != null ? dateFormat.format(DateTime.parse(vipDueDate!)) : "---"}"),
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
+        canPop: false,
+        child: Stack(
+          children: [
+            RefreshIndicator.adaptive(
+              onRefresh: _onRefresh,
+              child: SingleChildScrollView(
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 15.0,
+                    vertical: 10.0,
                   ),
-                Text(
-                  'Quick Services',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                Text(
-                  'Shortcut to frequently used function',
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: Theme.of(context).textTheme.labelLarge!.fontSize,
-                  ),
-                ),
-                Container(
-                  margin: const EdgeInsets.symmetric(
-                    vertical: 20.0,
-                  ),
-                  child: GridView(
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 8.0,
-                      mainAxisSpacing: 8.0,
-                      childAspectRatio: 1.6 / 1,
-                    ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      GestureDetector(
-                        onTap: () => _handleNavigateToTalikhidmat(context),
-                        child: Card(
-                          elevation: 5.0,
+                      if (isSubscribed)
+                        GestureDetector(
+                          onTap: getSubscriptionPackageOption,
                           child: Container(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                            margin:
+                                const EdgeInsets.only(bottom: 15.0, top: 5.0),
+                            width: double.infinity,
+                            height: screenSize.height * 0.13,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10.0),
+                              border: Border.all(
+                                width: 2.0,
+                                color: Colors.grey.shade300,
+                              ),
+                            ),
+                            child: Stack(
                               children: <Widget>[
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: <Widget>[
-                                    Icon(
-                                      Icons.feedback_outlined,
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                      size: 30.0,
-                                    ),
-                                    const Text(
-                                      "Talikhidmat",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(
-                                  height: 10.0,
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: Image.asset(
+                                    "assets/images/pictures/premium/premium_image.png",
+                                    opacity: const AlwaysStoppedAnimation(0.15),
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
                                 Container(
-                                  margin: const EdgeInsets.only(
-                                    left: 10.0,
+                                  alignment: Alignment.centerRight,
+                                  width: double.infinity,
+                                  child: Image.asset(
+                                    "assets/images/pictures/premium/premium_image_bg.png",
+                                    width: screenSize.width * 0.2,
+                                    height: screenSize.width * 0.2,
+                                    fit: BoxFit.cover,
                                   ),
-                                  child: Text(
-                                    "Submit a report",
-                                    style: TextStyle(
-                                      color: Colors.grey[600],
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      GestureDetector(
-                        // TODO: check for location permission
-                        onTap: () => _handleNavigateToEmergency(context),
-                        child: Card(
-                          elevation: 5.0,
-                          child: Container(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: <Widget>[
-                                    Icon(
-                                      Icons.sos_outlined,
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                      size: 30.0,
-                                    ),
-                                    const Text(
-                                      "Emergency",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(
-                                  height: 10.0,
                                 ),
                                 Container(
-                                  margin: const EdgeInsets.only(
-                                    left: 10.0,
-                                  ),
-                                  child: Text(
-                                    "Rescue request",
-                                    style: TextStyle(
-                                      color: Colors.grey[600],
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      Consumer<SubscriptionProvider>(
-                        builder: (BuildContext ctx,
-                            SubscriptionProvider subscriptionProvider, child) {
-                          return GestureDetector(
-                            onTap: () =>
-                                subscriptionProvider.isSubscriptionEnabled
-                                    ? _handleNavigateToSubscription(context)
-                                    : _handleNavigateToTrafficImages(context),
-                            child: Card(
-                              elevation: 5.0,
-                              child: Container(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: <Widget>[
-                                        subscriptionProvider
-                                                .isSubscriptionEnabled
-                                            ? Icon(
-                                                Icons.subscriptions,
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .primary,
-                                                size: 30.0,
-                                              )
-                                            : Icon(
-                                                Icons.traffic_outlined,
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .primary,
-                                                size: 30.0,
-                                              ),
+                                  width: double.infinity,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      if (calculateRemainingDays(vipDueDate) <=
+                                          10)
                                         Text(
-                                          subscriptionProvider
-                                                  .isSubscriptionEnabled
-                                              ? "Subscription"
-                                              : "Traffic images",
+                                          "${calculateRemainingDays(vipDueDate)} days left !",
                                           style: const TextStyle(
                                             fontWeight: FontWeight.bold,
+                                            color: Colors.red,
                                           ),
                                         ),
-                                      ],
-                                    ),
-                                    const SizedBox(
-                                      height: 10.0,
-                                    ),
-                                    Container(
-                                      margin: const EdgeInsets.only(
-                                        left: 10.0,
-                                      ),
-                                      child: Text(
-                                        subscriptionProvider
-                                                .isSubscriptionEnabled
-                                            ? "Premium member"
-                                            : "Live road images",
+                                      Text(
+                                        "You are subscribed",
                                         style: TextStyle(
-                                          color: Colors.grey[600],
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: Theme.of(context)
+                                              .textTheme
+                                              .titleLarge!
+                                              .fontSize,
                                         ),
                                       ),
-                                    )
-                                  ],
+                                      const SizedBox(height: 3.0),
+                                      Text(
+                                          "Due date:  ${vipDueDate != null ? dateFormat.format(DateTime.parse(vipDueDate!)) : "---"}"),
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      Text(
+                        'Quick Services',
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      Text(
+                        'Shortcut to frequently used function',
+                        style: TextStyle(
+                          color: Colors.grey[600],
+                          fontSize:
+                              Theme.of(context).textTheme.labelLarge!.fontSize,
+                        ),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.symmetric(
+                          vertical: 20.0,
+                        ),
+                        child: GridView(
+                          physics: const NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 8.0,
+                            mainAxisSpacing: 8.0,
+                            childAspectRatio: 1.6 / 1,
+                          ),
+                          children: <Widget>[
+                            GestureDetector(
+                              onTap: () =>
+                                  _handleNavigateToTalikhidmat(context),
+                              child: Card(
+                                elevation: 5.0,
+                                child: Container(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: <Widget>[
+                                          Icon(
+                                            Icons.feedback_outlined,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary,
+                                            size: 30.0,
+                                          ),
+                                          const Text(
+                                            "Talikhidmat",
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(
+                                        height: 10.0,
+                                      ),
+                                      Container(
+                                        margin: const EdgeInsets.only(
+                                          left: 10.0,
+                                        ),
+                                        child: Text(
+                                          "Submit a report",
+                                          style: TextStyle(
+                                            color: Colors.grey[600],
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
-                          );
-                        },
-                      ),
-                      GestureDetector(
-                        onTap: () => _handleNavigateToPayment(context),
-                        child: Card(
-                          elevation: 5.0,
-                          child: Container(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: <Widget>[
-                                    Icon(
-                                      Icons.receipt_long_outlined,
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                      size: 30.0,
-                                    ),
-                                    const Text(
-                                      "Bill Payment",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
+                            GestureDetector(
+                              // TODO: check for location permission
+                              onTap: () => _handleNavigateToEmergency(context),
+                              child: Card(
+                                elevation: 5.0,
+                                child: Container(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: <Widget>[
+                                          Icon(
+                                            Icons.sos_outlined,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary,
+                                            size: 30.0,
+                                          ),
+                                          const Text(
+                                            "Emergency",
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(
+                                        height: 10.0,
+                                      ),
+                                      Container(
+                                        margin: const EdgeInsets.only(
+                                          left: 10.0,
+                                        ),
+                                        child: Text(
+                                          "Rescue request",
+                                          style: TextStyle(
+                                            color: Colors.grey[600],
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Consumer<SubscriptionProvider>(
+                              builder: (BuildContext ctx,
+                                  SubscriptionProvider subscriptionProvider,
+                                  child) {
+                                return GestureDetector(
+                                  onTap: () => subscriptionProvider
+                                          .isSubscriptionEnabled
+                                      ? _handleNavigateToSubscription(context)
+                                      : _handleNavigateToTrafficImages(context),
+                                  child: Card(
+                                    elevation: 5.0,
+                                    child: Container(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceEvenly,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: <Widget>[
+                                              subscriptionProvider
+                                                      .isSubscriptionEnabled
+                                                  ? Icon(
+                                                      Icons.subscriptions,
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .primary,
+                                                      size: 30.0,
+                                                    )
+                                                  : Icon(
+                                                      Icons.traffic_outlined,
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .primary,
+                                                      size: 30.0,
+                                                    ),
+                                              Text(
+                                                subscriptionProvider
+                                                        .isSubscriptionEnabled
+                                                    ? "Subscription"
+                                                    : "Traffic images",
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(
+                                            height: 10.0,
+                                          ),
+                                          Container(
+                                            margin: const EdgeInsets.only(
+                                              left: 10.0,
+                                            ),
+                                            child: Text(
+                                              subscriptionProvider
+                                                      .isSubscriptionEnabled
+                                                  ? "Premium member"
+                                                  : "Live road images",
+                                              style: TextStyle(
+                                                color: Colors.grey[600],
+                                              ),
+                                            ),
+                                          )
+                                        ],
                                       ),
                                     ),
-                                  ],
-                                ),
-                                const SizedBox(
-                                  height: 10.0,
-                                ),
-                                Container(
-                                  margin: const EdgeInsets.only(
-                                    left: 10.0,
                                   ),
-                                  child: Text(
-                                    "Billing and taxes",
-                                    style: TextStyle(
-                                      color: Colors.grey[600],
-                                    ),
-                                  ),
-                                )
-                              ],
+                                );
+                              },
                             ),
-                          ),
+                            GestureDetector(
+                              onTap: () => _handleNavigateToPayment(context),
+                              child: Card(
+                                elevation: 5.0,
+                                child: Container(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: <Widget>[
+                                          Icon(
+                                            Icons.receipt_long_outlined,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary,
+                                            size: 30.0,
+                                          ),
+                                          const Text(
+                                            "Bill Payment",
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(
+                                        height: 10.0,
+                                      ),
+                                      Container(
+                                        margin: const EdgeInsets.only(
+                                          left: 10.0,
+                                        ),
+                                        child: Text(
+                                          "Billing and taxes",
+                                          style: TextStyle(
+                                            color: Colors.grey[600],
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
+                      const SizedBox(
+                        height: 10.0,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Citizen Announcements',
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                          GestureDetector(
+                            onTap: () =>
+                                _handleNavigateToCitizenAnnouncements(context),
+                            child: Text(
+                              'VIEW ALL',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: Theme.of(context)
+                                    .textTheme
+                                    .labelSmall!
+                                    .fontSize,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Text(
+                        'Get updated on the latest announcements',
+                        style: TextStyle(
+                          color: Colors.grey[600],
+                          fontSize:
+                              Theme.of(context).textTheme.labelLarge!.fontSize,
+                        ),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.only(
+                          top: 20.0,
+                          bottom: 10.0,
+                        ),
+                        child: HomepageCitizenAnnouncement(
+                          citizenShimmer: citizenShimmer,
+                          citizenAnnouncements: citizenAnnouncements,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 10.0,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Tourism News',
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                          GestureDetector(
+                            onTap: () => _handleNavigateToTourismNews(context),
+                            child: Text(
+                              'VIEW ALL',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: Theme.of(context)
+                                    .textTheme
+                                    .labelSmall!
+                                    .fontSize,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Text(
+                        'Checkout the tourist updates',
+                        style: TextStyle(
+                          color: Colors.grey[600],
+                          fontSize:
+                              Theme.of(context).textTheme.labelLarge!.fontSize,
+                        ),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.symmetric(
+                          vertical: 20.0,
+                        ),
+                        child: tourismAnnouncements.isEmpty
+                            ? Container(
+                                margin: const EdgeInsets.symmetric(
+                                  vertical: 10.0,
+                                ),
+                                child: Center(
+                                  child: Column(
+                                    children: <Widget>[
+                                      SvgPicture.asset(
+                                        "assets/images/svg/no_data.svg",
+                                        width: screenSize.width * 0.25,
+                                        height: screenSize.width * 0.25,
+                                        semanticsLabel: 'No Data Logo',
+                                      ),
+                                      const SizedBox(
+                                        height: 10.0,
+                                      ),
+                                      const Text("No news"),
+                                    ],
+                                  ),
+                                ),
+                              )
+                            : Column(
+                                children: tourismShimmer
+                                    ? List.generate(
+                                        3,
+                                        (index) => Shimmer.fromColors(
+                                              baseColor: Colors.white,
+                                              highlightColor:
+                                                  Colors.transparent,
+                                              child: const HomepageTourismCard(
+                                                useDefault: true,
+                                                imageUrl:
+                                                    "assets/images/icon/sioc.png",
+                                                title: "Loading...",
+                                                subtitle: "Loading...",
+                                              ),
+                                            ))
+                                    : tourismAnnouncements.map((e) {
+                                        int index =
+                                            tourismAnnouncements.indexOf(e);
+                                        return e.attachmentDtoList.isEmpty
+                                            ? HomepageTourismCard(
+                                                useDefault: true,
+                                                annId: e.annId,
+                                                imageUrl:
+                                                    "assets/images/icon/sioc.png",
+                                                title: getTourismTitle(
+                                                    index, context),
+                                                subtitle: getTourismContent(
+                                                    index, context),
+                                              )
+                                            : HomepageTourismCard(
+                                                annId: e.annId,
+                                                imageUrl: e.attachmentDtoList[0]
+                                                    .attFilePath,
+                                                title: getTourismTitle(
+                                                    index, context),
+                                                subtitle: getTourismContent(
+                                                    index, context),
+                                              );
+                                      }).toList(),
+                              ),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.only(
+                          bottom: 20.0,
+                        ),
+                        alignment: Alignment.center,
+                        child: const Text(
+                          "That's all for now",
+                        ),
+                      )
                     ],
                   ),
                 ),
-                const SizedBox(
-                  height: 10.0,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Citizen Announcements',
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                    GestureDetector(
-                      onTap: () =>
-                          _handleNavigateToCitizenAnnouncements(context),
-                      child: Text(
-                        'VIEW ALL',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize:
-                              Theme.of(context).textTheme.labelSmall!.fontSize,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                Text(
-                  'Get updated on the latest announcements',
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: Theme.of(context).textTheme.labelLarge!.fontSize,
-                  ),
-                ),
-                Container(
-                  margin: const EdgeInsets.symmetric(
-                    vertical: 20.0,
-                  ),
-                  child: HomepageCitizenAnnouncement(
-                    citizenShimmer: citizenShimmer,
-                    citizenAnnouncements: citizenAnnouncements,
-                  ),
-                ),
-                const SizedBox(
-                  height: 10.0,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Tourism News',
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                    GestureDetector(
-                      onTap: () => _handleNavigateToTourismNews(context),
-                      child: Text(
-                        'VIEW ALL',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize:
-                              Theme.of(context).textTheme.labelSmall!.fontSize,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                Text(
-                  'Checkout the tourist updates',
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: Theme.of(context).textTheme.labelLarge!.fontSize,
-                  ),
-                ),
-                Container(
-                  margin: const EdgeInsets.symmetric(
-                    vertical: 20.0,
-                  ),
-                  child: tourismAnnouncements.isEmpty
-                      ? Container(
-                          margin: const EdgeInsets.symmetric(
-                            vertical: 10.0,
-                          ),
-                          child: Center(
-                            child: Column(
-                              children: <Widget>[
-                                SvgPicture.asset(
-                                  "assets/images/svg/no_data.svg",
-                                  width: screenSize.width * 0.25,
-                                  height: screenSize.width * 0.25,
-                                  semanticsLabel: 'No Data Logo',
-                                ),
-                                const SizedBox(
-                                  height: 10.0,
-                                ),
-                                const Text("No news"),
-                              ],
-                            ),
-                          ),
-                        )
-                      : Column(
-                          children: tourismShimmer
-                              ? List.generate(
-                                  3,
-                                  (index) => Shimmer.fromColors(
-                                        baseColor: Colors.white,
-                                        highlightColor: Colors.transparent,
-                                        child: const HomepageTourismCard(
-                                          useDefault: true,
-                                          imageUrl:
-                                              "assets/images/icon/sioc.png",
-                                          title: "Loading...",
-                                          subtitle: "Loading...",
-                                        ),
-                                      ))
-                              : tourismAnnouncements.map((e) {
-                                  int index = tourismAnnouncements.indexOf(e);
-                                  return e.attachmentDtoList.isEmpty
-                                      ? HomepageTourismCard(
-                                          useDefault: true,
-                                          annId: e.annId,
-                                          imageUrl:
-                                              "assets/images/icon/sioc.png",
-                                          title:
-                                              getTourismTitle(index, context),
-                                          subtitle:
-                                              getTourismContent(index, context),
-                                        )
-                                      : HomepageTourismCard(
-                                          annId: e.annId,
-                                          imageUrl: e
-                                              .attachmentDtoList[0].attFilePath,
-                                          title:
-                                              getTourismTitle(index, context),
-                                          subtitle:
-                                              getTourismContent(index, context),
-                                        );
-                                }).toList(),
-                        ),
-                ),
-                Container(
-                  margin: const EdgeInsets.only(
-                    bottom: 20.0,
-                  ),
-                  alignment: Alignment.center,
-                  child: const Text(
-                    "That's all for now",
-                  ),
-                )
-              ],
+              ),
             ),
-          ),
-        ),
-      ),
-    );
+            if (_isLoading)
+              const Opacity(
+                opacity: 0.25,
+                child: ModalBarrier(dismissible: false, color: Colors.black),
+              ),
+            if (_isLoading)
+              const Center(
+                child: CircularProgressIndicator(),
+              ),
+          ],
+        ));
   }
 }

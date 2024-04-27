@@ -4,8 +4,13 @@ import 'package:introduction_screen/introduction_screen.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:logger/logger.dart';
 
 import './home_screen.dart';
+
+var logger = Logger(
+  printer: PrettyPrinter(),
+);
 
 class OnboardingScreen extends StatelessWidget {
   static const String routeName = "onboarding-screen";
@@ -24,14 +29,14 @@ class OnboardingScreen extends StatelessWidget {
         Permission.camera,
         Permission.photos,
       ].request();
-      print("Location permission: ${statuses[Permission.location]}");
-      print("Microphone permission: ${statuses[Permission.microphone]}");
-      print("Notification permission: ${statuses[Permission.notification]}");
-      print("Camera permission: ${statuses[Permission.camera]}");
-      print("Photo permission: ${statuses[Permission.photos]}");
+      logger.d("Location permission: ${statuses[Permission.location]}");
+      logger.d("Microphone permission: ${statuses[Permission.microphone]}");
+      logger.d("Notification permission: ${statuses[Permission.notification]}");
+      logger.d("Camera permission: ${statuses[Permission.camera]}");
+      logger.d("Photo permission: ${statuses[Permission.photos]}");
       Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
     } catch (e) {
-      print("handlePermission: ${e.toString()}");
+      logger.d("handlePermission: ${e.toString()}");
     }
   }
 

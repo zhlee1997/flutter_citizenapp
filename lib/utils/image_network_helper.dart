@@ -24,6 +24,7 @@ class ImageNetworkHelper {
             'assets/images/icon/sioc.png',
             height: height! * 0.5,
             width: width,
+            fit: BoxFit.cover,
           )
         : CachedNetworkImage(
             imageUrl: url,

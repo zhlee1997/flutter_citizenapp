@@ -29,8 +29,7 @@ class _MajorDialogHelperState extends State<MajorDialogHelper> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
-        Container(
-          color: Theme.of(context).colorScheme.secondary.withOpacity(0.75),
+        SizedBox(
           height: 200,
           child: PageView(
               onPageChanged: (int num) {
@@ -43,7 +42,7 @@ class _MajorDialogHelperState extends State<MajorDialogHelper> {
               children: majorAnnouncementList
                   .map((e) => ImageNetworkHelper.imageNetworkBuilder(
                         url: e.image.isNotEmpty ? e.image : null,
-                        fit: BoxFit.contain,
+                        fit: BoxFit.cover,
                         height: 200,
                         width: 200,
                       ))
@@ -93,9 +92,8 @@ class _MajorDialogHelperState extends State<MajorDialogHelper> {
               majorAnnouncementList[_pageNumber].description,
               maxLines: 3,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize,
-              ),
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodyMedium,
             ),
           ),
         const SizedBox(
@@ -137,27 +135,27 @@ class _MajorDialogHelperState extends State<MajorDialogHelper> {
     return SizedBox(
       height: 6,
       child: AnimatedContainer(
-        duration: Duration(milliseconds: 250),
-        margin: EdgeInsets.symmetric(horizontal: 4.0),
+        duration: const Duration(milliseconds: 250),
+        margin: const EdgeInsets.symmetric(horizontal: 4.0),
         height: isActive ? 6 : 4.0,
         width: isActive ? 8 : 4.0,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: isActive
               ? Theme.of(context).primaryColor.withOpacity(0.75)
-              : Color(0XFFEAEAEA),
+              : Colors.grey,
           boxShadow: [
             isActive
                 ? BoxShadow(
                     color: Theme.of(context).colorScheme.secondary,
                     blurRadius: 4.0,
                     spreadRadius: 1.0,
-                    offset: Offset(
+                    offset: const Offset(
                       0.0,
                       0.0,
                     ),
                   )
-                : BoxShadow(
+                : const BoxShadow(
                     color: Colors.transparent,
                   )
           ],

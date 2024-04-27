@@ -90,34 +90,37 @@ class CCTVListModel {
   }
 }
 
-class CCTVSnapshotModel {
+class CCTVOtherModel {
   late String cctvId;
-  late String imageUrl;
+  late String picUrl;
   late String channel;
   late String deviceName;
   late String location;
   late String latitude;
   late String longitude;
+  late double distance;
 
   // model constructor
-  CCTVSnapshotModel({
+  CCTVOtherModel({
     required this.cctvId,
-    required this.imageUrl,
+    required this.picUrl,
     required this.channel,
     required this.deviceName,
     required this.location,
     required this.latitude,
     required this.longitude,
+    required this.distance,
   });
 
   // serialize from json
-  CCTVSnapshotModel.fromJson(Map<String, dynamic> json) {
-    cctvId = json["deviceCode"];
+  CCTVOtherModel.fromJson(Map<String, dynamic> json) {
+    cctvId = json["thridDeviceId"];
     channel = json["channel"];
-    deviceName = json["deviceName"];
-    imageUrl = json["imageUrl"];
+    deviceName = json["thirdDeviceName"];
+    picUrl = json["picUrl"];
     location = json["location"];
     latitude = json["latitude"];
     longitude = json["longitude"];
+    distance = json["distance"];
   }
 }

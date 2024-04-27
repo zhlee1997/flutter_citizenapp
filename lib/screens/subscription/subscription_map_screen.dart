@@ -4,8 +4,6 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_citizenapp/models/camera_subscription_model.dart';
-import 'package:flutter_citizenapp/providers/camera_subscription_provider.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -15,7 +13,8 @@ import '../../models/cctv_model.dart';
 import '../../utils/app_localization.dart';
 import '../../widgets/subscription/map_bottom_sheet_widget.dart';
 import '../../providers/cctv_provider.dart';
-import '../../models/cctv_model.dart';
+import '../../models/camera_subscription_model.dart';
+import '../../providers/camera_subscription_provider.dart';
 
 class SubscriptionMapScreen extends StatefulWidget {
   static const String routeName = "subscription-map-screen";
@@ -70,7 +69,7 @@ class _SubscriptionMapScreenState extends State<SubscriptionMapScreen> {
 
       Map<String, dynamic> data = {
         "channel": "02",
-        "thridDeviceId": cctv.id,
+        "thridDeviceId": cctv.deviceCode,
       };
       try {
         await Provider.of<CCTVProvider>(context, listen: false)

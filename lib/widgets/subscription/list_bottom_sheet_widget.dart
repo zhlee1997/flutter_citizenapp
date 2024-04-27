@@ -7,15 +7,16 @@ import '../../providers/location_provider.dart';
 import '../../providers/subscription_provider.dart';
 import '../../screens/subscription/subscription_video_screen.dart';
 import '../../arguments/subscription_video_screen_arguments.dart';
+import '../../models/cctv_model.dart';
+import '../../providers/cctv_provider.dart';
 
 // ignore: must_be_immutable
-class ListBottomSheetWidget extends StatelessWidget {
+class ListBottomSheetWidget extends StatefulWidget {
   final String cctvLatitude;
   final String cctvLongitude;
   final String cctvName;
   final String cctvLocation;
   final String imageUrl;
-  // final String liveUrl;
 
   const ListBottomSheetWidget({
     required this.cctvName,
@@ -23,9 +24,20 @@ class ListBottomSheetWidget extends StatelessWidget {
     required this.cctvLatitude,
     required this.cctvLongitude,
     required this.imageUrl,
-    // required this.liveUrl,
     super.key,
   });
+
+  @override
+  State<ListBottomSheetWidget> createState() => _ListBottomSheetWidgetState();
+}
+
+class _ListBottomSheetWidgetState extends State<ListBottomSheetWidget> {
+  late CCTVProvider cctvProvider;
+  late SubscriptionProvider subscriptionProvider;
+
+  double endLatitude = 0;
+  double endLongitude = 0;
+  String distanceInBetween = "";
 
   // Use geolocator service to calculate the distance
   String getDistanceFromCoordinates(
@@ -45,33 +57,36 @@ class ListBottomSheetWidget extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
-
-    double endLatitude = 0;
-    double endLongitude = 0;
-    String distanceInBetween = "";
-
-    LocationProvider locationProvider = Provider.of<LocationProvider>(context);
-    SubscriptionProvider subscriptionProvider =
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    subscriptionProvider =
         Provider.of<SubscriptionProvider>(context, listen: false);
+    cctvProvider = Provider.of<CCTVProvider>(context, listen: false);
+    LocationProvider locationProvider = Provider.of<LocationProvider>(context);
     if (locationProvider.currentLocation != null) {
       endLatitude = locationProvider.currentLocation!.latitude;
       endLongitude = locationProvider.currentLocation!.longitude;
       distanceInBetween = getDistanceFromCoordinates(
-        double.parse(cctvLatitude),
-        double.parse(cctvLongitude),
+        double.parse(widget.cctvLatitude),
+        double.parse(widget.cctvLongitude),
         endLatitude,
         endLongitude,
       );
     }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+    final CCTVModelDetail? cctvDetail = cctvProvider.cctvModelDetail;
 
     return SingleChildScrollView(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Image.network(
-            imageUrl,
+            widget.imageUrl,
             width: double.infinity,
             height: screenSize.height * 0.25,
             fit: BoxFit.cover,
@@ -93,7 +108,7 @@ class ListBottomSheetWidget extends StatelessWidget {
             ),
             // width: double.infinity,
             child: Text(
-              cctvLocation,
+              widget.cctvLocation,
               style: const TextStyle(
                 fontSize: 18.0,
                 fontWeight: FontWeight.bold,
@@ -107,7 +122,7 @@ class ListBottomSheetWidget extends StatelessWidget {
               bottom: 5.0,
             ),
             child: Text(
-              cctvName,
+              widget.cctvName,
               textAlign: TextAlign.center,
             ),
           ),
@@ -123,20 +138,24 @@ class ListBottomSheetWidget extends StatelessWidget {
             width: screenSize.width * 0.9,
             // height: screenSize.height * 0.06,
             child: ElevatedButton(
-              onPressed: () async {
-                Navigator.of(context).pop();
-                Navigator.pushNamed(
-                  context,
-                  SubscriptionVideoScreen.routeName,
-                  arguments: SubscriptionVideoScreenArguments(
-                    // liveUrl,
-                    "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-                    cctvName,
-                    cctvLocation,
-                    distanceInBetween,
-                  ),
-                );
-              },
+              onPressed: cctvDetail != null && cctvDetail.liveUrl.isNotEmpty
+                  ? () async {
+                      Navigator.of(context).pop();
+                      Navigator.pushNamed(
+                        context,
+                        SubscriptionVideoScreen.routeName,
+                        arguments: SubscriptionVideoScreenArguments(
+                          cctvDetail.id,
+                          cctvDetail.liveUrl,
+                          widget.cctvName,
+                          widget.cctvLocation,
+                          distanceInBetween,
+                          widget.cctvLatitude,
+                          widget.cctvLongitude,
+                        ),
+                      );
+                    }
+                  : null,
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all(
                     Theme.of(context).colorScheme.secondary),

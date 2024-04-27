@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_citizenapp/models/camera_subscription_model.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import '../models/camera_subscription_model.dart';
 import '../models/cctv_model.dart';
 import '../services/cctv_services.dart';
 import '../utils/app_constant.dart';
@@ -16,8 +15,8 @@ class CCTVProvider with ChangeNotifier {
   late String _imageUrl;
   String get imageUrl => _imageUrl;
 
-  late List<Map<String, dynamic>> _nearCameraList;
-  List<Map<String, dynamic>> get nearCameraList => _nearCameraList;
+  List<CCTVOtherModel> _nearbyOtherCameraList = [];
+  List<CCTVOtherModel> get nearbyOtherCameraList => _nearbyOtherCameraList;
 
   /// Get the cctv coordinates when rendering Google Map
   /// Using getCctvCoordinates API
@@ -48,14 +47,14 @@ class CCTVProvider with ChangeNotifier {
     try {
       Map<String, dynamic> map = {
         "channel": data.channel,
-        "thridDeviceId": data.id,
+        "thridDeviceId": data.deviceCode,
         "urlType": AppConstant
             .urlType, // video type：1.rtsp、2.hls、3.rtmp、4.flv-http、5.dash
       };
       var response = await CCTVServices().getCctvDetail(map);
       if (response['status'] == 200) {
         _cctvModelDetail = CCTVModelDetail(
-          id: data.id,
+          id: data.deviceCode,
           name: data.deviceName,
           location: data.location,
           image: '',
@@ -86,46 +85,22 @@ class CCTVProvider with ChangeNotifier {
     }
   }
 
-  // Provider - obtain 5 nearby CCTV
-  Future<void> queryNearbyDevicesListProvider(Map<String, dynamic> data) async {
+  /// Obtain 5 nearby other CCTVs
+  Future<List<CCTVOtherModel>> queryNearbyDevicesListProvider(
+      Map<String, dynamic> data) async {
     try {
       var response = await CCTVServices().queryNearbyDevicesList(data);
       if (response['status'] == 200) {
-        _nearCameraList = [];
         if (response['obj'].length > 0) {
-          response['obj'].forEach((e) {
-            Map<String, dynamic> item = {
-              "cctvId": e['thridDeviceId'],
-              "coodinates": LatLng(
-                  double.parse(e['latitude']), double.parse(e['longitude'])),
-              "name": e['thirdDeviceName'] ?? "No Device Name",
-              "address": e['location'] ?? "No Address",
-              "imageURL": ''
-            };
-            _nearCameraList.add(item);
-          });
+          var list = response['obj'] as List;
+          _nearbyOtherCameraList =
+              list.map((e) => CCTVOtherModel.fromJson(e)).toList();
         }
       }
     } catch (e) {
-      print('queryNearbyDevicesListProvider fail');
+      print('queryNearbyDevicesListProvider fail: ${e.toString()}');
     }
+    notifyListeners();
+    return _nearbyOtherCameraList;
   }
-
-  // return list of CCTV capture image for nearby CCTV
-  // Future getImages(List<Map<String, dynamic>> cameraList) {
-  //   int counter = 0;
-  //   int sum = cameraList.length;
-  //   if (counter == sum) {
-  //     return Future(() {
-  //       return [];
-  //     });
-  //   }
-
-  //   List<Future> list = [];
-  //   cameraList.forEach((e) {
-  //     list.add(getImageUrl(e['cctvId']));
-  //   });
-  //   Future future = Future.wait(list);
-  //   return future;
-  // }
 }

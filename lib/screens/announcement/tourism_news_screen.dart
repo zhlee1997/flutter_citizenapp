@@ -80,6 +80,22 @@ class _TourismNewsScreenState extends State<TourismNewsScreen> {
     }
   }
 
+  String getAnnouncementDescription(int idx) {
+    String languageCode =
+        Provider.of<LanguageProvider>(context).locale.languageCode;
+    if (languageCode == 'en') {
+      return _news[idx].annMessageEn;
+    } else if (languageCode == 'zh') {
+      return _news[idx].annMessageZh != ''
+          ? _news[idx].annMessageZh
+          : _news[idx].annMessageEn;
+    } else {
+      return _news[idx].annMessageMs != ''
+          ? _news[idx].annMessageMs
+          : _news[idx].annMessageEn;
+    }
+  }
+
   void setStateIfMounted(f) {
     if (mounted) setState(f);
   }
@@ -151,7 +167,7 @@ class _TourismNewsScreenState extends State<TourismNewsScreen> {
                           .where((photo) => photo.attFileType == '2')
                           .toList();
                       return Container(
-                        margin: EdgeInsets.only(top: 10.0),
+                        // margin: EdgeInsets.only(top: 10.0),
                         child: ListTile(
                           leading: SizedBox(
                             width: screenSize.width * 0.25,
@@ -161,15 +177,14 @@ class _TourismNewsScreenState extends State<TourismNewsScreen> {
                                     tourismPhoto[0].attFilePath,
                                     fit: BoxFit.cover,
                                     errorBuilder: (context, url, error) =>
-                                        SvgPicture.asset(
-                                      "assets/images/svg/undraw_page_not_found.svg",
-                                      fit: BoxFit.cover,
-                                      semanticsLabel: 'Not Found Logo',
+                                        Image.asset(
+                                      "assets/images/icon/sioc.png",
+                                      fit: BoxFit.fill,
                                     ),
                                   )
                                 : Image.asset(
                                     "assets/images/icon/sioc.png",
-                                    fit: BoxFit.cover,
+                                    fit: BoxFit.fill,
                                   ),
                           ),
                           title: Text(
@@ -177,6 +192,11 @@ class _TourismNewsScreenState extends State<TourismNewsScreen> {
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: Theme.of(context).textTheme.titleSmall,
+                          ),
+                          subtitle: Text(
+                            getAnnouncementDescription(index),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                           ),
                           onTap: () {
                             // navigate to announcement detail screen

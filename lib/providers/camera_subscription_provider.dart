@@ -18,6 +18,9 @@ class CameraSubscriptionProvider with ChangeNotifier {
             cctvData.map((e) => CameraSubscriptionModel.fromJson(e)).toList();
         notifyListeners();
         return true;
+      } else {
+        // when response['status'] is 300 (system error)
+        return false;
       }
     } catch (e) {
       print("getDevicesListByPackageIdProvider error: ${e.toString()}");

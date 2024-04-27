@@ -5,9 +5,11 @@ import 'package:provider/provider.dart';
 import '../../models/cctv_model.dart';
 import '../../utils/global_dialog_helper.dart';
 import '../../providers/cctv_provider.dart';
+import '../../providers/subscription_provider.dart';
 import '../../utils/app_localization.dart';
 import '../../widgets/traffic/traffic_images_bottom_widget.dart';
-import '../../services/cctv_services.dart';
+import '../../services/camera_subscription_services.dart';
+import '../../models/camera_subscription_model.dart';
 
 class TrafficImagesListScreen extends StatefulWidget {
   static const String routeName = "traffic-images-list-screen";
@@ -20,7 +22,8 @@ class TrafficImagesListScreen extends StatefulWidget {
 }
 
 class _TrafficImagesListScreenState extends State<TrafficImagesListScreen> {
-  List<CCTVModel> _cctvModelList = [];
+  // List<CCTVModel> _cctvModelList = [];
+  List<CameraSubscriptionModel> _cctvModelList = [];
   bool _isLoading = false;
   bool _isError = false;
   late CCTVModelDetail _cctvModelDetail;
@@ -28,10 +31,10 @@ class _TrafficImagesListScreenState extends State<TrafficImagesListScreen> {
   final GlobalDialogHelper _globalDialogHelper = GlobalDialogHelper();
 
   // Tap the Camera Marker to show camera details
-  Future<void> onPressCameraIcon(CCTVModel cctv) async {
+  Future<void> onPressCameraIcon(CameraSubscriptionModel cctv) async {
     Future<void> handleFuture() async {
       _cctvModelDetail = CCTVModelDetail(
-        id: cctv.cctvId,
+        id: cctv.deviceCode,
         name: cctv.deviceName,
         location: cctv.location,
         image: '',
@@ -40,7 +43,7 @@ class _TrafficImagesListScreenState extends State<TrafficImagesListScreen> {
       );
       Map<String, dynamic> data = {
         "channel": "02",
-        "thridDeviceId": cctv.cctvId,
+        "thridDeviceId": cctv.deviceCode,
       };
       try {
         await Provider.of<CCTVProvider>(context, listen: false)
@@ -96,15 +99,25 @@ class _TrafficImagesListScreenState extends State<TrafficImagesListScreen> {
     setState(() {
       _isLoading = true;
     });
-    bool success = await Provider.of<CCTVProvider>(context, listen: false)
-        .getCctvCoordinatesProvider();
-    if (success) {
-      _cctvModelList =
-          Provider.of<CCTVProvider>(context, listen: false).cctvModel;
+    try {
+      final subscribeId =
+          Provider.of<SubscriptionProvider>(context, listen: false).subscribeId;
+      var response = await CameraSubscriptionServices()
+          .queryTrafficDevicesByPackageId(subscribeId);
+      if (response["status"] == "200") {
+        var list = response["data"] as List;
+        _cctvModelList =
+            list.map((e) => CameraSubscriptionModel.fromJson(e)).toList();
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      print("_initCCTVList fail: ${e.toString()}");
+      setState(() {
+        _isLoading = false;
+      });
     }
-    setState(() {
-      _isLoading = false;
-    });
   }
 
   @override
@@ -123,7 +136,6 @@ class _TrafficImagesListScreenState extends State<TrafficImagesListScreen> {
           : ListView.separated(
               padding: const EdgeInsets.all(8.0),
               separatorBuilder: (context, index) => const Divider(),
-              shrinkWrap: true,
               itemCount: _cctvModelList.length,
               itemBuilder: ((context, index) {
                 return ListTile(

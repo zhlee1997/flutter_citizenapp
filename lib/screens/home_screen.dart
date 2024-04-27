@@ -1,16 +1,31 @@
+import 'dart:async';
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:lottie/lottie.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 import '../providers/auth_provider.dart';
 import '../providers/inbox_provider.dart';
+import '../providers/subscription_provider.dart';
+import '../providers/announcement_provider.dart';
+import '../services/subscription_services.dart';
+
 import '../screens/home_page.dart';
 import '../screens/notifications/notifications_bottom_nav_screen.dart';
 import '../screens/profile/profile_bottom_nav_screen.dart';
 import '../screens/profile/profile_details_screen.dart';
 import '../screens/services/services_bottom_nav_screen.dart';
+import '../screens/subscription/subscription_result_screen.dart';
+import '../screens/bill_payment/bill_payment_result_screen.dart';
 import '../widgets/sarawakid/login_full_bottom_modal.dart';
+import "../utils/global_dialog_helper.dart";
+import '../utils/major_dialog_helper.dart';
+import '../arguments/bill_payment_result_screen_arguments.dart';
+import '../arguments/subscription_result_screen_arguments.dart';
+import '../models/major_announcement_model.dart';
 
 class HomeScreen extends StatefulWidget {
   static const routeName = 'home-page-screen';
@@ -24,17 +39,93 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _currentPageIndex = 0;
   bool isNotificationsSelected = true;
+  bool isSubscription = false;
 
   /// Creating a navigation key to control tab bar navigation
   final _navigationKey = GlobalKey();
+
+  List<Widget> _screens = [];
+
+  final GlobalDialogHelper _globalDialogHelper = GlobalDialogHelper();
+
+  // Payment EventChannel and StreamSubscription
+  static const EventChannel eventChannel =
+      EventChannel("com.sma.citizen_mobile/pay");
+  late StreamSubscription _paymentStreamSubscription;
+
+  // receive Object from activity (eventChannel)
+  // stream for listening to SPay SDK when payment is done
+  void _onData(Object? obj) async {
+    try {
+      if (isSubscription) {
+        // TODO: Temp skip auth checking
+        Provider.of<AuthProvider>(context, listen: false)
+            .queryUserInfoAfterSubscriptionProvider();
+      }
+      String encryptedData = obj as String;
+      if (encryptedData.isEmpty) {
+        _globalDialogHelper.showAlertDialogWithSingleButton(
+          context: context,
+          title: "Payment Error",
+          message:
+              "There was an error while processing your payment. Please contact support or try again later",
+        );
+        return;
+      }
+      print("encryptData: $encryptedData");
+      Map<String, dynamic> param = {"encryptData": encryptedData};
+      var response = await SubscriptionServices().decryptData(param);
+      Map<String, dynamic> payResult = {};
+      if (response['status'] == '200') {
+        payResult = response['data'];
+        Navigator.of(context).pop(true);
+
+        // when success, can look for extra data
+        // payResult['orderAmt'], payResult['orderDate']
+        // Navigate to transaction result page
+        jumpPayResult(payResult);
+      }
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  // receive error Object from activity (eventChannel) when error
+  void _onError(Object obj) {}
+
+  // display transaction result screen when a transaction is completed
+  void jumpPayResult(Map<String, dynamic> param) {
+    if (isSubscription) {
+      // for subscription, after payment
+      Provider.of<SubscriptionProvider>(context, listen: false)
+          .changeIsSubscription(false);
+      Navigator.of(context).pushNamedAndRemoveUntil(
+        SubscriptionResultScreen.routeName,
+        (route) => route.isFirst,
+        arguments: SubscriptionResultScreenArguments(
+          orderAmt: param["orderAmt"],
+          orderDate: param["orderDate"],
+          orderStatus: param["orderStatus"],
+        ),
+      ); // is used to keep only the first route (the HomeScreen);
+    } else {
+      Navigator.of(context).pushNamedAndRemoveUntil(
+        BillPaymentResultScreen.routeName,
+        (route) => route.isFirst,
+        arguments: BillPaymentResultScreenArguments(
+          orderAmt: param["orderAmt"],
+          orderDate: param["orderDate"],
+          orderStatus: param["orderStatus"],
+        ),
+      ); // is used to keep only the first route (the HomeScreen);
+    }
+  }
 
   void setNotificationsState(bool isSelected) {
     setState(() {
       isNotificationsSelected = isSelected;
     });
   }
-
-  List<Widget> _screens = [];
 
   Future<void> _handleFullScreenLoginBottomModal() async {
     await showModalBottomSheet(
@@ -124,6 +215,58 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  // display major announcement popup
+  Future<void> getMajorAnn() async {
+    if (mounted) {
+      List<MajorAnnouncementModel> majorAnnList =
+          Provider.of<AnnouncementProvider>(context, listen: false)
+              .majorAnnouncementList;
+      if (majorAnnList.isNotEmpty) {
+        await showDialog(
+          context: context,
+          builder: (_) {
+            return BackdropFilter(
+              filter: ImageFilter.blur(
+                sigmaX: 10.0,
+                sigmaY: 10.0,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Dialog(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        MajorDialogHelper(
+                          majorAnnouncementList: majorAnnList,
+                        ),
+                      ],
+                    ),
+                  ),
+                  Material(
+                    shape: const CircleBorder(),
+                    color: Theme.of(context).colorScheme.secondary,
+                    child: IconButton(
+                      splashRadius: 25.0,
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      icon: const Icon(
+                        Icons.close,
+                        size: 28,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      }
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -136,6 +279,29 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       const ProfileBottomNavScreen(),
     ];
+    WidgetsBinding.instance.addPostFrameCallback((timestamp) async {
+      getMajorAnn();
+    });
+    _paymentStreamSubscription = eventChannel.receiveBroadcastStream().listen(
+          _onData,
+          onError: _onError,
+        );
+  }
+
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    isSubscription = Provider.of<SubscriptionProvider>(context).isSubscription;
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    //      if (_paymentStreamSubscription != null) {
+    //    _paymentStreamSubscription.cancel();
+    //  }
   }
 
   @override
@@ -160,6 +326,18 @@ class _HomeScreenState extends State<HomeScreen> {
           onDestinationSelected: (int index) {
             if (index == _currentPageIndex) {
               return;
+            }
+
+            // Check for HomePage (Page 1).
+            if (index == 0) {
+              _screens.removeAt(0);
+              // Pass a UniqueKey as key to force the widget lifecycle to start over.
+              _screens.insert(
+                0,
+                HomePage(
+                  key: UniqueKey(),
+                ),
+              );
             }
 
             // Check for ServicessBottomNavScreen (Page 2).
@@ -295,9 +473,9 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           title: Consumer<AuthProvider>(
             builder: (_, AuthProvider authProvider, __) {
-              final String fullName = authProvider.auth.fullName;
+              final String fullName =
+                  authProvider.auth != null ? authProvider.auth!.fullName : "";
               final String firstName = fullName.split(" ")[0];
-
               final String greetings = getGreeting();
 
               return GestureDetector(
@@ -438,13 +616,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
                                   Text(
-                                    authProvider.auth.fullName,
+                                    authProvider.auth != null
+                                        ? authProvider.auth!.fullName
+                                        : "",
                                     style:
                                         Theme.of(context).textTheme.bodyLarge,
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                   Text(
-                                    authProvider.auth.mobile ?? "",
+                                    authProvider.auth != null
+                                        ? authProvider.auth!.mobile!
+                                        : "",
                                     style: TextStyle(
                                       color: Colors.black54,
                                       fontSize: Theme.of(context)
@@ -462,9 +644,11 @@ class _HomeScreenState extends State<HomeScreen> {
                               child: Stack(
                                 alignment: Alignment.bottomRight,
                                 children: [
-                                  authProvider.auth.profileImage != null &&
+                                  authProvider.auth != null &&
+                                          authProvider.auth!.profileImage !=
+                                              null &&
                                           authProvider
-                                              .auth.profileImage!.isNotEmpty
+                                              .auth!.profileImage!.isNotEmpty
                                       ? ClipRRect(
                                           borderRadius:
                                               BorderRadius.circular(25.0),
@@ -492,8 +676,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 strokeWidth: 2.0,
                                               ),
                                             ),
-                                            imageUrl:
-                                                authProvider.auth.profileImage!,
+                                            imageUrl: authProvider.auth != null
+                                                ? authProvider
+                                                    .auth!.profileImage!
+                                                : "",
                                             errorWidget:
                                                 (context, url, error) =>
                                                     Container(

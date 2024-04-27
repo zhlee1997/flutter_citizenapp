@@ -41,8 +41,8 @@ class _SarawakIDScreenState extends State<SarawakIDScreen> {
         await Provider.of<AuthProvider>(context, listen: false)
             .queryLoginUserInfo(
                 response['userId']!, response['isSubscribed'] == 'true')
-            .then((value) {
-          if (value) {
+            .then((bool isLoginSuccess) {
+          if (isLoginSuccess) {
             Provider.of<InboxProvider>(context, listen: false).refreshCount();
             _pushNotification.setFirebase(true).then((_) {
               if (mounted) {
@@ -79,14 +79,23 @@ class _SarawakIDScreenState extends State<SarawakIDScreen> {
             Fluttertoast.showToast(
               msg: AppLocalization.of(context)!.translate('login_error')!,
             );
+            Provider.of<AuthProvider>(context, listen: false)
+                .removeAuthByForce();
           }
         });
       } else {
         Fluttertoast.showToast(
           msg: AppLocalization.of(context)!.translate('login_error')!,
         );
+        Provider.of<AuthProvider>(context, listen: false).removeAuthByForce();
       }
-    } catch (e) {}
+    } catch (e) {
+      print("signIn fail: ${e.toString()}");
+      _webViewController.loadData(
+          data:
+              """<h1>Unable to log in</h1><br/><h2>An unexpected error occured.</h2><h2>Please try login again.</h2>""");
+      Provider.of<AuthProvider>(context, listen: false).removeAuthByForce();
+    }
   }
 
   @override
@@ -142,6 +151,9 @@ class _SarawakIDScreenState extends State<SarawakIDScreen> {
         onLoadStop: (InAppWebViewController controller, Uri? url) async {
           // TODO: to change the IP Address when switch environment
           if (url.toString().contains('124.70.29.113:28300/loading.html')) {
+            _webViewController.loadData(
+                data:
+                    """<h1>Signing In. Please wait.</h1><br/><h1>Do not close the page.</h1>""");
             print("loginUrl: $url");
             // detect "userId" redirect by backend
             if (url!.queryParameters["userId"] != null) {
@@ -149,7 +161,7 @@ class _SarawakIDScreenState extends State<SarawakIDScreen> {
             } else {
               _webViewController.loadData(
                   data:
-                      """<h1>Unable to log in</h1><br/><h2>An unexpected error occured.</h2><h2>Please try logging in again.</h2>""");
+                      """<h1>Unable to log in</h1><br/><h2>An unexpected error occured.</h2><h2>Please try login again.</h2>""");
               Fluttertoast.showToast(msg: "Unable to log in");
             }
           }
@@ -164,7 +176,7 @@ class _SarawakIDScreenState extends State<SarawakIDScreen> {
         ) {
           _webViewController.loadData(
               data:
-                  """<h1>Unable to log in</h1><br/><h2>An unexpected error occured: ${webResourceError.description}.</h2><h2>Please try logging in again.</h2>""");
+                  """<h1>Unable to log in</h1><br/><h2>An unexpected error occured: ${webResourceError.description}.</h2><h2>Please try login again.</h2>""");
           Fluttertoast.showToast(msg: "Unable to log in");
           setState(() {
             loadingPercentage = 100;

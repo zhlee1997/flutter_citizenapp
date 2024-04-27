@@ -15,4 +15,17 @@ class CameraSubscriptionServices {
       print("queryDevicesByPackageId API error: ${e.toString()}");
     }
   }
+
+  Future<dynamic> queryTrafficDevicesByPackageId(String packageId) async {
+    try {
+      var response = await _apiBaseHelper.get(
+        'member/memberSubscribePackage/getTrafficDeviceById/$packageId',
+        requireToken: false,
+      );
+      print('queryTrafficDevicesByPackageId API success: $response');
+      return response;
+    } catch (e) {
+      print("queryTrafficDevicesByPackageId API error: ${e.toString()}");
+    }
+  }
 }

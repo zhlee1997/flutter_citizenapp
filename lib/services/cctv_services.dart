@@ -73,19 +73,4 @@ class CCTVServices {
       throw e;
     }
   }
-
-  // API - obtain nearby 5 cctv
-  Future<dynamic> queryCCTVSnapshotList(Map<String, dynamic> data) async {
-    try {
-      var response = await _apiBaseHelper.post(
-        'vms/getSnapshotList',
-        data: json.encode(data),
-      );
-      print('queryCCTVSnapshotList success: $response');
-      return response;
-    } catch (e) {
-      print('queryCCTVSnapshotList fail: ${e.toString()}');
-      throw e;
-    }
-  }
 }

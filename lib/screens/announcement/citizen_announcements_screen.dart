@@ -83,6 +83,22 @@ class _CitizenAnnouncementsScreenState
     }
   }
 
+  String getAnnouncementDescription(int idx) {
+    String languageCode =
+        Provider.of<LanguageProvider>(context).locale.languageCode;
+    if (languageCode == 'en') {
+      return _announcements[idx].annMessageEn;
+    } else if (languageCode == 'zh') {
+      return _announcements[idx].annMessageZh != ''
+          ? _announcements[idx].annMessageZh
+          : _announcements[idx].annMessageEn;
+    } else {
+      return _announcements[idx].annMessageMs != ''
+          ? _announcements[idx].annMessageMs
+          : _announcements[idx].annMessageEn;
+    }
+  }
+
   void setStateIfMounted(f) {
     if (mounted) setState(f);
   }
@@ -155,7 +171,7 @@ class _CitizenAnnouncementsScreenState
                           .toList();
 
                       return Container(
-                        margin: const EdgeInsets.only(top: 10.0),
+                        // margin: const EdgeInsets.only(top: 10.0),
                         child: ListTile(
                           leading: SizedBox(
                             width: screenSize.width * 0.25,
@@ -165,15 +181,14 @@ class _CitizenAnnouncementsScreenState
                                     citizenPhoto[0].attFilePath,
                                     fit: BoxFit.cover,
                                     errorBuilder: (context, url, error) =>
-                                        SvgPicture.asset(
-                                      "assets/images/svg/undraw_page_not_found.svg",
-                                      fit: BoxFit.cover,
-                                      semanticsLabel: 'Not Found Logo',
+                                        Image.asset(
+                                      "assets/images/icon/sioc.png",
+                                      fit: BoxFit.fill,
                                     ),
                                   )
                                 : Image.asset(
                                     "assets/images/icon/sioc.png",
-                                    // fit: BoxFit.cover,
+                                    fit: BoxFit.cover,
                                   ),
                           ),
                           title: Text(
@@ -181,6 +196,11 @@ class _CitizenAnnouncementsScreenState
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: Theme.of(context).textTheme.titleSmall,
+                          ),
+                          subtitle: Text(
+                            getAnnouncementDescription(index),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                           ),
                           onTap: () {
                             // navigate to announcement detail screen

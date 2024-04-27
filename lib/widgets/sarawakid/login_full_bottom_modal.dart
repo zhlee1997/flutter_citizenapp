@@ -127,7 +127,6 @@ class LoginFullBottomModal extends StatelessWidget {
               ),
               SizedBox(
                 width: screenSize.width * 0.75,
-                height: screenSize.width * 0.125,
                 child: OutlinedButton(
                   onPressed: () async {
                     await GlobalDialogHelper().showAlertDialog(

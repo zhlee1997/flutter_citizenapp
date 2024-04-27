@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '../bus_schedule/bus_map_screen.dart';
 import '../traffic/traffic_images_list_screen.dart';
@@ -30,6 +31,7 @@ class ServicesBottomNavScreen extends StatefulWidget {
 class _ServicesBottomNavScreenState extends State<ServicesBottomNavScreen> {
   bool isSubscribed = false;
   bool isSubscriptionEnabled = false;
+  bool _isLoading = false;
 
   void _handleNavigateToBusSchedule(BuildContext context) =>
       Navigator.of(context).pushNamed(BusMapScreen.routeName);
@@ -149,11 +151,17 @@ class _ServicesBottomNavScreenState extends State<ServicesBottomNavScreen> {
     final SubscriptionProvider subscriptionProvider =
         Provider.of<SubscriptionProvider>(context, listen: false);
 
-    if (authProvider.isAuth) {
+    if (authProvider.isAuth && authProvider.auth != null) {
       GlobalDialogHelper().buildCircularProgressCenter(context: context);
       bool isWhitelisted = await subscriptionProvider
-          .queryAndSetIsWhitelisted(authProvider.auth.sId);
+          .queryAndSetIsWhitelisted(authProvider.auth!.sId);
+      bool isSubscriptionEnabled =
+          await subscriptionProvider.queryAndSetIsSubscriptionEnabled();
       Navigator.of(context).pop();
+      if (!isSubscriptionEnabled) {
+        Fluttertoast.showToast(msg: "Subscription is disabled");
+        return;
+      }
       if (isWhitelisted) {
         // show bottom modal
         _handleSubscriptionWhitelistBottomModal(context);
@@ -197,8 +205,14 @@ class _ServicesBottomNavScreenState extends State<ServicesBottomNavScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (mounted) {
+        setState(() {
+          _isLoading = true;
+        });
         await Provider.of<SubscriptionProvider>(context, listen: false)
             .queryAndSetIsSubscriptionEnabled();
+        setState(() {
+          _isLoading = false;
+        });
       }
     });
   }
@@ -207,274 +221,289 @@ class _ServicesBottomNavScreenState extends State<ServicesBottomNavScreen> {
   void didChangeDependencies() {
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
-    isSubscribed = Provider.of<AuthProvider>(context).auth.vipStatus;
+    if (Provider.of<AuthProvider>(context).auth != null) {
+      isSubscribed = Provider.of<AuthProvider>(context).auth!.vipStatus;
+    }
     isSubscriptionEnabled =
         Provider.of<SubscriptionProvider>(context).isSubscriptionEnabled;
   }
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(10.0),
-      child: GridView(
-        physics: const NeverScrollableScrollPhysics(),
-        shrinkWrap: true,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          crossAxisSpacing: 5.0,
-          mainAxisSpacing: 5.0,
-          childAspectRatio: 0.7 / 1,
+    return Stack(
+      children: [
+        SingleChildScrollView(
+          padding: const EdgeInsets.all(10.0),
+          child: GridView(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              crossAxisSpacing: 5.0,
+              mainAxisSpacing: 5.0,
+              childAspectRatio: 0.7 / 1,
+            ),
+            children: <Widget>[
+              GestureDetector(
+                onTap: () => _handleNavigateToTalikhidmat(context),
+                child: Card(
+                  elevation: 5.0,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                      // image: DecorationImage(
+                      //   image: AssetImage(
+                      //       "assets/images/pictures/talikhidmat_image.jpg"),
+                      //   fit: BoxFit.cover,
+                      //   opacity: 0.3,
+                      // ),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        const Icon(
+                          Icons.feedback_outlined,
+                          size: 50.0,
+                          color: Colors.deepPurple,
+                        ),
+                        const SizedBox(
+                          height: 10.0,
+                        ),
+                        Text(
+                          "Talikhidmat",
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              GestureDetector(
+                onTap: () => _handleNavigateToEmergency(context),
+                child: Card(
+                  color: Color.fromARGB(255, 255, 252, 221),
+                  elevation: 5.0,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                      // image: DecorationImage(
+                      //   image: AssetImage("assets/images/pictures/sos_image.jpg"),
+                      //   fit: BoxFit.cover,
+                      //   opacity: 0.15,
+                      // ),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        const Icon(
+                          Icons.sos_outlined,
+                          size: 50.0,
+                          color: Colors.orange,
+                        ),
+                        const SizedBox(
+                          height: 10.0,
+                        ),
+                        Text(
+                          "Emergency Button",
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              GestureDetector(
+                onTap: () => _handleNavigateToBusSchedule(context),
+                child: Card(
+                  color: Color.fromARGB(255, 227, 255, 235),
+                  elevation: 5.0,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                      // image: DecorationImage(
+                      //   image: AssetImage("assets/images/pictures/bus_image.jpg"),
+                      //   fit: BoxFit.cover,
+                      //   opacity: 0.2,
+                      // ),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        const Icon(
+                          Icons.bus_alert_outlined,
+                          size: 50.0,
+                          color: Colors.green,
+                        ),
+                        const SizedBox(
+                          height: 10.0,
+                        ),
+                        Text(
+                          "Bus Schedule",
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              GestureDetector(
+                onTap: () => _handleNavigateToTrafficImages(context),
+                child: Card(
+                  elevation: 5.0,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                      // image: const DecorationImage(
+                      //   image: AssetImage(
+                      //       "assets/images/pictures/traffic_image.jpg"),
+                      //   fit: BoxFit.cover,
+                      //   opacity: 0.2,
+                      // ),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        const Icon(
+                          Icons.traffic_outlined,
+                          size: 50.0,
+                          color: Colors.deepPurple,
+                        ),
+                        const SizedBox(
+                          height: 10.0,
+                        ),
+                        Text(
+                          "Traffic Images",
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              GestureDetector(
+                onTap: () => _handleNavigateToPayment(context),
+                child: Card(
+                  color: Color.fromARGB(255, 255, 252, 221),
+                  elevation: 5.0,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                      // image: DecorationImage(
+                      //   image: AssetImage(
+                      //       "assets/images/pictures/payment_image.jpg"),
+                      //   fit: BoxFit.cover,
+                      //   opacity: 0.2,
+                      // ),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        const Icon(
+                          Icons.receipt_long_outlined,
+                          size: 50.0,
+                          color: Colors.orange,
+                        ),
+                        const SizedBox(
+                          height: 10.0,
+                        ),
+                        Text(
+                          "Bill Payment",
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              GestureDetector(
+                onTap: () => _handleNavigateToTourismNews(context),
+                child: Card(
+                  color: Color.fromARGB(255, 227, 255, 235),
+                  elevation: 5.0,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                      // image: DecorationImage(
+                      //   image: AssetImage(
+                      //       "assets/images/pictures/tourism_image.jpg"),
+                      //   fit: BoxFit.cover,
+                      //   opacity: 0.3,
+                      // ),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        const Icon(
+                          Icons.luggage_outlined,
+                          size: 50.0,
+                          color: Colors.green,
+                        ),
+                        const SizedBox(
+                          height: 10.0,
+                        ),
+                        Text(
+                          "Tourism News",
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              if (isSubscriptionEnabled)
+                GestureDetector(
+                  onTap: () => _handleNavigateToSubscription(context),
+                  child: Card(
+                    elevation: 5.0,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10.0),
+                        // image: DecorationImage(
+                        //   image: AssetImage(
+                        //       "assets/images/pictures/subscription_image.jpg"),
+                        //   fit: BoxFit.cover,
+                        //   opacity: 0.2,
+                        // ),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          const Icon(
+                            Icons.subscriptions,
+                            size: 50.0,
+                            color: Colors.deepPurple,
+                          ),
+                          const SizedBox(
+                            height: 10.0,
+                          ),
+                          Text(
+                            "Premium Subscription",
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
         ),
-        children: <Widget>[
-          GestureDetector(
-            onTap: () => _handleNavigateToTalikhidmat(context),
-            child: Card(
-              elevation: 5.0,
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10.0),
-                  // image: DecorationImage(
-                  //   image: AssetImage(
-                  //       "assets/images/pictures/talikhidmat_image.jpg"),
-                  //   fit: BoxFit.cover,
-                  //   opacity: 0.3,
-                  // ),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    const Icon(
-                      Icons.feedback_outlined,
-                      size: 50.0,
-                      color: Colors.deepPurple,
-                    ),
-                    const SizedBox(
-                      height: 10.0,
-                    ),
-                    Text(
-                      "Talikhidmat",
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    )
-                  ],
-                ),
-              ),
-            ),
+        if (_isLoading)
+          const Opacity(
+            opacity: 0.25,
+            child: ModalBarrier(dismissible: false, color: Colors.black),
           ),
-          GestureDetector(
-            onTap: () => _handleNavigateToEmergency(context),
-            child: Card(
-              color: Color.fromARGB(255, 255, 252, 221),
-              elevation: 5.0,
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10.0),
-                  // image: DecorationImage(
-                  //   image: AssetImage("assets/images/pictures/sos_image.jpg"),
-                  //   fit: BoxFit.cover,
-                  //   opacity: 0.15,
-                  // ),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    const Icon(
-                      Icons.sos_outlined,
-                      size: 50.0,
-                      color: Colors.orange,
-                    ),
-                    const SizedBox(
-                      height: 10.0,
-                    ),
-                    Text(
-                      "Emergency Button",
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    )
-                  ],
-                ),
-              ),
-            ),
+        if (_isLoading)
+          const Center(
+            child: CircularProgressIndicator(),
           ),
-          GestureDetector(
-            onTap: () => _handleNavigateToBusSchedule(context),
-            child: Card(
-              color: Color.fromARGB(255, 227, 255, 235),
-              elevation: 5.0,
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10.0),
-                  // image: DecorationImage(
-                  //   image: AssetImage("assets/images/pictures/bus_image.jpg"),
-                  //   fit: BoxFit.cover,
-                  //   opacity: 0.2,
-                  // ),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    const Icon(
-                      Icons.bus_alert_outlined,
-                      size: 50.0,
-                      color: Colors.green,
-                    ),
-                    const SizedBox(
-                      height: 10.0,
-                    ),
-                    Text(
-                      "Bus Schedule",
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    )
-                  ],
-                ),
-              ),
-            ),
-          ),
-          GestureDetector(
-            onTap: () => _handleNavigateToTrafficImages(context),
-            child: Card(
-              elevation: 5.0,
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10.0),
-                  // image: const DecorationImage(
-                  //   image: AssetImage(
-                  //       "assets/images/pictures/traffic_image.jpg"),
-                  //   fit: BoxFit.cover,
-                  //   opacity: 0.2,
-                  // ),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    const Icon(
-                      Icons.traffic_outlined,
-                      size: 50.0,
-                      color: Colors.deepPurple,
-                    ),
-                    const SizedBox(
-                      height: 10.0,
-                    ),
-                    Text(
-                      "Traffic Images",
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    )
-                  ],
-                ),
-              ),
-            ),
-          ),
-          GestureDetector(
-            onTap: () => _handleNavigateToPayment(context),
-            child: Card(
-              color: Color.fromARGB(255, 255, 252, 221),
-              elevation: 5.0,
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10.0),
-                  // image: DecorationImage(
-                  //   image: AssetImage(
-                  //       "assets/images/pictures/payment_image.jpg"),
-                  //   fit: BoxFit.cover,
-                  //   opacity: 0.2,
-                  // ),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    const Icon(
-                      Icons.receipt_long_outlined,
-                      size: 50.0,
-                      color: Colors.orange,
-                    ),
-                    const SizedBox(
-                      height: 10.0,
-                    ),
-                    Text(
-                      "Bill Payment",
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    )
-                  ],
-                ),
-              ),
-            ),
-          ),
-          GestureDetector(
-            onTap: () => _handleNavigateToTourismNews(context),
-            child: Card(
-              color: Color.fromARGB(255, 227, 255, 235),
-              elevation: 5.0,
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10.0),
-                  // image: DecorationImage(
-                  //   image: AssetImage(
-                  //       "assets/images/pictures/tourism_image.jpg"),
-                  //   fit: BoxFit.cover,
-                  //   opacity: 0.3,
-                  // ),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    const Icon(
-                      Icons.luggage_outlined,
-                      size: 50.0,
-                      color: Colors.green,
-                    ),
-                    const SizedBox(
-                      height: 10.0,
-                    ),
-                    Text(
-                      "Tourism News",
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    )
-                  ],
-                ),
-              ),
-            ),
-          ),
-          if (isSubscriptionEnabled)
-            GestureDetector(
-              onTap: () => _handleNavigateToSubscription(context),
-              child: Card(
-                elevation: 5.0,
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10.0),
-                    // image: DecorationImage(
-                    //   image: AssetImage(
-                    //       "assets/images/pictures/subscription_image.jpg"),
-                    //   fit: BoxFit.cover,
-                    //   opacity: 0.2,
-                    // ),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      const Icon(
-                        Icons.subscriptions,
-                        size: 50.0,
-                        color: Colors.deepPurple,
-                      ),
-                      const SizedBox(
-                        height: 10.0,
-                      ),
-                      Text(
-                        "Premium Subscription",
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            ),
-        ],
-      ),
+      ],
     );
   }
 }

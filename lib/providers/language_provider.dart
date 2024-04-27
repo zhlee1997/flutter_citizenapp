@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:logger/logger.dart';
+
+var logger = Logger(
+  printer: PrettyPrinter(),
+);
 
 class LanguageProvider extends ChangeNotifier {
   Locale? _locale;
@@ -11,10 +16,10 @@ class LanguageProvider extends ChangeNotifier {
     if (prefs.getString('language_code') != null) {
       String? languageCode = prefs.getString('language_code');
       String? countryCode = prefs.getString('country_code');
-      debugPrint("checkLanguage: $languageCode");
+      logger.d("checkLanguage: $languageCode");
       _locale = Locale(languageCode!, countryCode);
     } else {
-      debugPrint("checkLanguage: null");
+      logger.d("checkLanguage: null");
       _locale = null;
     }
     notifyListeners();

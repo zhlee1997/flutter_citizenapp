@@ -3,9 +3,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:fijkplayer/fijkplayer.dart';
+import 'package:flutter_citizenapp/utils/global_dialog_helper.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:geolocator/geolocator.dart';
 
 import '../../utils/app_localization.dart';
 import '../../arguments/subscription_video_screen_arguments.dart';
@@ -13,6 +16,8 @@ import '../../models/cctv_model.dart';
 import '../../services/cctv_services.dart';
 import '../../utils/app_constant.dart';
 import '../../providers/subscription_provider.dart';
+import '../../providers/cctv_provider.dart';
+import '../../providers/location_provider.dart';
 
 class SubscriptionVideoScreen extends StatefulWidget {
   static const String routeName = "subscription-video-screen";
@@ -32,9 +37,16 @@ class _SubscriptionVideoScreenState extends State<SubscriptionVideoScreen>
   late Timer videoTimer;
   late SubscriptionVideoScreenArguments args;
   TabController? tabController;
-  List<CCTVSnapshotModel> _listCCTVSnapshotModel = [];
+  List<CCTVOtherModel> _CCTVOtherModelList = [];
   late CCTVModelDetail? otherCCTVDetail;
   late StreamSubscription _videoStreamSubscription;
+
+  double _endLatitude = 0;
+  double _endLongitude = 0;
+  String _distanceInBetween = "";
+
+  String latitude = "";
+  String longitude = "";
 
   void _setTimer() {
     timer = Timer(const Duration(seconds: 7), () {
@@ -46,14 +58,21 @@ class _SubscriptionVideoScreenState extends State<SubscriptionVideoScreen>
     });
   }
 
-  void _setVideoTimer(int minutes) {
-    videoTimer = Timer(Duration(seconds: minutes), () {
-      Fluttertoast.showToast(
-        msg: "Still loading... Please wait",
-        toastLength: Toast.LENGTH_LONG,
-        timeInSecForIosWeb: 5,
-      );
-    });
+  // Use geolocator service to calculate the distance
+  String getDistanceFromCoordinates(
+    double startLatitude,
+    double startLongitude,
+    double endLatitude,
+    double endLongitude,
+  ) {
+    double distanceBetween = Geolocator.distanceBetween(
+      startLatitude,
+      startLongitude,
+      endLatitude,
+      endLongitude,
+    );
+    distanceBetween = distanceBetween / 1000;
+    return distanceBetween.toStringAsFixed(1);
   }
 
   void _fijkValueListener() {
@@ -102,141 +121,106 @@ class _SubscriptionVideoScreenState extends State<SubscriptionVideoScreen>
 
   // return Google Map URL
   String get getGoogleMapUrl {
-    // TODO: use args for latitude and longitude
-    String lat = "1.553110";
-    String long = "110.345032";
+    String lat = latitude;
+    String long = longitude;
     return "https://www.google.com/maps/search/?api=1&query=$lat,$long";
   }
 
-  // TODO: Open Google Maps
+  // Open Google Maps
   Future<void> _launchGoogleMaps() async {
-    final Uri encodedURl = Uri.parse(getGoogleMapUrl);
-    await launchUrl(encodedURl, mode: LaunchMode.externalApplication);
-  }
-
-  // TODO: Get Snapshots API (need 5 cameras)
-  Future<void> getSnapshotList(Map<String, dynamic> data) async {
-    final CCTVServices cctvServices = CCTVServices();
-
-    try {
-      var response = await cctvServices.queryCCTVSnapshotList(data);
-      if (response["status"] == "200") {
-        setState(() {
-          _listCCTVSnapshotModel = response["obj"];
-        });
-      }
-    } catch (e) {
-      print("getSnapshotList fail: ${e.toString()}");
+    if (latitude.isNotEmpty && longitude.isNotEmpty) {
+      final Uri encodedURl = Uri.parse(getGoogleMapUrl);
+      await launchUrl(
+        encodedURl,
+        mode: LaunchMode.externalApplication,
+      );
+    } else {
+      Fluttertoast.showToast(msg: "Unable to open Google Maps");
     }
   }
 
-  // TODO: Get other cameras (need 5 cameras)
-  Future<void> getOtherCamerasList() async {
-    // TODO: Get other Cameras => API
-    setState(() {
-      _listCCTVSnapshotModel = [
-        CCTVSnapshotModel(
-          cctvId: "1",
-          imageUrl:
-              "https://images.lifestyleasia.com/wp-content/uploads/sites/5/2022/07/15175110/Hero_Sarawak_River-1600x900.jpg",
-          channel: "02",
-          deviceName: "SIOC Other CCTV 1",
-          location: "SIOC Kuching 1",
-          latitude: "0",
-          longitude: "1",
-        ),
-        CCTVSnapshotModel(
-          cctvId: "2",
-          imageUrl:
-              "https://images.lifestyleasia.com/wp-content/uploads/sites/5/2022/07/15175110/Hero_Sarawak_River-1600x900.jpg",
-          channel: "02",
-          deviceName: "SIOC Other CCTV 2",
-          location: "SIOC Kuching 2",
-          latitude: "0",
-          longitude: "1",
-        ),
-        CCTVSnapshotModel(
-          cctvId: "3",
-          imageUrl:
-              "https://images.lifestyleasia.com/wp-content/uploads/sites/5/2022/07/15175110/Hero_Sarawak_River-1600x900.jpg",
-          channel: "02",
-          deviceName: "SIOC Other CCTV 3",
-          location: "SIOC Kuching 3",
-          latitude: "0",
-          longitude: "1",
-        ),
-        CCTVSnapshotModel(
-          cctvId: "4",
-          imageUrl:
-              "https://images.lifestyleasia.com/wp-content/uploads/sites/5/2022/07/15175110/Hero_Sarawak_River-1600x900.jpg",
-          channel: "02",
-          deviceName: "SIOC Other CCTV 4",
-          location: "SIOC Kuching 4",
-          latitude: "0",
-          longitude: "1",
-        ),
-        CCTVSnapshotModel(
-          cctvId: "5",
-          imageUrl:
-              "https://images.lifestyleasia.com/wp-content/uploads/sites/5/2022/07/15175110/Hero_Sarawak_River-1600x900.jpg",
-          channel: "02",
-          deviceName: "SIOC Other CCTV 5",
-          location: "SIOC Kuching 5",
-          latitude: "0",
-          longitude: "1",
-        )
-      ];
-    });
+  // Get other cameras  => API (need 5 cameras)
+  Future<void> getOtherCamerasList(String deviceCode) async {
+    try {
+      Map<String, dynamic> data = {
+        "channel": "02",
+        "thridDeviceId": deviceCode,
+      };
+      _CCTVOtherModelList =
+          await Provider.of<CCTVProvider>(context, listen: false)
+              .queryNearbyDevicesListProvider(data);
+      setState(() {});
+    } catch (e) {
+      print("getOtherCamerasList error: ${e.toString()}");
+    }
   }
 
-  // TODO: Get CCTV Detail API
-  Future<void> getCCTVDetail(CCTVModel data) async {
+  //  Get CCTV Detail API
+  Future<String?> getOtherLiveUrl(CCTVOtherModel cctvOtherModel) async {
     final CCTVServices cctvServices = CCTVServices();
 
     try {
       Map<String, dynamic> map = {
-        "channel": data.channel,
-        "thridDeviceId": data.cctvId,
+        "channel": cctvOtherModel.channel,
+        "thridDeviceId": cctvOtherModel.cctvId,
         "urlType": AppConstant
             .urlType, // video type：1.rtsp、2.hls、3.rtmp、4.flv-http、5.dash
       };
       var response = await cctvServices.getCctvDetail(map);
-      if (response["status"] == "200") {
-        setState(() {
-          _listCCTVSnapshotModel = response["obj"];
-        });
+      if (response["status"] == 200) {
+        var liveUrl = response["obj"]["liveUrl"] as String?;
+
+        if (liveUrl != null && liveUrl.isNotEmpty) {
+          return liveUrl;
+        } else {
+          return null;
+        }
       }
     } catch (e) {
-      print("getCCTVDetail fail: ${e.toString()}");
+      print("getOtherLiveUrl fail: ${e.toString()}");
     }
+    return null;
   }
 
-  // TODO: Get camera detail for liveUrl and navigate page
-  Future<void> getCameraDetail(CCTVSnapshotModel cctvSnapshotModel) async {
-    // TODO: Get camera detail => API
-    // TODO: temp static data => otherCCTVDetail
-    otherCCTVDetail = CCTVModelDetail(
-      id: "1",
-      name: "SIOC CCTV 1",
-      location: "Bangunan Baitulmakmur 1",
-      image:
-          "https://images.lifestyleasia.com/wp-content/uploads/sites/5/2022/07/15175110/Hero_Sarawak_River-1600x900.jpg",
-      updateTime: "updateTime1",
-      liveUrl:
-          "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-    );
+  Future<void> onSelectOtherCamera(CCTVOtherModel cctvOtherModel) async {
+    try {
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      GlobalDialogHelper().buildCircularProgressWithTextCenter(
+          context: context, message: "Loading camera...");
+      String? liveUrl = await getOtherLiveUrl(cctvOtherModel);
 
-    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    // TODO: To calculate distance in between for other cameras
-    Navigator.of(context).pushReplacementNamed(
-      SubscriptionVideoScreen.routeName,
-      arguments: SubscriptionVideoScreenArguments(
-        otherCCTVDetail!.liveUrl,
-        otherCCTVDetail!.name,
-        otherCCTVDetail!.location,
-        "12",
-      ),
-    );
+      if (liveUrl == null || liveUrl.isEmpty) {
+        Navigator.of(context).pop();
+        Fluttertoast.showToast(
+            msg: "Camera cannot be played. Please try again later");
+        return;
+      }
+
+      // To calculate distance in between for other cameras
+      _distanceInBetween = getDistanceFromCoordinates(
+        double.parse(cctvOtherModel.latitude),
+        double.parse(cctvOtherModel.longitude),
+        _endLatitude,
+        _endLongitude,
+      );
+
+      Navigator.of(context).pop();
+      Navigator.of(context).pushReplacementNamed(
+        SubscriptionVideoScreen.routeName,
+        arguments: SubscriptionVideoScreenArguments(
+          cctvOtherModel.cctvId,
+          liveUrl,
+          cctvOtherModel.deviceName,
+          cctvOtherModel.location,
+          _distanceInBetween,
+          cctvOtherModel.latitude,
+          cctvOtherModel.longitude,
+        ),
+      );
+    } catch (e) {
+      Navigator.of(context).pop();
+      print("onSelectOtherCamera error: ${e.toString()}");
+    }
   }
 
   @override
@@ -245,7 +229,6 @@ class _SubscriptionVideoScreenState extends State<SubscriptionVideoScreen>
     super.initState();
     tabController = TabController(length: 2, vsync: this);
     SchedulerBinding.instance.addPostFrameCallback((_) {
-      // TODO: API => load other cameras
       // Accessing the arguments passed to the modal route
       args = ModalRoute.of(context)!.settings.arguments
           as SubscriptionVideoScreenArguments;
@@ -262,8 +245,7 @@ class _SubscriptionVideoScreenState extends State<SubscriptionVideoScreen>
               .playbackDuration;
       _videoStreamSubscription =
           player.onCurrentPosUpdate.listen((Duration duration) {
-        // TODO: need to change in minutes
-        if (duration.inSeconds == int.parse(playbackDurationLimit)) {
+        if (duration.inMinutes == int.parse(playbackDurationLimit)) {
           player.release();
           Fluttertoast.cancel();
           timer.cancel();
@@ -281,10 +263,23 @@ class _SubscriptionVideoScreenState extends State<SubscriptionVideoScreen>
           ScaffoldMessenger.of(context).showSnackBar(videoSnackBar);
         }
       });
+      // get other cameras => API
+      getOtherCamerasList(args.deviceCode);
+      // CCTV latitude, longitude
+      latitude = args.latitude;
+      longitude = args.longitude;
     });
     _setTimer();
-    // TODO: get other cameras => API
-    getOtherCamerasList();
+  }
+
+  @override
+  void didChangeDependencies() async {
+    super.didChangeDependencies();
+    LocationProvider locationProvider = Provider.of<LocationProvider>(context);
+    if (locationProvider.currentLocation != null) {
+      _endLatitude = locationProvider.currentLocation!.latitude;
+      _endLongitude = locationProvider.currentLocation!.longitude;
+    }
   }
 
   @override
@@ -297,6 +292,7 @@ class _SubscriptionVideoScreenState extends State<SubscriptionVideoScreen>
     Fluttertoast.cancel();
     player.removeListener(_fijkValueListener);
     player.release();
+    _videoStreamSubscription.cancel();
   }
 
   @override
@@ -317,7 +313,6 @@ class _SubscriptionVideoScreenState extends State<SubscriptionVideoScreen>
           title: Text(AppLocalization.of(context)!.translate('live_cctv')!),
         ),
         body: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(
               height: screenSize.height * 0.32,
@@ -483,45 +478,64 @@ class _SubscriptionVideoScreenState extends State<SubscriptionVideoScreen>
                       ),
                     ),
                   ),
-                  ListView.builder(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 5.0,
-                      vertical: 5.0,
-                    ),
-                    shrinkWrap: true,
-                    itemCount: _listCCTVSnapshotModel.length,
-                    itemBuilder: ((context, index) {
-                      return ListTile(
-                        onTap: () =>
-                            getCameraDetail(_listCCTVSnapshotModel[index]),
-                        title: Text(
-                          _listCCTVSnapshotModel[index].location,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w500,
+                  _CCTVOtherModelList.isEmpty
+                      ? Container(
+                          margin:
+                              EdgeInsets.only(top: screenSize.height * 0.05),
+                          child: Column(
+                            children: <Widget>[
+                              SvgPicture.asset(
+                                "assets/images/svg/no_data.svg",
+                                width: screenSize.width * 0.5,
+                                height: screenSize.width * 0.5,
+                                semanticsLabel: 'No Data Logo',
+                              ),
+                              const SizedBox(
+                                height: 10.0,
+                              ),
+                              const Text("No other cameras"),
+                            ],
                           ),
-                        ),
-                        subtitle: Text(
-                          _listCCTVSnapshotModel[index].deviceName,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w300,
+                        )
+                      : ListView.builder(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 5.0,
+                            vertical: 5.0,
                           ),
-                        ),
-                        trailing: SizedBox(
-                          width: screenSize.width * 0.275,
-                          height: screenSize.width * 0.2,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(5.0),
-                            child: Image.network(
-                              _listCCTVSnapshotModel[index].imageUrl,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                      );
-                    }),
-                  )
+                          shrinkWrap: true,
+                          itemCount: _CCTVOtherModelList.length,
+                          itemBuilder: ((context, index) {
+                            return ListTile(
+                              onTap: () => onSelectOtherCamera(
+                                  _CCTVOtherModelList[index]),
+                              title: Text(
+                                _CCTVOtherModelList[index].location,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              subtitle: Text(
+                                _CCTVOtherModelList[index].deviceName,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w300,
+                                ),
+                              ),
+                              trailing: SizedBox(
+                                width: screenSize.width * 0.275,
+                                height: screenSize.width * 0.2,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(5.0),
+                                  child: Image.network(
+                                    _CCTVOtherModelList[index].picUrl,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                            );
+                          }),
+                        )
                 ],
               ),
             ),
