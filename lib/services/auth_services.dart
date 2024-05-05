@@ -3,9 +3,11 @@ import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../utils/api_base_helper.dart';
+import "../../services/notification_services.dart";
 
 class AuthServices {
   ApiBaseHelper _apiBaseHelper = ApiBaseHelper();
+  NotificationServices _notificationServices = NotificationServices();
 
   /// Get user information
   ///
@@ -43,17 +45,22 @@ class AuthServices {
       'token': siocToken,
       'loginMode': '1',
     };
+    var response;
     try {
-      var response = await _apiBaseHelper.post(
+      response = await _apiBaseHelper.post(
         'login/invalid/token',
         data: json.encode(map),
       );
       print('signOut API success: $response');
-      return response;
     } catch (e) {
       print('signOut error: ${e.toString()}');
       throw e;
     }
+    if (response["status"] == "200") {
+      // DELETE FCM TOKEN IF LOGOUT SUCCESS
+      await _notificationServices.deleteToken();
+    }
+    return response;
   }
 
   /// Get new refresh token when app is opened

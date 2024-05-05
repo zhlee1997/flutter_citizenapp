@@ -28,6 +28,8 @@ class _SplashVideoScreenState extends State<SplashVideoScreen> {
   late VlcPlayerController _videoPlayerController;
   bool _isLoading = false;
   PushNotification _pushNotification = PushNotification();
+  bool isAuth = false;
+  bool isPushNotificationEnabled = false;
 
   @override
   void initState() {
@@ -61,60 +63,102 @@ class _SplashVideoScreenState extends State<SplashVideoScreen> {
           // TODO: can show a loading spinner in end of video, after complete then navigate to HomeScreen
           // TODO: check subscription package and whether enabled
           // TODO: need to get major announcements
-          Provider.of<LocationProvider>(context, listen: false)
-              .getCurrentLocation()
-              .then((_) {
-            Provider.of<LanguageProvider>(context, listen: false)
-                .checkLanguage()
-                .then((_) {
-              Provider.of<BusProvider>(context, listen: false)
-                  .setBusRouteProvider()
-                  .then((_) {
-                Provider.of<AnnouncementProvider>(context, listen: false)
-                    .queryandSetMajorAnnouncementProvider(context)
-                    .then((_) {
-                  Provider.of<SubscriptionProvider>(context, listen: false)
-                      .queryAndSetIsSubscriptionEnabled()
-                      .then((_) {
-                    Provider.of<AuthProvider>(context, listen: false)
-                        .checkIsAuthAndSubscribeOverdue(context)
-                        .then((bool isAuth) {
-                      if (isAuth) {
-                        // Refresh Token Provider
-                        // After checking is within the valid refresh period (checkIsAuthAndSubscribeOverdue), then refresh token (everytime open app)
-                        Provider.of<AuthProvider>(context, listen: false)
-                            .refreshTokenProvider()
-                            .then((_) {
-                          Provider.of<InboxProvider>(context, listen: false)
-                              .refreshCount()
-                              .then((_) {
-                            Provider.of<SettingsProvider>(context,
-                                    listen: false)
-                                .checkPushNotification()
-                                .then((bool isPushNotificationEnabled) {
-                              if (isPushNotificationEnabled) {
-                                _pushNotification.setFirebase(true).then((_) =>
-                                    Navigator.of(context).pushReplacementNamed(
-                                        HomeScreen.routeName));
-                              } else {
-                                _pushNotification.setFirebase(false).then((_) =>
-                                    Navigator.of(context).pushReplacementNamed(
-                                        HomeScreen.routeName));
-                              }
-                            });
-                          });
-                        });
-                      } else {
-                        _pushNotification.setFirebase(false).then((_) =>
-                            Navigator.of(context)
-                                .pushReplacementNamed(HomeScreen.routeName));
-                      }
-                    });
-                  });
-                });
-              });
-            });
-          });
+
+          try {
+            await Provider.of<LocationProvider>(context, listen: false)
+                .getCurrentLocation();
+          } catch (e) {
+            print("getCurrentLocation error: ${e.toString()}");
+          }
+
+          try {
+            await Provider.of<LanguageProvider>(context, listen: false)
+                .checkLanguage();
+          } catch (e) {
+            print("checkLanguage error: ${e.toString()}");
+          }
+
+          try {
+            await Provider.of<BusProvider>(context, listen: false)
+                .setBusRouteProvider();
+          } catch (e) {
+            print("setBusRouteProvider error: ${e.toString()}");
+          }
+
+          try {
+            await Provider.of<AnnouncementProvider>(context, listen: false)
+                .queryandSetMajorAnnouncementProvider(context);
+          } catch (e) {
+            print(
+                "queryandSetMajorAnnouncementProvider error: ${e.toString()}");
+          }
+
+          try {
+            await Provider.of<SubscriptionProvider>(context, listen: false)
+                .queryAndSetIsSubscriptionEnabled();
+          } catch (e) {
+            print("queryAndSetIsSubscriptionEnabled error: ${e.toString()}");
+          }
+
+          try {
+            isAuth = await Provider.of<AuthProvider>(context, listen: false)
+                .checkIsAuthAndSubscribeOverdue(context);
+          } catch (e) {
+            print("checkIsAuthAndSubscribeOverdue error: ${e.toString()}");
+          }
+
+          if (isAuth) {
+            // Refresh Token Provider
+            // After checking is within the valid refresh period (checkIsAuthAndSubscribeOverdue), then refresh token (everytime open app)
+
+            try {
+              await Provider.of<AuthProvider>(context, listen: false)
+                  .refreshTokenProvider();
+            } catch (e) {
+              print("refreshTokenProvider error: ${e.toString()}");
+            }
+
+            try {
+              await Provider.of<InboxProvider>(context, listen: false)
+                  .refreshCount();
+            } catch (e) {
+              print("refreshCount error: ${e.toString()}");
+            }
+
+            try {
+              isPushNotificationEnabled =
+                  await Provider.of<SettingsProvider>(context, listen: false)
+                      .checkPushNotification();
+            } catch (e) {
+              print("checkPushNotification error: ${e.toString()}");
+            }
+
+            if (isPushNotificationEnabled) {
+              try {
+                await _pushNotification.setFirebase(true);
+              } catch (e) {
+                print("setFirebase error: ${e.toString()}");
+              }
+
+              Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
+            } else {
+              try {
+                await _pushNotification.setFirebase(false);
+              } catch (e) {
+                print("setFirebase false error: ${e.toString()}");
+              }
+
+              Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
+            }
+          } else {
+            try {
+              await _pushNotification.setFirebase(false);
+            } catch (e) {
+              print("setFirebase false error: ${e.toString()}");
+            }
+
+            Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
+          }
 
           return;
         } else {
@@ -122,20 +166,34 @@ class _SplashVideoScreenState extends State<SplashVideoScreen> {
           // TODO: if true, no need to get auth, location (no permission), inbox, language, music, push notification
           // TODO: need to get bus route
           // TODO: need to get major announcements
-          Provider.of<BusProvider>(context, listen: false)
-              .setBusRouteProvider()
-              .then((_) {
-            Provider.of<AnnouncementProvider>(context, listen: false)
-                .queryandSetMajorAnnouncementProvider(context)
-                .then((_) {
-              Provider.of<SubscriptionProvider>(context, listen: false)
-                  .queryAndSetIsSubscriptionEnabled()
-                  .then((_) {
-                Navigator.of(context)
-                    .pushReplacementNamed(OnboardingScreen.routeName);
-              });
-            });
+
+          setState(() {
+            _isLoading = true;
           });
+          try {
+            await Provider.of<BusProvider>(context, listen: false)
+                .setBusRouteProvider();
+          } catch (e) {
+            print("setBusRouteProvider error: ${e.toString()}");
+          }
+
+          try {
+            await Provider.of<AnnouncementProvider>(context, listen: false)
+                .queryandSetMajorAnnouncementProvider(context);
+          } catch (e) {
+            print(
+                "queryandSetMajorAnnouncementProvider error: ${e.toString()}");
+          }
+
+          try {
+            await Provider.of<SubscriptionProvider>(context, listen: false)
+                .queryAndSetIsSubscriptionEnabled();
+          } catch (e) {
+            print("queryAndSetIsSubscriptionEnabled error: ${e.toString()}");
+          }
+
+          Navigator.of(context)
+              .pushReplacementNamed(OnboardingScreen.routeName);
           return;
         }
       }

@@ -8,26 +8,15 @@ import "../models/auth_model.dart";
 import "../services/auth_services.dart";
 import "../providers/inbox_provider.dart";
 import '../utils/app_localization.dart';
-import "../../services/notification_services.dart";
 import "../utils/general_helper.dart";
 
 class AuthProvider with ChangeNotifier {
   AuthServices _authServices = AuthServices();
-  NotificationServices _notificationServices = NotificationServices();
 
   int currentMilliSec = DateTime.now().millisecondsSinceEpoch;
 
   bool _isAuth = false;
   bool get isAuth => _isAuth;
-
-  // bool _isSubscriptionEnabled = true;
-  // bool get isSubscriptionEnabled => _isSubscriptionEnabled;
-
-  // bool _isWhitelisted = false;
-  // bool get isWhitelisted => _isWhitelisted;
-
-  // String? _vipDueDate;
-  // String? get vipDueDate => _vipDueDate;
 
   AuthModel? _auth;
   AuthModel? get auth => _auth;
@@ -50,9 +39,9 @@ class AuthProvider with ChangeNotifier {
 
     try {
       if (data['userId'] != null) {
-        prefs.setInt(
-            "expire", int.parse(data['expire']!) * 1000 + currentMilliSec);
-        prefs.setString("userId", data['userId'] ?? '');
+        await prefs.setInt(
+            'expire', int.parse(data['expire']!) * 1000 + currentMilliSec);
+        await prefs.setString('userId', data['userId'] ?? '');
 
         // VIP due date
         // callback response URL will not have "vipDueDate" if "isSubscribed" is false
@@ -68,10 +57,20 @@ class AuthProvider with ChangeNotifier {
         );
         return data;
       } else {
+        // to ensure login atomicity when login failed
+        await prefs.remove('expire');
+        await prefs.remove('userId');
+        await storage.delete(key: 'siocToken');
+        await storage.delete(key: 'sarawakToken');
         _auth = null;
         return null;
       }
     } catch (e) {
+      // to ensure login atomicity when login failed
+      await prefs.remove('expire');
+      await prefs.remove('userId');
+      await storage.delete(key: 'siocToken');
+      await storage.delete(key: 'sarawakToken');
       _auth = null;
       return null;
     }
@@ -95,8 +94,6 @@ class AuthProvider with ChangeNotifier {
         siocToken: siocToken,
       );
       if (response['status'] == '200') {
-        // DELETE FCM TOKEN IF LOGOUT SUCCESS
-        await _notificationServices.deleteToken();
         Provider.of<InboxProvider>(context, listen: false).resetMessageCount();
         prefs.clear();
         // reset the isAppFirstStart after clear all
@@ -146,12 +143,15 @@ class AuthProvider with ChangeNotifier {
   // http://124.70.29.113:28300/loading.html?sarawakToken=159952acea21cbb45844594aa9ad4485&isSubscribed=false&userId=22569&siocToken=eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIyMjU2OSIsInVzZXJJZCI6IjEwMDIwNDU2MDciLCJuYW1lIjoiWmhvbmdMaWFuZ1dhbmciLCJleHAiOjE3MTI1NjI3MjQsImlhdCI6MTcxMTI2NjcyNH0.jx0vxGVxhVShHDsVgaDOPm1Zey_y5OZ9b0pKUK2YfbOvsGNTEH2aKPqp-0z7WmQdNhzCnS07fnJ3YOHmdrOJsCx1rzzw4MPPnn0gD2-N_OBbdTbD21xzacXViANqTsFlhxJYW0py1Q5KMsmuylufHt79w52qWesf8t1g1Rlv8l0&expire=1296000&loginMode=1
   // TO DEV: "isSubscribed" param not used by backend anymore
   Future<bool> queryLoginUserInfo(String userId, bool isSubscribed) async {
+    final prefs = await SharedPreferences.getInstance();
+    final storage = new FlutterSecureStorage();
+
     try {
-      final prefs = await SharedPreferences.getInstance();
-
       var response = await _authServices.queryUserInfo(userId);
+      // to handle 40101 error from backend
+      String status = response['status'].toString();
 
-      if (response['status'] == '200') {
+      if (status == '200') {
         // User Information
         _auth = AuthModel(
           address: response['data']['address'] ?? '',
@@ -186,12 +186,22 @@ class AuthProvider with ChangeNotifier {
         notifyListeners();
         return true;
       } else {
+        // to ensure login atomicity when login failed
+        await prefs.remove('expire');
+        await prefs.remove('userId');
+        await storage.delete(key: 'siocToken');
+        await storage.delete(key: 'sarawakToken');
         _auth = null;
         _isAuth = false;
         notifyListeners();
         return false;
       }
     } catch (e) {
+      // to ensure login atomicity when login failed
+      await prefs.remove('expire');
+      await prefs.remove('userId');
+      await storage.delete(key: 'siocToken');
+      await storage.delete(key: 'sarawakToken');
       _auth = null;
       _isAuth = false;
       notifyListeners();
@@ -322,6 +332,11 @@ class AuthProvider with ChangeNotifier {
           }
         } else {
           print("Sign out due to SarawakID or name is empty");
+          // to ensure login atomicity when login failed
+          await prefs.remove('expire');
+          await prefs.remove('userId');
+          await storage.delete(key: 'siocToken');
+          await storage.delete(key: 'sarawakToken');
           _isAuth = false;
           _auth = null;
           isTokenOk = false;
@@ -329,6 +344,11 @@ class AuthProvider with ChangeNotifier {
       }
     } else {
       print("Sign out due to siocToken or sarawakToken is empty");
+      // to ensure login atomicity when login failed
+      await prefs.remove('expire');
+      await prefs.remove('userId');
+      await storage.delete(key: 'siocToken');
+      await storage.delete(key: 'sarawakToken');
       _isAuth = false;
       _auth = null;
       isTokenOk = false;
@@ -337,6 +357,7 @@ class AuthProvider with ChangeNotifier {
     if (isTokenOk) {
       _isAuth = true;
     }
+
     return isTokenOk;
   }
 

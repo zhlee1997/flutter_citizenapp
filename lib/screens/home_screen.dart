@@ -28,9 +28,10 @@ import '../arguments/subscription_result_screen_arguments.dart';
 import '../models/major_announcement_model.dart';
 
 class HomeScreen extends StatefulWidget {
+  final int currentIndex;
   static const routeName = 'home-page-screen';
 
-  const HomeScreen({super.key});
+  const HomeScreen({required this.currentIndex, super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -221,6 +222,7 @@ class _HomeScreenState extends State<HomeScreen> {
       List<MajorAnnouncementModel> majorAnnList =
           Provider.of<AnnouncementProvider>(context, listen: false)
               .majorAnnouncementList;
+
       if (majorAnnList.isNotEmpty) {
         await showDialog(
           context: context,
@@ -262,7 +264,12 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             );
           },
-        );
+        ).whenComplete(() async {
+          // save the annIds into shared pref
+          List<String> annIdList = majorAnnList.map((e) => e.sid).toList();
+          await Provider.of<AnnouncementProvider>(context, listen: false)
+              .setMajorLocalStorage(annIdList);
+        });
       }
     }
   }
@@ -279,6 +286,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       const ProfileBottomNavScreen(),
     ];
+    _currentPageIndex = widget.currentIndex;
     WidgetsBinding.instance.addPostFrameCallback((timestamp) async {
       getMajorAnn();
     });
@@ -559,201 +567,346 @@ class _HomeScreenState extends State<HomeScreen> {
     required void Function() handleNavigateToProfileDetailsScreen,
   }) =>
       PreferredSize(
-        preferredSize: Size(
-          MediaQuery.of(context).size.width,
-          // TODO: Adjust appbar height
-          height + screenSize.height * 0.22,
-        ),
-        child: Stack(
-          children: <Widget>[
-            Container(
-              // Background
-              color: Theme.of(context).primaryColor,
-              // TODO: Adjust appbar height
-              height: height + screenSize.height * 0.13,
-              width: screenSize.width,
-              child: Container(
-                margin: EdgeInsets.only(top: screenSize.height * 0.06),
-                alignment: Alignment.topCenter,
-                child: const Text(
-                  "Profile",
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.w400,
-                    color: Colors.white,
-                  ),
-                ),
+        preferredSize: Size.fromHeight(MediaQuery.of(context).viewPadding.top +
+            MediaQuery.of(context).viewPadding.top * 0.25 +
+            height +
+            MediaQuery.of(context).size.width * 0.13),
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 8.0),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: const FractionalOffset(0.0, 0.0),
+              end: const FractionalOffset(1.0, 1.0),
+              colors: <Color>[
+                Theme.of(context).colorScheme.primary,
+                Theme.of(context).colorScheme.secondary,
+              ],
+              stops: <double>[0.0, 1.0],
+              tileMode: TileMode.clamp,
+            ),
+            borderRadius: BorderRadius.vertical(
+              bottom: Radius.elliptical(
+                MediaQuery.of(context).size.width,
+                50.0,
               ),
             ),
-
-            Container(), // Required some widget in between to float AppBar
-
-            Positioned(
-              // To take AppBar Size only
-              top: 100.0,
-              left: 20.0,
-              right: 20.0,
-              child: AppBar(
-                // TODO: Adjust appbar height
-                toolbarHeight: screenSize.height * 0.17,
-                shape: Border.all(
-                  width: 0.5,
-                  color: Colors.grey,
-                ),
-                scrolledUnderElevation: 0.0,
-                backgroundColor: Colors.white,
-                primary: false,
-                title: Column(
-                  children: <Widget>[
-                    Consumer<AuthProvider>(
-                      builder: (_, AuthProvider authProvider, __) {
-                        return Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Container(
-                              padding: EdgeInsets.only(left: 10.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Text(
-                                    authProvider.auth != null
-                                        ? authProvider.auth!.fullName
-                                        : "",
-                                    style:
-                                        Theme.of(context).textTheme.bodyLarge,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  Text(
-                                    authProvider.auth != null
-                                        ? authProvider.auth!.mobile!
-                                        : "",
-                                    style: TextStyle(
-                                      color: Colors.black54,
-                                      fontSize: Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium!
-                                          .fontSize,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.only(right: 10.0),
-                              child: Stack(
-                                alignment: Alignment.bottomRight,
-                                children: [
-                                  authProvider.auth != null &&
-                                          authProvider.auth!.profileImage !=
-                                              null &&
-                                          authProvider
-                                              .auth!.profileImage!.isNotEmpty
-                                      ? ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(25.0),
-                                          child: CachedNetworkImage(
-                                            fit: BoxFit.cover,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.13,
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.13,
-                                            placeholder: (BuildContext context,
-                                                    String url) =>
-                                                Container(
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .secondary,
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child:
-                                                  const CircularProgressIndicator
-                                                      .adaptive(
-                                                strokeWidth: 2.0,
-                                              ),
-                                            ),
-                                            imageUrl: authProvider.auth != null
-                                                ? authProvider
-                                                    .auth!.profileImage!
-                                                : "",
-                                            errorWidget:
-                                                (context, url, error) =>
-                                                    Container(
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .secondary,
-                                              child: const Icon(
-                                                Icons.error_outline,
-                                                color: Colors.red,
-                                              ),
-                                            ),
-                                          ),
-                                        )
-                                      : CircleAvatar(
-                                          radius: 25.0,
-                                          child: Lottie.asset(
-                                            'assets/animations/lottie_profile.json',
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.11,
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.11,
-                                            fit: BoxFit.fill,
-                                          ),
-                                        ),
-                                  Container(
-                                    padding: const EdgeInsets.all(3),
-                                    decoration: const BoxDecoration(
-                                      color: Colors.green,
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: const Icon(
-                                      Icons.star,
-                                      color: Colors.white,
-                                      size: 10.5,
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ],
-                        );
-                      },
+          ),
+          child: Consumer<AuthProvider>(
+            builder: (_, AuthProvider authProvider, __) {
+              return Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(
+                      top: MediaQuery.of(context).viewPadding.top +
+                          MediaQuery.of(context).viewPadding.top * 0.5,
+                      bottom: 8.0,
                     ),
-                    const Divider(),
-                    GestureDetector(
-                      onTap: handleNavigateToProfileDetailsScreen,
-                      child: Container(
-                        margin: const EdgeInsets.only(
-                          top: 5.0,
-                        ),
-                        child: Center(
-                          child: Text(
-                            "View Profile",
-                            style: TextStyle(
-                              fontSize: Theme.of(context)
+                    child: Text(
+                      "Profile",
+                      style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                          ),
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: authProvider.auth != null &&
+                                authProvider.auth!.profileImage != null &&
+                                authProvider.auth!.profileImage!.isNotEmpty
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.circular(25.0),
+                                child: CachedNetworkImage(
+                                  fit: BoxFit.cover,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.13,
+                                  height:
+                                      MediaQuery.of(context).size.width * 0.13,
+                                  placeholder:
+                                      (BuildContext context, String url) =>
+                                          Container(
+                                    color:
+                                        Theme.of(context).colorScheme.secondary,
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: const CircularProgressIndicator
+                                        .adaptive(
+                                      strokeWidth: 2.0,
+                                    ),
+                                  ),
+                                  imageUrl: authProvider.auth != null
+                                      ? authProvider.auth!.profileImage!
+                                      : "",
+                                  errorWidget: (context, url, error) =>
+                                      Container(
+                                    color:
+                                        Theme.of(context).colorScheme.secondary,
+                                    child: const Icon(
+                                      Icons.error_outline,
+                                      color: Colors.red,
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : CircleAvatar(
+                                radius: 25.0,
+                                child: Lottie.asset(
+                                  'assets/animations/lottie_profile.json',
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.11,
+                                  height:
+                                      MediaQuery.of(context).size.width * 0.11,
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
+                      ),
+                      SizedBox(
+                        width: 5.0,
+                      ),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          // mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              authProvider.auth != null
+                                  ? authProvider.auth!.fullName
+                                  : "",
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge!
+                                  .copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                            ),
+                            Text(
+                              authProvider.auth != null
+                                  ? authProvider.auth!.email!
+                                  : "",
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context)
                                   .textTheme
                                   .bodyMedium!
-                                  .fontSize,
-                              color: Theme.of(context).colorScheme.primary,
-                              fontWeight: FontWeight.w500,
+                                  .copyWith(
+                                    color: Colors.white,
+                                  ),
                             ),
-                          ),
+                          ],
                         ),
                       ),
-                    )
-                  ],
-                ),
-              ),
-            ),
-          ],
+                      IconButton(
+                        icon: Icon(Icons.edit_square),
+                        onPressed: handleNavigateToProfileDetailsScreen,
+                        color: Colors.white,
+                      ),
+                    ],
+                  ),
+                ],
+              );
+            },
+          ),
         ),
       );
+
+  // PreferredSize(
+  //   preferredSize: Size(
+  //     MediaQuery.of(context).size.width,
+  //     // TODO: Adjust appbar height
+  //     height + screenSize.height * 0.22,
+  //   ),
+  //   child: Stack(
+  //     children: <Widget>[
+  //       Container(
+  //         // Background
+  //         color: Theme.of(context).primaryColor,
+  //         // TODO: Adjust appbar height
+  //         height: height + screenSize.height * 0.13,
+  //         width: screenSize.width,
+  //         child: Container(
+  //           margin: EdgeInsets.only(top: screenSize.height * 0.06),
+  //           alignment: Alignment.topCenter,
+  //           child: const Text(
+  //             "Profile",
+  //             style: TextStyle(
+  //               fontSize: 20.0,
+  //               fontWeight: FontWeight.w400,
+  //               color: Colors.white,
+  //             ),
+  //           ),
+  //         ),
+  //       ),
+
+  //       Container(), // Required some widget in between to float AppBar
+
+  //       Positioned(
+  //         // To take AppBar Size only
+  //         top: 100.0,
+  //         left: 20.0,
+  //         right: 20.0,
+  //         child: AppBar(
+  //           // TODO: Adjust appbar height
+  //           toolbarHeight: screenSize.height * 0.17,
+  //           shape: Border.all(
+  //             width: 0.5,
+  //             color: Colors.grey,
+  //           ),
+  //           scrolledUnderElevation: 0.0,
+  //           backgroundColor: Colors.white,
+  //           primary: false,
+  //           title: Column(
+  //             children: <Widget>[
+  //               Consumer<AuthProvider>(
+  //                 builder: (_, AuthProvider authProvider, __) {
+  //                   return Row(
+  //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                     children: <Widget>[
+  //                       Container(
+  //                         padding: EdgeInsets.only(left: 10.0),
+  //                         child: Column(
+  //                           crossAxisAlignment: CrossAxisAlignment.start,
+  //                           children: <Widget>[
+  //                             Text(
+  //                               authProvider.auth != null
+  //                                   ? authProvider.auth!.fullName
+  //                                   : "",
+  //                               style:
+  //                                   Theme.of(context).textTheme.bodyLarge,
+  //                               overflow: TextOverflow.ellipsis,
+  //                             ),
+  //                             Text(
+  //                               authProvider.auth != null
+  //                                   ? authProvider.auth!.mobile!
+  //                                   : "",
+  //                               style: TextStyle(
+  //                                 color: Colors.black54,
+  //                                 fontSize: Theme.of(context)
+  //                                     .textTheme
+  //                                     .bodyMedium!
+  //                                     .fontSize,
+  //                                 overflow: TextOverflow.ellipsis,
+  //                               ),
+  //                             ),
+  //                           ],
+  //                         ),
+  //                       ),
+  //                       Container(
+  //                         padding: const EdgeInsets.only(right: 10.0),
+  //                         child: Stack(
+  //                           alignment: Alignment.bottomRight,
+  //                           children: [
+  //                             authProvider.auth != null &&
+  //                                     authProvider.auth!.profileImage !=
+  //                                         null &&
+  //                                     authProvider
+  //                                         .auth!.profileImage!.isNotEmpty
+  //                                 ? ClipRRect(
+  //                                     borderRadius:
+  //                                         BorderRadius.circular(25.0),
+  //                                     child: CachedNetworkImage(
+  //                                       fit: BoxFit.cover,
+  //                                       width: MediaQuery.of(context)
+  //                                               .size
+  //                                               .width *
+  //                                           0.13,
+  //                                       height: MediaQuery.of(context)
+  //                                               .size
+  //                                               .width *
+  //                                           0.13,
+  //                                       placeholder: (BuildContext context,
+  //                                               String url) =>
+  //                                           Container(
+  //                                         color: Theme.of(context)
+  //                                             .colorScheme
+  //                                             .secondary,
+  //                                         padding:
+  //                                             const EdgeInsets.all(8.0),
+  //                                         child:
+  //                                             const CircularProgressIndicator
+  //                                                 .adaptive(
+  //                                           strokeWidth: 2.0,
+  //                                         ),
+  //                                       ),
+  //                                       imageUrl: authProvider.auth != null
+  //                                           ? authProvider
+  //                                               .auth!.profileImage!
+  //                                           : "",
+  //                                       errorWidget:
+  //                                           (context, url, error) =>
+  //                                               Container(
+  //                                         color: Theme.of(context)
+  //                                             .colorScheme
+  //                                             .secondary,
+  //                                         child: const Icon(
+  //                                           Icons.error_outline,
+  //                                           color: Colors.red,
+  //                                         ),
+  //                                       ),
+  //                                     ),
+  //                                   )
+  //                                 : CircleAvatar(
+  //                                     radius: 25.0,
+  //                                     child: Lottie.asset(
+  //                                       'assets/animations/lottie_profile.json',
+  //                                       width: MediaQuery.of(context)
+  //                                               .size
+  //                                               .width *
+  //                                           0.11,
+  //                                       height: MediaQuery.of(context)
+  //                                               .size
+  //                                               .width *
+  //                                           0.11,
+  //                                       fit: BoxFit.fill,
+  //                                     ),
+  //                                   ),
+  //                             Container(
+  //                               padding: const EdgeInsets.all(3),
+  //                               decoration: const BoxDecoration(
+  //                                 color: Colors.green,
+  //                                 shape: BoxShape.circle,
+  //                               ),
+  //                               child: const Icon(
+  //                                 Icons.star,
+  //                                 color: Colors.white,
+  //                                 size: 10.5,
+  //                               ),
+  //                             )
+  //                           ],
+  //                         ),
+  //                       ),
+  //                     ],
+  //                   );
+  //                 },
+  //               ),
+  //               const Divider(),
+  //               GestureDetector(
+  //                 onTap: handleNavigateToProfileDetailsScreen,
+  //                 child: Container(
+  //                   margin: const EdgeInsets.only(
+  //                     top: 5.0,
+  //                   ),
+  //                   child: Center(
+  //                     child: Text(
+  //                       "View Profile",
+  //                       style: TextStyle(
+  //                         fontSize: Theme.of(context)
+  //                             .textTheme
+  //                             .bodyMedium!
+  //                             .fontSize,
+  //                         color: Theme.of(context).colorScheme.primary,
+  //                         fontWeight: FontWeight.w500,
+  //                       ),
+  //                     ),
+  //                   ),
+  //                 ),
+  //               )
+  //             ],
+  //           ),
+  //         ),
+  //       ),
+  //     ],
+  //   ),
+  // );
 }

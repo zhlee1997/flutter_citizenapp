@@ -7,7 +7,8 @@ import '../../providers/talikhidmat_provider.dart';
 import '../../providers/inbox_provider.dart';
 
 class TalikhidmatFinishFullBottomModal extends StatelessWidget {
-  const TalikhidmatFinishFullBottomModal({super.key});
+  final bool isServices;
+  const TalikhidmatFinishFullBottomModal({this.isServices = false, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +34,7 @@ class TalikhidmatFinishFullBottomModal extends StatelessWidget {
               const Padding(
                 padding: EdgeInsets.all(8.0),
                 child: Text(
-                  "Your Talikhidmat feedback is submitted successfully.\nThe SIOC Team will process your feedback soon.",
+                  "Your Talikhidmat feedback is submitted successfully.\nYou can check status below or in your profile.",
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -63,7 +64,8 @@ class TalikhidmatFinishFullBottomModal extends StatelessWidget {
                   Navigator.of(context)
                       .popUntil(ModalRoute.withName('home-page-screen'));
                 },
-                child: const Text("Back to homepage"),
+                child:
+                    Text(isServices ? "Back to services" : "Back to homepage"),
               )
             ],
           ),

@@ -7,7 +7,8 @@ import '../../providers/emergency_provider.dart';
 import '../../providers/inbox_provider.dart';
 
 class EmergencyFinishFullBottomModal extends StatelessWidget {
-  const EmergencyFinishFullBottomModal({super.key});
+  final bool isServices;
+  const EmergencyFinishFullBottomModal({this.isServices = false, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +34,7 @@ class EmergencyFinishFullBottomModal extends StatelessWidget {
               const Padding(
                 padding: EdgeInsets.all(8.0),
                 child: Text(
-                  "Your emergency request is submitted successfully.\nThe SIOC Team will contact you shortly.",
+                  "Your emergency request is submitted successfully.\nYou can check status below or in your profile.",
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -63,7 +64,8 @@ class EmergencyFinishFullBottomModal extends StatelessWidget {
                   Navigator.of(context)
                       .popUntil(ModalRoute.withName('home-page-screen'));
                 },
-                child: const Text("Back to homepage"),
+                child:
+                    Text(isServices ? "Back to services" : "Back to homepage"),
               )
             ],
           ),

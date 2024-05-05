@@ -8,6 +8,7 @@ import "../../providers/auth_provider.dart";
 import "../../providers/inbox_provider.dart";
 import '../../utils/app_localization.dart';
 import '../../utils/notification/push_notification.dart';
+import '../../config/app_config.dart';
 
 class SarawakIDScreen extends StatefulWidget {
   static const routeName = 'sarawakid-screen';
@@ -100,6 +101,9 @@ class _SarawakIDScreenState extends State<SarawakIDScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var clientId = AppConfig.sarawakIdClientID;
+    var callbackURL = AppConfig.sarawakIdCallbackURL;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Login Now to CitizenApp'),
@@ -121,12 +125,12 @@ class _SarawakIDScreenState extends State<SarawakIDScreen> {
 <script type="text/javascript" language="javascript">
     document.addEventListener("DOMContentLoaded", function () {
         swkid_sso_init({
-            client_id: 'citizenapp_mobile_dev',
+            client_id: '$clientId',
             state: '${uuid.v4()}',
             response_type: 'code',
-            redirect_uri: 'http://124.70.29.113:28300/mobile/api/login/auth/callback/',
-            logout_redirect_url: 'http://124.70.29.113:28300/redirect/',
-            logout_uri: 'http://124.70.29.113:28300/redirect/',
+            redirect_uri: '$callbackURL/mobile/api/login/auth/callback/',
+            logout_redirect_url: '$callbackURL/redirect/',
+            logout_uri: '$callbackURL/redirect/',
             misc_param: '',/*this will pass to redirect_uri*/
         });
         swkid_login_form_submit();
@@ -150,7 +154,7 @@ class _SarawakIDScreenState extends State<SarawakIDScreen> {
         },
         onLoadStop: (InAppWebViewController controller, Uri? url) async {
           // TODO: to change the IP Address when switch environment
-          if (url.toString().contains('124.70.29.113:28300/loading.html')) {
+          if (url.toString().contains('${callbackURL}loading.html')) {
             _webViewController.loadData(
                 data:
                     """<h1>Signing In. Please wait.</h1><br/><h1>Do not close the page.</h1>""");

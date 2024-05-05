@@ -33,6 +33,7 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
 
   Future<void> handleTransactionDetailBottomModal({
     required String orderNo,
+    required String orderId,
     required String taxCode,
     required String type,
     required String date,
@@ -41,6 +42,7 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
       context: context,
       builder: (_) => TransactionDetailBottomModal(
         orderNo: orderNo,
+        orderId: orderId,
         taxCode: taxCode,
         type: type,
         date: date,
@@ -172,10 +174,11 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
           return ListView.builder(
             padding: const EdgeInsets.all(8.0),
             itemCount: transactionProvider.list.length,
-            itemBuilder: (((_, index) {
+            itemBuilder: ((_, index) {
               return ListTile(
                 onTap: () => handleTransactionDetailBottomModal(
                   orderNo: transactionProvider.list[index]['orderNo'],
+                  orderId: transactionProvider.list[index]['orderId'],
                   taxCode: transactionProvider.list[index]['taxCode'],
                   // option => 30-days/90-days
                   // type => 2: Assessment rate, 1: Subscription
@@ -203,7 +206,7 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
                   ),
                 ),
               );
-            })),
+            }),
           );
         },
       ),

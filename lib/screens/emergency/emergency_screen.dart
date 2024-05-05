@@ -98,7 +98,7 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
     }
   }
 
-  Future<void> submitCase() async {
+  Future<void> submitCase(bool isServices) async {
     // TODO: API Lack of "Voice Recording" category
     // eventLongitude, eventLatitude, eventLocation
     // TODO: Lack of eventAudioURL
@@ -160,7 +160,9 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
           isScrollControlled: true,
           context: context,
           builder: (BuildContext context) {
-            return const EmergencyFinishFullBottomModal();
+            return EmergencyFinishFullBottomModal(
+              isServices: isServices,
+            );
           },
         );
       }
@@ -177,6 +179,8 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
     final screenSize = MediaQuery.of(context).size;
     final EmergencyProvider emergencyProvider =
         Provider.of<EmergencyProvider>(context, listen: false);
+    final arguments = (ModalRoute.of(context)?.settings.arguments ??
+        <String, dynamic>{}) as Map;
 
     return PopScope(
       canPop: !(emergencyProvider.category != -1),
@@ -258,8 +262,9 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
               bool isLastStep =
                   currentStep == getSteps(context, screenSize).length - 1;
               if (isLastStep) {
+                print(arguments["isServices"]);
                 // submit emergency case
-                submitCase();
+                submitCase(arguments["isServices"] ?? false);
               } else {
                 setState(() => currentStep += 1);
               }

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_citizenapp/utils/get_permissions.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
@@ -55,7 +56,9 @@ class _ReportScreenState extends State<ReportScreen> {
   /// Get image using camera
   Future _getPhotoCamera() async {
     try {
-      final pickedFile = await picker.pickImage(source: ImageSource.camera);
+      final pickedFile = await picker.pickImage(
+        source: ImageSource.camera,
+      );
 
       if (pickedFile != null) {
         _uploadFile(pickedFile);
@@ -164,9 +167,13 @@ class _ReportScreenState extends State<ReportScreen> {
                   fontSize: 18.0,
                 ),
               ),
-              onTap: () {
-                _getPhotoLibrary();
-                Navigator.of(context).pop();
+              onTap: () async {
+                final bool photosPermissionStatus =
+                    await GetPermissions.getStoragePermission(context);
+                if (photosPermissionStatus) {
+                  _getPhotoLibrary();
+                  Navigator.of(context).pop();
+                }
               },
             ),
             ListTile(
@@ -180,9 +187,13 @@ class _ReportScreenState extends State<ReportScreen> {
                   fontSize: 18.0,
                 ),
               ),
-              onTap: () {
-                _getPhotoCamera();
-                Navigator.of(context).pop();
+              onTap: () async {
+                final bool cameraPermissionStatus =
+                    await GetPermissions.getCameraPermission(context);
+                if (cameraPermissionStatus) {
+                  _getPhotoCamera();
+                  Navigator.of(context).pop();
+                }
               },
             ),
           ],

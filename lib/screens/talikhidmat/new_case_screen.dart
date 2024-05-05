@@ -47,7 +47,7 @@ class _NewCaseScreenState extends State<NewCaseScreen> {
     print(_message);
   }
 
-  Future<void> submitCase() async {
+  Future<void> submitCase(bool isServices) async {
     // category
     // eventLongitude, eventLatitude, eventLocation
     // message
@@ -100,7 +100,7 @@ class _NewCaseScreenState extends State<NewCaseScreen> {
             isScrollControlled: true,
             context: context,
             builder: (BuildContext context) {
-              return const TalikhidmatFinishFullBottomModal();
+              return TalikhidmatFinishFullBottomModal(isServices: isServices);
             },
           );
         }
@@ -130,6 +130,8 @@ class _NewCaseScreenState extends State<NewCaseScreen> {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
+    final arguments = (ModalRoute.of(context)?.settings.arguments ??
+        <String, dynamic>{}) as Map;
 
     return PopScope(
       canPop: !(_message.isNotEmpty ||
@@ -153,7 +155,7 @@ class _NewCaseScreenState extends State<NewCaseScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Submit Report'),
+          title: Text('Submit Feedback'),
         ),
         body: Stepper(
           type: StepperType.horizontal,
@@ -218,7 +220,7 @@ class _NewCaseScreenState extends State<NewCaseScreen> {
                 currentStep == getSteps(context, screenSize).length - 1;
             if (isLastStep) {
               // submit talikhidmat case
-              submitCase();
+              submitCase(arguments["isServices"] ?? false);
             } else {
               if (currentStep == 0) {
                 if (!_formKey.currentState!.validate()) {
@@ -252,7 +254,7 @@ class _NewCaseScreenState extends State<NewCaseScreen> {
           isActive: currentStep >= 0,
           state: currentStep > 0 ? StepState.complete : StepState.indexed,
           title: Text(
-            "Report",
+            "Feedback",
             style: TextStyle(
               color: currentStep >= 0
                   ? Theme.of(context).colorScheme.primary

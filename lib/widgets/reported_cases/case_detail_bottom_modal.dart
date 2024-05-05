@@ -139,7 +139,7 @@ class _CaseDetailBottomModalState extends State<CaseDetailBottomModal> {
                   buildCaseStatusContainer(
                       caseData.reportedCaseDetail!.eventStatus!),
                   CaseDetailBottomBar(
-                    label: AppLocalization.of(context)!.translate('case_id')!,
+                    label: "Case Number",
                     value: caseData.reportedCaseDetail!.talikhidmatCaseId ?? "",
                   ),
                   // CaseDetailBottomBar(

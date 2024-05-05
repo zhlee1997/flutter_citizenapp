@@ -16,6 +16,7 @@ import '../../widgets/subscription/subscription_preview_dialog.dart';
 
 import '../../providers/auth_provider.dart';
 import '../../providers/subscription_provider.dart';
+import '../../providers/location_provider.dart';
 import '../../utils/global_dialog_helper.dart';
 
 class ServicesBottomNavScreen extends StatefulWidget {
@@ -32,6 +33,9 @@ class _ServicesBottomNavScreenState extends State<ServicesBottomNavScreen> {
   bool isSubscribed = false;
   bool isSubscriptionEnabled = false;
   bool _isLoading = false;
+
+  double latitude = 0;
+  double longitude = 0;
 
   void _handleNavigateToBusSchedule(BuildContext context) =>
       Navigator.of(context).pushNamed(BusMapScreen.routeName);
@@ -56,10 +60,21 @@ class _ServicesBottomNavScreenState extends State<ServicesBottomNavScreen> {
   void _handleNavigateToTalikhidmat(BuildContext context) async {
     if (Provider.of<AuthProvider>(context, listen: false).isAuth) {
       if (await Permission.location.isGranted) {
-        Navigator.of(context).pushNamed(NewCaseScreen.routeName);
+        Navigator.of(context).pushNamed(
+          NewCaseScreen.routeName,
+          arguments: {
+            "isServices": true,
+          },
+        );
       } else {
-        Permission.location.request().then(
-            (_) => Navigator.of(context).pushNamed(NewCaseScreen.routeName));
+        Permission.location
+            .request()
+            .then((_) => Navigator.of(context).pushNamed(
+                  NewCaseScreen.routeName,
+                  arguments: {
+                    "isServices": true,
+                  },
+                ));
       }
     } else {
       _handleFullScreenLoginBottomModal(context);
@@ -71,33 +86,12 @@ class _ServicesBottomNavScreenState extends State<ServicesBottomNavScreen> {
     // TODO: Emergency service to check location permission is given
     // TODO: If denied, ask again
     // TODO: If foreverDenied, need navigate to app settings
-    await Permission.location.onDeniedCallback(() {
-      // Your code
-    }).onGrantedCallback(() async {
-      Navigator.of(context).pushNamed(EmergencyScreen.routeName);
 
-      // if (numberOfRequestLeft != 0) {
-      //   await _globalDialogHelper.showAlertDialog(
-      //     context: context,
-      //     yesButtonFunc: () {
-      //       Navigator.of(context).pop();
-      //       Navigator.of(context).pushNamed(EmergencyScreen.routeName);
-      //     },
-      //     title: "Remaining requests",
-      //     message:
-      //         "You have $numberOfRequestLeft requests left per day. Are you sure to proceed?",
-      //   );
-      // } else {
-      //   await _globalDialogHelper.showAlertDialogWithSingleButton(
-      //     context: context,
-      //     title: "No more requests",
-      //     message: "There is no more requests. Please try again tomorrow",
-      //   );
-      // }
-    }).onPermanentlyDeniedCallback(() async {
-      // The user opted to never again see the permission request dialog for this
-      // app. The only way to change the permission's status now is to let the
-      // user manually enables it in the system settings.
+    PermissionStatus permissionStatus = await Permission.location.request();
+    if (permissionStatus.isDenied) {
+      Fluttertoast.showToast(msg: 'Location permission is required');
+      return;
+    } else if (permissionStatus.isPermanentlyDenied) {
       await showDialog<bool>(
           context: context,
           builder: (BuildContext context) {
@@ -122,13 +116,95 @@ class _ServicesBottomNavScreenState extends State<ServicesBottomNavScreen> {
               ],
             );
           });
-    }).onRestrictedCallback(() {
-      // Your code
-    }).onLimitedCallback(() {
-      // Your code
-    }).onProvisionalCallback(() {
-      // Your code
-    }).request();
+      return;
+    }
+    await Provider.of<LocationProvider>(context, listen: false)
+        .getCurrentLocation()
+        .then((position) async {
+      if ((latitude != 0 && longitude != 0) ||
+          (position!.latitude != 0 && position.longitude != 0)) {
+        Navigator.of(context).pushNamed(
+          EmergencyScreen.routeName,
+          arguments: {
+            "isServices": true,
+          },
+        );
+      } else {
+        await showDialog<bool>(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text('Require GPS to access'),
+                content: const Text(
+                    "GPS location is not captured by your device somehow. Kindly check the location settings of your device in order to access."),
+                actions: <Widget>[
+                  TextButton(
+                    child: const Text('Open Settings'),
+                    onPressed: () {
+                      Navigator.pop(context, false);
+                      openAppSettings();
+                    },
+                  ),
+                  TextButton(
+                    child: const Text('Cancel'),
+                    onPressed: () {
+                      Navigator.pop(context, false);
+                    },
+                  ),
+                ],
+              );
+            });
+      }
+    }).catchError((error, stackTrace) {
+      // when location service is disabled
+      print("_showEmergencyRequestLeftDialog error: $error");
+      Fluttertoast.showToast(msg: error);
+    });
+
+    // await Permission.location.onDeniedCallback(() {
+    //   // Your code
+    // }).onGrantedCallback(() async {
+    //   Navigator.of(context).pushNamed(
+    //     EmergencyScreen.routeName,
+    //     arguments: {
+    //       "isServices": true,
+    //     },
+    //   );
+    // }).onPermanentlyDeniedCallback(() async {
+    //   // The user opted to never again see the permission request dialog for this
+    //   // app. The only way to change the permission's status now is to let the
+    //   // user manually enables it in the system settings.
+    //   await showDialog<bool>(
+    //       context: context,
+    //       builder: (BuildContext context) {
+    //         return AlertDialog(
+    //           title: const Text('Permission Denied'),
+    //           content: const Text(
+    //               "You have to manually enable the location permission's status in the system settings."),
+    //           actions: <Widget>[
+    //             TextButton(
+    //               child: const Text('Open Settings'),
+    //               onPressed: () {
+    //                 Navigator.pop(context, false);
+    //                 openAppSettings();
+    //               },
+    //             ),
+    //             TextButton(
+    //               child: const Text('Cancel'),
+    //               onPressed: () {
+    //                 Navigator.pop(context, false);
+    //               },
+    //             ),
+    //           ],
+    //         );
+    //       });
+    // }).onRestrictedCallback(() {
+    //   // Your code
+    // }).onLimitedCallback(() {
+    //   // Your code
+    // }).onProvisionalCallback(() {
+    //   // Your code
+    // }).request();
   }
 
   void _handleNavigateToEmergency(BuildContext context) =>
@@ -226,6 +302,8 @@ class _ServicesBottomNavScreenState extends State<ServicesBottomNavScreen> {
     }
     isSubscriptionEnabled =
         Provider.of<SubscriptionProvider>(context).isSubscriptionEnabled;
+    latitude = Provider.of<LocationProvider>(context).latitude;
+    longitude = Provider.of<LocationProvider>(context).longitude;
   }
 
   @override

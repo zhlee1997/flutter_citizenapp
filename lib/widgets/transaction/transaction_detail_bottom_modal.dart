@@ -4,12 +4,14 @@ import '../../utils/app_localization.dart';
 
 class TransactionDetailBottomModal extends StatelessWidget {
   final String orderNo;
+  final String orderId;
   final String taxCode;
   final String type;
   final String date;
 
   const TransactionDetailBottomModal({
     required this.orderNo,
+    required this.orderId,
     required this.taxCode,
     required this.type,
     required this.date,
@@ -53,7 +55,7 @@ class TransactionDetailBottomModal extends StatelessWidget {
           ),
           const SizedBox(height: 10.0),
           Text(
-            '${AppLocalization.of(context)!.translate('transaction_n')!}: $orderNo',
+            'Receipt Number: $orderNo',
             style: Theme.of(context).textTheme.bodyMedium,
           ),
           const SizedBox(height: 5.0),
@@ -64,6 +66,11 @@ class TransactionDetailBottomModal extends StatelessWidget {
           const SizedBox(height: 5.0),
           Text(
             'Date: $date',
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+          const SizedBox(height: 5.0),
+          Text(
+            'Reference Number: $orderId',
             style: Theme.of(context).textTheme.bodyMedium,
           ),
         ],

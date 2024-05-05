@@ -194,7 +194,7 @@ class _SubscriptionPackageScreenState extends State<SubscriptionPackageScreen> {
                   Flexible(
                     child: RichText(
                         text: TextSpan(
-                      text: "By accepting this, I agree to the ",
+                      text: "By submitting this, you agree to the ",
                       style: const TextStyle(
                         color: Colors.black,
                       ),

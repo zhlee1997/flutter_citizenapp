@@ -69,8 +69,12 @@ class _LocationScreenState extends State<LocationScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (await Permission.location.status.isGranted) {
-        await Provider.of<LocationProvider>(context, listen: false)
-            .getCurrentLocation();
+        try {
+          await Provider.of<LocationProvider>(context, listen: false)
+              .getCurrentLocation();
+        } catch (e) {
+          print("initState error: ${e.toString()}");
+        }
       }
     });
   }

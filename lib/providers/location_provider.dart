@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class LocationProvider with ChangeNotifier {
   Position? _currentLocation;
@@ -67,20 +68,25 @@ class LocationProvider with ChangeNotifier {
   /// When accessing Google Map
   /// When submitting cases
   Future<Position?> getCurrentLocation() async {
-    Position position = await _determinePosition();
+    try {
+      Position position = await _determinePosition();
 
-    if (position.latitude.isFinite && position.longitude.isFinite) {
-      _currentLocation = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-      );
-      if (_currentLocation != null) {
-        _latitude = _currentLocation!.latitude;
-        _longitude = _currentLocation!.longitude;
-        notifyListeners();
-        return _currentLocation;
+      if (position.latitude.isFinite && position.longitude.isFinite) {
+        _currentLocation = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high,
+        );
+        if (_currentLocation != null) {
+          _latitude = _currentLocation!.latitude;
+          _longitude = _currentLocation!.longitude;
+          notifyListeners();
+          return _currentLocation;
+        }
+      } else {
+        _currentLocation = null;
       }
-    } else {
-      _currentLocation = null;
+    } catch (e) {
+      print("getCurrentLocation error: ${e.toString()}");
+      return Future.error(e);
     }
     notifyListeners();
     return null;

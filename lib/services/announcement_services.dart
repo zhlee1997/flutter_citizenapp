@@ -58,8 +58,8 @@ class AnnouncementServices {
       print("queryAnnouncementDetail API success: $response");
       return response;
     } catch (e) {
-      print('get announcement detail fail');
-      throw e;
+      print('get announcement detail fail: ${e.toString()}');
+      // throw e;
     }
   }
 }

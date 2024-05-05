@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import './show_notification.dart';
 import '../navigation_service.dart';
@@ -19,9 +20,9 @@ class PushNotification {
 
   AndroidNotificationChannel _androidNotificationChannel =
       const AndroidNotificationChannel(
-    "unknownId", // id
-    'unknownTitle', // title
-    description: 'unknownDescription', // description
+    "citizenapp_notification", // id
+    'CitizenApp Notification', // title
+    description: 'To cater for CitizenApp Notification', // description
     importance: Importance.high,
     enableVibration: true,
     playSound: true,
@@ -61,7 +62,22 @@ class PushNotification {
     // if isFCMRequired is true, then getFcmToken()
     // else, delete FCM Token
     if (isFCMRequired) {
-      getFcmToken();
+      try {
+        PermissionStatus permissionStatus =
+            await Permission.notification.request();
+        if (permissionStatus.isDenied) {
+          Fluttertoast.showToast(
+              msg:
+                  "Notification permission is denied. Please turn on in OS Settings.");
+        } else if (permissionStatus.isPermanentlyDenied) {
+          Fluttertoast.showToast(
+              msg:
+                  "Notification permission is permenantly denied. Please turn on in OS Settings.");
+        }
+        await getFcmToken();
+      } catch (e) {
+        print("getFcmToken error: ${e.toString()}");
+      }
     } else {
       try {
         await _firebaseMessaging.deleteToken();

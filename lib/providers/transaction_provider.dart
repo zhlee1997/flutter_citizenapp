@@ -59,6 +59,7 @@ class TransactionProvider with ChangeNotifier {
             'description': title,
             'amount': money,
             'orderNo': item['outTradeNo'],
+            'orderId': item['orderId'],
             // only Assessment Rate has "taxCode"
             'taxCode': item['taxCode'] ?? "",
             // only Subscription has "option"

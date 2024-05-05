@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_citizenapp/utils/get_permissions.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
@@ -249,7 +250,7 @@ class _BillPaymentDetailScreenState extends State<BillPaymentDetailScreen> {
                   Container(
                     margin: const EdgeInsets.only(top: 20.0),
                     child: Text(
-                      AppLocalization.of(context)!.translate('please_allow')!,
+                      "Successful payment will be updated in your account within 24 hours.",
                       style: TextStyle(
                         fontSize: 16.0,
                         color: Colors.grey.shade600,
@@ -280,7 +281,8 @@ class _BillPaymentDetailScreenState extends State<BillPaymentDetailScreen> {
                     height: 10.0,
                   ),
                   TextButton(
-                    onPressed: () {
+                    onPressed: () async {
+                      // Council bills cant scan
                       if (type == "Majlis Perbandaran Padawan" ||
                           type == "Majlis Bandaraya Kuching Selatan" ||
                           type == "Dewan Bandaraya Kuching Utara") {
@@ -289,10 +291,14 @@ class _BillPaymentDetailScreenState extends State<BillPaymentDetailScreen> {
                         );
                         return;
                       }
-                      Navigator.of(context).pushNamed(
-                        BillPaymentScanScreen.routeName,
-                        arguments: paymentDetail,
-                      );
+                      final bool cameraPermissionStatus =
+                          await GetPermissions.getCameraPermission(context);
+                      if (cameraPermissionStatus) {
+                        Navigator.of(context).pushNamed(
+                          BillPaymentScanScreen.routeName,
+                          arguments: paymentDetail,
+                        );
+                      }
                     },
                     child: Container(
                       height: screenSize.height * 0.06,

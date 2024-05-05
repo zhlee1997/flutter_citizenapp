@@ -13,7 +13,8 @@ class BillPaymentScanScreen extends StatefulWidget {
   State<BillPaymentScanScreen> createState() => _BillPaymentScanScreenState();
 }
 
-class _BillPaymentScanScreenState extends State<BillPaymentScanScreen> {
+class _BillPaymentScanScreenState extends State<BillPaymentScanScreen>
+    with WidgetsBindingObserver {
   final MobileScannerController controller = MobileScannerController(
     detectionSpeed: DetectionSpeed.noDuplicates,
     formats: const [BarcodeFormat.qrCode],
@@ -70,7 +71,20 @@ class _BillPaymentScanScreenState extends State<BillPaymentScanScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    controller.start();
+    WidgetsBinding.instance.addPostFrameCallback((timestamp) async {
+      try {
+        await controller.start();
+      } catch (e) {
+        print("initState error: ${e.toString()}");
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    controller.dispose();
   }
 
   @override
@@ -86,17 +100,62 @@ class _BillPaymentScanScreenState extends State<BillPaymentScanScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text('Bill Scan')),
       body: MobileScanner(
-        onDetect: (BarcodeCapture capture) =>
-            onDetect(capture, paymentDetail, context),
-        fit: BoxFit.contain,
-        scanWindow: scanWindow,
-        controller: controller,
-        overlay: QRScannerOverlay(
-          overlayColour: Colors.black.withOpacity(0.4),
+          onDetect: (BarcodeCapture capture) =>
+              onDetect(capture, paymentDetail, context),
+          fit: BoxFit.contain,
+          scanWindow: scanWindow,
+          controller: controller,
+          overlay: QRScannerOverlay(
+            overlayColour: Colors.black.withOpacity(0.4),
+          ),
+          errorBuilder: (
+            BuildContext context,
+            MobileScannerException error,
+            Widget? child,
+          ) {
+            return ScannerErrorWidget(error: error);
+          }),
+    );
+  }
+}
+
+class ScannerErrorWidget extends StatelessWidget {
+  const ScannerErrorWidget({super.key, required this.error});
+
+  final MobileScannerException error;
+
+  @override
+  Widget build(BuildContext context) {
+    String errorMessage;
+
+    switch (error.errorCode) {
+      case MobileScannerErrorCode.controllerUninitialized:
+        errorMessage = 'Controller not ready.';
+        break;
+      case MobileScannerErrorCode.permissionDenied:
+        errorMessage = 'Permission denied';
+        break;
+      default:
+        errorMessage = 'Generic Error';
+        break;
+    }
+
+    return ColoredBox(
+      color: Colors.black,
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Padding(
+              padding: EdgeInsets.only(bottom: 16),
+              child: Icon(Icons.error, color: Colors.white),
+            ),
+            Text(
+              errorMessage,
+              style: const TextStyle(color: Colors.white),
+            ),
+          ],
         ),
-        // errorBuilder: (context, error, child) {
-        //   return ScannerErrorWidget(error: error);
-        // },
       ),
     );
   }

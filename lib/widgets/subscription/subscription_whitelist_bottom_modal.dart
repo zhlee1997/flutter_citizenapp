@@ -53,7 +53,7 @@ class _SubscriptionWhitelistBottomModalState
             RichText(
                 text: TextSpan(
               text:
-                  "You are whitelisted and entitled for free subscription service. By proceeding to access the service, you agree to the ",
+                  "You are whitelisted for subscription service. By proceeding to access the service, you agree to the ",
               style: TextStyle(
                 color: Colors.grey[600], // Set the text color.
                 fontSize: 16.0,

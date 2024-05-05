@@ -6,6 +6,7 @@ import 'dart:async';
 import 'package:ffmpeg_kit_flutter/session_state.dart';
 import 'package:flutter/material.dart';
 import 'package:audio_waveforms/audio_waveforms.dart';
+import 'package:flutter_citizenapp/utils/get_permissions.dart';
 import 'package:provider/provider.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -288,12 +289,18 @@ class _RecordingBottomModalState extends State<RecordingBottomModal> {
                   ),
                   onPressed: _stopWatchTimer.isRunning
                       ? null
-                      : () {
+                      : () async {
                           if (permission) {
                             _stopWatchTimer.onStartTimer();
                             setState(() {});
                           } else {
-                            // TODO: show permission message, request for message
+                            bool micPermission =
+                                await GetPermissions.getMicrophonePermission(
+                                    context);
+                            if (micPermission) {
+                              _stopWatchTimer.onStartTimer();
+                              setState(() {});
+                            }
                           }
                         },
                   child: _stopWatchTimer.isRunning

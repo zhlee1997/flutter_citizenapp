@@ -100,7 +100,9 @@ class MyApp extends StatelessWidget {
             title: 'CitizenApp',
             routes: routes,
             onUnknownRoute: (_) => MaterialPageRoute(
-              builder: (_) => const HomeScreen(),
+              builder: (_) => const HomeScreen(
+                currentIndex: 0,
+              ),
             ),
             locale: languageProvider.locale,
             supportedLocales: const [

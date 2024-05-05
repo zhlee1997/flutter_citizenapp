@@ -352,27 +352,39 @@ class _ProfileBottomNavScreenState extends State<ProfileBottomNavScreen> {
                                       isLoading = true;
                                     });
                                     if (value) {
-                                      _pushNotification
-                                          .setFirebase(true)
-                                          .then((_) {
-                                        setState(() {
-                                          notification = value;
-                                          Provider.of<SettingsProvider>(context,
-                                                  listen: false)
-                                              .enablePushNotification();
+                                      try {
+                                        await _pushNotification
+                                            .setFirebase(true)
+                                            .then((_) {
+                                          setState(() {
+                                            notification = value;
+                                            Provider.of<SettingsProvider>(
+                                                    context,
+                                                    listen: false)
+                                                .enablePushNotification();
+                                          });
                                         });
-                                      });
+                                      } catch (e) {
+                                        print(
+                                            "setFirebase true error: ${e.toString()}");
+                                      }
                                     } else {
-                                      _pushNotification
-                                          .setFirebase(false)
-                                          .then((_) {
-                                        setState(() {
-                                          notification = value;
-                                          Provider.of<SettingsProvider>(context,
-                                                  listen: false)
-                                              .disablePushNotification();
+                                      try {
+                                        await _pushNotification
+                                            .setFirebase(false)
+                                            .then((_) {
+                                          setState(() {
+                                            notification = value;
+                                            Provider.of<SettingsProvider>(
+                                                    context,
+                                                    listen: false)
+                                                .disablePushNotification();
+                                          });
                                         });
-                                      });
+                                      } catch (e) {
+                                        print(
+                                            "setFirebase false error: ${e.toString()}");
+                                      }
                                     }
                                     setState(() {
                                       isLoading = false;

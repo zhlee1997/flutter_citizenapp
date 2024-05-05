@@ -14,8 +14,9 @@ import './config/app_config.dart';
 Future<void> main() async {
   AppConfig.baseURL = AppConfig().baseUrlDev;
   AppConfig.picFlavor = Flavor.dev;
-  // AppConfig.baseURL = AppConfig().baseUrlStaging;
-  // AppConfig.picFlavor = Flavor.staging;
+  AppConfig.sarawakIdCallbackURL = AppConfig().sarawakIdCallbackURLDev;
+  AppConfig.sarawakIdClientID = AppConfig().sarawakIdClientIDDev;
+
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
