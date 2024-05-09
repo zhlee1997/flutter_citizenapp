@@ -36,6 +36,7 @@ import './screens/subscription/subscription_result_screen.dart';
 import './screens/traffic/traffic_images_list_screen.dart';
 
 import './screens/support/privacy_policy_screen.dart';
+import './screens/support/security_policy_screen.dart';
 import './screens/support/terms_and_conditions_screen.dart';
 import './screens/support/send_feedback_screen.dart';
 
@@ -62,6 +63,7 @@ final Map<String, WidgetBuilder> routes = <String, WidgetBuilder>{
   BillPaymentScreen.routeName: (ctx) => const BillPaymentScreen(),
   AnnouncementDetailScreen.routeName: (ctx) => const AnnouncementDetailScreen(),
   PrivacyPolicyScreen.routeName: (ctx) => const PrivacyPolicyScreen(),
+  SecurityPolicyScreen.routeName: (ctx) => const SecurityPolicyScreen(),
   TermsAndConditionsScreen.routeName: (ctx) => const TermsAndConditionsScreen(),
   SendFeedbackScreen.routeName: (ctx) => const SendFeedbackScreen(),
   SubscriptionPackageScreen.routeName: (ctx) =>

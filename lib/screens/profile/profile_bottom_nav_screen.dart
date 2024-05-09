@@ -13,6 +13,7 @@ import '../../screens/support/send_feedback_screen.dart';
 import '../../screens/reported_cases/emergency_cases_screen.dart';
 import '../../screens/reported_cases/talikhidmat_cases_screen.dart';
 import '../../screens/transaction/transaction_history_screen.dart';
+import '../../screens/support/security_policy_screen.dart';
 import '../../utils/notification/push_notification.dart';
 import '../../utils/app_localization.dart';
 
@@ -553,7 +554,7 @@ class _ProfileBottomNavScreenState extends State<ProfileBottomNavScreen> {
                 const Divider(),
                 GestureDetector(
                   onTap: () => Navigator.of(context)
-                      .pushNamed(TermsAndConditionsScreen.routeName),
+                      .pushNamed(SecurityPolicyScreen.routeName),
                   child: Container(
                     margin: const EdgeInsets.symmetric(
                       vertical: 10.0,
@@ -561,14 +562,13 @@ class _ProfileBottomNavScreenState extends State<ProfileBottomNavScreen> {
                     child: Row(
                       children: <Widget>[
                         const Icon(
-                          Icons.description_outlined,
+                          Icons.security_outlined,
                           size: 30.0,
                         ),
                         const SizedBox(
                           width: 15.0,
                         ),
-                        Text(AppLocalization.of(context)!
-                            .translate('terms_cond')!)
+                        Text("Security Policy")
                       ],
                     ),
                   ),
@@ -592,6 +592,29 @@ class _ProfileBottomNavScreenState extends State<ProfileBottomNavScreen> {
                         ),
                         Text(AppLocalization.of(context)!
                             .translate('privacy_poli')!)
+                      ],
+                    ),
+                  ),
+                ),
+                const Divider(),
+                GestureDetector(
+                  onTap: () => Navigator.of(context)
+                      .pushNamed(TermsAndConditionsScreen.routeName),
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(
+                      vertical: 10.0,
+                    ),
+                    child: Row(
+                      children: <Widget>[
+                        const Icon(
+                          Icons.description_outlined,
+                          size: 30.0,
+                        ),
+                        const SizedBox(
+                          width: 15.0,
+                        ),
+                        Text(AppLocalization.of(context)!
+                            .translate('terms_cond')!)
                       ],
                     ),
                   ),

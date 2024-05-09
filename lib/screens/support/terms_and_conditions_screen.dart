@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 import 'package:flutter_markdown/flutter_markdown.dart';
 import '../../utils/app_localization.dart';
@@ -40,17 +41,23 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
       appBar: AppBar(
         title: Text(AppLocalization.of(context)!.translate('terms_cond')!),
       ),
-      body: FutureBuilder(
-          future: rootBundle.loadString(_url),
-          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-            if (snapshot.hasData) {
-              return Markdown(data: snapshot.data ?? "");
-            }
+      body: InAppWebView(
+        initialUrlRequest: URLRequest(
+          url: WebUri(
+              "https://sarawak.gov.my/web/home/article_view/253/289/?id=253"),
+        ),
+      ),
+      // FutureBuilder(
+      //     future: rootBundle.loadString(_url),
+      //     builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+      //       if (snapshot.hasData) {
+      //         return Markdown(data: snapshot.data ?? "");
+      //       }
 
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }),
+      //       return const Center(
+      //         child: CircularProgressIndicator(),
+      //       );
+      //     }),
     );
   }
 }

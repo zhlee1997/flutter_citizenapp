@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 
@@ -59,11 +60,18 @@ class TalikhidmatAttachmentFullBottomModal extends StatelessWidget {
                       return RawMaterialButton(
                         child: InkWell(
                           child: Ink.image(
-                            image:
-                                NetworkImage(attachmentURLs[index].attFilePath),
-                            height: 300,
-                            fit: BoxFit.cover,
-                          ),
+                              child: Icon(
+                                Icons.error_outline,
+                                color: Colors.red,
+                              ),
+                              image: CachedNetworkImageProvider(
+                                  attachmentURLs[index].attFilePath),
+                              height: 300,
+                              fit: BoxFit.cover,
+                              onImageError: (exception, stackTrace) {
+                                print("Image Error:");
+                                print(exception);
+                              }),
                         ),
                         onPressed: () {
                           Navigator.push(

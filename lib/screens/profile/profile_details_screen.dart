@@ -409,12 +409,19 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                   margin: EdgeInsets.only(
                     top: screenSize.width * 0.015,
                   ),
-                  child: Text(
-                    _identityNumber!,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  child: _identityNumber!.isEmpty
+                      ? Text(
+                          "N/A",
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )
+                      : Text(
+                          _identityNumber!,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                 ),
               ),
             ),

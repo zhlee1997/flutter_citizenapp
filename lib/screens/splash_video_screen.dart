@@ -33,8 +33,8 @@ class _SplashVideoScreenState extends State<SplashVideoScreen> {
 
   @override
   void initState() {
-    Provider.of<SettingsProvider>(context, listen: false).checkSettings();
     super.initState();
+    Provider.of<SettingsProvider>(context, listen: false).checkSettings();
     _videoPlayerController = VlcPlayerController.asset(
       AppConstant.splashVideoFilename,
       hwAcc: HwAcc.full,
@@ -110,7 +110,6 @@ class _SplashVideoScreenState extends State<SplashVideoScreen> {
           if (isAuth) {
             // Refresh Token Provider
             // After checking is within the valid refresh period (checkIsAuthAndSubscribeOverdue), then refresh token (everytime open app)
-
             try {
               await Provider.of<AuthProvider>(context, listen: false)
                   .refreshTokenProvider();

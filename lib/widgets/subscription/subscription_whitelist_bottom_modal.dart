@@ -106,8 +106,8 @@ class _SubscriptionWhitelistBottomModalState
                   backgroundColor: Theme.of(context).colorScheme.primary,
                 ), // Set the button background color.
                 onPressed: () {
-                  Navigator.pop(context); // Close the sheet.
                   widget.handleNavigateToChooseScreen();
+                  Navigator.pop(context); // Close the sheet.
                 },
                 child: const Text(
                   "Proceed",

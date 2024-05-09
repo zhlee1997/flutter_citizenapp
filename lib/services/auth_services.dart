@@ -114,12 +114,20 @@ class AuthServices {
     required String ic,
   }) async {
     if (sarawakToken != null) {
-      Map<String, dynamic> body = {
-        'accessToken': sarawakToken,
-        'memberId': memberId,
-        'sarawakId': sarawakId,
-        'ic': ic,
-      };
+      // when no IC -> foreigner,
+      // pass sarawakId only for eKYC API to get photos
+      Map<String, dynamic> body = ic.isEmpty
+          ? {
+              'accessToken': sarawakToken,
+              'memberId': memberId,
+              'sarawakId': sarawakId,
+            }
+          : {
+              'accessToken': sarawakToken,
+              'memberId': memberId,
+              'sarawakId': sarawakId,
+              'ic': ic,
+            };
       try {
         var response = await _apiBaseHelper.post(
           'member/modifyById',

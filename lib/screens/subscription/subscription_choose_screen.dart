@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
 import '../../screens/subscription/subscription_map_screen.dart';
@@ -17,7 +18,8 @@ class SubscriptionChooseScreen extends StatefulWidget {
 }
 
 class _SubscriptionChooseScreenState extends State<SubscriptionChooseScreen> {
-  late SnackBar _snackBar;
+  late SnackBar _errorSnackBar;
+  bool _isError = false;
 
   void _handleNavigateToSubscriptionMapScreen(BuildContext context) =>
       Navigator.of(context).pushNamed(SubscriptionMapScreen.routeName);
@@ -29,8 +31,15 @@ class _SubscriptionChooseScreenState extends State<SubscriptionChooseScreen> {
     bool success =
         await Provider.of<CameraSubscriptionProvider>(context, listen: false)
             .getDevicesListByPackageIdProvider(subscribeId);
-    if (!success) {
-      ScaffoldMessenger.of(context).showSnackBar(_snackBar);
+    if (success) {
+      setState(() {
+        _isError = false;
+      });
+    } else {
+      setState(() {
+        _isError = true;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(_errorSnackBar);
     }
   }
 
@@ -40,12 +49,13 @@ class _SubscriptionChooseScreenState extends State<SubscriptionChooseScreen> {
     super.didChangeDependencies();
     final subscribeId = Provider.of<SubscriptionProvider>(context).subscribeId;
     getSubscriptionDevicesList(subscribeId);
-    _snackBar = SnackBar(
-      content: const Text('Get CCTV List unsuccessful. Try again'),
+    _errorSnackBar = SnackBar(
+      content: const Text('Fail to fetch CCTVs. Try again'),
+      duration: const Duration(minutes: 1),
       action: SnackBarAction(
         label: "Retry",
-        onPressed: () {
-          getSubscriptionDevicesList(subscribeId);
+        onPressed: () async {
+          await getSubscriptionDevicesList(subscribeId);
           ScaffoldMessenger.of(context).hideCurrentSnackBar();
         },
       ),
@@ -70,9 +80,12 @@ class _SubscriptionChooseScreenState extends State<SubscriptionChooseScreen> {
               height: screenSize.height * 0.025,
             ),
             GestureDetector(
-              onTap: () {
-                _handleNavigateToSubscriptionMapScreen(context);
-              },
+              onTap: _isError
+                  ? () => Fluttertoast.showToast(
+                      msg: "Cannot access now. Try again")
+                  : () {
+                      _handleNavigateToSubscriptionMapScreen(context);
+                    },
               child: Container(
                 height: screenSize.height * 0.225,
                 width: screenSize.width * 0.9,
@@ -156,9 +169,12 @@ class _SubscriptionChooseScreenState extends State<SubscriptionChooseScreen> {
               height: screenSize.height * 0.03,
             ),
             GestureDetector(
-              onTap: () {
-                _handleNavigateToSubscriptionListScreen(context);
-              },
+              onTap: _isError
+                  ? () => Fluttertoast.showToast(
+                      msg: "Cannot access now. Try again")
+                  : () {
+                      _handleNavigateToSubscriptionListScreen(context);
+                    },
               child: Container(
                 height: screenSize.height * 0.225,
                 width: screenSize.width * 0.9,

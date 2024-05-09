@@ -157,7 +157,7 @@ class _SarawakIDScreenState extends State<SarawakIDScreen> {
           if (url.toString().contains('${callbackURL}loading.html')) {
             _webViewController.loadData(
                 data:
-                    """<h1>Signing In. Please wait.</h1><br/><h1>Do not close the page.</h1>""");
+                    """<h1>Signing In. Please wait for moments.</h1><br/><h1>Please do not close the page.</h1>""");
             print("loginUrl: $url");
             // detect "userId" redirect by backend
             if (url!.queryParameters["userId"] != null) {

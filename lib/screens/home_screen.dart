@@ -11,6 +11,7 @@ import '../providers/auth_provider.dart';
 import '../providers/inbox_provider.dart';
 import '../providers/subscription_provider.dart';
 import '../providers/announcement_provider.dart';
+import '../providers/location_provider.dart';
 import '../services/subscription_services.dart';
 
 import '../screens/home_page.dart';
@@ -288,7 +289,13 @@ class _HomeScreenState extends State<HomeScreen> {
     ];
     _currentPageIndex = widget.currentIndex;
     WidgetsBinding.instance.addPostFrameCallback((timestamp) async {
-      getMajorAnn();
+      await getMajorAnn();
+      try {
+        await Provider.of<LocationProvider>(context, listen: false)
+            .getCurrentLocation();
+      } catch (e) {
+        print("initState error: ${e.toString()}");
+      }
     });
     _paymentStreamSubscription = eventChannel.receiveBroadcastStream().listen(
           _onData,

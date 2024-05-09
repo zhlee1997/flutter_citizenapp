@@ -628,15 +628,15 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((timestamp) async {
-      // getMajorAnn();
-      try {
-        await Provider.of<LocationProvider>(context, listen: false)
-            .getCurrentLocation();
-      } catch (e) {
-        print("initState error: ${e.toString()}");
-      }
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((timestamp) async {
+    // getMajorAnn();
+    // try {
+    //   await Provider.of<LocationProvider>(context, listen: false)
+    //       .getCurrentLocation();
+    // } catch (e) {
+    //   print("initState error: ${e.toString()}");
+    // }
+    // });
     // _paymentStreamSubscription = eventChannel.receiveBroadcastStream().listen(
     //       _onData,
     //       onError: _onError,
