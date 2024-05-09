@@ -45,7 +45,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
     launchUrl(uri);
   }
 
-  // TODO: refresh profile (new Update API)
+  // refresh profile (new Update API)
   Future<void> _refreshProfile() async {
     await GlobalDialogHelper().showAlertDialog(
       context: context,
@@ -179,14 +179,14 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
           children: <Widget>[
             SizedBox(
               // TODO: to make it responsive
-              height: 140 + 30,
+              height: 140 + (MediaQuery.of(context).size.width * 0.18) / 1.75,
               child: Stack(
                 children: <Widget>[
                   Image.asset(
                     "assets/images/pictures/kuching_city.jpeg",
                     height: 140,
                     width: double.infinity,
-                    fit: BoxFit.fill,
+                    fit: BoxFit.cover,
                     opacity: const AlwaysStoppedAnimation(0.85),
                   ),
                   Positioned(
@@ -206,38 +206,44 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                             alignment: Alignment.bottomRight,
                             children: [
                               _profileImage != null && _profileImage!.isNotEmpty
-                                  ? ClipRRect(
-                                      borderRadius: BorderRadius.circular(32.5),
-                                      child: CachedNetworkImage(
-                                        fit: BoxFit.cover,
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.18,
-                                        height:
-                                            MediaQuery.of(context).size.width *
-                                                0.18,
-                                        placeholder: (BuildContext context,
-                                                String url) =>
-                                            Container(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .secondary,
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: const CircularProgressIndicator
-                                              .adaptive(
-                                            strokeWidth: 2.0,
+                                  ? CachedNetworkImage(
+                                      fit: BoxFit.cover,
+                                      width: MediaQuery.of(context).size.width *
+                                          0.18,
+                                      height:
+                                          MediaQuery.of(context).size.width *
+                                              0.18,
+                                      placeholder:
+                                          (BuildContext context, String url) =>
+                                              Container(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .secondary,
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: const CircularProgressIndicator
+                                            .adaptive(
+                                          strokeWidth: 2.0,
+                                        ),
+                                      ),
+                                      imageUrl: _profileImage!,
+                                      imageBuilder: (context, imageProvider) =>
+                                          Container(
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          image: DecorationImage(
+                                            image: imageProvider,
+                                            fit: BoxFit.cover,
                                           ),
                                         ),
-                                        imageUrl: _profileImage!,
-                                        errorWidget: (context, url, error) =>
-                                            Container(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .secondary,
-                                          child: const Icon(
-                                            Icons.error_outline,
-                                            color: Colors.red,
-                                          ),
+                                      ),
+                                      errorWidget: (context, url, error) =>
+                                          Container(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .secondary,
+                                        child: const Icon(
+                                          Icons.error_outline,
+                                          color: Colors.red,
                                         ),
                                       ),
                                     )

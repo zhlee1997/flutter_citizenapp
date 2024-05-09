@@ -174,19 +174,31 @@ class _AnnouncementDetailScreenState extends State<AnnouncementDetailScreen> {
                               backgroundColor:
                                   Theme.of(context).colorScheme.background,
                               radius: 23.0,
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(30),
-                                child: CachedNetworkImage(
-                                  imageUrl: iconPath!,
-                                  errorWidget: (context, url, error) =>
-                                      CircleAvatar(
-                                    radius: 23.0,
-                                    child: Icon(
-                                      Icons.error,
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                      size: 28.0,
+                              child: CachedNetworkImage(
+                                placeholder: (BuildContext context,
+                                        String url) =>
+                                    const CircularProgressIndicator.adaptive(
+                                  strokeWidth: 2.0,
+                                ),
+                                imageUrl: iconPath!,
+                                imageBuilder: (context, imageProvider) =>
+                                    Container(
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    image: DecorationImage(
+                                      image: imageProvider,
+                                      fit: BoxFit.cover,
                                     ),
+                                  ),
+                                ),
+                                errorWidget: (context, url, error) =>
+                                    CircleAvatar(
+                                  radius: 23.0,
+                                  child: Icon(
+                                    Icons.error,
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                    size: 28.0,
                                   ),
                                 ),
                               ),

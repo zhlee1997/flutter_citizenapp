@@ -623,36 +623,44 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: authProvider.auth != null &&
                                 authProvider.auth!.profileImage != null &&
                                 authProvider.auth!.profileImage!.isNotEmpty
-                            ? ClipRRect(
-                                borderRadius: BorderRadius.circular(25.0),
-                                child: CachedNetworkImage(
-                                  fit: BoxFit.cover,
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.13,
-                                  height:
-                                      MediaQuery.of(context).size.width * 0.13,
-                                  placeholder:
-                                      (BuildContext context, String url) =>
-                                          Container(
+                            ? CachedNetworkImage(
+                                fit: BoxFit.cover,
+                                width: MediaQuery.of(context).size.width * 0.13,
+                                height:
+                                    MediaQuery.of(context).size.width * 0.13,
+                                placeholder:
+                                    (BuildContext context, String url) =>
+                                        Container(
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
                                     color:
                                         Theme.of(context).colorScheme.secondary,
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: const CircularProgressIndicator
-                                        .adaptive(
-                                      strokeWidth: 2.0,
+                                  ),
+                                  padding: const EdgeInsets.all(8.0),
+                                  child:
+                                      const CircularProgressIndicator.adaptive(
+                                    strokeWidth: 2.0,
+                                  ),
+                                ),
+                                imageUrl: authProvider.auth != null
+                                    ? authProvider.auth!.profileImage!
+                                    : "",
+                                imageBuilder: (context, imageProvider) =>
+                                    Container(
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    image: DecorationImage(
+                                      image: imageProvider,
+                                      fit: BoxFit.cover,
                                     ),
                                   ),
-                                  imageUrl: authProvider.auth != null
-                                      ? authProvider.auth!.profileImage!
-                                      : "",
-                                  errorWidget: (context, url, error) =>
-                                      Container(
-                                    color:
-                                        Theme.of(context).colorScheme.secondary,
-                                    child: const Icon(
-                                      Icons.error_outline,
-                                      color: Colors.red,
-                                    ),
+                                ),
+                                errorWidget: (context, url, error) => Container(
+                                  color:
+                                      Theme.of(context).colorScheme.secondary,
+                                  child: const Icon(
+                                    Icons.error_outline,
+                                    color: Colors.red,
                                   ),
                                 ),
                               )

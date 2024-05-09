@@ -58,20 +58,26 @@ class TalikhidmatAttachmentFullBottomModal extends StatelessWidget {
                     itemCount: attachmentURLs.length,
                     itemBuilder: (context, index) {
                       return RawMaterialButton(
-                        child: InkWell(
-                          child: Ink.image(
-                              child: Icon(
-                                Icons.error_outline,
-                                color: Colors.red,
-                              ),
-                              image: CachedNetworkImageProvider(
-                                  attachmentURLs[index].attFilePath),
-                              height: 300,
-                              fit: BoxFit.cover,
-                              onImageError: (exception, stackTrace) {
-                                print("Image Error:");
-                                print(exception);
-                              }),
+                        child: CachedNetworkImage(
+                          imageUrl: attachmentURLs[index].attFilePath,
+                          fit: BoxFit.contain,
+                          height: 300,
+                          width: 300,
+                          placeholder: (BuildContext context, String url) =>
+                              Container(
+                            color: Theme.of(context).colorScheme.secondary,
+                            padding: const EdgeInsets.all(8.0),
+                            child: const CircularProgressIndicator.adaptive(
+                              strokeWidth: 2.0,
+                            ),
+                          ),
+                          errorWidget: (context, url, error) => Container(
+                            color: Theme.of(context).colorScheme.secondary,
+                            child: const Icon(
+                              Icons.error_outline,
+                              color: Colors.red,
+                            ),
+                          ),
                         ),
                         onPressed: () {
                           Navigator.push(
