@@ -1146,7 +1146,13 @@ class _HomePageState extends State<HomePage> {
                                     : tourismAnnouncements.map((e) {
                                         int index =
                                             tourismAnnouncements.indexOf(e);
-                                        return e.attachmentDtoList.isEmpty
+                                        List<AttachmentDtoList> tourismPhoto =
+                                            tourismAnnouncements[index]
+                                                .attachmentDtoList
+                                                .where((photo) =>
+                                                    photo.attFileType == '2')
+                                                .toList();
+                                        return tourismPhoto.isEmpty
                                             ? HomepageTourismCard(
                                                 useDefault: true,
                                                 annId: e.annId,
@@ -1159,8 +1165,8 @@ class _HomePageState extends State<HomePage> {
                                               )
                                             : HomepageTourismCard(
                                                 annId: e.annId,
-                                                imageUrl: e.attachmentDtoList[0]
-                                                    .attFilePath,
+                                                imageUrl:
+                                                    tourismPhoto[0].attFilePath,
                                                 title: getTourismTitle(
                                                     index, context),
                                                 subtitle: getTourismContent(

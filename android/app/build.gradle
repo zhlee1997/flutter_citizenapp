@@ -91,6 +91,11 @@ android {
             resValue "string", "app_name", "CitizenApp"
         }
 
+        dev {
+            resValue "string", "app_name", "CitizenApp-dev"
+            applicationIdSuffix ".dev"
+        }
+
         ut {
             resValue "string", "app_name", "CitizenApp-test"
             applicationIdSuffix ".test"

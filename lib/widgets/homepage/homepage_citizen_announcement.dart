@@ -90,6 +90,10 @@ class HomepageCitizenAnnouncement extends StatelessWidget {
       ),
       itemCount: citizenShimmer ? 6 : citizenAnnouncements.length,
       itemBuilder: (ctx, i) {
+        List<AttachmentDtoList> citizenPhoto = citizenAnnouncements[i]
+            .attachmentDtoList
+            .where((photo) => photo.attFileType == '2')
+            .toList();
         if (citizenShimmer) {
           return Shimmer.fromColors(
             baseColor: Colors.white,
@@ -103,7 +107,7 @@ class HomepageCitizenAnnouncement extends StatelessWidget {
             ),
           );
         }
-        return citizenAnnouncements[i].attachmentDtoList.isEmpty
+        return citizenPhoto.isEmpty
             ? HomepageCitizenCard(
                 useDefaultImage: true,
                 imageUrl: "assets/images/icon/sioc.png",
@@ -118,8 +122,7 @@ class HomepageCitizenAnnouncement extends StatelessWidget {
                 ),
               )
             : HomepageCitizenCard(
-                imageUrl:
-                    citizenAnnouncements[i].attachmentDtoList[0].attFilePath,
+                imageUrl: citizenPhoto[0].attFilePath,
                 title: getAnnouncementTitle(i, context),
                 subtitle: getAnnouncementContent(i, context),
                 onTap: () => Navigator.of(context).pushNamed(

@@ -12,10 +12,10 @@ import './utils/notification/show_notification.dart';
 import './config/app_config.dart';
 
 Future<void> main() async {
-  AppConfig.baseURL = AppConfig().baseUrlProduction;
-  AppConfig.picFlavor = Flavor.prod;
-  AppConfig.sarawakIdCallbackURL = AppConfig().sarawakIdCallbackURLProduction;
-  AppConfig.sarawakIdClientID = AppConfig().sarawakIdClientIDProduction;
+  AppConfig.baseURL = AppConfig().baseUrlDev;
+  AppConfig.picFlavor = Flavor.dev;
+  AppConfig.sarawakIdCallbackURL = AppConfig().sarawakIdCallbackURLDev;
+  AppConfig.sarawakIdClientID = AppConfig().sarawakIdClientIDDev;
 
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(

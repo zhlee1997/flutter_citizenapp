@@ -127,7 +127,8 @@ class GeneralHelper {
           String newDomain = AppConfig().picBaseUrlStaging;
           return "$newDomain$path";
         } else if (flavor == Flavor.prod) {
-          return "";
+          String newDomain = AppConfig().picBaseUrlProduction;
+          return "$newDomain$path";
         } else {
           return "";
         }
