@@ -35,6 +35,7 @@ class ApiBaseHelper {
                   'Authorization': siocToken ?? '',
                   'sarawakToken': sarawakToken ?? '',
                 },
+                contentType: Headers.jsonContentType,
               )
             : null,
         queryParameters: queryParameters,

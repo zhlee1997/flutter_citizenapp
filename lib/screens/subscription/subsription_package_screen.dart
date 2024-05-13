@@ -217,8 +217,12 @@ class _SubscriptionPackageScreenState extends State<SubscriptionPackageScreen> {
                                                   AsyncSnapshot<String>
                                                       snapshot) {
                                                 if (snapshot.hasData) {
-                                                  return Markdown(
-                                                    data: snapshot.data ?? "",
+                                                  return SizedBox(
+                                                    height: double.maxFinite,
+                                                    width: double.maxFinite,
+                                                    child: Markdown(
+                                                      data: snapshot.data ?? "",
+                                                    ),
                                                   );
                                                 }
 

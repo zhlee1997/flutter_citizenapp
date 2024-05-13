@@ -128,7 +128,7 @@ class _MapBottomSheetWidgetState extends State<MapBottomSheetWidget> {
           children: [
             SizedBox(
               height: 150,
-              child: SvgPicture.asset('assets/images/undraw_online.svg'),
+              child: SvgPicture.asset('assets/images/svg/undraw_online.svg'),
             ),
             SizedBox(
               height: 20,

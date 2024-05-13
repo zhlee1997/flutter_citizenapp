@@ -71,8 +71,8 @@ class _SubscriptionListScreenState extends State<SubscriptionListScreen> {
                     children: [
                       SizedBox(
                         height: 150,
-                        child:
-                            SvgPicture.asset('assets/images/undraw_online.svg'),
+                        child: SvgPicture.asset(
+                            'assets/images/svg/undraw_online.svg'),
                       ),
                       const SizedBox(
                         height: 20,

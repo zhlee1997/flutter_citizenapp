@@ -101,7 +101,7 @@ class _SubscriptionMapScreenState extends State<SubscriptionMapScreen> {
                         SizedBox(
                           height: 150,
                           child: SvgPicture.asset(
-                              'assets/images/undraw_online.svg'),
+                              'assets/images/svg/undraw_online.svg'),
                         ),
                         const SizedBox(
                           height: 20,

@@ -209,6 +209,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> getCitizenAnn() async {
     setState(() {
+      citizenAnnouncements = [];
       citizenShimmer = true;
     });
     var response = await _announcementServices.queryPageList(
@@ -233,6 +234,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> getTourismAnn() async {
     setState(() {
+      tourismAnnouncements = [];
       tourismShimmer = true;
     });
     var response = await _announcementServices.queryPageList(
@@ -281,7 +283,7 @@ class _HomePageState extends State<HomePage> {
       BuildContext context) async {
     await showModalBottomSheet(
       context: context,
-      builder: (BuildContext context) {
+      builder: (_) {
         return SubscriptionWhitelistBottomModal(
           handleNavigateToChooseScreen: () => Navigator.of(context)
               .pushNamed(SubscriptionChooseScreen.routeName),

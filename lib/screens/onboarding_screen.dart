@@ -184,8 +184,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                                 AsyncSnapshot<String>
                                                     snapshot) {
                                               if (snapshot.hasData) {
-                                                return Markdown(
-                                                  data: snapshot.data ?? "",
+                                                return SizedBox(
+                                                  width: double.maxFinite,
+                                                  height: double.maxFinite,
+                                                  child: Markdown(
+                                                    data: snapshot.data ?? "",
+                                                  ),
                                                 );
                                               }
 
@@ -275,119 +279,112 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                             ),
                                           ],
                                         ),
-                                        content: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: <Widget>[
-                                            ListView(
-                                              shrinkWrap: true,
-                                              children: ListTile.divideTiles(
-                                                context: context,
-                                                tiles: [
-                                                  ListTile(
-                                                    contentPadding:
-                                                        EdgeInsets.symmetric(
-                                                      horizontal: 8.0,
-                                                      vertical: 8.0,
-                                                    ),
-                                                    leading: Icon(Icons
-                                                        .camera_alt_outlined),
-                                                    title: Text("Camera"),
-                                                    subtitle: Text(
-                                                      "This permission is required for capturing photos.",
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .labelSmall!
-                                                          .copyWith(
-                                                            color:
-                                                                Colors.black45,
-                                                          ),
-                                                    ),
+                                        content: SizedBox(
+                                          height: double.maxFinite,
+                                          width: double.maxFinite,
+                                          child: ListView(
+                                            shrinkWrap: true,
+                                            children: ListTile.divideTiles(
+                                              context: context,
+                                              tiles: [
+                                                ListTile(
+                                                  contentPadding:
+                                                      EdgeInsets.symmetric(
+                                                    horizontal: 8.0,
+                                                    vertical: 8.0,
                                                   ),
-                                                  ListTile(
-                                                    contentPadding:
-                                                        EdgeInsets.symmetric(
-                                                      horizontal: 8.0,
-                                                      vertical: 8.0,
-                                                    ),
-                                                    leading: Icon(Icons
-                                                        .location_on_outlined),
-                                                    title: Text("Location"),
-                                                    subtitle: Text(
-                                                      "This permission is required for capturing locations.",
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .labelSmall!
-                                                          .copyWith(
-                                                            color:
-                                                                Colors.black45,
-                                                          ),
-                                                    ),
+                                                  leading: Icon(Icons
+                                                      .camera_alt_outlined),
+                                                  title: Text("Camera"),
+                                                  subtitle: Text(
+                                                    "This permission is required for capturing photos.",
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .labelSmall!
+                                                        .copyWith(
+                                                          color: Colors.black45,
+                                                        ),
                                                   ),
-                                                  ListTile(
-                                                    contentPadding:
-                                                        EdgeInsets.symmetric(
-                                                      horizontal: 8.0,
-                                                      vertical: 8.0,
-                                                    ),
-                                                    leading: Icon(Icons
-                                                        .mic_none_outlined),
-                                                    title: Text("Microphone"),
-                                                    subtitle: Text(
-                                                      "This permission is required for voice recording.",
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .labelSmall!
-                                                          .copyWith(
-                                                            color:
-                                                                Colors.black45,
-                                                          ),
-                                                    ),
+                                                ),
+                                                ListTile(
+                                                  contentPadding:
+                                                      EdgeInsets.symmetric(
+                                                    horizontal: 8.0,
+                                                    vertical: 8.0,
                                                   ),
-                                                  ListTile(
-                                                    contentPadding:
-                                                        EdgeInsets.symmetric(
-                                                      horizontal: 8.0,
-                                                      vertical: 8.0,
-                                                    ),
-                                                    leading: Icon(Icons
-                                                        .notifications_on_outlined),
-                                                    title: Text("Notification"),
-                                                    subtitle: Text(
-                                                      "This permission is required for receiving notifications.",
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .labelSmall!
-                                                          .copyWith(
-                                                            color:
-                                                                Colors.black45,
-                                                          ),
-                                                    ),
+                                                  leading: Icon(Icons
+                                                      .location_on_outlined),
+                                                  title: Text("Location"),
+                                                  subtitle: Text(
+                                                    "This permission is required for capturing locations.",
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .labelSmall!
+                                                        .copyWith(
+                                                          color: Colors.black45,
+                                                        ),
                                                   ),
-                                                  ListTile(
-                                                    contentPadding:
-                                                        EdgeInsets.symmetric(
-                                                      horizontal: 8.0,
-                                                      vertical: 8.0,
-                                                    ),
-                                                    leading: Icon(Icons
-                                                        .photo_library_outlined),
-                                                    title: Text("Photos"),
-                                                    subtitle: Text(
-                                                      "This permission is required for accessing photo library.",
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .labelSmall!
-                                                          .copyWith(
-                                                            color:
-                                                                Colors.black45,
-                                                          ),
-                                                    ),
+                                                ),
+                                                ListTile(
+                                                  contentPadding:
+                                                      EdgeInsets.symmetric(
+                                                    horizontal: 8.0,
+                                                    vertical: 8.0,
                                                   ),
-                                                ],
-                                              ).toList(),
-                                            )
-                                          ],
+                                                  leading: Icon(
+                                                      Icons.mic_none_outlined),
+                                                  title: Text("Microphone"),
+                                                  subtitle: Text(
+                                                    "This permission is required for voice recording.",
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .labelSmall!
+                                                        .copyWith(
+                                                          color: Colors.black45,
+                                                        ),
+                                                  ),
+                                                ),
+                                                ListTile(
+                                                  contentPadding:
+                                                      EdgeInsets.symmetric(
+                                                    horizontal: 8.0,
+                                                    vertical: 8.0,
+                                                  ),
+                                                  leading: Icon(Icons
+                                                      .notifications_on_outlined),
+                                                  title: Text("Notification"),
+                                                  subtitle: Text(
+                                                    "This permission is required for receiving notifications.",
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .labelSmall!
+                                                        .copyWith(
+                                                          color: Colors.black45,
+                                                        ),
+                                                  ),
+                                                ),
+                                                ListTile(
+                                                  contentPadding:
+                                                      EdgeInsets.symmetric(
+                                                    horizontal: 8.0,
+                                                    vertical: 8.0,
+                                                  ),
+                                                  leading: Icon(Icons
+                                                      .photo_library_outlined),
+                                                  title: Text("Photos"),
+                                                  subtitle: Text(
+                                                    "This permission is required for accessing photo library.",
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .labelSmall!
+                                                        .copyWith(
+                                                          color: Colors.black45,
+                                                        ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ).toList(),
+                                          ),
                                         ),
                                         actions: [
                                           TextButton(

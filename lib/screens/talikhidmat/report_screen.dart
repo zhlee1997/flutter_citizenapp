@@ -1,7 +1,7 @@
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_citizenapp/utils/get_permissions.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -35,6 +35,7 @@ class ReportScreen extends StatefulWidget {
 class _ReportScreenState extends State<ReportScreen> {
   final _messageController = TextEditingController();
   final picker = ImagePicker();
+  final int _messageTextFormFieldLengthLimit = 75;
 
   List<Map> _images = [];
 
@@ -307,32 +308,37 @@ class _ReportScreenState extends State<ReportScreen> {
             child: Form(
               key: widget.formKey,
               child: TextFormField(
-                style: const TextStyle(
-                  fontSize: 18.0,
-                ),
-                validator: (String? value) {
-                  if (value == null || value.isEmpty) {
-                    return AppLocalization.of(context)!
-                        .translate('please_enter_messages')!;
-                  }
-                  return null;
-                },
-                controller: _messageController,
-                onChanged: (value) {
-                  widget.messageCallback(value);
-                },
-                decoration: InputDecoration(
-                  border: const OutlineInputBorder(),
-                  labelText:
-                      "${AppLocalization.of(context)!.translate('message')!}*",
-                  labelStyle: const TextStyle(
+                  maxLength: _messageTextFormFieldLengthLimit,
+                  style: const TextStyle(
                     fontSize: 18.0,
                   ),
-                ),
-                maxLines: 3,
-                textInputAction: TextInputAction.done,
-                // keyboardType: TextInputType.multiline,
-              ),
+                  validator: (String? value) {
+                    if (value == null || value.isEmpty) {
+                      return AppLocalization.of(context)!
+                          .translate('please_enter_messages')!;
+                    }
+                    return null;
+                  },
+                  controller: _messageController,
+                  onChanged: (value) {
+                    widget.messageCallback(value);
+                  },
+                  decoration: InputDecoration(
+                    border: const OutlineInputBorder(),
+                    labelText:
+                        "${AppLocalization.of(context)!.translate('message')!}*",
+                    labelStyle: const TextStyle(
+                      fontSize: 18.0,
+                    ),
+                  ),
+                  maxLines: 3,
+                  textInputAction: TextInputAction.done,
+                  inputFormatters: [
+                    LengthLimitingTextInputFormatter(
+                        _messageTextFormFieldLengthLimit),
+                  ]
+                  // keyboardType: TextInputType.multiline,
+                  ),
             ),
           ),
           const SizedBox(

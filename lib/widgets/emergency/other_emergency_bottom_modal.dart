@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:geocoding/geocoding.dart';
 
@@ -28,6 +29,8 @@ class _OtherEmergencyBottomModalState extends State<OtherEmergencyBottomModal> {
   double _latitude = 0;
   double _longitude = 0;
   final TextEditingController textEditingController = TextEditingController();
+
+  final int _otherTextFormFieldLengthLimit = 50;
 
   /// Perform geocoding from coordinates to get address
   ///
@@ -109,11 +112,16 @@ class _OtherEmergencyBottomModalState extends State<OtherEmergencyBottomModal> {
                 child: Form(
                   key: widget.formKey,
                   child: TextFormField(
+                      maxLength: _otherTextFormFieldLengthLimit,
                       controller: textEditingController,
                       decoration: const InputDecoration(
                         labelText: 'Enter here to tell us more',
                       ),
                       textInputAction: TextInputAction.done,
+                      inputFormatters: [
+                        LengthLimitingTextInputFormatter(
+                            _otherTextFormFieldLengthLimit),
+                      ],
                       validator: (String? v) {
                         if (v == null || v.isEmpty) {
                           return AppLocalization.of(context)!

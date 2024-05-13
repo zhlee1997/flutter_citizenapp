@@ -75,8 +75,12 @@ class _SubscriptionWhitelistBottomModalState
                                       builder: (BuildContext context,
                                           AsyncSnapshot<String> snapshot) {
                                         if (snapshot.hasData) {
-                                          return Markdown(
-                                            data: snapshot.data ?? "",
+                                          return SizedBox(
+                                            height: double.maxFinite,
+                                            width: double.maxFinite,
+                                            child: Markdown(
+                                              data: snapshot.data ?? "",
+                                            ),
                                           );
                                         }
 
@@ -106,8 +110,8 @@ class _SubscriptionWhitelistBottomModalState
                   backgroundColor: Theme.of(context).colorScheme.primary,
                 ), // Set the button background color.
                 onPressed: () {
-                  widget.handleNavigateToChooseScreen();
                   Navigator.pop(context); // Close the sheet.
+                  widget.handleNavigateToChooseScreen();
                 },
                 child: const Text(
                   "Proceed",
