@@ -34,15 +34,15 @@ class _SubscriptionPriceCardState extends State<SubscriptionPriceCard> {
     packageArray = [
       {
         "days": 30,
-        "monthPrice": widget.oneMonthPrice.toStringAsFixed(2),
+        "monthPrice": double.parse(widget.oneMonthPrice.toStringAsFixed(2)),
       },
       {
         "days": 90,
-        "monthPrice": widget.threeMonthPrice.toStringAsFixed(2),
+        "monthPrice": double.parse(widget.threeMonthPrice.toStringAsFixed(2)),
       },
       {
         "days": 365,
-        "monthPrice": widget.twelveMonthPrice.toStringAsFixed(2),
+        "monthPrice": double.parse(widget.twelveMonthPrice.toStringAsFixed(2)),
       },
     ];
 
