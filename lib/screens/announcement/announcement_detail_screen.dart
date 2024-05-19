@@ -35,26 +35,30 @@ class _AnnouncementDetailScreenState extends State<AnnouncementDetailScreen> {
   /// Get announcement details when screen first renders
   /// Using queryAnnouncementDetail API
   Future<void> getAnnouncementDetail() async {
-    var response =
-        await _announcementServices.queryAnnouncementDetail(arguments['id']);
+    try {
+      var response =
+          await _announcementServices.queryAnnouncementDetail(arguments['id']);
 
-    if (response['status'] == '200') {
-      setState(() {
-        _announcement = AnnouncementModel.fromJson(response['data']);
+      if (response['status'] == '200' && mounted) {
+        setState(() {
+          _announcement = AnnouncementModel.fromJson(response['data']);
 
-        if (_announcement != null) {
-          List<String> normalPaths = [];
-          _announcement!.attachmentDtoList.forEach((element) {
-            if (element.attFileType == '3') {
-              iconPath = element.attFilePath;
-            }
-            if (element.attFileType == '2') {
-              normalPaths.add(element.attFilePath);
-            }
-          });
-          photoCarousel = normalPaths;
-        }
-      });
+          if (_announcement != null) {
+            List<String> normalPaths = [];
+            _announcement!.attachmentDtoList.forEach((element) {
+              if (element.attFileType == '3') {
+                iconPath = element.attFilePath;
+              }
+              if (element.attFileType == '2') {
+                normalPaths.add(element.attFilePath);
+              }
+            });
+            photoCarousel = normalPaths;
+          }
+        });
+      }
+    } catch (e) {
+      print("getAnnouncementDetail error: ${e.toString()}");
     }
   }
 

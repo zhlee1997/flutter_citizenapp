@@ -327,7 +327,7 @@ class _NotificationsBottomNavScreenState
                                         .withOpacity(0.8),
                                   ),
                             child: Text(
-                              "Major",
+                              AppLocalization.of(context)!.translate('major')!,
                               style: TextStyle(
                                 color: selected == 0
                                     ? Colors.white
@@ -362,7 +362,8 @@ class _NotificationsBottomNavScreenState
                                         .withOpacity(0.8),
                                   ),
                             child: Text(
-                              "Notifications",
+                              AppLocalization.of(context)!
+                                  .translate('notifications')!,
                               style: TextStyle(
                                 color: selected == 1
                                     ? Colors.white
@@ -582,13 +583,15 @@ class _NotificationsBottomNavScreenState
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                const Text("Login now to view your notifications"),
+                Text(AppLocalization.of(context)!
+                    .translate('login_now_to_view')!),
                 const SizedBox(
                   height: 20.0,
                 ),
                 ElevatedButton(
                   onPressed: () => _handleFullScreenLoginBottomModal(context),
-                  child: Text("Login Now"),
+                  child: Text(
+                      AppLocalization.of(context)!.translate('login_now')!),
                 )
               ],
             ),

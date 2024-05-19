@@ -204,5 +204,13 @@
   "get_updated_on": "了解最新公告",
   "tourism_news": "旅游新闻",
   "checkout_the_tourist": "查看旅游更新",
-  "thats_all_for_now": "目前为止就这样了"
+  "thats_all_for_now": "目前为止就这样了",
+  "home": "首页",
+  "notifications": "通知",
+  "profile": "用户",
+  "premium_subscription": "高级订阅",
+  "major": "重大公告",
+  "security_policy": "安全政策",
+  "login_now_to_view": "立即登录以查看您的通知",
+  "login_now": "立即登录"
 }

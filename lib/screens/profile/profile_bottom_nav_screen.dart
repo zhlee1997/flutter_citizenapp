@@ -197,7 +197,7 @@ class _ProfileBottomNavScreenState extends State<ProfileBottomNavScreen> {
                       width: 15.0,
                     ),
                     Text(
-                      "Login Now",
+                      AppLocalization.of(context)!.translate('login_now')!,
                       style: Theme.of(context).textTheme.titleMedium,
                     )
                   ],
@@ -568,7 +568,8 @@ class _ProfileBottomNavScreenState extends State<ProfileBottomNavScreen> {
                         const SizedBox(
                           width: 15.0,
                         ),
-                        Text("Security Policy")
+                        Text(AppLocalization.of(context)!
+                            .translate('security_policy')!)
                       ],
                     ),
                   ),

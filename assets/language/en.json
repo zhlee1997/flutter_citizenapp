@@ -204,5 +204,13 @@
   "get_updated_on": "Get updated on the latest announcements",
   "tourism_news": "Tourism News",
   "checkout_the_tourist": "Checkout the tourist updates",
-  "thats_all_for_now": "That's all for now"
+  "thats_all_for_now": "That's all for now",
+  "home": "Home",
+  "notifications": "Notifications",
+  "profile": "Profile",
+  "premium_subscription": "Premium Subscription",
+  "major": "Major",
+  "security_policy": "Security Policy",
+  "login_now_to_view": "Login now to view your notifications",
+  "login_now": "Login Now"
 }

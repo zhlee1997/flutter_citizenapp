@@ -397,7 +397,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Icons.home_outlined,
                 color: Colors.grey,
               ),
-              label: 'Home',
+              label: AppLocalization.of(context)!.translate('home')!,
             ),
             NavigationDestination(
               selectedIcon: Icon(
@@ -408,7 +408,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Icons.apps_outlined,
                 color: Colors.grey,
               ),
-              label: 'Services',
+              label: AppLocalization.of(context)!.translate('services')!,
             ),
             NavigationDestination(
               selectedIcon: Badge(
@@ -427,7 +427,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     Icons.notifications_outlined,
                     color: Colors.grey,
                   )),
-              label: 'Notifications',
+              label: AppLocalization.of(context)!.translate('notifications')!,
             ),
             NavigationDestination(
               selectedIcon: Icon(
@@ -438,7 +438,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Icons.account_circle_outlined,
                 color: Colors.grey,
               ),
-              label: 'Profile',
+              label: AppLocalization.of(context)!.translate('profile')!,
             ),
           ],
         ),
@@ -538,11 +538,11 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       case 1:
         return AppBar(
-          title: const Text("Services"),
+          title: Text(AppLocalization.of(context)!.translate('services')!),
         );
       case 2:
         return AppBar(
-          title: const Text("Notifications"),
+          title: Text(AppLocalization.of(context)!.translate('notifications')!),
           // actions: isNotificationsSelected
           //     ? [
           //         IconButton(
@@ -563,7 +563,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     handleNavigateToProfileDetailsScreen(),
               )
             : AppBar(
-                title: const Text("Profile"),
+                title: Text(AppLocalization.of(context)!.translate('profile')!),
               );
       default:
         return AppBar();
@@ -611,7 +611,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       bottom: 8.0,
                     ),
                     child: Text(
-                      "Profile",
+                      AppLocalization.of(context)!.translate('profile')!,
                       style: Theme.of(context).textTheme.titleLarge!.copyWith(
                             color: Colors.white,
                             fontWeight: FontWeight.w500,

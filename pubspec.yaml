@@ -33,8 +33,6 @@ dependencies:
   flutter_localizations:
     sdk: flutter
 
-  intl: ^0.18.0 # Change from 0.17 -> 0.18
-
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
@@ -131,17 +129,9 @@ flutter:
     - assets/images/icon/sarawakid_logo.png
 
     # images/pictures
-    - assets/images/pictures/sos_image.jpg
-    - assets/images/pictures/payment_image.jpg
-    - assets/images/pictures/talikhidmat_image.jpg
-    - assets/images/pictures/subscription_image.jpg
-    - assets/images/pictures/traffic_image.jpg
-    - assets/images/pictures/tourism_image.jpg
-    - assets/images/pictures/bus_image.jpg
     - assets/images/pictures/kuching_city.jpeg
 
     # images/pictures/emergency
-    - assets/images/pictures/emergency/voice_recording.jpg
     - assets/images/pictures/emergency/harassment.jpg
     - assets/images/pictures/emergency/fire.jpg
     - assets/images/pictures/emergency/traffic_accident.jpg

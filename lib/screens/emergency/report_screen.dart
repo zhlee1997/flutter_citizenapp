@@ -212,18 +212,6 @@ class ReportScreen extends StatelessWidget {
             margin: const EdgeInsets.only(
               bottom: 8.0,
             ),
-            decoration: BoxDecoration(
-                // borderRadius: BorderRadius.circular(10.0),
-                // border: Border.all(
-                //   color: Theme.of(context).colorScheme.primary,
-                // ),
-                // image: const DecorationImage(
-                //   image: AssetImage(
-                //       "assets/images/pictures/emergency/voice_recording.jpg"),
-                //   fit: BoxFit.cover,
-                //   opacity: 0.3,
-                // ),
-                ),
             // padding: const EdgeInsets.all(8.0),
             child: ElevatedButton(
               onPressed: handleVoiceNoteBottomModal,

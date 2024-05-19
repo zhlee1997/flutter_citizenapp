@@ -18,6 +18,7 @@ import '../../providers/auth_provider.dart';
 import '../../providers/subscription_provider.dart';
 import '../../providers/location_provider.dart';
 import '../../utils/global_dialog_helper.dart';
+import '../../utils/app_localization.dart';
 
 class ServicesBottomNavScreen extends StatefulWidget {
   static const String routeName = 'servcies-bottom-nav-screen';
@@ -329,12 +330,6 @@ class _ServicesBottomNavScreenState extends State<ServicesBottomNavScreen> {
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10.0),
-                      // image: DecorationImage(
-                      //   image: AssetImage(
-                      //       "assets/images/pictures/talikhidmat_image.jpg"),
-                      //   fit: BoxFit.cover,
-                      //   opacity: 0.3,
-                      // ),
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -348,7 +343,8 @@ class _ServicesBottomNavScreenState extends State<ServicesBottomNavScreen> {
                           height: 10.0,
                         ),
                         Text(
-                          "Talikhidmat",
+                          AppLocalization.of(context)!
+                              .translate('talikhidmat')!,
                           style: Theme.of(context).textTheme.bodyMedium,
                         )
                       ],
@@ -364,11 +360,6 @@ class _ServicesBottomNavScreenState extends State<ServicesBottomNavScreen> {
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10.0),
-                      // image: DecorationImage(
-                      //   image: AssetImage("assets/images/pictures/sos_image.jpg"),
-                      //   fit: BoxFit.cover,
-                      //   opacity: 0.15,
-                      // ),
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -382,7 +373,8 @@ class _ServicesBottomNavScreenState extends State<ServicesBottomNavScreen> {
                           height: 10.0,
                         ),
                         Text(
-                          "Emergency Button",
+                          AppLocalization.of(context)!
+                              .translate('emergency_button')!,
                           textAlign: TextAlign.center,
                           style: Theme.of(context).textTheme.bodyMedium,
                         )
@@ -399,11 +391,6 @@ class _ServicesBottomNavScreenState extends State<ServicesBottomNavScreen> {
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10.0),
-                      // image: DecorationImage(
-                      //   image: AssetImage("assets/images/pictures/bus_image.jpg"),
-                      //   fit: BoxFit.cover,
-                      //   opacity: 0.2,
-                      // ),
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -417,7 +404,8 @@ class _ServicesBottomNavScreenState extends State<ServicesBottomNavScreen> {
                           height: 10.0,
                         ),
                         Text(
-                          "Bus Schedule",
+                          AppLocalization.of(context)!
+                              .translate('bus_schedule')!,
                           textAlign: TextAlign.center,
                           style: Theme.of(context).textTheme.bodyMedium,
                         )
@@ -433,12 +421,6 @@ class _ServicesBottomNavScreenState extends State<ServicesBottomNavScreen> {
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10.0),
-                      // image: const DecorationImage(
-                      //   image: AssetImage(
-                      //       "assets/images/pictures/traffic_image.jpg"),
-                      //   fit: BoxFit.cover,
-                      //   opacity: 0.2,
-                      // ),
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -452,7 +434,8 @@ class _ServicesBottomNavScreenState extends State<ServicesBottomNavScreen> {
                           height: 10.0,
                         ),
                         Text(
-                          "Traffic Images",
+                          AppLocalization.of(context)!
+                              .translate('traffic_images')!,
                           textAlign: TextAlign.center,
                           style: Theme.of(context).textTheme.bodyMedium,
                         )
@@ -469,12 +452,6 @@ class _ServicesBottomNavScreenState extends State<ServicesBottomNavScreen> {
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10.0),
-                      // image: DecorationImage(
-                      //   image: AssetImage(
-                      //       "assets/images/pictures/payment_image.jpg"),
-                      //   fit: BoxFit.cover,
-                      //   opacity: 0.2,
-                      // ),
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -488,7 +465,8 @@ class _ServicesBottomNavScreenState extends State<ServicesBottomNavScreen> {
                           height: 10.0,
                         ),
                         Text(
-                          "Bill Payment",
+                          AppLocalization.of(context)!
+                              .translate('bill_payment')!,
                           textAlign: TextAlign.center,
                           style: Theme.of(context).textTheme.bodyMedium,
                         )
@@ -505,12 +483,6 @@ class _ServicesBottomNavScreenState extends State<ServicesBottomNavScreen> {
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10.0),
-                      // image: DecorationImage(
-                      //   image: AssetImage(
-                      //       "assets/images/pictures/tourism_image.jpg"),
-                      //   fit: BoxFit.cover,
-                      //   opacity: 0.3,
-                      // ),
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -524,7 +496,8 @@ class _ServicesBottomNavScreenState extends State<ServicesBottomNavScreen> {
                           height: 10.0,
                         ),
                         Text(
-                          "Tourism News",
+                          AppLocalization.of(context)!
+                              .translate('tourism_news')!,
                           textAlign: TextAlign.center,
                           style: Theme.of(context).textTheme.bodyMedium,
                         )
@@ -541,12 +514,6 @@ class _ServicesBottomNavScreenState extends State<ServicesBottomNavScreen> {
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10.0),
-                        // image: DecorationImage(
-                        //   image: AssetImage(
-                        //       "assets/images/pictures/subscription_image.jpg"),
-                        //   fit: BoxFit.cover,
-                        //   opacity: 0.2,
-                        // ),
                       ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -560,7 +527,8 @@ class _ServicesBottomNavScreenState extends State<ServicesBottomNavScreen> {
                             height: 10.0,
                           ),
                           Text(
-                            "Premium Subscription",
+                            AppLocalization.of(context)!
+                                .translate('premium_subscription')!,
                             textAlign: TextAlign.center,
                             style: Theme.of(context).textTheme.bodyMedium,
                           )
