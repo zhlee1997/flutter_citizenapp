@@ -129,7 +129,7 @@ class SubscriptionResultScreen extends StatelessWidget {
                   children: <Widget>[
                     const Text("Paid Amount"),
                     Text(
-                      "RM ${args.orderAmt}",
+                      "RM ${args.orderAmt!.toStringAsFixed(2)}",
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                       ),

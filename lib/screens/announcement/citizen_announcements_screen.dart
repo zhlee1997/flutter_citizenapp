@@ -143,6 +143,7 @@ class _CitizenAnnouncementsScreenState
     final screenSize = MediaQuery.of(context).size;
 
     return Scaffold(
+      appBar: _isInitLoading ? AppBar() : null,
       body: _isInitLoading
           ? GlobalDialogHelper().showLoadingSpinner()
           : CustomScrollView(

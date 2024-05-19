@@ -530,6 +530,12 @@ class _SubscriptionVideoScreenState extends State<SubscriptionVideoScreen>
                                   child: Image.network(
                                     _CCTVOtherModelList[index].picUrl,
                                     fit: BoxFit.cover,
+                                    errorBuilder:
+                                        (context, error, stackTrace) =>
+                                            Image.asset(
+                                      "assets/images/icon/sioc.png",
+                                      fit: BoxFit.fill,
+                                    ),
                                   ),
                                 ),
                               ),

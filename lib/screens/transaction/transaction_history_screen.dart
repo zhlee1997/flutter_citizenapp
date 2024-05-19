@@ -175,6 +175,8 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
             padding: const EdgeInsets.all(8.0),
             itemCount: transactionProvider.list.length,
             itemBuilder: ((_, index) {
+              double formattedString =
+                  transactionProvider.list[index]['amount'];
               return ListTile(
                 onTap: () => handleTransactionDetailBottomModal(
                   orderNo: transactionProvider.list[index]['orderNo'],
@@ -200,7 +202,7 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
                   ),
                 ),
                 trailing: Text(
-                  "-RM ${transactionProvider.list[index]['amount']}",
+                  "-RM ${formattedString.toStringAsFixed(2)}",
                   style: const TextStyle(
                     color: Colors.red,
                   ),

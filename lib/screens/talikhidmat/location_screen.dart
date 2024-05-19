@@ -8,6 +8,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../providers/location_provider.dart';
 import '../../providers/talikhidmat_provider.dart';
@@ -32,24 +33,31 @@ class _LocationScreenState extends State<LocationScreen> {
   ///
   /// Receives [latitude] and [longitude] as the latitude and longitude
   Future<void> _geocodeAddress(double latitude, double longitude) async {
-    List<Placemark> placemarks =
-        await placemarkFromCoordinates(latitude, longitude);
-    String name = placemarks[0].name != '' ? '${placemarks[0].name}, ' : '';
-    String subLocal =
-        placemarks[0].subLocality != '' ? '${placemarks[0].subLocality}, ' : '';
-    String thoroughfare = placemarks[0].thoroughfare != '' && Platform.isAndroid
-        ? '${placemarks[0].thoroughfare}, '
-        : '';
-    _address =
-        '$name$thoroughfare$subLocal${placemarks[0].locality}, ${placemarks[0].administrativeArea}, ${placemarks[0].postalCode}';
-    if (mounted) {
-      Provider.of<TalikhidmatProvider>(context, listen: false)
-          .setAddressAndLocation(
-        address: _address,
-        latitide: latitude,
-        longitude: longitude,
-      );
-      setState(() {});
+    try {
+      List<Placemark> placemarks =
+          await placemarkFromCoordinates(latitude, longitude);
+      String name = placemarks[0].name != '' ? '${placemarks[0].name}, ' : '';
+      String subLocal = placemarks[0].subLocality != ''
+          ? '${placemarks[0].subLocality}, '
+          : '';
+      String thoroughfare =
+          placemarks[0].thoroughfare != '' && Platform.isAndroid
+              ? '${placemarks[0].thoroughfare}, '
+              : '';
+      _address =
+          '$name$thoroughfare$subLocal${placemarks[0].locality}, ${placemarks[0].administrativeArea}, ${placemarks[0].postalCode}';
+      if (mounted) {
+        Provider.of<TalikhidmatProvider>(context, listen: false)
+            .setAddressAndLocation(
+          address: _address,
+          latitide: latitude,
+          longitude: longitude,
+        );
+        setState(() {});
+      }
+    } catch (e) {
+      Fluttertoast.showToast(msg: "Geocode error. Please try again");
+      print("_geocodeAddress error: ${e.toString()}");
     }
   }
 

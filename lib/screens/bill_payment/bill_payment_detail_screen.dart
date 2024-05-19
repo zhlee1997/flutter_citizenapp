@@ -343,41 +343,38 @@ class _BillPaymentDetailScreenState extends State<BillPaymentDetailScreen> {
                 fontSize: 18.0,
               )),
         ),
-        Container(
-            child: Row(
+        Row(
           children: <Widget>[
             Expanded(
               flex: 1,
-              child: Container(
-                child: TextFormField(
-                  keyboardType: TextInputType.text,
-                  textCapitalization: TextCapitalization.characters,
-                  style: const TextStyle(fontSize: 20.0),
-                  decoration: const InputDecoration(
-                    hintText: 'TH',
-                  ),
-                  focusNode: _f1,
-                  inputFormatters: [maskFormatter1],
-                  onChanged: (String newVal) {
-                    _accountNumberController1.value = TextEditingValue(
-                      text: newVal.toUpperCase(),
-                      selection: TextSelection.collapsed(
-                        offset: newVal.length,
-                      ),
-                    );
-                    if (newVal.length == 2) {
-                      _f1.unfocus();
-                      FocusScope.of(context).requestFocus(_f2);
-                    }
-                  },
-                  controller: _accountNumberController1,
-                  validator: (String? value) {
-                    if (value == null || value.isEmpty || value.length != 2) {
-                      return "";
-                    }
-                    return null;
-                  },
+              child: TextFormField(
+                keyboardType: TextInputType.text,
+                textCapitalization: TextCapitalization.characters,
+                style: const TextStyle(fontSize: 20.0),
+                decoration: const InputDecoration(
+                  hintText: 'TH',
                 ),
+                focusNode: _f1,
+                inputFormatters: [maskFormatter1],
+                onChanged: (String newVal) {
+                  _accountNumberController1.value = TextEditingValue(
+                    text: newVal.toUpperCase(),
+                    selection: TextSelection.collapsed(
+                      offset: newVal.length,
+                    ),
+                  );
+                  if (newVal.length == 2) {
+                    _f1.unfocus();
+                    FocusScope.of(context).requestFocus(_f2);
+                  }
+                },
+                controller: _accountNumberController1,
+                validator: (String? value) {
+                  if (value == null || value.isEmpty || value.length != 2) {
+                    return "";
+                  }
+                  return null;
+                },
               ),
             ),
             const Text(
@@ -388,43 +385,41 @@ class _BillPaymentDetailScreenState extends State<BillPaymentDetailScreen> {
             ),
             Expanded(
               flex: 8,
-              child: Container(
-                child: TextFormField(
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    hintText: '123456',
-                  ),
-                  style: const TextStyle(fontSize: 20.0),
-                  focusNode: _f2,
-                  inputFormatters: [maskFormatter2],
-                  controller: _accountNumberController2,
-                  validator: (String? value) {
-                    if (value == null || value.isEmpty || value.length != 6) {
-                      return AppLocalization.of(context)!
-                          .translate('enter_account_number')!;
-                    }
-                    return null;
-                  },
-                  onChanged: (String newVal) {
-                    _accountNumberController2.value = TextEditingValue(
-                      text: newVal.toUpperCase(),
-                      selection: TextSelection.collapsed(
-                        offset: newVal.length,
-                      ),
-                    );
-                    if (newVal.length == 6) {
-                      _f2.unfocus();
-                    }
-                    if (newVal == '') {
-                      _f2.unfocus();
-                      FocusScope.of(context).requestFocus(_f1);
-                    }
-                  },
+              child: TextFormField(
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                  hintText: '123456',
                 ),
+                style: const TextStyle(fontSize: 20.0),
+                focusNode: _f2,
+                inputFormatters: [maskFormatter2],
+                controller: _accountNumberController2,
+                validator: (String? value) {
+                  if (value == null || value.isEmpty || value.length != 6) {
+                    return AppLocalization.of(context)!
+                        .translate('enter_account_number')!;
+                  }
+                  return null;
+                },
+                onChanged: (String newVal) {
+                  _accountNumberController2.value = TextEditingValue(
+                    text: newVal.toUpperCase(),
+                    selection: TextSelection.collapsed(
+                      offset: newVal.length,
+                    ),
+                  );
+                  if (newVal.length == 6) {
+                    _f2.unfocus();
+                  }
+                  if (newVal == '') {
+                    _f2.unfocus();
+                    FocusScope.of(context).requestFocus(_f1);
+                  }
+                },
               ),
             ),
           ],
-        )),
+        ),
         Container(
           margin: const EdgeInsets.only(top: 15.0),
           alignment: Alignment.centerLeft,
@@ -435,45 +430,42 @@ class _BillPaymentDetailScreenState extends State<BillPaymentDetailScreen> {
             ),
           ),
         ),
-        Container(
-          child: TextFormField(
-            style: const TextStyle(
-              fontSize: 20.0,
-            ),
-            validator: (String? value) {
-              if (value == '0.00') {
-                return AppLocalization.of(context)!
-                    .translate('greater_than_0')!;
-              }
-              if (value == null || value.isEmpty) {
-                return AppLocalization.of(context)!
-                    .translate('enter_bill_amount')!;
-              }
-              return null;
-            },
-            keyboardType: const TextInputType.numberWithOptions(
-              decimal: true,
-              signed: false,
-            ),
-            decoration: const InputDecoration(
-              hintText: '0.00',
-            ),
-            inputFormatters: <TextInputFormatter>[
-              FilteringTextInputFormatter.digitsOnly,
-            ],
-            onChanged: (String value) {
-              _billAmountController.value = GeneralHelper.formatCurrency(
-                value: value,
-                controller: _billAmountController,
-                isFirst: isFirst,
-              );
-            },
-            controller: _billAmountController,
-            focusNode: _billAmountFocusNode,
-            onFieldSubmitted: (value) =>
-                FocusScope.of(context).requestFocus(_addressFocusNode),
-            textInputAction: TextInputAction.next,
+        TextFormField(
+          style: const TextStyle(
+            fontSize: 20.0,
           ),
+          validator: (String? value) {
+            if (value == '0.00') {
+              return AppLocalization.of(context)!.translate('greater_than_0')!;
+            }
+            if (value == null || value.isEmpty) {
+              return AppLocalization.of(context)!
+                  .translate('enter_bill_amount')!;
+            }
+            return null;
+          },
+          keyboardType: const TextInputType.numberWithOptions(
+            decimal: true,
+            signed: false,
+          ),
+          decoration: const InputDecoration(
+            hintText: '0.00',
+          ),
+          inputFormatters: <TextInputFormatter>[
+            FilteringTextInputFormatter.digitsOnly,
+          ],
+          onChanged: (String value) {
+            _billAmountController.value = GeneralHelper.formatCurrency(
+              value: value,
+              controller: _billAmountController,
+              isFirst: isFirst,
+            );
+          },
+          controller: _billAmountController,
+          focusNode: _billAmountFocusNode,
+          onFieldSubmitted: (value) =>
+              FocusScope.of(context).requestFocus(_addressFocusNode),
+          textInputAction: TextInputAction.next,
         ),
       ];
     }

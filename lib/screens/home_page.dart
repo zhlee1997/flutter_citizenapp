@@ -38,6 +38,7 @@ import "../models/announcement_model.dart";
 import '../models/major_announcement_model.dart';
 import "../utils/global_dialog_helper.dart";
 import '../utils/major_dialog_helper.dart';
+import '../utils/app_localization.dart';
 import '../arguments/bill_payment_result_screen_arguments.dart';
 import '../arguments/subscription_result_screen_arguments.dart';
 
@@ -744,7 +745,8 @@ class _HomePageState extends State<HomePage> {
                                           ),
                                         ),
                                       Text(
-                                        "You are subscribed",
+                                        AppLocalization.of(context)!
+                                            .translate('you_are_subscribed')!,
                                         style: TextStyle(
                                           fontWeight: FontWeight.w500,
                                           fontSize: Theme.of(context)
@@ -755,7 +757,7 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                       const SizedBox(height: 3.0),
                                       Text(
-                                          "Due date:  ${vipDueDate != null ? dateFormat.format(DateTime.parse(vipDueDate!)) : "---"}"),
+                                          "${AppLocalization.of(context)!.translate('due_date')!}:  ${vipDueDate != null ? dateFormat.format(DateTime.parse(vipDueDate!)) : "---"}"),
                                     ],
                                   ),
                                 )
@@ -764,11 +766,13 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                       Text(
-                        'Quick Services',
+                        AppLocalization.of(context)!
+                            .translate('quick_services')!,
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                       Text(
-                        'Shortcut to frequently used function',
+                        AppLocalization.of(context)!
+                            .translate('shortcut_to_frequently')!,
                         style: TextStyle(
                           color: Colors.grey[600],
                           fontSize:
@@ -815,9 +819,10 @@ class _HomePageState extends State<HomePage> {
                                                 .primary,
                                             size: 30.0,
                                           ),
-                                          const Text(
-                                            "Talikhidmat",
-                                            style: TextStyle(
+                                          Text(
+                                            AppLocalization.of(context)!
+                                                .translate('talikhidmat')!,
+                                            style: const TextStyle(
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),
@@ -831,7 +836,8 @@ class _HomePageState extends State<HomePage> {
                                           left: 10.0,
                                         ),
                                         child: Text(
-                                          "Submit a feedback",
+                                          AppLocalization.of(context)!
+                                              .translate('submit_a_feedback')!,
                                           style: TextStyle(
                                             color: Colors.grey[600],
                                           ),
@@ -867,9 +873,10 @@ class _HomePageState extends State<HomePage> {
                                                 .primary,
                                             size: 30.0,
                                           ),
-                                          const Text(
-                                            "Emergency",
-                                            style: TextStyle(
+                                          Text(
+                                            AppLocalization.of(context)!
+                                                .translate('emergency')!,
+                                            style: const TextStyle(
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),
@@ -883,7 +890,8 @@ class _HomePageState extends State<HomePage> {
                                           left: 10.0,
                                         ),
                                         child: Text(
-                                          "Rescue request",
+                                          AppLocalization.of(context)!
+                                              .translate('rescue_resquest')!,
                                           style: TextStyle(
                                             color: Colors.grey[600],
                                           ),
@@ -938,8 +946,14 @@ class _HomePageState extends State<HomePage> {
                                               Text(
                                                 subscriptionProvider
                                                         .isSubscriptionEnabled
-                                                    ? "Subscription"
-                                                    : "Traffic images",
+                                                    ? AppLocalization.of(
+                                                            context)!
+                                                        .translate(
+                                                            'subscription_1')!
+                                                    : AppLocalization.of(
+                                                            context)!
+                                                        .translate(
+                                                            'traffic_images')!,
                                                 style: const TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                 ),
@@ -956,8 +970,12 @@ class _HomePageState extends State<HomePage> {
                                             child: Text(
                                               subscriptionProvider
                                                       .isSubscriptionEnabled
-                                                  ? "Premium member"
-                                                  : "Live road images",
+                                                  ? AppLocalization.of(context)!
+                                                      .translate(
+                                                          'premium_member')!
+                                                  : AppLocalization.of(context)!
+                                                      .translate(
+                                                          'live_road_images')!,
                                               style: TextStyle(
                                                 color: Colors.grey[600],
                                               ),
@@ -994,9 +1012,10 @@ class _HomePageState extends State<HomePage> {
                                                 .primary,
                                             size: 30.0,
                                           ),
-                                          const Text(
-                                            "Bill Payment",
-                                            style: TextStyle(
+                                          Text(
+                                            AppLocalization.of(context)!
+                                                .translate('bill_payment')!,
+                                            style: const TextStyle(
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),
@@ -1010,7 +1029,8 @@ class _HomePageState extends State<HomePage> {
                                           left: 10.0,
                                         ),
                                         child: Text(
-                                          "Billing and taxes",
+                                          AppLocalization.of(context)!
+                                              .translate('billing_and_taxes')!,
                                           style: TextStyle(
                                             color: Colors.grey[600],
                                           ),
@@ -1031,14 +1051,16 @@ class _HomePageState extends State<HomePage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'Citizen Announcements',
+                            AppLocalization.of(context)!
+                                .translate('citizen_announcements')!,
                             style: Theme.of(context).textTheme.titleMedium,
                           ),
                           GestureDetector(
                             onTap: () =>
                                 _handleNavigateToCitizenAnnouncements(context),
                             child: Text(
-                              'VIEW ALL',
+                              AppLocalization.of(context)!
+                                  .translate('view_all')!,
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: Theme.of(context)
@@ -1052,7 +1074,8 @@ class _HomePageState extends State<HomePage> {
                         ],
                       ),
                       Text(
-                        'Get updated on the latest announcements',
+                        AppLocalization.of(context)!
+                            .translate('get_updated_on')!,
                         style: TextStyle(
                           color: Colors.grey[600],
                           fontSize:
@@ -1076,13 +1099,15 @@ class _HomePageState extends State<HomePage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'Tourism News',
+                            AppLocalization.of(context)!
+                                .translate('tourism_news')!,
                             style: Theme.of(context).textTheme.titleMedium,
                           ),
                           GestureDetector(
                             onTap: () => _handleNavigateToTourismNews(context),
                             child: Text(
-                              'VIEW ALL',
+                              AppLocalization.of(context)!
+                                  .translate('view_all')!,
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: Theme.of(context)
@@ -1096,7 +1121,8 @@ class _HomePageState extends State<HomePage> {
                         ],
                       ),
                       Text(
-                        'Checkout the tourist updates',
+                        AppLocalization.of(context)!
+                            .translate('checkout_the_tourist')!,
                         style: TextStyle(
                           color: Colors.grey[600],
                           fontSize:
@@ -1182,8 +1208,9 @@ class _HomePageState extends State<HomePage> {
                           bottom: 20.0,
                         ),
                         alignment: Alignment.center,
-                        child: const Text(
-                          "That's all for now",
+                        child: Text(
+                          AppLocalization.of(context)!
+                              .translate('thats_all_for_now')!,
                         ),
                       )
                     ],

@@ -24,6 +24,7 @@ import '../screens/bill_payment/bill_payment_result_screen.dart';
 import '../widgets/sarawakid/login_full_bottom_modal.dart';
 import "../utils/global_dialog_helper.dart";
 import '../utils/major_dialog_helper.dart';
+import '../utils/app_localization.dart';
 import '../arguments/bill_payment_result_screen_arguments.dart';
 import '../arguments/subscription_result_screen_arguments.dart';
 import '../models/major_announcement_model.dart';
@@ -460,11 +461,11 @@ class _HomeScreenState extends State<HomeScreen> {
     String getGreeting() {
       var hour = DateTime.now().hour;
       if (hour >= 5 && hour < 12) {
-        return 'Good Morning';
+        return AppLocalization.of(context)!.translate('good_morning')!;
       } else if (hour >= 12 && hour < 17) {
-        return 'Good Afternoon';
+        return AppLocalization.of(context)!.translate('good_afternoon')!;
       } else {
-        return 'Good Evening';
+        return AppLocalization.of(context)!.translate('good_evening')!;
       }
     }
 
@@ -500,7 +501,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Text(
                   authProvider.isAuth
                       ? "$greetings, $firstName"
-                      : "Login Now to CitizenApp",
+                      : AppLocalization.of(context)!
+                          .translate('login_now_to_citizenApp')!,
                   style: TextStyle(
                     overflow: TextOverflow.ellipsis,
                     color: Theme.of(context).colorScheme.primary,

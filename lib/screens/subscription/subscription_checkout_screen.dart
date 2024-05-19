@@ -256,7 +256,7 @@ class _SubscriptionCheckoutScreenState
                             height: 5,
                           ),
                           Text(
-                            "RM ${args.selectedPrice}",
+                            "RM ${args.selectedPrice.toStringAsFixed(2)}",
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 16.0,

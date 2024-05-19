@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lottie/lottie.dart';
@@ -22,6 +23,7 @@ class SendFeedbackScreen extends StatefulWidget {
 
 class _SendFeedbackScreenState extends State<SendFeedbackScreen> {
   late double _feedbackValue;
+  final int _messageTextFormFieldLengthLimit = 50;
 
   final FeedbackServices _feedbackServices = FeedbackServices();
   final GlobalDialogHelper _globalDialogHelper = GlobalDialogHelper();
@@ -242,6 +244,7 @@ class _SendFeedbackScreenState extends State<SendFeedbackScreen> {
                 ),
                 child: TextField(
                   controller: _textEditingController,
+                  maxLength: _messageTextFormFieldLengthLimit,
                   maxLines: 3,
                   keyboardType: TextInputType.multiline,
                   textInputAction: TextInputAction.done,
@@ -250,6 +253,10 @@ class _SendFeedbackScreenState extends State<SendFeedbackScreen> {
                   onChanged: (String value) {
                     print("Typed: $value");
                   },
+                  inputFormatters: [
+                    LengthLimitingTextInputFormatter(
+                        _messageTextFormFieldLengthLimit),
+                  ],
                   style: const TextStyle(
                     fontSize: 15.0,
                   ),

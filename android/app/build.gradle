@@ -129,3 +129,6 @@ dependencies {
     implementation(name: 'paylibrary-release', ext: 'aar')
 
 }
+
+// This must appear at the bottom of the file
+apply plugin: 'com.google.firebase.crashlytics'

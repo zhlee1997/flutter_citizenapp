@@ -62,6 +62,7 @@ class _SubscriptionPackageScreenState extends State<SubscriptionPackageScreen> {
         List filteredList = subscribeList
             .where((element) => element["subscribeCode"] == "Default")
             .toList();
+
         setState(() {
           oneMonthPrice = filteredList[0]["option_1"];
           threeMonthPrice = filteredList[0]["option_2"];

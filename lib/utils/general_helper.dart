@@ -93,7 +93,7 @@ class GeneralHelper {
     try {
       ApiBaseHelper _apiBaseHelper = ApiBaseHelper();
       var response = await _apiBaseHelper.get(
-        '/file/delCacheKey',
+        'file/delCacheKey',
         queryParameters: {
           'operType': operType,
         },

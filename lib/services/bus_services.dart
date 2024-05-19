@@ -12,7 +12,7 @@ class BusServices {
 
     try {
       var response = await _apiBaseHelper.get(
-        '/busRoute/queryList',
+        'busRoute/queryList',
         requireToken: false,
       );
       if (response['status'] == '200') {
@@ -37,7 +37,7 @@ class BusServices {
 
     try {
       var response = await _apiBaseHelper.get(
-        '/busStation/queryList',
+        'busStation/queryList',
         queryParameters: {
           "routeId": routeId,
         },
@@ -68,7 +68,7 @@ class BusServices {
   ) async {
     try {
       var response = await _apiBaseHelper.get(
-        '/busScheduleStation/queryList',
+        'busScheduleStation/queryList',
         queryParameters: {
           'routeId': routeId,
           'stationId': stationId,

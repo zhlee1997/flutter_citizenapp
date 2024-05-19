@@ -17,7 +17,10 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      return web;
+      throw UnsupportedError(
+        'DefaultFirebaseOptions have not been configured for web - '
+        'you can reconfigure this by running the FlutterFire CLI again.',
+      );
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -25,7 +28,10 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        return macos;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for macos - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -43,16 +49,6 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyAmi6tOxI2L4d7r27O5XbLGfg0hrkoWSu8',
-    appId: '1:664335931229:web:d9d1629aeb33a0ecbebab4',
-    messagingSenderId: '664335931229',
-    projectId: 'sioc2a',
-    authDomain: 'sioc2a.firebaseapp.com',
-    storageBucket: 'sioc2a.appspot.com',
-    measurementId: 'G-LNYEFVYHVP',
-  );
-
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyDLLp-cs2czzDmxfZ5dj2ckU7xrdPAiPxI',
     appId: '1:664335931229:android:6a7dc365f6515eafbebab4',
@@ -69,15 +65,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'sioc2a.appspot.com',
     androidClientId: '664335931229-tnn7rs9rspp3g65ko493r91hf1oqj2ia.apps.googleusercontent.com',
     iosBundleId: 'com.sioc.sma.flutterCitizenapp',
-  );
-
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyCISHKOIjGdq03w0HE3_eeO5DuMofu1tlY',
-    appId: '1:664335931229:ios:136c7bcd40d1dc4bbebab4',
-    messagingSenderId: '664335931229',
-    projectId: 'sioc2a',
-    storageBucket: 'sioc2a.appspot.com',
-    androidClientId: '664335931229-tnn7rs9rspp3g65ko493r91hf1oqj2ia.apps.googleusercontent.com',
-    iosBundleId: 'com.example.flutterCitizenapp.RunnerTests',
   );
 }

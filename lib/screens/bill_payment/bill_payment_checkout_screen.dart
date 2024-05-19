@@ -171,6 +171,8 @@ class _BillPaymentCheckoutScreenState extends State<BillPaymentCheckoutScreen> {
     final args = ModalRoute.of(context)!.settings.arguments
         as BillPaymentCheckoutScreenArguments;
 
+    double formattedString = double.parse(args.orderAmount!);
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Payment Checkout"),
@@ -245,7 +247,7 @@ class _BillPaymentCheckoutScreenState extends State<BillPaymentCheckoutScreen> {
                           ),
                           const Text("Payment Amount"),
                           Text(
-                            "RM ${args.orderAmount}",
+                            "RM ${formattedString.toStringAsFixed(2)}",
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 16.0,
