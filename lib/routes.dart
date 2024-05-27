@@ -20,6 +20,7 @@ import './screens/bill_payment/bill_payment_detail_screen.dart';
 import './screens/bill_payment/bill_payment_checkout_screen.dart';
 import './screens/bill_payment/bill_payment_result_screen.dart';
 import './screens/bill_payment/bill_payment_scan_screen.dart';
+import './screens/bill_payment/bill_payment_due_screen.dart';
 
 import './screens/announcement/announcement_detail_screen.dart';
 import './screens/announcement/citizen_announcements_screen.dart';
@@ -32,6 +33,7 @@ import './screens/subscription/subscription_map_screen.dart';
 import './screens/subscription/subscription_video_screen.dart';
 import './screens/subscription/subscription_list_screen.dart';
 import './screens/subscription/subscription_result_screen.dart';
+import './screens/subscription/subscription_due_screen.dart';
 
 import './screens/traffic/traffic_images_list_screen.dart';
 
@@ -49,6 +51,7 @@ import './screens/bus_schedule/bus_map_screen.dart';
 
 import './screens/home_screen.dart';
 import './screens/onboarding_screen.dart';
+import './screens/app_maintenance_screen.dart';
 
 final Map<String, WidgetBuilder> routes = <String, WidgetBuilder>{
   NewCaseScreen.routeName: (ctx) => const NewCaseScreen(),
@@ -92,4 +95,7 @@ final Map<String, WidgetBuilder> routes = <String, WidgetBuilder>{
   BusMapScreen.routeName: (ctx) => const BusMapScreen(),
   NotificationsDetailScreen.routeName: (ctx) =>
       const NotificationsDetailScreen(),
+  AppMaintenanceScreen.routeName: (ctx) => const AppMaintenanceScreen(),
+  BillPaymentDueScreen.routeName: (ctx) => const BillPaymentDueScreen(),
+  SubscriptionDueScreen.routeName: (ctx) => const SubscriptionDueScreen(),
 };

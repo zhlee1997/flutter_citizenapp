@@ -121,6 +121,7 @@ class AnnouncementProvider with ChangeNotifier {
       }
     } catch (e) {
       print("queryandSetMajorAnnouncementProvider error: ${e.toString()}");
+      rethrow;
     }
   }
 }

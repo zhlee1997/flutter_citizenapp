@@ -12,17 +12,22 @@ class LanguageProvider extends ChangeNotifier {
 
   /// Check local-saved language preference when app is opened
   Future<void> checkLanguage() async {
-    final prefs = await SharedPreferences.getInstance();
-    if (prefs.getString('language_code') != null) {
-      String? languageCode = prefs.getString('language_code');
-      String? countryCode = prefs.getString('country_code');
-      logger.d("checkLanguage: $languageCode");
-      _locale = Locale(languageCode!, countryCode);
-    } else {
-      logger.d("checkLanguage: null");
-      _locale = null;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      if (prefs.getString('language_code') != null) {
+        String? languageCode = prefs.getString('language_code');
+        String? countryCode = prefs.getString('country_code');
+        logger.d("checkLanguage: $languageCode");
+        _locale = Locale(languageCode!, countryCode);
+      } else {
+        logger.d("checkLanguage: null");
+        _locale = null;
+      }
+      notifyListeners();
+    } catch (e) {
+      print("checkLanguage error: ${e.toString()}");
+      rethrow;
     }
-    notifyListeners();
   }
 
   /// Change language preference when choosing different language

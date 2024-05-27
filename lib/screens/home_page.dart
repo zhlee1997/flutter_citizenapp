@@ -209,6 +209,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> getCitizenAnn() async {
+    // TODO: try-catch
+
     setState(() {
       citizenAnnouncements = [];
       citizenShimmer = true;
@@ -234,6 +236,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> getTourismAnn() async {
+    // TODO: try-catch
+
     setState(() {
       tourismAnnouncements = [];
       tourismShimmer = true;
@@ -323,11 +327,14 @@ class _HomePageState extends State<HomePage> {
     // TODO: If denied, ask again
     // TODO: If foreverDenied, need navigate to app settings
 
+    _globalDialogHelper.buildCircularProgressCenter(context: context);
     PermissionStatus permissionStatus = await Permission.location.request();
     if (permissionStatus.isDenied) {
+      Navigator.of(context).pop();
       Fluttertoast.showToast(msg: 'Location permission is required');
       return;
     } else if (permissionStatus.isPermanentlyDenied) {
+      Navigator.of(context).pop();
       await showDialog<bool>(
           context: context,
           builder: (BuildContext context) {
@@ -359,8 +366,10 @@ class _HomePageState extends State<HomePage> {
         .then((position) async {
       if ((latitude != 0 && longitude != 0) ||
           (position!.latitude != 0 && position.longitude != 0)) {
+        Navigator.of(context).pop();
         Navigator.of(context).pushNamed(EmergencyScreen.routeName);
       } else {
+        Navigator.of(context).pop();
         await showDialog<bool>(
             context: context,
             builder: (BuildContext context) {
@@ -388,6 +397,7 @@ class _HomePageState extends State<HomePage> {
       }
     }).catchError((error, stackTrace) {
       // when location service is disabled
+      Navigator.of(context).pop();
       print("_showEmergencyRequestLeftDialog error: $error");
       Fluttertoast.showToast(msg: error);
     });

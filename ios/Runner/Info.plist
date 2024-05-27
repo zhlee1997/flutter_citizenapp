@@ -54,11 +54,11 @@
 	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>Please allow this permision, to take photo for form submission</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>to capture user current location</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>to capture user current location</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>to capture user current location</string>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>to capture user current location</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>This permission is required for voice recording</string>
@@ -80,15 +80,6 @@
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
-	</array>
-	<key>UISupportedInterfaceOrientations~ipad</key>
-	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationPortraitUpsideDown</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 </dict>
 </plist>

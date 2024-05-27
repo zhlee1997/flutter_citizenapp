@@ -10,6 +10,7 @@ import '../config/app_config.dart';
 
 class ApiBaseHelper {
   final String _baseUrl = AppConfig.baseURL;
+  final cancelToken = CancelToken();
 
   Future<dynamic> get(
     String url, {
@@ -54,6 +55,7 @@ class ApiBaseHelper {
     String url, {
     dynamic data,
     Function(int, int)? onSendProgress,
+    CancelToken? cancelToken,
   }) async {
     final dio = Dio();
     final storage = new FlutterSecureStorage();
@@ -74,8 +76,14 @@ class ApiBaseHelper {
           },
         ),
         data: data,
+        cancelToken: cancelToken,
       );
+
       responseJson = _returnResponse(response);
+    } on DioException catch (error) {
+      if (CancelToken.isCancel(error)) {
+        print('Request canceled: ${error.message}');
+      }
     } catch (e) {
       print('postError: ${e.toString()}');
       // make it explicit that this function can throw exceptions

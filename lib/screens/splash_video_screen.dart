@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_citizenapp/screens/app_maintenance_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_vlc_player/flutter_vlc_player.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -76,6 +77,9 @@ class _SplashVideoScreenState extends State<SplashVideoScreen> {
                 .checkLanguage();
           } catch (e) {
             print("checkLanguage error: ${e.toString()}");
+            Navigator.of(context)
+                .pushReplacementNamed(AppMaintenanceScreen.routeName);
+            return;
           }
 
           try {
@@ -91,6 +95,9 @@ class _SplashVideoScreenState extends State<SplashVideoScreen> {
           } catch (e) {
             print(
                 "queryandSetMajorAnnouncementProvider error: ${e.toString()}");
+            Navigator.of(context)
+                .pushReplacementNamed(AppMaintenanceScreen.routeName);
+            return;
           }
 
           try {
@@ -130,6 +137,9 @@ class _SplashVideoScreenState extends State<SplashVideoScreen> {
                       .checkPushNotification();
             } catch (e) {
               print("checkPushNotification error: ${e.toString()}");
+              Navigator.of(context)
+                  .pushReplacementNamed(AppMaintenanceScreen.routeName);
+              return;
             }
 
             if (isPushNotificationEnabled) {
@@ -182,6 +192,9 @@ class _SplashVideoScreenState extends State<SplashVideoScreen> {
           } catch (e) {
             print(
                 "queryandSetMajorAnnouncementProvider error: ${e.toString()}");
+            Navigator.of(context)
+                .pushReplacementNamed(AppMaintenanceScreen.routeName);
+            return;
           }
 
           try {
@@ -227,7 +240,9 @@ class _SplashVideoScreenState extends State<SplashVideoScreen> {
               alignment: Alignment.bottomCenter,
               child: Container(
                 margin: EdgeInsets.only(bottom: screenSize.width * 0.2),
-                child: const CircularProgressIndicator(),
+                child: CircularProgressIndicator.adaptive(
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                ),
               ),
             )
         ],

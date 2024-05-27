@@ -248,7 +248,7 @@ class BillPaymentResultScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                )
+                ),
               ],
             ),
           ),

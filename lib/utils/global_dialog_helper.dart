@@ -139,6 +139,80 @@ class GlobalDialogHelper {
     );
   }
 
+  /// Displays circular progress dialog with text
+  ///
+  /// Receives [message] as the dialog message
+  Future<void> buildCircularProgressWithTextCenterWithCancel({
+    required BuildContext context,
+    required String message,
+    required VoidCallback cancelButtonFunc,
+  }) async {
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => WillPopScope(
+        child: Dialog(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Expanded(
+                          flex: 1,
+                          child: Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Expanded(
+                          flex: 3,
+                          child: Text(
+                            message,
+                            softWrap: true,
+                            style: const TextStyle(
+                              fontSize: 16,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    GestureDetector(
+                      onTap: () => cancelButtonFunc(),
+                      child: Container(
+                        padding: const EdgeInsets.only(bottom: 1.0),
+                        decoration: BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(
+                              width: 2.0,
+                              color: Colors.purple.shade900,
+                            ),
+                          ),
+                        ),
+                        child: Text('Cancel'),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        onWillPop: () async => false,
+      ),
+    );
+  }
+
   /// Displays loading spinner dialog
   Widget showLoadingSpinner() {
     return Center(
@@ -218,11 +292,16 @@ class GlobalDialogHelper {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (_) => const Dialog(
-        backgroundColor: Colors.transparent,
-        child: Center(
-          child: CircularProgressIndicator(),
-        ),
+      builder: (_) => const Stack(
+        children: [
+          Opacity(
+            opacity: 0.05,
+            child: ModalBarrier(dismissible: false, color: Colors.black),
+          ),
+          Center(
+            child: CircularProgressIndicator(),
+          ),
+        ],
       ),
     );
   }

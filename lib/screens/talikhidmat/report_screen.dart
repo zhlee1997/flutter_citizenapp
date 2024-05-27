@@ -8,6 +8,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:provider/provider.dart';
+import 'package:dio/dio.dart';
 
 import '../../utils/app_localization.dart';
 import '../../utils/global_dialog_helper.dart';
@@ -78,6 +79,8 @@ class _ReportScreenState extends State<ReportScreen> {
   /// Receives [pickedFile] as the source of image file information
   /// such as file path, file type and file name
   Future<void> _uploadFile(XFile pickedFile) async {
+    final cancelToken = CancelToken();
+
     File selectedImage = File(pickedFile.path);
     String path = pickedFile.path;
     String name = path.substring(path.lastIndexOf("/") + 1, path.length);
@@ -92,9 +95,10 @@ class _ReportScreenState extends State<ReportScreen> {
       return;
     }
 
-    GlobalDialogHelper().buildCircularProgressWithTextCenter(
+    GlobalDialogHelper().buildCircularProgressWithTextCenterWithCancel(
       context: context,
       message: AppLocalization.of(context)!.translate('upload_photo')!,
+      cancelButtonFunc: () => cancelToken.cancel("Request cancelled"),
     );
 
     FlutterImageCompress.compressWithFile(path, quality: 75)
@@ -105,6 +109,7 @@ class _ReportScreenState extends State<ReportScreen> {
           value,
           type,
           name,
+          cancelToken,
         );
         if (response["status"] == '200') {
           Navigator.of(context).pop();

@@ -1,4 +1,3 @@
-import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
@@ -16,6 +15,7 @@ class PrivacyPolicyScreen extends StatefulWidget {
 
 class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
   String _url = "";
+  var loadingPercentage = 0;
 
   @override
   void initState() {
@@ -39,12 +39,45 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalization.of(context)!.translate('privacy_poli')!),
+        bottom: loadingPercentage < 100
+            ? PreferredSize(
+                preferredSize:
+                    const Size.fromHeight(1.0), // Adjust the height as needed
+                child: LinearProgressIndicator(
+                  value: loadingPercentage / 100.0,
+                ),
+              )
+            : null,
       ),
       body: InAppWebView(
         initialUrlRequest: URLRequest(
           url: WebUri(
               "https://sarawak.gov.my/web/home/article_view/251/262/?id=251"),
         ),
+        onLoadStart: (InAppWebViewController controller, Uri? url) {
+          setState(() {
+            loadingPercentage = 0;
+          });
+        },
+        onProgressChanged: (_, int progress) {
+          setState(() {
+            loadingPercentage = progress;
+          });
+        },
+        onLoadStop: (InAppWebViewController controller, Uri? url) async {
+          setState(() {
+            loadingPercentage = 100;
+          });
+        },
+        onReceivedError: (
+          InAppWebViewController controller,
+          WebResourceRequest webResourceRequest,
+          WebResourceError webResourceError,
+        ) {
+          setState(() {
+            loadingPercentage = 100;
+          });
+        },
       ),
       // FutureBuilder(
       //     future: rootBundle.loadString(_url),

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 import 'package:flutter_markdown/flutter_markdown.dart';
@@ -17,6 +16,7 @@ class TermsAndConditionsScreen extends StatefulWidget {
 
 class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
   String _url = "";
+  var loadingPercentage = 0;
 
   @override
   void initState() {
@@ -40,12 +40,45 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalization.of(context)!.translate('terms_cond')!),
+        bottom: loadingPercentage < 100
+            ? PreferredSize(
+                preferredSize:
+                    const Size.fromHeight(1.0), // Adjust the height as needed
+                child: LinearProgressIndicator(
+                  value: loadingPercentage / 100.0,
+                ),
+              )
+            : null,
       ),
       body: InAppWebView(
         initialUrlRequest: URLRequest(
           url: WebUri(
               "https://sarawak.gov.my/web/home/article_view/253/289/?id=253"),
         ),
+        onLoadStart: (InAppWebViewController controller, Uri? url) {
+          setState(() {
+            loadingPercentage = 0;
+          });
+        },
+        onProgressChanged: (_, int progress) {
+          setState(() {
+            loadingPercentage = progress;
+          });
+        },
+        onLoadStop: (InAppWebViewController controller, Uri? url) async {
+          setState(() {
+            loadingPercentage = 100;
+          });
+        },
+        onReceivedError: (
+          InAppWebViewController controller,
+          WebResourceRequest webResourceRequest,
+          WebResourceError webResourceError,
+        ) {
+          setState(() {
+            loadingPercentage = 100;
+          });
+        },
       ),
       // FutureBuilder(
       //     future: rootBundle.loadString(_url),

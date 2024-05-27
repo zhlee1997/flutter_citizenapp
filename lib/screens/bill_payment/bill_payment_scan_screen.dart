@@ -105,9 +105,9 @@ class _BillPaymentScanScreenState extends State<BillPaymentScanScreen>
           fit: BoxFit.contain,
           scanWindow: scanWindow,
           controller: controller,
-          overlay: QRScannerOverlay(
-            overlayColour: Colors.black.withOpacity(0.4),
-          ),
+          overlayBuilder: (context, constraints) => QRScannerOverlay(
+                overlayColour: Colors.black.withOpacity(0.4),
+              ),
           errorBuilder: (
             BuildContext context,
             MobileScannerException error,

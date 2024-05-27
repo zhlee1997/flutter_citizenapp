@@ -250,7 +250,7 @@ class _BillPaymentDetailScreenState extends State<BillPaymentDetailScreen> {
                   Container(
                     margin: const EdgeInsets.only(top: 20.0),
                     child: Text(
-                      "Successful payment will be updated in your account within 24 hours.",
+                      "Successful payment will be reflected in your account within 24 hours.",
                       style: TextStyle(
                         fontSize: 16.0,
                         color: Colors.grey.shade600,

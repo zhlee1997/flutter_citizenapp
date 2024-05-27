@@ -19,6 +19,7 @@ class UploadServices {
     Uint8List? file,
     String type,
     String fileName,
+    CancelToken cancelToken,
   ) async {
     try {
       if (file != null) {
@@ -32,6 +33,7 @@ class UploadServices {
         var response = await _apiBaseHelper.post(
           "file/uploadFile",
           data: formData,
+          cancelToken: cancelToken,
         );
         print("uploadFile API success: $response");
         return response;

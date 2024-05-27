@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:month_year_picker/month_year_picker.dart';
+import 'package:month_picker_dialog/month_picker_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -132,7 +132,7 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
           IconButton(
             color: Theme.of(context).colorScheme.primary,
             onPressed: () {
-              showMonthYearPicker(
+              showMonthPicker(
                 context: context,
                 initialDate: DateTime.now(),
                 firstDate: DateTime(DateTime.now().year - 1),

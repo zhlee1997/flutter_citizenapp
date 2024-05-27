@@ -149,21 +149,19 @@ class _SubscriptionPackageScreenState extends State<SubscriptionPackageScreen> {
                     handleSelectPackage: handleSelectPackage,
                   ),
             const SizedBox(
-              height: 15,
+              height: 10,
             ),
             SizedBox(
               width: screenSize.width * 0.9,
-              height: Platform.isIOS
-                  ? screenSize.height * 0.05
-                  : screenSize.height * 0.05,
+              height: screenSize.height * 0.05,
               child: ElevatedButton(
                 onPressed: isChecked
                     ? () => _handleNavigateToPaymentCheckoutScreen()
                     : null,
                 child: const Text(
-                  "Continue",
+                  "Continue Payment",
                   style: TextStyle(
-                    letterSpacing: 1.0,
+                    letterSpacing: 0.5,
                     fontSize: 18,
                   ),
                 ),
@@ -241,13 +239,19 @@ class _SubscriptionPackageScreenState extends State<SubscriptionPackageScreen> {
                                             ),
                                           ],
                                         ));
-                              }))
+                              })),
+                        TextSpan(
+                            text:
+                                ". Successful payment will be reflected in your account within 24 hours."),
                       ],
                     )),
                   ),
                 ],
               ),
             ),
+            SizedBox(
+              height: 15.0,
+            )
           ],
         ),
       ),
