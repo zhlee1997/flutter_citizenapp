@@ -70,6 +70,13 @@ class EmergencyProvider with ChangeNotifier {
   }) {
     _category = category;
     _yourself = yourself;
+
+    // if chosen other than voice recording, make sure the recording variable is empty
+    if (category != 6) {
+      _audioPath = "";
+      _audioName = "";
+      _audioSuffix = "";
+    }
     notifyListeners();
   }
 

@@ -21,6 +21,8 @@ import '../screens/profile/profile_details_screen.dart';
 import '../screens/services/services_bottom_nav_screen.dart';
 import '../screens/subscription/subscription_result_screen.dart';
 import '../screens/bill_payment/bill_payment_result_screen.dart';
+import '../screens/bill_payment/bill_payment_due_screen.dart';
+import '../screens/subscription/subscription_due_screen.dart';
 import '../widgets/sarawakid/login_full_bottom_modal.dart';
 import "../utils/global_dialog_helper.dart";
 import '../utils/major_dialog_helper.dart';
@@ -62,33 +64,47 @@ class _HomeScreenState extends State<HomeScreen> {
     try {
       if (isSubscription) {
         // TODO: Temp skip auth checking
-        Provider.of<AuthProvider>(context, listen: false)
+        await Provider.of<AuthProvider>(context, listen: false)
             .queryUserInfoAfterSubscriptionProvider();
       }
+      // Receive obj (encryptedData) from SPay Global when redirect back to app
       String encryptedData = obj as String;
-      if (encryptedData.isEmpty) {
-        _globalDialogHelper.showAlertDialogWithSingleButton(
-          context: context,
-          title: "Payment Error",
-          message:
-              "There was an error while processing your payment. Please contact support or try again later",
+
+      /// if encryptedData is not empty
+      /// call decryptData() to get payment details
+      /// if success, navigate to Successful Payment Screen
+      ///
+      /// else, navigate to Due Payment Screen
+      if (encryptedData.isNotEmpty) {
+        print("encryptData: $encryptedData");
+        Map<String, dynamic> param = {"encryptData": encryptedData};
+        var response = await SubscriptionServices().decryptData(param);
+        Map<String, dynamic> payResult = {};
+        if (response['status'] == '200') {
+          payResult = response['data'];
+          Navigator.of(context).pop(true);
+
+          // when success, can look for extra data
+          // payResult['orderAmt'], payResult['orderDate']
+          // Navigate to transaction result page
+          jumpPayResult(payResult);
+        }
+      } else {
+        if (isSubscription) {
+          Navigator.of(context).pushNamedAndRemoveUntil(
+            SubscriptionDueScreen.routeName,
+            (route) => route.isFirst,
+          );
+          return;
+        }
+        Navigator.of(context).pushNamedAndRemoveUntil(
+          BillPaymentDueScreen.routeName,
+          (route) => route.isFirst,
         );
         return;
       }
-      print("encryptData: $encryptedData");
-      Map<String, dynamic> param = {"encryptData": encryptedData};
-      var response = await SubscriptionServices().decryptData(param);
-      Map<String, dynamic> payResult = {};
-      if (response['status'] == '200') {
-        payResult = response['data'];
-        Navigator.of(context).pop(true);
-
-        // when success, can look for extra data
-        // payResult['orderAmt'], payResult['orderDate']
-        // Navigate to transaction result page
-        jumpPayResult(payResult);
-      }
     } catch (e) {
+      print("_onData error: ${e.toString()}");
       throw e;
     }
   }

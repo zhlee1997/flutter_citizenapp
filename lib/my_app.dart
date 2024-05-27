@@ -1,12 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:month_year_picker/month_year_picker.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import './screens/home_screen.dart';
@@ -121,8 +118,6 @@ class MyApp extends StatelessWidget {
               GlobalWidgetsLocalizations.delegate,
               // Built-in localization of basic text for Cupertino widgets
               GlobalCupertinoLocalizations.delegate,
-              // AppLocalizations.delegate,
-              MonthYearPickerLocalizations.delegate,
             ],
             localeResolutionCallback: (locale, supportedLocales) {
               // Check if the current device locale is supported

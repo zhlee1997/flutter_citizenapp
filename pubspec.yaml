@@ -16,7 +16,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.0+9
+version: 1.0.0+10
 
 environment:
   sdk: ">=3.2.2 <4.0.0"
@@ -39,17 +39,16 @@ dependencies:
   provider: ^6.1.1
   shared_preferences: ^2.2.2
   path_provider: ^2.1.1
-  month_year_picker: ^0.3.0+1
   flutter_vlc_player: ^7.4.1
   uuid: ^4.3.3
   http: ^1.2.0
   lottie: ^3.0.0
-  audioplayers: ^5.2.1
-  google_maps_flutter: ^2.5.3
+  audioplayers: ^6.0.0
+  google_maps_flutter: ^2.6.1
   fluttertoast: ^8.2.4
   flutter_inappwebview: ^6.0.0
   flutter_secure_storage: ^9.0.0
-  flutter_local_notifications: ^16.3.2
+  flutter_local_notifications: ^17.1.2
   firebase_messaging: ^14.7.15
   firebase_core: ^2.25.4
   url_launcher: ^6.2.4
@@ -60,20 +59,20 @@ dependencies:
   flutter_svg: ^2.0.10+1
   cached_network_image: ^3.3.1
   flutter_linkify: ^6.0.0
-  package_info_plus: ^5.0.1
-  flutter_markdown: ^0.6.20
+  package_info_plus: ^8.0.0
+  flutter_markdown: ^0.7.1
   flutter_rating_bar: ^4.0.1
   slide_to_act: ^2.0.2
   flutter_native_splash: ^2.3.10
   introduction_screen: ^3.1.12
   permission_handler: ^11.3.0
-  geolocator: ^11.0.0
+  geolocator: ^12.0.0
   record: ^5.0.4
   stop_watch_timer: ^3.1.0+4
-  geocoding: ^2.2.0
+  geocoding: ^3.0.0
   http_parser: ^4.0.2
   flutter_spinkit: ^5.2.0
-  photo_view: ^0.14.0
+  photo_view: ^0.15.0
   fijkplayer: ^0.11.0
   installed_apps: ^1.5.0
   dio: ^5.4.1
@@ -81,12 +80,13 @@ dependencies:
   flutter_polyline_points: ^2.0.0
   flutter_slidable: ^3.1.0
   audio_waveforms: ^1.0.5
-  mobile_scanner: ^4.0.1
+  mobile_scanner: ^5.1.1
   ffmpeg_kit_flutter: ^6.0.3
   logger: ^2.2.0
-  device_info_plus: ^9.1.2
+  device_info_plus: ^10.1.0
   firebase_crashlytics: ^3.4.18
   firebase_analytics: ^10.8.9
+  month_picker_dialog: ^2.12.0
 
 dev_dependencies:
   flutter_test:
@@ -97,7 +97,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^3.0.1
+  flutter_lints: ^4.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -169,6 +169,8 @@ flutter:
     - assets/images/svg/undraw_bus_stop.svg
     - assets/images/svg/undraw_online.svg
     - assets/images/svg/undraw_page_not_found.svg
+    - assets/images/svg/undraw_bug_fixing.svg
+    - assets/images/svg/undraw_pending_payment.svg
 
     # images/svg/onboarding
     - assets/images/svg/onboarding/

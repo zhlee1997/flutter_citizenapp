@@ -60,15 +60,20 @@ class SettingsProvider with ChangeNotifier {
 
   /// Check last-saved settings preference when app is opened
   Future<bool> checkPushNotification() async {
-    final prefs = await SharedPreferences.getInstance();
-    if (prefs.getBool('enablePushNotification') != null) {
-      _isPushNotificationEnabled = prefs.getBool('enablePushNotification')!;
-      logger.d('checkPushNotification: $_isPushNotificationEnabled');
-    } else {
-      _isPushNotificationEnabled = true;
-      logger.d('checkPushNotification: null');
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      if (prefs.getBool('enablePushNotification') != null) {
+        _isPushNotificationEnabled = prefs.getBool('enablePushNotification')!;
+        logger.d('checkPushNotification: $_isPushNotificationEnabled');
+      } else {
+        _isPushNotificationEnabled = true;
+        logger.d('checkPushNotification: null');
+      }
+      notifyListeners();
+      return _isPushNotificationEnabled;
+    } catch (e) {
+      print("checkPushNotification error: ${e.toString()}");
+      rethrow;
     }
-    notifyListeners();
-    return _isPushNotificationEnabled;
   }
 }
