@@ -142,8 +142,7 @@ class EmergencyCaseBottomModal extends StatelessWidget {
                       caseData.reportedCaseDetail!.eventStatus!),
                   CaseDetailBottomBar(
                     label: "Case Number",
-                    value:
-                        caseData.reportedCaseDetail!.eventId!.substring(0, 10),
+                    value: caseData.reportedCaseDetail!.eventCode!,
                   ),
                   // CaseDetailBottomBar(
                   //   label: AppLocalization.of(context)!.translate('case_s')!,

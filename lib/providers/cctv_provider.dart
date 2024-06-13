@@ -89,6 +89,8 @@ class CCTVProvider with ChangeNotifier {
   Future<List<CCTVOtherModel>> queryNearbyDevicesListProvider(
       Map<String, dynamic> data) async {
     try {
+      // everytime clear out the old list
+      _nearbyOtherCameraList = [];
       var response = await CCTVServices().queryNearbyDevicesList(data);
       if (response['status'] == 200) {
         if (response['obj'].length > 0) {

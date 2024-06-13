@@ -105,9 +105,23 @@ class _RecordingBottomModalState extends State<RecordingBottomModal> {
         await recorderController.stop(); // Stop recording and get the path
     print("audio path: $path");
     if (path != null) {
-      _convertFile(path).then((output) => _uploadRecording(output).then((_) =>
+      _convertFile(path).then((output) async {
+        try {
+          await _uploadRecording(output);
           // pop() the screen and currentStep +1 to go next step
-          widget.handleProceedNext()));
+          widget.handleProceedNext();
+        } catch (e) {
+          // pop twice to close the bottom modal when upload file
+          Navigator.of(context).pop();
+          Navigator.of(context).pop();
+          print("_uploadRecording error: ${e.toString()}");
+        }
+      }).catchError((error, stackTrace) {
+        // pop twice to close the bottom modal when upload file
+        Navigator.of(context).pop();
+        Navigator.of(context).pop();
+        print("_convertFile error: ${error.toString()}");
+      });
     }
   }
 
@@ -160,6 +174,7 @@ class _RecordingBottomModalState extends State<RecordingBottomModal> {
       Fluttertoast.showToast(
         msg: AppLocalization.of(context)!.translate('upload_fail')!,
       );
+      rethrow;
     }
   }
 
@@ -282,7 +297,7 @@ class _RecordingBottomModalState extends State<RecordingBottomModal> {
                 )
               ],
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             if (!isRecording)
@@ -345,9 +360,14 @@ class _RecordingBottomModalState extends State<RecordingBottomModal> {
                   Expanded(
                     child: IconButton.filled(
                       onPressed: () async {
-                        await stopRecordingAndProceed();
+                        try {
+                          await stopRecordingAndProceed();
+                        } catch (e) {
+                          print(
+                              "stopRecordingAndProceed error: ${e.toString()}");
+                        }
                       },
-                      icon: Icon(
+                      icon: const Icon(
                         Icons.send,
                         color: Colors.white,
                       ),

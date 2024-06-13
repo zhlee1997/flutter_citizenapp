@@ -121,20 +121,87 @@ class _MapBottomSheetWidgetState extends State<MapBottomSheetWidget> {
     final screenSize = MediaQuery.of(context).size;
     final CCTVModelDetail? cctvDetail = cctvProvider.cctvModelDetail;
 
+    // if imageUrl is empty, show default SIOC Logo
     if (cctvProvider.imageUrl.isEmpty) {
-      return Center(
+      return SingleChildScrollView(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              height: 150,
-              child: SvgPicture.asset('assets/images/svg/undraw_online.svg'),
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Image.asset(
+              "assets/images/icon/sioc.png",
+              width: double.infinity,
+              height: screenSize.height * 0.25,
+              fit: BoxFit.fill,
+            ),
+            Container(
+              margin: const EdgeInsets.only(
+                top: 20.0,
+                left: 20.0,
+                right: 20.0,
+                bottom: 10.0,
+              ),
+              // width: double.infinity,
+              child: Text(
+                cctvDetail!.location,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.only(
+                left: 20.0,
+                right: 20.0,
+                bottom: 5.0,
+              ),
+              // width: double.infinity,
+              child: Text(
+                cctvDetail.name,
+                textAlign: TextAlign.center,
+              ),
             ),
             SizedBox(
-              height: 20,
+              width: screenSize.width * 0.9,
+              child: ElevatedButton(
+                onPressed: () async {
+                  timer.cancel();
+                  Fluttertoast.cancel();
+                  Navigator.of(context).pop();
+                  Navigator.pushNamed(
+                    context,
+                    SubscriptionVideoScreen.routeName,
+                    arguments: SubscriptionVideoScreenArguments(
+                      cctvDetail.id,
+                      cctvDetail.liveUrl,
+                      cctvDetail.name,
+                      cctvDetail.location,
+                      _distanceInBetween,
+                      widget.cctvLatitude,
+                      widget.cctvLongitude,
+                    ),
+                  );
+                },
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(
+                      Theme.of(context).colorScheme.secondary),
+                ),
+                child: Text(
+                  AppLocalization.of(context)!.translate('play_now')!,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
             ),
-            Text(AppLocalization.of(context)!
-                .translate('camera_is_not_available')!)
+            Text(
+              "Each video session is ${subscriptionProvider.playbackDuration} minutes",
+              style: Theme.of(context).textTheme.labelSmall,
+            ),
+            const SizedBox(
+              height: 20.0,
+            )
           ],
         ),
       );
@@ -185,6 +252,7 @@ class _MapBottomSheetWidgetState extends State<MapBottomSheetWidget> {
                   // width: double.infinity,
                   child: Text(
                     cctvDetail!.location,
+                    textAlign: TextAlign.center,
                     style: const TextStyle(
                       fontSize: 18.0,
                       fontWeight: FontWeight.bold,
@@ -247,9 +315,11 @@ class _MapBottomSheetWidgetState extends State<MapBottomSheetWidget> {
             ),
           );
         } else {
+          // if null (timer reached), still can play video button
           if (imageByteData == null) {
             return SingleChildScrollView(
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   Center(
                     child: SizedBox(
@@ -257,8 +327,7 @@ class _MapBottomSheetWidgetState extends State<MapBottomSheetWidget> {
                       height: screenSize.height * 0.25,
                       child: Center(
                         child: Text(
-                          AppLocalization.of(context)!
-                              .translate('camera_is_not_available')!,
+                          "Camera image not available",
                           textAlign: TextAlign.center,
                         ),
                       ),
@@ -271,11 +340,12 @@ class _MapBottomSheetWidgetState extends State<MapBottomSheetWidget> {
                       right: 20.0,
                       bottom: 10.0,
                     ),
-                    width: double.infinity,
+                    // width: double.infinity,
                     child: Text(
                       cctvDetail!.location,
+                      textAlign: TextAlign.center,
                       style: TextStyle(
-                        fontSize: Platform.isIOS ? 18.0 : 18.0,
+                        fontSize: 18.0,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -284,22 +354,39 @@ class _MapBottomSheetWidgetState extends State<MapBottomSheetWidget> {
                     margin: const EdgeInsets.only(
                       left: 20.0,
                       right: 20.0,
-                      bottom: 20.0,
+                      bottom: 5.0,
                     ),
-                    width: double.infinity,
+                    // width: double.infinity,
                     child: Text(
                       cctvDetail.name,
                       softWrap: true,
-                      style: TextStyle(
-                        fontSize: Platform.isIOS ? 18.0 : 15.0,
-                      ),
                     ),
                   ),
                   SizedBox(
                     width: screenSize.width * 0.9,
-                    height: screenSize.height * 0.06,
+                    // height: screenSize.height * 0.06,
                     child: ElevatedButton(
-                      onPressed: null,
+                      onPressed: () async {
+                        timer.cancel();
+                        Fluttertoast.cancel();
+                        Navigator.of(context).pop();
+                        Navigator.pushNamed(
+                          context,
+                          SubscriptionVideoScreen.routeName,
+                          arguments: SubscriptionVideoScreenArguments(
+                              cctvDetail.id,
+                              cctvDetail.liveUrl,
+                              cctvDetail.name,
+                              cctvDetail.location,
+                              _distanceInBetween,
+                              widget.cctvLatitude,
+                              widget.cctvLongitude),
+                        );
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(
+                            Theme.of(context).colorScheme.secondary),
+                      ),
                       child: Text(
                         AppLocalization.of(context)!.translate('play_now')!,
                         style: TextStyle(
@@ -311,6 +398,9 @@ class _MapBottomSheetWidgetState extends State<MapBottomSheetWidget> {
                   Text(
                     "Each video session is ${subscriptionProvider.playbackDuration} minutes",
                     style: Theme.of(context).textTheme.labelSmall,
+                  ),
+                  const SizedBox(
+                    height: 20.0,
                   ),
                 ],
               ),
@@ -333,8 +423,7 @@ class _MapBottomSheetWidgetState extends State<MapBottomSheetWidget> {
                       width: double.infinity,
                       height: screenSize.height * 0.25,
                       child: Center(
-                        child: Text(AppLocalization.of(context)!
-                            .translate('camera_is_not_available')!),
+                        child: Text("Camera image not available"),
                       ),
                     ),
                   ),
@@ -349,6 +438,7 @@ class _MapBottomSheetWidgetState extends State<MapBottomSheetWidget> {
                   // width: double.infinity,
                   child: Text(
                     cctvDetail!.location,
+                    textAlign: TextAlign.center,
                     style: const TextStyle(
                       fontSize: 18.0,
                       fontWeight: FontWeight.bold,

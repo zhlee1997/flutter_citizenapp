@@ -86,17 +86,15 @@ class _ListBottomSheetWidgetState extends State<ListBottomSheetWidget> {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Image.network(
-            widget.imageUrl,
+            widget.imageUrl + "12",
             width: double.infinity,
             height: screenSize.height * 0.25,
             fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) => SizedBox(
+            errorBuilder: (context, error, stackTrace) => Image.asset(
+              "assets/images/icon/sioc.png",
               width: double.infinity,
               height: screenSize.height * 0.25,
-              child: Center(
-                child: Text(AppLocalization.of(context)!
-                    .translate('camera_is_not_available')!),
-              ),
+              fit: BoxFit.fill,
             ),
           ),
           Container(
@@ -109,6 +107,7 @@ class _ListBottomSheetWidgetState extends State<ListBottomSheetWidget> {
             // width: double.infinity,
             child: Text(
               widget.cctvLocation,
+              textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 18.0,
                 fontWeight: FontWeight.bold,
@@ -156,10 +155,12 @@ class _ListBottomSheetWidgetState extends State<ListBottomSheetWidget> {
                       );
                     }
                   : null,
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(
-                    Theme.of(context).colorScheme.secondary),
-              ),
+              style: cctvDetail != null && cctvDetail.liveUrl.isNotEmpty
+                  ? ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(
+                          Theme.of(context).colorScheme.secondary),
+                    )
+                  : null,
               child: Text(
                 AppLocalization.of(context)!.translate('play_now')!,
                 style: const TextStyle(

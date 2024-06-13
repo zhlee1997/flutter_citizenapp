@@ -76,6 +76,7 @@ class CaseDetailModel {
   String? delFlag;
   String? eventDesc;
   String? eventId;
+  String? eventCode;
   String? eventLatitude;
   String? eventLevel;
   String? eventLocation;
@@ -99,6 +100,7 @@ class CaseDetailModel {
     this.delFlag,
     this.eventDesc,
     this.eventId,
+    this.eventCode,
     this.eventLatitude,
     this.eventLevel,
     this.eventLocation,
@@ -123,6 +125,7 @@ class CaseDetailModel {
     delFlag = json['delFlag'];
     eventDesc = json['eventDesc'];
     eventId = json['eventId'];
+    eventCode = json['eventCode'];
     eventLatitude = json['eventLatitude'];
     eventLevel = json['eventLevel'];
     eventLocation = json['eventLocation'];
@@ -148,6 +151,7 @@ class CaseDetailModel {
     data['delFlag'] = delFlag;
     data['eventDesc'] = eventDesc;
     data['eventId'] = eventId;
+    data['eventCode'] = eventCode;
     data['eventLatitude'] = eventLatitude;
     data['eventLevel'] = eventLevel;
     data['eventLocation'] = eventLocation;

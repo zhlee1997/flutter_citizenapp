@@ -52,7 +52,7 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
       body: InAppWebView(
         initialUrlRequest: URLRequest(
           url: WebUri(
-              "https://sarawak.gov.my/web/home/article_view/251/262/?id=251"),
+              "https://sites.google.com/view/citizenapp-privacy-policy/home"),
         ),
         onLoadStart: (InAppWebViewController controller, Uri? url) {
           setState(() {

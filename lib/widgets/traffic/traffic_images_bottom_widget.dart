@@ -1,11 +1,9 @@
-import 'dart:io';
 import 'dart:async';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 
@@ -105,22 +103,49 @@ class _TrafficImagesBottomWidgetState extends State<TrafficImagesBottomWidget> {
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
 
+    // if imageUrl is empty, show default SIOC Logo
     if (cctvProvider.imageUrl.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              height: 150,
-              child: SvgPicture.asset('assets/images/svg/undraw_online.svg'),
+      return Column(
+        children: [
+          Image.asset(
+            "assets/images/icon/sioc.png",
+            width: double.infinity,
+            height: screenSize.height * 0.3,
+            fit: BoxFit.fill,
+          ),
+          Container(
+            margin: const EdgeInsets.symmetric(
+              horizontal: 20.0,
+              vertical: 10.0,
             ),
-            SizedBox(
-              height: 20,
+            width: double.infinity,
+            child: Text(
+              widget.cctvModelDetail.location,
+              style: const TextStyle(
+                fontSize: 16.0,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-            Text(AppLocalization.of(context)!
-                .translate('camera_is_not_available')!)
-          ],
-        ),
+          ),
+          Container(
+            margin: const EdgeInsets.symmetric(
+              horizontal: 20.0,
+            ),
+            width: double.infinity,
+            child: Row(
+              children: <Widget>[
+                const Icon(Icons.timelapse_rounded),
+                const SizedBox(
+                  width: 10,
+                ),
+                const Text(
+                  'Last Check At: ',
+                ),
+                Text(returnCurrentTime)
+              ],
+            ),
+          ),
+        ],
       );
     }
 
@@ -132,9 +157,7 @@ class _TrafficImagesBottomWidgetState extends State<TrafficImagesBottomWidget> {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return SizedBox(
                   width: double.infinity,
-                  height: Platform.isIOS
-                      ? screenSize.height * 0.3
-                      : screenSize.height * 0.3,
+                  height: screenSize.height * 0.3,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
@@ -164,13 +187,10 @@ class _TrafficImagesBottomWidgetState extends State<TrafficImagesBottomWidget> {
                   return Center(
                     child: SizedBox(
                       width: double.infinity,
-                      height: Platform.isIOS
-                          ? screenSize.height * 0.3
-                          : screenSize.height * 0.3,
+                      height: screenSize.height * 0.3,
                       child: Center(
                         child: Text(
-                          AppLocalization.of(context)!
-                              .translate('camera_is_not_available')!,
+                          "Camera image not available",
                           textAlign: TextAlign.center,
                         ),
                       ),
@@ -183,18 +203,13 @@ class _TrafficImagesBottomWidgetState extends State<TrafficImagesBottomWidget> {
                   child: Image.memory(
                     watermarkImage,
                     width: double.infinity,
-                    height: Platform.isIOS
-                        ? screenSize.height * 0.3
-                        : screenSize.height * 0.3,
+                    height: screenSize.height * 0.3,
                     fit: BoxFit.fill,
                     errorBuilder: (context, error, stackTrace) => SizedBox(
                       width: double.infinity,
-                      height: Platform.isIOS
-                          ? screenSize.height * 0.3
-                          : screenSize.height * 0.3,
+                      height: screenSize.height * 0.3,
                       child: Center(
-                        child: Text(AppLocalization.of(context)!
-                            .translate('camera_is_not_available')!),
+                        child: Text("Camera image not available"),
                       ),
                     ),
                   ),
