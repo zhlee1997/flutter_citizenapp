@@ -339,7 +339,8 @@ class _EmergencyCasesScreenState extends State<EmergencyCasesScreen> {
                                               _pendingCases[index].eventTime,
                                           caseStatus:
                                               _pendingCases[index].eventStatus,
-                                          caseCategory: _cases[index].eventType,
+                                          caseCategory:
+                                              _pendingCases[index].eventType,
                                           caseType: 2,
                                         );
                                       }
@@ -386,7 +387,8 @@ class _EmergencyCasesScreenState extends State<EmergencyCasesScreen> {
                                               _resolvedCases[index].eventTime,
                                           caseStatus:
                                               _resolvedCases[index].eventStatus,
-                                          caseCategory: _cases[index].eventType,
+                                          caseCategory:
+                                              _resolvedCases[index].eventType,
                                           caseType: 2,
                                         );
                                       }

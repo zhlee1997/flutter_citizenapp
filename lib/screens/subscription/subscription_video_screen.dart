@@ -40,6 +40,7 @@ class _SubscriptionVideoScreenState extends State<SubscriptionVideoScreen>
   List<CCTVOtherModel> _CCTVOtherModelList = [];
   late CCTVModelDetail? otherCCTVDetail;
   late StreamSubscription _videoStreamSubscription;
+  late bool _isLoading;
 
   double _endLatitude = 0;
   double _endLongitude = 0;
@@ -149,9 +150,14 @@ class _SubscriptionVideoScreenState extends State<SubscriptionVideoScreen>
       _CCTVOtherModelList =
           await Provider.of<CCTVProvider>(context, listen: false)
               .queryNearbyDevicesListProvider(data);
-      setState(() {});
+      setState(() {
+        _isLoading = false;
+      });
     } catch (e) {
       print("getOtherCamerasList error: ${e.toString()}");
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -186,7 +192,9 @@ class _SubscriptionVideoScreenState extends State<SubscriptionVideoScreen>
     try {
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
       GlobalDialogHelper().buildCircularProgressWithTextCenter(
-          context: context, message: "Loading camera...");
+        context: context,
+        message: "Loading camera...",
+      );
       String? liveUrl = await getOtherLiveUrl(cctvOtherModel);
 
       if (liveUrl == null || liveUrl.isEmpty) {
@@ -227,6 +235,7 @@ class _SubscriptionVideoScreenState extends State<SubscriptionVideoScreen>
   void initState() {
     // TODO: implement initState
     super.initState();
+    _isLoading = true;
     tabController = TabController(length: 2, vsync: this);
     SchedulerBinding.instance.addPostFrameCallback((_) {
       // Accessing the arguments passed to the modal route
@@ -329,8 +338,8 @@ class _SubscriptionVideoScreenState extends State<SubscriptionVideoScreen>
                   text: "Camera Details",
                 ),
                 Tab(
-                  icon: Icon(Icons.more_horiz_outlined),
-                  text: "Other Cameras",
+                  icon: Icon(Icons.linked_camera_outlined),
+                  text: "Camera Nearby",
                 ),
               ],
               controller: tabController,
@@ -406,12 +415,15 @@ class _SubscriptionVideoScreenState extends State<SubscriptionVideoScreen>
                               ),
                             ],
                           ),
+                          const SizedBox(
+                            height: 15,
+                          ),
                           Column(
                             children: [
                               Container(
                                 width: screenSize.width * 0.9,
                                 margin: const EdgeInsets.only(
-                                  bottom: 10.0,
+                                  bottom: 15.0,
                                 ),
                                 padding: const EdgeInsets.all(15.0),
                                 decoration: BoxDecoration(
@@ -453,9 +465,9 @@ class _SubscriptionVideoScreenState extends State<SubscriptionVideoScreen>
                                       height: 5.0,
                                     ),
                                     const Text(
-                                      "You can open the Google Maps if installed. Otherwise, open map browser to pinpoint the camera location.",
+                                      "You can open the Google Maps to pinpoint the camera location.",
                                       style: TextStyle(
-                                        fontSize: 13.0,
+                                        fontSize: 12.0,
                                       ),
                                     ),
                                   ],
@@ -478,70 +490,73 @@ class _SubscriptionVideoScreenState extends State<SubscriptionVideoScreen>
                       ),
                     ),
                   ),
-                  _CCTVOtherModelList.isEmpty
-                      ? Container(
-                          margin:
-                              EdgeInsets.only(top: screenSize.height * 0.05),
-                          child: Column(
-                            children: <Widget>[
-                              SvgPicture.asset(
-                                "assets/images/svg/no_data.svg",
-                                width: screenSize.width * 0.5,
-                                height: screenSize.width * 0.5,
-                                semanticsLabel: 'No Data Logo',
+                  _isLoading
+                      ? GlobalDialogHelper().showLoadingSpinner()
+                      : _CCTVOtherModelList.isEmpty
+                          ? Container(
+                              margin: EdgeInsets.only(
+                                top: screenSize.height * 0.05,
                               ),
-                              const SizedBox(
-                                height: 10.0,
+                              child: Column(
+                                children: <Widget>[
+                                  SvgPicture.asset(
+                                    "assets/images/svg/no_data.svg",
+                                    width: screenSize.width * 0.4,
+                                    height: screenSize.width * 0.4,
+                                    semanticsLabel: 'No Data Logo',
+                                  ),
+                                  const SizedBox(
+                                    height: 10.0,
+                                  ),
+                                  const Text("No camera nearby"),
+                                ],
                               ),
-                              const Text("No other cameras"),
-                            ],
-                          ),
-                        )
-                      : ListView.builder(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 5.0,
-                            vertical: 5.0,
-                          ),
-                          shrinkWrap: true,
-                          itemCount: _CCTVOtherModelList.length,
-                          itemBuilder: ((context, index) {
-                            return ListTile(
-                              onTap: () => onSelectOtherCamera(
-                                  _CCTVOtherModelList[index]),
-                              title: Text(
-                                _CCTVOtherModelList[index].location,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                ),
+                            )
+                          : ListView.builder(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 5.0,
+                                vertical: 5.0,
                               ),
-                              subtitle: Text(
-                                _CCTVOtherModelList[index].deviceName,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w300,
-                                ),
-                              ),
-                              trailing: SizedBox(
-                                width: screenSize.width * 0.275,
-                                height: screenSize.width * 0.2,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(5.0),
-                                  child: Image.network(
-                                    _CCTVOtherModelList[index].picUrl,
-                                    fit: BoxFit.cover,
-                                    errorBuilder:
-                                        (context, error, stackTrace) =>
-                                            Image.asset(
-                                      "assets/images/icon/sioc.png",
-                                      fit: BoxFit.fill,
+                              shrinkWrap: true,
+                              itemCount: _CCTVOtherModelList.length,
+                              itemBuilder: ((context, index) {
+                                return ListTile(
+                                  onTap: () => onSelectOtherCamera(
+                                      _CCTVOtherModelList[index]),
+                                  title: Text(
+                                    _CCTVOtherModelList[index].location,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w500,
                                     ),
                                   ),
-                                ),
-                              ),
-                            );
-                          }),
-                        )
+                                  subtitle: Text(
+                                    _CCTVOtherModelList[index].deviceName,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w300,
+                                    ),
+                                  ),
+                                  trailing: SizedBox(
+                                    width: screenSize.width * 0.275,
+                                    height: screenSize.width * 0.2,
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(5.0),
+                                      child: Image.network(
+                                        _CCTVOtherModelList[index].picUrl,
+                                        fit: BoxFit.cover,
+                                        errorBuilder:
+                                            (context, error, stackTrace) =>
+                                                Image.asset(
+                                          "assets/images/icon/sioc.png",
+                                          fit: BoxFit.fill,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }),
+                            )
                 ],
               ),
             ),

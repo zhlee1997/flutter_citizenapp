@@ -36,7 +36,8 @@ class ReportScreen extends StatefulWidget {
 class _ReportScreenState extends State<ReportScreen> {
   final _messageController = TextEditingController();
   final picker = ImagePicker();
-  final int _messageTextFormFieldLengthLimit = 75;
+  // change from 75 char to 500 at SMA Request (11/06/2024, Wilson)
+  final int _messageTextFormFieldLengthLimit = 500;
 
   List<Map> _images = [];
 
@@ -49,7 +50,6 @@ class _ReportScreenState extends State<ReportScreen> {
     setState(() {
       _images.removeWhere((img) => img['file'].path == imagePath);
     });
-    // TODO: new added provider for images
     Provider.of<TalikhidmatProvider>(context, listen: false).removeAttachement(
       attachment: uploadPath,
     );

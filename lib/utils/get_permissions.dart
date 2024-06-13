@@ -99,6 +99,7 @@ class GetPermissions {
           return false;
         }
       } else {
+        // more than Android API Level 32
         PermissionStatus permissionStatus = await Permission.photos.status;
 
         if (permissionStatus.isGranted) {
