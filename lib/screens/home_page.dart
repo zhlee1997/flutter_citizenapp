@@ -13,6 +13,7 @@ import 'package:intl/intl.dart';
 import '../screens/emergency/emergency_screen.dart';
 import '../screens/talikhidmat/new_case_screen.dart';
 import '../screens/bill_payment/bill_payment_screen.dart';
+import '../screens/bill_payment/bill_payment_screen_new.dart';
 import '../screens/announcement/citizen_announcements_screen.dart';
 import '../widgets/sarawakid/login_full_bottom_modal.dart';
 import '../widgets/subscription/subscription_preview_dialog.dart';
@@ -518,6 +519,7 @@ class _HomePageState extends State<HomePage> {
   void _handleNavigateToPayment(BuildContext context) =>
       Provider.of<AuthProvider>(context, listen: false).isAuth
           ? Navigator.of(context).pushNamed(BillPaymentScreen.routeName)
+          // ? Navigator.of(context).pushNamed(BillPaymentScreenNew.routeName)
           : _handleFullScreenLoginBottomModal(context);
 
   void _handleNavigateToCitizenAnnouncements(BuildContext context) =>

@@ -242,7 +242,7 @@ class _SubscriptionPackageScreenState extends State<SubscriptionPackageScreen> {
                               })),
                         TextSpan(
                             text:
-                                ". Successful payment will be reflected in your account within 24 hours."),
+                                ". Kindly note that successful payment will be reflected in your account within 24 hours."),
                       ],
                     )),
                   ),
