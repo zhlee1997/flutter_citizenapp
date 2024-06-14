@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:installed_apps/installed_apps.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:appcheck/appcheck.dart';
 
 import '../utils/api_base_helper.dart';
 import '../config/app_config.dart';
@@ -69,8 +69,8 @@ class GeneralHelper {
         return iosAppInstalled;
       } else {
         bool? androidAppInstalled =
-            await InstalledApps.isAppInstalled(androidPackageName);
-        return androidAppInstalled ?? false;
+            await AppCheck.isAppInstalled(androidPackageName);
+        return androidAppInstalled;
       }
     } catch (e) {
       print("checkAppInstalled fail: ${e.toString()}");

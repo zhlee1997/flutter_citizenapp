@@ -16,6 +16,7 @@ import './screens/emergency/emergency_screen.dart';
 import './screens/emergency/recording_screen.dart';
 
 import './screens/bill_payment/bill_payment_screen.dart';
+import './screens/bill_payment/bill_payment_screen_new.dart';
 import './screens/bill_payment/bill_payment_detail_screen.dart';
 import './screens/bill_payment/bill_payment_checkout_screen.dart';
 import './screens/bill_payment/bill_payment_result_screen.dart';
@@ -64,6 +65,7 @@ final Map<String, WidgetBuilder> routes = <String, WidgetBuilder>{
   SarawakIDScreen.routeName: (ctx) => const SarawakIDScreen(),
   EmergencyScreen.routeName: (ctx) => const EmergencyScreen(),
   BillPaymentScreen.routeName: (ctx) => const BillPaymentScreen(),
+  BillPaymentScreenNew.routeName: (ctx) => const BillPaymentScreenNew(),
   AnnouncementDetailScreen.routeName: (ctx) => const AnnouncementDetailScreen(),
   PrivacyPolicyScreen.routeName: (ctx) => const PrivacyPolicyScreen(),
   SecurityPolicyScreen.routeName: (ctx) => const SecurityPolicyScreen(),
