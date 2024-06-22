@@ -56,6 +56,8 @@ class ApiBaseHelper {
     dynamic data,
     Function(int, int)? onSendProgress,
     CancelToken? cancelToken,
+    bool domainFlag = false,
+    int domainFlagValue = 0,
   }) async {
     final dio = Dio();
     final storage = new FlutterSecureStorage();
@@ -70,10 +72,16 @@ class ApiBaseHelper {
       final response = await dio.post(
         "$_baseUrl$url",
         options: Options(
-          headers: {
-            'Authorization': siocToken ?? '',
-            'sarawakToken': sarawakToken ?? '',
-          },
+          headers: domainFlag
+              ? {
+                  'Authorization': siocToken ?? '',
+                  'sarawakToken': sarawakToken ?? '',
+                  'Domain-Flag': domainFlagValue,
+                }
+              : {
+                  'Authorization': siocToken ?? '',
+                  'sarawakToken': sarawakToken ?? '',
+                },
         ),
         data: data,
         cancelToken: cancelToken,

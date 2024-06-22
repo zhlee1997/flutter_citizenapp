@@ -41,6 +41,26 @@ class CCTVServices {
     }
   }
 
+  /// NEW: Obtain cctv live rtsp url using POST method
+  ///
+  /// Receives [data] as the CCTV details (video type 1 = rtsp)
+  /// Returns API response object
+  Future<dynamic> getCctvRTSPUrl(Map<String, dynamic> data) async {
+    try {
+      var response = await _apiBaseHelper.post(
+        'vms/getCameraLiveUrlForRtsp',
+        data: json.encode(data),
+        domainFlag: true,
+        domainFlagValue: 0,
+      );
+      print('getCctvRTSPUrl success: $response');
+      return response;
+    } catch (e) {
+      print('getCctvRTSPUrl fail: ${e.toString()}');
+      throw e;
+    }
+  }
+
   /// Obtain cctv capture image using POST method
   ///
   /// Receives [data] as the CCTV details

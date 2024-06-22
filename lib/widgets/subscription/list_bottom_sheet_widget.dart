@@ -86,7 +86,7 @@ class _ListBottomSheetWidgetState extends State<ListBottomSheetWidget> {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Image.network(
-            widget.imageUrl + "12",
+            widget.imageUrl,
             width: double.infinity,
             height: screenSize.height * 0.25,
             fit: BoxFit.cover,
@@ -137,7 +137,8 @@ class _ListBottomSheetWidgetState extends State<ListBottomSheetWidget> {
             width: screenSize.width * 0.9,
             // height: screenSize.height * 0.06,
             child: ElevatedButton(
-              onPressed: cctvDetail != null && cctvDetail.liveUrl.isNotEmpty
+              onPressed: cctvDetail != null &&
+                      !cctvDetail.liveUrl.contains("get live url is fail")
                   ? () async {
                       Navigator.of(context).pop();
                       Navigator.pushNamed(
@@ -155,7 +156,8 @@ class _ListBottomSheetWidgetState extends State<ListBottomSheetWidget> {
                       );
                     }
                   : null,
-              style: cctvDetail != null && cctvDetail.liveUrl.isNotEmpty
+              style: cctvDetail != null &&
+                      !cctvDetail.liveUrl.contains("get live url is fail")
                   ? ButtonStyle(
                       backgroundColor: MaterialStateProperty.all(
                           Theme.of(context).colorScheme.secondary),
@@ -170,7 +172,10 @@ class _ListBottomSheetWidgetState extends State<ListBottomSheetWidget> {
             ),
           ),
           Text(
-            "Each video session is ${subscriptionProvider.playbackDuration} minutes",
+            cctvDetail != null &&
+                    !cctvDetail.liveUrl.contains("get live url is fail")
+                ? "Each video session is ${subscriptionProvider.playbackDuration} minutes"
+                : "Unable to get video stream. Try again",
             style: Theme.of(context).textTheme.labelSmall,
           ),
           const SizedBox(

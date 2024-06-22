@@ -9,6 +9,7 @@ import '../talikhidmat/new_case_screen.dart';
 import '../emergency/emergency_screen.dart';
 import '../../widgets/sarawakid/login_full_bottom_modal.dart';
 import '../bill_payment/bill_payment_screen.dart';
+import '../bill_payment/bill_payment_screen_new.dart';
 import '../announcement/tourism_news_screen.dart';
 import '../../widgets/subscription/subscription_whitelist_bottom_modal.dart';
 import '../subscription/subscription_choose_screen.dart';
@@ -215,7 +216,8 @@ class _ServicesBottomNavScreenState extends State<ServicesBottomNavScreen> {
 
   void _handleNavigateToPayment(BuildContext context) =>
       Provider.of<AuthProvider>(context, listen: false).isAuth
-          ? Navigator.of(context).pushNamed(BillPaymentScreen.routeName)
+          // ? Navigator.of(context).pushNamed(BillPaymentScreen.routeName)
+          ? Navigator.of(context).pushNamed(BillPaymentScreenNew.routeName)
           : _handleFullScreenLoginBottomModal(context);
 
   void _handleNavigateToTourismNews(BuildContext context) =>

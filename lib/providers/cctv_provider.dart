@@ -51,6 +51,7 @@ class CCTVProvider with ChangeNotifier {
         "urlType": AppConstant
             .urlType, // video type：1.rtsp、2.hls、3.rtmp、4.flv-http、5.dash
       };
+      // var response = await CCTVServices().getCctvRTSPUrl(map);
       var response = await CCTVServices().getCctvDetail(map);
       if (response['status'] == 200) {
         _cctvModelDetail = CCTVModelDetail(

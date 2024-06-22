@@ -135,6 +135,16 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
         );
         return;
       }
+      if (response["status"] == "300") {
+        // dismiss the dialog after submit fail (300: Request exception!)
+        Navigator.of(context).pop();
+        await GlobalDialogHelper().showAlertDialogWithSingleButton(
+          context: context,
+          title: "Submit Fail",
+          message: response["message"],
+        );
+        return;
+      }
       if (response["status"] == "200") {
         String? eventId = response["data"];
         if (eventId != null) {
@@ -165,6 +175,15 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
             );
           },
         );
+      } else {
+        // dismiss the dialog after submit fail
+        Navigator.of(context).pop();
+        await GlobalDialogHelper().showAlertDialogWithSingleButton(
+          context: context,
+          title: "Submit Fail",
+          message: response["message"],
+        );
+        return;
       }
     } catch (e) {
       // dismiss the dialog

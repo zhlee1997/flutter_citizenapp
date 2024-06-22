@@ -270,7 +270,7 @@ class _BillPaymentDetailScreenState extends State<BillPaymentDetailScreen> {
                       width: screenSize.width * 0.7,
                       alignment: Alignment.center,
                       child: Text(
-                        AppLocalization.of(context)!.translate('proceed_to')!,
+                        "Proceed to Payment",
                         style: const TextStyle(
                           fontSize: 18.0,
                         ),
