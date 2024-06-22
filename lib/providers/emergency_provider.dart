@@ -121,6 +121,12 @@ class EmergencyProvider with ChangeNotifier {
       _reportedCaseDetailStatus = caseDetailStatus;
       _reportedCaseId = caseId;
       var res = await EventServices().getEventById(caseId);
+
+      if (res['status'] == "300") {
+        // when reponse return 300
+        throw Exception('exception');
+      }
+
       if (res['data'] != null) {
         var caseDetailData = res['data'];
         _reportedCaseDetail = CaseDetailModel.fromJson(caseDetailData);

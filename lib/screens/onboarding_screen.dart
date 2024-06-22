@@ -78,7 +78,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     return IntroductionScreen(
       pages: listPagesViewModel(screenSize),
       showNextButton: false,
-      done: const Text("Done"),
+      done: const Text("Agree"),
       onDone: isChecked && isPermissionChecked
           ? () async {
               final prefs = await SharedPreferences.getInstance();

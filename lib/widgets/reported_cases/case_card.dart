@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
@@ -78,8 +79,13 @@ class CaseCard extends StatelessWidget {
             return const Center(
               child: CircularProgressIndicator(),
             );
+          } else if (snapshot.hasError) {
+            // when reponse return 300
+            Fluttertoast.showToast(msg: snapshot.error.toString());
+            return Container();
           } else {
             return const EmergencyCaseBottomModal();
+            // return Container();
           }
         },
       ),

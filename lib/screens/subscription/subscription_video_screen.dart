@@ -172,11 +172,12 @@ class _SubscriptionVideoScreenState extends State<SubscriptionVideoScreen>
         "urlType": AppConstant
             .urlType, // video type：1.rtsp、2.hls、3.rtmp、4.flv-http、5.dash
       };
+      // var response = await cctvServices.getCctvRTSPUrl(map);
       var response = await cctvServices.getCctvDetail(map);
       if (response["status"] == 200) {
         var liveUrl = response["obj"]["liveUrl"] as String?;
 
-        if (liveUrl != null && liveUrl.isNotEmpty) {
+        if (liveUrl != null && !liveUrl.contains("get live url is fail")) {
           return liveUrl;
         } else {
           return null;
@@ -200,7 +201,7 @@ class _SubscriptionVideoScreenState extends State<SubscriptionVideoScreen>
       if (liveUrl == null || liveUrl.isEmpty) {
         Navigator.of(context).pop();
         Fluttertoast.showToast(
-            msg: "Camera cannot be played. Please try again later");
+            msg: "Camera cannot be played. Please try again");
         return;
       }
 
@@ -242,7 +243,14 @@ class _SubscriptionVideoScreenState extends State<SubscriptionVideoScreen>
       args = ModalRoute.of(context)!.settings.arguments
           as SubscriptionVideoScreenArguments;
       player.setDataSource(
+        // FLV Stream
         args.liveUrl,
+
+        // RTSP Stream
+        // "rtsp://rtspstream:ee1530a1676f130466b44e88b46caa30@zephyr.rtsp.stream/movie",
+
+        // HLS Stream
+        // "https://flipfit-cdn.akamaized.net/flip_hls/661f570aab9d840019942b80-473e0b/video_h1.m3u8",
         autoPlay: true,
         showCover: true,
       );

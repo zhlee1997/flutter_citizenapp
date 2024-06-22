@@ -17,6 +17,7 @@ import '../../models/cctv_model.dart';
 import '../../utils/app_localization.dart';
 import '../../utils/global_dialog_helper.dart';
 import '../../screens/subscription/subscription_video_screen.dart';
+import '../../screens/subscription/subscription_video_screen_ls.dart';
 
 class MapBottomSheetWidget extends StatefulWidget {
   final String cctvLatitude;
@@ -165,28 +166,32 @@ class _MapBottomSheetWidgetState extends State<MapBottomSheetWidget> {
             SizedBox(
               width: screenSize.width * 0.9,
               child: ElevatedButton(
-                onPressed: () async {
-                  timer.cancel();
-                  Fluttertoast.cancel();
-                  Navigator.of(context).pop();
-                  Navigator.pushNamed(
-                    context,
-                    SubscriptionVideoScreen.routeName,
-                    arguments: SubscriptionVideoScreenArguments(
-                      cctvDetail.id,
-                      cctvDetail.liveUrl,
-                      cctvDetail.name,
-                      cctvDetail.location,
-                      _distanceInBetween,
-                      widget.cctvLatitude,
-                      widget.cctvLongitude,
-                    ),
-                  );
-                },
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(
-                      Theme.of(context).colorScheme.secondary),
-                ),
+                onPressed: cctvDetail!.liveUrl.contains("get live url is fail")
+                    ? null
+                    : () async {
+                        timer.cancel();
+                        Fluttertoast.cancel();
+                        Navigator.of(context).pop();
+                        Navigator.pushNamed(
+                          context,
+                          SubscriptionVideoScreen.routeName,
+                          arguments: SubscriptionVideoScreenArguments(
+                            cctvDetail.id,
+                            cctvDetail.liveUrl,
+                            cctvDetail.name,
+                            cctvDetail.location,
+                            _distanceInBetween,
+                            widget.cctvLatitude,
+                            widget.cctvLongitude,
+                          ),
+                        );
+                      },
+                style: cctvDetail!.liveUrl.contains("get live url is fail")
+                    ? null
+                    : ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(
+                            Theme.of(context).colorScheme.secondary),
+                      ),
                 child: Text(
                   AppLocalization.of(context)!.translate('play_now')!,
                   style: const TextStyle(
@@ -389,7 +394,7 @@ class _MapBottomSheetWidgetState extends State<MapBottomSheetWidget> {
                       ),
                       child: Text(
                         AppLocalization.of(context)!.translate('play_now')!,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -397,6 +402,80 @@ class _MapBottomSheetWidgetState extends State<MapBottomSheetWidget> {
                   ),
                   Text(
                     "Each video session is ${subscriptionProvider.playbackDuration} minutes",
+                    style: Theme.of(context).textTheme.labelSmall,
+                  ),
+                  const SizedBox(
+                    height: 20.0,
+                  ),
+                ],
+              ),
+            );
+          } else if (cctvDetail!.liveUrl.contains("get live url is fail")) {
+            return SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  GestureDetector(
+                    onTap: () => GlobalDialogHelper()
+                        .showMemoryPhotoGallery(context, imageByteData!),
+                    child: Image.memory(
+                      imageByteData!,
+                      width: double.infinity,
+                      height: screenSize.height * 0.25,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => SizedBox(
+                        width: double.infinity,
+                        height: screenSize.height * 0.25,
+                        child: Center(
+                          child: Text("Camera image not available"),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(
+                      top: 20.0,
+                      left: 20.0,
+                      right: 20.0,
+                      bottom: 10.0,
+                    ),
+                    // width: double.infinity,
+                    child: Text(
+                      cctvDetail!.location,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(
+                      left: 20.0,
+                      right: 20.0,
+                      bottom: 5.0,
+                    ),
+                    // width: double.infinity,
+                    child: Text(
+                      cctvDetail.name,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  SizedBox(
+                    width: screenSize.width * 0.9,
+                    // height: screenSize.height * 0.06,
+                    child: ElevatedButton(
+                      onPressed: null,
+                      child: Text(
+                        AppLocalization.of(context)!.translate('play_now')!,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Text(
+                    "Unable to get video stream. Try again",
                     style: Theme.of(context).textTheme.labelSmall,
                   ),
                   const SizedBox(
@@ -468,6 +547,7 @@ class _MapBottomSheetWidgetState extends State<MapBottomSheetWidget> {
                       Navigator.pushNamed(
                         context,
                         SubscriptionVideoScreen.routeName,
+                        // SubscriptionVideoScreenLS.routeName,
                         arguments: SubscriptionVideoScreenArguments(
                           cctvDetail.id,
                           cctvDetail.liveUrl,

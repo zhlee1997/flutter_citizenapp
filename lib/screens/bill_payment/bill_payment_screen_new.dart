@@ -25,7 +25,7 @@ class BillPaymentScreenNew extends StatelessWidget {
                 Icons.electric_bolt_outlined,
                 color: Theme.of(context).colorScheme.primary,
               ),
-              title: Text("Sarawak Energy"),
+              title: const Text("Sarawak Energy"),
               trailing: Icon(
                 Icons.arrow_forward_ios_rounded,
                 size: 15.0,
@@ -34,7 +34,7 @@ class BillPaymentScreenNew extends StatelessWidget {
               onTap: () => Navigator.of(context).pushNamed(
                 BillPaymentDetailScreen.routeName,
                 arguments: {
-                  'title': "Other Utilities",
+                  'title': "Electricity Utility",
                   'imageUrl': 'assets/images/icon/sarawak-energy.png',
                   'text': 'Sarawak Energy',
                 },
@@ -45,7 +45,7 @@ class BillPaymentScreenNew extends StatelessWidget {
                 Icons.water_drop_outlined,
                 color: Theme.of(context).colorScheme.primary,
               ),
-              title: Text("Kuching Water Board"),
+              title: const Text("Kuching Water Board"),
               trailing: Icon(
                 Icons.arrow_forward_ios_rounded,
                 size: 15.0,
@@ -54,7 +54,7 @@ class BillPaymentScreenNew extends StatelessWidget {
               onTap: () => Navigator.of(context).pushNamed(
                 BillPaymentDetailScreen.routeName,
                 arguments: {
-                  'title': "Other Utilities",
+                  'title': "Water Utility",
                   'imageUrl': 'assets/images/icon/kwb.png',
                   'text': 'Kuching Water Board',
                 },

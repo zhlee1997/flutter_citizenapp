@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -268,13 +266,11 @@ class _SendFeedbackScreenState extends State<SendFeedbackScreen> {
                 ),
               ),
               const SizedBox(
-                height: 20.0,
+                height: 10.0,
               ),
               SizedBox(
                 width: screenSize.width * 0.9,
-                height: Platform.isIOS
-                    ? screenSize.height * 0.05
-                    : screenSize.height * 0.05,
+                height: screenSize.height * 0.05,
                 child: ElevatedButton(
                   onPressed: () {
                     // Perform any action needed with the entered text
@@ -374,8 +370,19 @@ class _SendFeedbackScreenState extends State<SendFeedbackScreen> {
       ),
       Container(
         alignment: Alignment.centerLeft,
-        padding: const EdgeInsets.all(10.0),
-        child: const Text("Select all that apply"),
+        padding: const EdgeInsets.only(
+          left: 10.0,
+          right: 10.0,
+          bottom: 10.0,
+          top: 2.5,
+        ),
+        child: Text(
+          "Select all that apply",
+          style: Theme.of(context)
+              .textTheme
+              .labelMedium!
+              .copyWith(color: Colors.grey[600]),
+        ),
       ),
       Container(
         padding: const EdgeInsets.symmetric(

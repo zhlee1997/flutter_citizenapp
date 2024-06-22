@@ -146,20 +146,24 @@ class _HomePageState extends State<HomePage> {
 
   /// Pull to refresh announcement and tourism information
   Future<void> _onRefresh() async {
-    setState(() {
-      _isLoading = true;
-    });
-    if (Provider.of<AuthProvider>(context, listen: false).isAuth) {
-      Provider.of<AuthProvider>(context, listen: false)
-          .checkIsAuthAndSubscribeOverdue(context);
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+      if (Provider.of<AuthProvider>(context, listen: false).isAuth) {
+        Provider.of<AuthProvider>(context, listen: false)
+            .checkIsAuthAndSubscribeOverdue(context);
+      }
+      await Provider.of<SubscriptionProvider>(context, listen: false)
+          .queryAndSetIsSubscriptionEnabled();
+      await getCitizenAnn();
+      await getTourismAnn();
+      setState(() {
+        _isLoading = false;
+      });
+    } catch (e) {
+      print("_onRefresh error: ${e.toString()}");
     }
-    await Provider.of<SubscriptionProvider>(context, listen: false)
-        .queryAndSetIsSubscriptionEnabled();
-    await getCitizenAnn();
-    await getTourismAnn();
-    setState(() {
-      _isLoading = false;
-    });
   }
 
   String returnPackageName(String packageName) {
@@ -210,65 +214,70 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> getCitizenAnn() async {
-    // TODO: try-catch
+    try {
+      setState(() {
+        citizenAnnouncements = [];
+        citizenShimmer = true;
+      });
+      var response = await _announcementServices.queryPageList(
+        '1',
+        pageSize: '6',
+        annType: '1',
+      );
 
-    setState(() {
-      citizenAnnouncements = [];
-      citizenShimmer = true;
-    });
-    var response = await _announcementServices.queryPageList(
-      '1',
-      pageSize: '6',
-      annType: '1',
-    );
-
-    if (response['status'] == '200') {
-      var data = response['data']['list'] as List;
-      if (mounted) {
-        // Check if the widget is still mounted
-        setState(() {
-          citizenShimmer = false;
-          // Cast to AnnouncementModel type to use AnnouncementModel object
-          citizenAnnouncements =
-              data.map((e) => AnnouncementModel.fromJson(e)).toList();
-        });
+      if (response['status'] == '200') {
+        var data = response['data']['list'] as List;
+        if (mounted) {
+          // Check if the widget is still mounted
+          setState(() {
+            citizenShimmer = false;
+            // Cast to AnnouncementModel type to use AnnouncementModel object
+            citizenAnnouncements =
+                data.map((e) => AnnouncementModel.fromJson(e)).toList();
+          });
+        }
       }
+    } catch (e) {
+      print("getCitizenAnn error: ${e.toString()}");
     }
   }
 
   Future<void> getTourismAnn() async {
     // TODO: try-catch
+    try {
+      setState(() {
+        tourismAnnouncements = [];
+        tourismShimmer = true;
+      });
+      var response = await _announcementServices.queryPageList(
+        '1',
+        pageSize: '4',
+        annType: '2',
+      );
 
-    setState(() {
-      tourismAnnouncements = [];
-      tourismShimmer = true;
-    });
-    var response = await _announcementServices.queryPageList(
-      '1',
-      pageSize: '4',
-      annType: '2',
-    );
-
-    if (response['status'] == '200') {
-      var data = response['data']['list'] as List;
-      if (mounted) {
-        // Check if the widget is still mounted
-        setState(() {
-          tourismShimmer = false;
-          tourismAnnouncements =
-              data.map((e) => AnnouncementModel.fromJson(e)).toList();
-          // for (var element in list) {
-          //   if (element.attachmentDtoList.isNotEmpty) {
-          //     for (var dto in element.attachmentDtoList) {
-          //       if (dto.attFileType == '2') {
-          //         tourismAnnouncements.add(element);
-          //         break;
-          //       }
-          //     }
-          //   }
-          // }
-        });
+      if (response['status'] == '200') {
+        var data = response['data']['list'] as List;
+        if (mounted) {
+          // Check if the widget is still mounted
+          setState(() {
+            tourismShimmer = false;
+            tourismAnnouncements =
+                data.map((e) => AnnouncementModel.fromJson(e)).toList();
+            // for (var element in list) {
+            //   if (element.attachmentDtoList.isNotEmpty) {
+            //     for (var dto in element.attachmentDtoList) {
+            //       if (dto.attFileType == '2') {
+            //         tourismAnnouncements.add(element);
+            //         break;
+            //       }
+            //     }
+            //   }
+            // }
+          });
+        }
       }
+    } catch (e) {
+      print("getTourismAnn error: ${e.toString()}");
     }
   }
 
@@ -518,8 +527,8 @@ class _HomePageState extends State<HomePage> {
 
   void _handleNavigateToPayment(BuildContext context) =>
       Provider.of<AuthProvider>(context, listen: false).isAuth
-          ? Navigator.of(context).pushNamed(BillPaymentScreen.routeName)
-          // ? Navigator.of(context).pushNamed(BillPaymentScreenNew.routeName)
+          // ? Navigator.of(context).pushNamed(BillPaymentScreen.routeName)
+          ? Navigator.of(context).pushNamed(BillPaymentScreenNew.routeName)
           : _handleFullScreenLoginBottomModal(context);
 
   void _handleNavigateToCitizenAnnouncements(BuildContext context) =>
@@ -1041,8 +1050,7 @@ class _HomePageState extends State<HomePage> {
                                           left: 10.0,
                                         ),
                                         child: Text(
-                                          AppLocalization.of(context)!
-                                              .translate('billing_and_taxes')!,
+                                          "Billing and utilies",
                                           style: TextStyle(
                                             color: Colors.grey[600],
                                           ),
