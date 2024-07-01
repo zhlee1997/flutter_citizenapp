@@ -114,9 +114,11 @@ class _TrafficImagesListScreenState extends State<TrafficImagesListScreen> {
       }
     } catch (e) {
       print("_initCCTVList fail: ${e.toString()}");
-      setState(() {
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 

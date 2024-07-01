@@ -226,15 +226,15 @@ class _TalikhidmatCasesScreenState extends State<TalikhidmatCasesScreen> {
             labelPadding: const EdgeInsets.only(
               bottom: 5.0,
             ),
-            tabs: const [
+            tabs: [
               Tab(
-                text: 'New',
+                text: AppLocalization.of(context)!.translate('new')!,
               ),
               Tab(
-                text: "Pending",
+                text: AppLocalization.of(context)!.translate('pending')!,
               ),
               Tab(
-                text: "Resolved",
+                text: AppLocalization.of(context)!.translate('resolved')!,
               ),
             ],
           ),

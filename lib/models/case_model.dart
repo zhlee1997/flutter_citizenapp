@@ -75,6 +75,7 @@ class CaseDetailModel {
   String? createTime;
   String? delFlag;
   String? eventDesc;
+  String? eventNeedHelp;
   String? eventId;
   String? eventCode;
   String? eventLatitude;
@@ -99,6 +100,7 @@ class CaseDetailModel {
     this.createTime,
     this.delFlag,
     this.eventDesc,
+    this.eventNeedHelp,
     this.eventId,
     this.eventCode,
     this.eventLatitude,
@@ -124,6 +126,7 @@ class CaseDetailModel {
     createTime = json['createTime'];
     delFlag = json['delFlag'];
     eventDesc = json['eventDesc'];
+    eventNeedHelp = json['eventNeedHelp'];
     eventId = json['eventId'];
     eventCode = json['eventCode'];
     eventLatitude = json['eventLatitude'];
@@ -150,6 +153,7 @@ class CaseDetailModel {
     data['createTime'] = createTime;
     data['delFlag'] = delFlag;
     data['eventDesc'] = eventDesc;
+    data['eventNeedHelp'] = eventNeedHelp;
     data['eventId'] = eventId;
     data['eventCode'] = eventCode;
     data['eventLatitude'] = eventLatitude;

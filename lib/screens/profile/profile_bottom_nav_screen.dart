@@ -87,7 +87,8 @@ class _ProfileBottomNavScreenState extends State<ProfileBottomNavScreen> {
               Container(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  "Choose the reported cases",
+                  AppLocalization.of(context)!
+                      .translate('choose_the_reported_cases')!,
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
               ),
@@ -100,7 +101,8 @@ class _ProfileBottomNavScreenState extends State<ProfileBottomNavScreen> {
                 leading: const CircleAvatar(
                   child: Icon(Icons.feedback_outlined),
                 ),
-                title: const Text("Talikhidmat Cases"),
+                title: Text(AppLocalization.of(context)!
+                    .translate('talikhidmat_cases')!),
                 trailing: Icon(
                   Icons.arrow_circle_right_outlined,
                   color: Theme.of(context).colorScheme.primary,
@@ -115,7 +117,8 @@ class _ProfileBottomNavScreenState extends State<ProfileBottomNavScreen> {
                 leading: const CircleAvatar(
                   child: Icon(Icons.sos),
                 ),
-                title: const Text("Emergency Cases"),
+                title: Text(
+                    AppLocalization.of(context)!.translate('emergency_cases')!),
                 trailing: Icon(
                   Icons.arrow_circle_right_outlined,
                   color: Theme.of(context).colorScheme.primary,

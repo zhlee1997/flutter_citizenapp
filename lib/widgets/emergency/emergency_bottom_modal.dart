@@ -7,6 +7,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../providers/emergency_provider.dart';
 import '../../providers/location_provider.dart';
+import '../../utils/app_localization.dart';
 
 class EmergencyBottomModal extends StatefulWidget {
   final VoidCallback handleProceedNext;
@@ -30,19 +31,20 @@ class _EmergencyBottomModalState extends State<EmergencyBottomModal> {
   String returnCategoryInText(int category) {
     switch (category) {
       case 0:
-        return "HARASSMENT";
+        return AppLocalization.of(context)!.translate('harassment')!;
       case 1:
-        return "FIRE/RESCUE";
+        return AppLocalization.of(context)!.translate('fire/rescue')!;
       case 2:
-        return "TRAFFIC ACCIDENT/INJURIES";
+        return AppLocalization.of(context)!
+            .translate('traffic_accident/injuries')!;
       case 3:
-        return "THEFT/ROBBERY";
+        return AppLocalization.of(context)!.translate('theft/robbery')!;
       case 4:
-        return "PHYSICAL VIOLENCE";
+        return AppLocalization.of(context)!.translate('physical_violence')!;
       case 5:
-        return "OTHERS";
+        return AppLocalization.of(context)!.translate('others')!;
       default:
-        return "VOICE RECORDING";
+        return AppLocalization.of(context)!.translate('voice_recording')!;
     }
   }
 
@@ -115,9 +117,10 @@ class _EmergencyBottomModalState extends State<EmergencyBottomModal> {
               padding: const EdgeInsets.symmetric(
                 horizontal: 5.0,
               ),
-              child: const Text(
-                "Are you the one in need of help?",
-                style: TextStyle(
+              child: Text(
+                AppLocalization.of(context)!
+                    .translate('are_you_the_one_in_need_of_help')!,
+                style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 18.0,
                 ),
@@ -150,9 +153,9 @@ class _EmergencyBottomModalState extends State<EmergencyBottomModal> {
                     );
                     widget.handleProceedNext();
                   },
-                  child: const Text(
-                    "Yes",
-                    style: TextStyle(
+                  child: Text(
+                    AppLocalization.of(context)!.translate('yes')!,
+                    style: const TextStyle(
                       fontSize: 16.0,
                       color: Colors.white,
                     ),
@@ -182,7 +185,7 @@ class _EmergencyBottomModalState extends State<EmergencyBottomModal> {
                     widget.handleProceedNext();
                   },
                   child: Text(
-                    "No",
+                    AppLocalization.of(context)!.translate('no')!,
                     style: TextStyle(
                       fontSize: 16.0,
                       color: Colors.grey[700],

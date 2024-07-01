@@ -68,12 +68,12 @@ class _NewCaseScreenState extends State<NewCaseScreen> {
     try {
       globalDialogHelper.buildCircularProgressWithTextCenter(
         context: context,
-        message: "Submitting",
+        message: AppLocalization.of(context)!.translate('submitting')!,
       );
       // Submit Case => API
       var response = await _eventServices.create(paramater);
       if (response["status"] == "200") {
-        // TODO: after submit case, submit images => API
+        // after submit case, submit images => API
         String? eventId = response["data"];
 
         if (eventId != null) {
@@ -170,7 +170,7 @@ class _NewCaseScreenState extends State<NewCaseScreen> {
                   ),
                 ),
                 onPressed: details.onStepContinue,
-                child: const Text('PROCEED'),
+                child: Text(AppLocalization.of(context)!.translate('proceed')!),
               );
             } else {
               return Row(
@@ -185,7 +185,8 @@ class _NewCaseScreenState extends State<NewCaseScreen> {
                         ),
                       ),
                       onPressed: details.onStepCancel,
-                      child: const Text('BACK'),
+                      child:
+                          Text(AppLocalization.of(context)!.translate('back')!),
                     ),
                   ),
                   SizedBox(
@@ -198,17 +199,19 @@ class _NewCaseScreenState extends State<NewCaseScreen> {
                       ),
                       onPressed: details.onStepContinue,
                       child: currentStep == 2
-                          ? const Row(
+                          ? Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
-                                Text("SUBMIT"),
-                                SizedBox(
+                                Text(AppLocalization.of(context)!
+                                    .translate('submit')!),
+                                const SizedBox(
                                   width: 10.0,
                                 ),
-                                Icon(Icons.send)
+                                const Icon(Icons.send)
                               ],
                             )
-                          : const Text('PROCEED'),
+                          : Text(AppLocalization.of(context)!
+                              .translate('proceed')!),
                     ),
                   ),
                 ],
@@ -254,7 +257,7 @@ class _NewCaseScreenState extends State<NewCaseScreen> {
           isActive: currentStep >= 0,
           state: currentStep > 0 ? StepState.complete : StepState.indexed,
           title: Text(
-            "Feedback",
+            AppLocalization.of(context)!.translate('feedback')!,
             style: TextStyle(
               color: currentStep >= 0
                   ? Theme.of(context).colorScheme.primary
@@ -273,7 +276,7 @@ class _NewCaseScreenState extends State<NewCaseScreen> {
           isActive: currentStep >= 1,
           state: currentStep > 1 ? StepState.complete : StepState.indexed,
           title: Text(
-            "Location",
+            AppLocalization.of(context)!.translate('location')!,
             style: TextStyle(
               color: currentStep >= 1
                   ? Theme.of(context).colorScheme.primary
@@ -287,7 +290,7 @@ class _NewCaseScreenState extends State<NewCaseScreen> {
           isActive: currentStep >= 2,
           state: currentStep > 2 ? StepState.complete : StepState.indexed,
           title: Text(
-            "Confirm",
+            AppLocalization.of(context)!.translate('confirm')!,
             style: Theme.of(context).textTheme.labelSmall,
           ),
           content: const ConfirmScreen(),

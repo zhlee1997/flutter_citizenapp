@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import '../utils/api_base_helper.dart';
+import '../config/app_config.dart';
 
 class CCTVServices {
   final ApiBaseHelper _apiBaseHelper = ApiBaseHelper();
@@ -90,6 +91,26 @@ class CCTVServices {
       return response;
     } catch (e) {
       print('queryNearbyDevicesList fail: ${e.toString()}');
+      throw e;
+    }
+  }
+
+  /// Obtain cctv live url using POST method
+  ///
+  /// Receives [data] as the CCTV details
+  /// Returns API response object
+  Future<dynamic> getLinkingVisionLogin(Map<String, dynamic> data) async {
+    try {
+      var response = await _apiBaseHelper.getThirdParty(
+        AppConfig().isProductionInternal
+            ? 'https://10.16.24.144:18445/api/v1/Login'
+            : 'https://video.sioc.sma.gov.my:18445/api/v1/Login',
+        queryParameters: data,
+      );
+      print('getLinkingVisionLogin success: $response');
+      return response;
+    } catch (e) {
+      print('getLinkingVisionLogin fail: ${e.toString()}');
       throw e;
     }
   }

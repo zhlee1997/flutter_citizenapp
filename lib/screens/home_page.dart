@@ -912,7 +912,7 @@ class _HomePageState extends State<HomePage> {
                                         ),
                                         child: Text(
                                           AppLocalization.of(context)!
-                                              .translate('rescue_resquest')!,
+                                              .translate('call_for_helps')!,
                                           style: TextStyle(
                                             color: Colors.grey[600],
                                           ),
@@ -993,7 +993,7 @@ class _HomePageState extends State<HomePage> {
                                                       .isSubscriptionEnabled
                                                   ? AppLocalization.of(context)!
                                                       .translate(
-                                                          'premium_member')!
+                                                          'paid_services')!
                                                   : AppLocalization.of(context)!
                                                       .translate(
                                                           'live_road_images')!,
@@ -1050,7 +1050,8 @@ class _HomePageState extends State<HomePage> {
                                           left: 10.0,
                                         ),
                                         child: Text(
-                                          "Billing and utilies",
+                                          AppLocalization.of(context)!
+                                              .translate('billing_payments')!,
                                           style: TextStyle(
                                             color: Colors.grey[600],
                                           ),
@@ -1170,7 +1171,8 @@ class _HomePageState extends State<HomePage> {
                                       const SizedBox(
                                         height: 10.0,
                                       ),
-                                      const Text("No news"),
+                                      Text(AppLocalization.of(context)!
+                                          .translate('no_news')!),
                                     ],
                                   ),
                                 ),

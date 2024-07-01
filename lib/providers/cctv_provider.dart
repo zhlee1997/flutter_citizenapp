@@ -15,6 +15,9 @@ class CCTVProvider with ChangeNotifier {
   late String _imageUrl;
   String get imageUrl => _imageUrl;
 
+  late String _sessionLS;
+  String get sessionLS => _sessionLS;
+
   List<CCTVOtherModel> _nearbyOtherCameraList = [];
   List<CCTVOtherModel> get nearbyOtherCameraList => _nearbyOtherCameraList;
 
@@ -105,5 +108,23 @@ class CCTVProvider with ChangeNotifier {
     }
     notifyListeners();
     return _nearbyOtherCameraList;
+  }
+
+  Future<void> getLinkingVisionLoginProvider() async {
+    try {
+      Map<String, dynamic> map = {
+        "user": "admin",
+        "password": "450cd8c9ccc2a97d8f1619f0201b9d7f",
+      };
+      var response = await CCTVServices().getLinkingVisionLogin(map);
+      if (response['bStatus'] == true) {
+        String session = response["strSession"];
+        _sessionLS = session;
+        print("LinkingVision session: $session");
+      }
+    } catch (e) {
+      print('getLinkingVisionLoginProvider fail: ${e.toString()}');
+      throw e;
+    }
   }
 }

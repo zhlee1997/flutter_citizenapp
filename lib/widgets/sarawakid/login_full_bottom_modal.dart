@@ -3,6 +3,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../screens/sarawakid/sarawakid_screen.dart';
 import '../../utils/global_dialog_helper.dart';
+import '../../utils/app_localization.dart';
 
 class LoginFullBottomModal extends StatelessWidget {
   const LoginFullBottomModal({super.key});
@@ -52,16 +53,17 @@ class LoginFullBottomModal extends StatelessWidget {
               ),
               SizedBox(
                 width: screenSize.width * 0.75,
-                child: const Column(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Hey There,\nWelcome to CitizenApp",
-                      style: TextStyle(
+                      AppLocalization.of(context)!.translate('hey_there')!,
+                      style: const TextStyle(
                         fontSize: 20.0,
                       ),
                     ),
-                    Text("Login to your account to continue")
+                    Text(AppLocalization.of(context)!
+                        .translate('login_to_your_account')!)
                   ],
                 ),
               ),
@@ -98,9 +100,10 @@ class LoginFullBottomModal extends StatelessWidget {
                       const SizedBox(
                         width: 10.0,
                       ),
-                      const Text(
-                        "Sign In with SarawakID",
-                        style: TextStyle(
+                      Text(
+                        AppLocalization.of(context)!
+                            .translate('sign_in_with_sarawakid')!,
+                        style: const TextStyle(
                           color: Colors.white,
                         ),
                       )
@@ -119,7 +122,7 @@ class LoginFullBottomModal extends StatelessWidget {
                 height: 10.0,
               ),
               Text(
-                "Not yet have an account?",
+                AppLocalization.of(context)!.translate('not_yet_have_account')!,
                 style: Theme.of(context).textTheme.titleSmall,
               ),
               const SizedBox(
@@ -135,19 +138,21 @@ class LoginFullBottomModal extends StatelessWidget {
                         Navigator.of(context).pop();
                         openExternalBrowser();
                       },
-                      title: "New Registration",
-                      message:
-                          "You are about to use a browser for user registration. Close the browser and Sign in with SarawakID after registration is completed. Do you want to proceed?",
+                      title: AppLocalization.of(context)!
+                          .translate('new_registration')!,
+                      message: AppLocalization.of(context)!
+                          .translate('you_can_use_browser')!,
                     );
                   },
-                  child: const Row(
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Text("Sign Up with SarawakID"),
-                      SizedBox(
+                      Text(AppLocalization.of(context)!
+                          .translate('sign_up_with_sarawakid')!),
+                      const SizedBox(
                         width: 10.0,
                       ),
-                      Icon(
+                      const Icon(
                         Icons.open_in_new_outlined,
                         size: 20.0,
                       )

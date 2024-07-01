@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../../widgets/emergency/emergency_audio_player.dart';
 import '../../screens/emergency/recording_screen.dart';
 import './recording_bottom_modal.dart';
+import '../../utils/app_localization.dart';
 
 class VoiceNoteBottomModal extends StatefulWidget {
   final Widget childWidget;
@@ -152,9 +153,9 @@ class _VoiceNoteBottomModalState extends State<VoiceNoteBottomModal> {
                 backgroundColor: MaterialStateProperty.all<Color>(
                     Theme.of(context).colorScheme.secondary),
               ),
-              child: const Text(
-                "I understand",
-                style: TextStyle(
+              child: Text(
+                AppLocalization.of(context)!.translate('i_understand')!,
+                style: const TextStyle(
                   fontSize: 18.0,
                 ),
               ),
@@ -191,21 +192,19 @@ class _VoiceNoteBottomModalState extends State<VoiceNoteBottomModal> {
             top: 10.0,
             // bottom: 5.0,
           ),
-          child: const Text(
-            "VOICE RECORDING",
-            style: TextStyle(
+          child: Text(
+            AppLocalization.of(context)!.translate('voice_recording')!,
+            style: const TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 18,
             ),
           ),
         ),
         Container(
-          margin: const EdgeInsets.only(
-            bottom: 10.0,
-          ),
           padding: const EdgeInsets.all(8.0),
-          child: const Text(
-            "Request and activate Emergency SOS by recording audio, capture location, and initiate assistance in case of an emergency.",
+          child: Text(
+            AppLocalization.of(context)!
+                .translate('request_and_activate_emergency')!,
             textAlign: TextAlign.center,
           ),
         ),

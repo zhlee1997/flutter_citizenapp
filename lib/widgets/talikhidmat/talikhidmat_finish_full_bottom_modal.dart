@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../screens/reported_cases/talikhidmat_cases_screen.dart';
 import '../../providers/talikhidmat_provider.dart';
 import '../../providers/inbox_provider.dart';
+import '../../utils/app_localization.dart';
 
 class TalikhidmatFinishFullBottomModal extends StatelessWidget {
   final bool isServices;
@@ -31,10 +32,11 @@ class TalikhidmatFinishFullBottomModal extends StatelessWidget {
                 height: screenSize.width * 0.5,
                 repeat: false,
               ),
-              const Padding(
-                padding: EdgeInsets.all(8.0),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  "Your Talikhidmat feedback is submitted successfully.\nYou can check status below or in your profile.",
+                  AppLocalization.of(context)!
+                      .translate("your_talikhidmat_feedback_is_submitted")!,
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -52,7 +54,8 @@ class TalikhidmatFinishFullBottomModal extends StatelessWidget {
                     (route) => route.isFirst,
                   );
                 },
-                child: const Text("View Talikhidmat cases"),
+                child: Text(AppLocalization.of(context)!
+                    .translate("view_talikhidmat_cases")!),
               ),
               // Navigate to homepage
               TextButton(
@@ -64,8 +67,10 @@ class TalikhidmatFinishFullBottomModal extends StatelessWidget {
                   Navigator.of(context)
                       .popUntil(ModalRoute.withName('home-page-screen'));
                 },
-                child:
-                    Text(isServices ? "Back to services" : "Back to homepage"),
+                child: Text(isServices
+                    ? "Back to services"
+                    : AppLocalization.of(context)!
+                        .translate("back_to_homepage")!),
               )
             ],
           ),

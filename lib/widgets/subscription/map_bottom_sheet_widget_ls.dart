@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -16,24 +15,24 @@ import '../../providers/subscription_provider.dart';
 import '../../models/cctv_model.dart';
 import '../../utils/app_localization.dart';
 import '../../utils/global_dialog_helper.dart';
-import '../../screens/subscription/subscription_video_screen.dart';
 import '../../screens/subscription/subscription_video_screen_ls.dart';
+import '../../config/app_config.dart';
 
-class MapBottomSheetWidget extends StatefulWidget {
+class MapBottomSheetWidgetLS extends StatefulWidget {
   final String cctvLatitude;
   final String cctvLongitude;
 
-  const MapBottomSheetWidget({
+  const MapBottomSheetWidgetLS({
     required this.cctvLatitude,
     required this.cctvLongitude,
     super.key,
   });
 
   @override
-  State<MapBottomSheetWidget> createState() => _MapBottomSheetWidgetState();
+  State<MapBottomSheetWidgetLS> createState() => _MapBottomSheetWidgetLSState();
 }
 
-class _MapBottomSheetWidgetState extends State<MapBottomSheetWidget> {
+class _MapBottomSheetWidgetLSState extends State<MapBottomSheetWidgetLS> {
   Uint8List? imageByteData;
 
   late CCTVProvider cctvProvider;
@@ -117,6 +116,15 @@ class _MapBottomSheetWidgetState extends State<MapBottomSheetWidget> {
     }
   }
 
+  String amendCCTVToken(String cctvId) {
+    if (cctvId.isNotEmpty) {
+      String updatedString = cctvId.replaceAll('#', '_');
+      return "0ba9--$updatedString";
+    } else {
+      return "";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
@@ -169,15 +177,26 @@ class _MapBottomSheetWidgetState extends State<MapBottomSheetWidget> {
                 onPressed: cctvDetail!.liveUrl.contains("get live url is fail")
                     ? null
                     : () async {
+                        var cctvId =
+                            Provider.of<CCTVProvider>(context, listen: false)
+                                .cctvModelDetail!
+                                .id;
+                        String newCCTVId = amendCCTVToken(cctvId);
+                        String session =
+                            Provider.of<CCTVProvider>(context, listen: false)
+                                .sessionLS;
+                        String liveUrl = AppConfig().isProductionInternal
+                            ? "https://10.16.24.144:18445/rtc.html?token=$newCCTVId&session=$session"
+                            : "https://video.sioc.sma.gov.my:18445/rtc.html?token=$newCCTVId&session=$session";
                         timer.cancel();
                         Fluttertoast.cancel();
                         Navigator.of(context).pop();
                         Navigator.pushNamed(
                           context,
-                          SubscriptionVideoScreen.routeName,
+                          SubscriptionVideoScreenLS.routeName,
                           arguments: SubscriptionVideoScreenArguments(
                             cctvDetail.id,
-                            cctvDetail.liveUrl,
+                            liveUrl,
                             cctvDetail.name,
                             cctvDetail.location,
                             _distanceInBetween,
@@ -281,15 +300,26 @@ class _MapBottomSheetWidgetState extends State<MapBottomSheetWidget> {
                   // height: screenSize.height * 0.06,
                   child: ElevatedButton(
                     onPressed: () async {
+                      var cctvId =
+                          Provider.of<CCTVProvider>(context, listen: false)
+                              .cctvModelDetail!
+                              .id;
+                      String newCCTVId = amendCCTVToken(cctvId);
+                      String session =
+                          Provider.of<CCTVProvider>(context, listen: false)
+                              .sessionLS;
+                      String liveUrl = AppConfig().isProductionInternal
+                          ? "https://10.16.24.144:18445/rtc.html?token=$newCCTVId&session=$session"
+                          : "https://video.sioc.sma.gov.my:18445/rtc.html?token=$newCCTVId&session=$session";
                       timer.cancel();
                       Fluttertoast.cancel();
                       Navigator.of(context).pop();
                       Navigator.pushNamed(
                         context,
-                        SubscriptionVideoScreen.routeName,
+                        SubscriptionVideoScreenLS.routeName,
                         arguments: SubscriptionVideoScreenArguments(
                             cctvDetail.id,
-                            cctvDetail.liveUrl,
+                            liveUrl,
                             cctvDetail.name,
                             cctvDetail.location,
                             _distanceInBetween,
@@ -372,15 +402,26 @@ class _MapBottomSheetWidgetState extends State<MapBottomSheetWidget> {
                     // height: screenSize.height * 0.06,
                     child: ElevatedButton(
                       onPressed: () async {
+                        var cctvId =
+                            Provider.of<CCTVProvider>(context, listen: false)
+                                .cctvModelDetail!
+                                .id;
+                        String newCCTVId = amendCCTVToken(cctvId);
+                        String session =
+                            Provider.of<CCTVProvider>(context, listen: false)
+                                .sessionLS;
+                        String liveUrl = AppConfig().isProductionInternal
+                            ? "https://10.16.24.144:18445/rtc.html?token=$newCCTVId&session=$session"
+                            : "https://video.sioc.sma.gov.my:18445/rtc.html?token=$newCCTVId&session=$session";
                         timer.cancel();
                         Fluttertoast.cancel();
                         Navigator.of(context).pop();
                         Navigator.pushNamed(
                           context,
-                          SubscriptionVideoScreen.routeName,
+                          SubscriptionVideoScreenLS.routeName,
                           arguments: SubscriptionVideoScreenArguments(
                               cctvDetail.id,
-                              cctvDetail.liveUrl,
+                              liveUrl,
                               cctvDetail.name,
                               cctvDetail.location,
                               _distanceInBetween,
@@ -541,15 +582,28 @@ class _MapBottomSheetWidgetState extends State<MapBottomSheetWidget> {
                   // height: screenSize.height * 0.06,
                   child: ElevatedButton(
                     onPressed: () async {
+                      var cctvId =
+                          Provider.of<CCTVProvider>(context, listen: false)
+                              .cctvModelDetail!
+                              .id;
+                      String newCCTVId = amendCCTVToken(cctvId);
+                      String session =
+                          Provider.of<CCTVProvider>(context, listen: false)
+                              .sessionLS;
+                      String liveUrl = AppConfig().isProductionInternal
+                          ? "https://10.16.24.144:18445/rtc.html?token=$newCCTVId&session=$session"
+                          : "https://video.sioc.sma.gov.my:18445/rtc.html?token=$newCCTVId&session=$session";
+                      // liveUrl =
+                      //     "https://video.sioc.sma.gov.my/hlsjs.html?token=0ba9--03445253974291760101_2450e628c6654835a282faf5e4185d8b&session=1aa43ca0-8e85-4041-9368-77503d1e0dbb";
                       timer.cancel();
                       Fluttertoast.cancel();
                       Navigator.of(context).pop();
                       Navigator.pushNamed(
                         context,
-                        SubscriptionVideoScreen.routeName,
+                        SubscriptionVideoScreenLS.routeName,
                         arguments: SubscriptionVideoScreenArguments(
                           cctvDetail.id,
-                          cctvDetail.liveUrl,
+                          liveUrl,
                           cctvDetail.name,
                           cctvDetail.location,
                           _distanceInBetween,

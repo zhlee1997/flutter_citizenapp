@@ -92,19 +92,14 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
     } else if (categoryIndex == 4) {
       return 'You reported Physical Violence';
     } else if (categoryIndex == 5) {
-      return Provider.of<EmergencyProvider>(context).otherText ?? "No remarks";
+      return Provider.of<EmergencyProvider>(context, listen: false).otherText ??
+          "No remarks";
     } else {
       return "You submitted Voice Recording";
     }
   }
 
   Future<void> submitCase(bool isServices) async {
-    // TODO: API Lack of "Voice Recording" category
-    // eventLongitude, eventLatitude, eventLocation
-    // TODO: Lack of eventAudioURL
-    // TODO: Lack of eventYourself
-    // TODO: attachment API
-
     final GlobalDialogHelper globalDialogHelper = GlobalDialogHelper();
     final EmergencyProvider emergencyProvider =
         Provider.of<EmergencyProvider>(context, listen: false);
@@ -114,9 +109,11 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
       'eventTargetUrgent': emergencyProvider.category.toString(),
       'eventLatitude': emergencyProvider.latitude.toString(),
       'eventLongitude': emergencyProvider.longitude.toString(),
-      // TODO: New field for emergency (address) => API
+      // New field for emergency (address) => API
       'eventLocation': emergencyProvider.address.toString(),
       'eventDesc': returnRemarksInText(emergencyProvider.category),
+      // New field for eventYourself (eventNeedHelp) => API
+      'eventNeedHelp': emergencyProvider.yourself ? "1" : "0",
     };
 
     try {
@@ -220,7 +217,8 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("Emergency Request"),
+          title: Text(
+              AppLocalization.of(context)!.translate('emergency_request')!),
         ),
         body: Theme(
           data: Theme.of(context).copyWith(
@@ -249,7 +247,8 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
                           ),
                         ),
                         onPressed: details.onStepCancel,
-                        child: const Text('BACK'),
+                        child: Text(
+                            AppLocalization.of(context)!.translate('back')!),
                       ),
                     ),
                     SizedBox(
@@ -261,14 +260,15 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
                           ),
                         ),
                         onPressed: details.onStepContinue,
-                        child: const Row(
+                        child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                            Text("SUBMIT"),
-                            SizedBox(
+                            Text(AppLocalization.of(context)!
+                                .translate('submit')!),
+                            const SizedBox(
                               width: 10.0,
                             ),
-                            Icon(Icons.send)
+                            const Icon(Icons.send)
                           ],
                         ),
                       ),
@@ -308,7 +308,7 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
             isActive: currentStep >= 0,
             state: currentStep > 0 ? StepState.complete : StepState.indexed,
             title: Text(
-              "Report",
+              AppLocalization.of(context)!.translate('report')!,
               style: TextStyle(
                 color: currentStep >= 0 ? Colors.red : null,
                 fontSize: Theme.of(context).textTheme.labelSmall!.fontSize,
@@ -335,7 +335,7 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
           isActive: currentStep >= 1,
           state: currentStep > 1 ? StepState.complete : StepState.indexed,
           title: Text(
-            "Confirm",
+            AppLocalization.of(context)!.translate('confirm')!,
             style: Theme.of(context).textTheme.labelSmall,
           ),
           content: const ConfirmScreen(),

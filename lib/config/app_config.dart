@@ -2,9 +2,13 @@ class AppConfig {
   // IBS Google Map API Key
   String get googleMapApiKey => 'AIzaSyBQmKCI94m7awSBd_x4c-CFAnnsprCJ45w';
 
+  bool isProductionInternal = false;
+  bool isUsingLinkingVision = true;
+
   static String baseURL = '';
-  String get baseUrlProduction =>
-      'https://citizen.sioc.sma.gov.my/mobile/api/'; // Staging Env
+  String get baseUrlProduction => isProductionInternal
+      ? "http://10.16.24.130:28300/mobile/api/"
+      : "https://citizen.sioc.sma.gov.my/mobile/api/"; // Staging Env
   String get baseUrlStaging =>
       'http://10.16.24.139:28300/mobile/api/'; // Staging Env
   String get baseUrlDev => 'http://124.70.29.113:28300/mobile/api/'; // Dev Env

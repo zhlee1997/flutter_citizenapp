@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_citizenapp/config/app_config.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
 import '../../screens/subscription/subscription_map_screen.dart';
+import '../../screens/subscription/subscription_map_screen_ls.dart';
 import '../../screens/subscription/subscription_list_screen.dart';
+import '../../screens/subscription/subscription_list_screen_ls.dart';
+
 import '../../providers/camera_subscription_provider.dart';
 import '../../providers/subscription_provider.dart';
 
@@ -24,10 +28,14 @@ class _SubscriptionChooseScreenState extends State<SubscriptionChooseScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   void _handleNavigateToSubscriptionMapScreen(BuildContext context) =>
-      Navigator.of(context).pushNamed(SubscriptionMapScreen.routeName);
+      AppConfig().isUsingLinkingVision
+          ? Navigator.of(context).pushNamed(SubscriptionMapScreenLS.routeName)
+          : Navigator.of(context).pushNamed(SubscriptionMapScreen.routeName);
 
   void _handleNavigateToSubscriptionListScreen(BuildContext context) =>
-      Navigator.of(context).pushNamed(SubscriptionListScreen.routeName);
+      AppConfig().isUsingLinkingVision
+          ? Navigator.of(context).pushNamed(SubscriptionListScreenLS.routeName)
+          : Navigator.of(context).pushNamed(SubscriptionListScreen.routeName);
 
   Future<void> getSubscriptionDevicesList(String subscribeId) async {
     try {
@@ -38,6 +46,7 @@ class _SubscriptionChooseScreenState extends State<SubscriptionChooseScreen> {
         setState(() {
           _isError = false;
         });
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
       } else {
         setState(() {
           _isError = true;
@@ -65,8 +74,9 @@ class _SubscriptionChooseScreenState extends State<SubscriptionChooseScreen> {
       action: SnackBarAction(
         label: "Retry",
         onPressed: () async {
-          await getSubscriptionDevicesList(subscribeId);
-          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          try {
+            await getSubscriptionDevicesList(subscribeId);
+          } catch (e) {}
         },
       ),
     );
@@ -98,9 +108,7 @@ class _SubscriptionChooseScreenState extends State<SubscriptionChooseScreen> {
                 onTap: _isError
                     ? () => Fluttertoast.showToast(
                         msg: "Cannot access now. Try again")
-                    : () {
-                        _handleNavigateToSubscriptionMapScreen(context);
-                      },
+                    : () => _handleNavigateToSubscriptionMapScreen(context),
                 child: Container(
                   height: screenSize.height * 0.225,
                   width: screenSize.width * 0.9,

@@ -264,9 +264,11 @@ class _NotificationsBottomNavScreenState
         setState(() {
           _isLoading = true;
         });
-        await getMajorAnnouncements(_majorPage);
-        await Provider.of<InboxProvider>(context, listen: false)
-            .refreshNotificationsProvider();
+      }
+      await getMajorAnnouncements(_majorPage);
+      await Provider.of<InboxProvider>(context, listen: false)
+          .refreshNotificationsProvider();
+      if (mounted) {
         setState(() {
           _isLoading = false;
         });
@@ -533,20 +535,28 @@ class _NotificationsBottomNavScreenState
                                                       _inboxes[index].msgType)),
                                             ),
                                             title: Text(
-                                              _inboxes[index].msgTitle,
+                                              _inboxes[index].msgType == "4"
+                                                  ? "Utilities Bill Payment"
+                                                  : _inboxes[index].msgTitle,
                                               overflow: TextOverflow.ellipsis,
                                               style: const TextStyle(
                                                 fontWeight: FontWeight.w500,
                                               ),
                                             ),
+                                            // TODO: temp add words for ultilities
                                             subtitle: Text(
-                                                _inboxes[index].msgType == "1"
-                                                    ? json.decode(_inboxes[
-                                                            index]
-                                                        .msgContext)["content"]
-                                                    : json.decode(_inboxes[
-                                                            index]
-                                                        .msgContext)["title"],
+                                                _inboxes[index].msgType == "4"
+                                                    ? "Utilities Bill Payment: Submitted"
+                                                    : _inboxes[index].msgType ==
+                                                            "1"
+                                                        ? json.decode(_inboxes[
+                                                                    index]
+                                                                .msgContext)[
+                                                            "content"]
+                                                        : json.decode(_inboxes[
+                                                                    index]
+                                                                .msgContext)[
+                                                            "title"],
                                                 overflow: TextOverflow.ellipsis,
                                                 style: const TextStyle(
                                                   fontWeight: FontWeight.w300,

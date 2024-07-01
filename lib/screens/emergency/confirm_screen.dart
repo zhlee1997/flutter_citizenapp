@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/emergency_provider.dart';
+import '../../utils/app_localization.dart';
 
 class ConfirmScreen extends StatelessWidget {
   const ConfirmScreen({super.key});
@@ -77,9 +78,9 @@ class ConfirmScreen extends StatelessWidget {
                   const SizedBox(
                     width: 10.0,
                   ),
-                  const Text(
-                    "Note",
-                    style: TextStyle(
+                  Text(
+                    AppLocalization.of(context)!.translate('note_2')!,
+                    style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
@@ -89,9 +90,10 @@ class ConfirmScreen extends StatelessWidget {
               const SizedBox(
                 height: 8.0,
               ),
-              const Text(
-                "Please verify and check the information below before submission.",
-                style: TextStyle(
+              Text(
+                AppLocalization.of(context)!
+                    .translate('please_verify_and_check')!,
+                style: const TextStyle(
                   fontSize: 13.0,
                   color: Colors.white,
                 ),
@@ -102,7 +104,7 @@ class ConfirmScreen extends StatelessWidget {
         const SizedBox(
           height: 20.0,
         ),
-        const Text("ADDRESS"),
+        Text(AppLocalization.of(context)!.translate('address_2')!),
         Text(
           Provider.of<EmergencyProvider>(context).address,
           style: const TextStyle(
@@ -112,7 +114,7 @@ class ConfirmScreen extends StatelessWidget {
         const SizedBox(
           height: 10.0,
         ),
-        const Text("LOCATION"),
+        Text(AppLocalization.of(context)!.translate('location_2')!),
         Text(
           "${Provider.of<EmergencyProvider>(context).latitude}, ${Provider.of<EmergencyProvider>(context).longitude}",
           style: const TextStyle(
@@ -122,7 +124,7 @@ class ConfirmScreen extends StatelessWidget {
         const SizedBox(
           height: 10.0,
         ),
-        const Text("EMERGENCY REQUEST"),
+        Text(AppLocalization.of(context)!.translate('emergency_request_2')!),
         Text(
           returnCategoryInText(
               Provider.of<EmergencyProvider>(context).category),
@@ -134,7 +136,8 @@ class ConfirmScreen extends StatelessWidget {
           const SizedBox(
             height: 10.0,
           ),
-        if (audioPath.isNotEmpty) const Text("ATTACHMENT"),
+        if (audioPath.isNotEmpty)
+          Text(AppLocalization.of(context)!.translate('attachment')!),
         if (audioPath.isNotEmpty)
           Text(
             audioPath.substring(audioPath.lastIndexOf("/"), audioPath.length),
@@ -145,7 +148,7 @@ class ConfirmScreen extends StatelessWidget {
         const SizedBox(
           height: 10.0,
         ),
-        const Text("IS IT YOU YOURSELF?"),
+        Text(AppLocalization.of(context)!.translate('is_it_you_yourself')!),
         Text(
           Provider.of<EmergencyProvider>(context).yourself ? "YES" : "NO",
           style: const TextStyle(
@@ -155,7 +158,7 @@ class ConfirmScreen extends StatelessWidget {
         const SizedBox(
           height: 10.0,
         ),
-        const Text("REMARKS"),
+        Text(AppLocalization.of(context)!.translate('remarks')!),
         Text(
           returnRemarksInText(
             context,
