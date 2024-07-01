@@ -569,10 +569,9 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                           Future.delayed(Duration.zero, () {
                             GlobalDialogHelper()
                                 .buildCircularProgressWithTextCenter(
-                              context: context,
-                              message: AppLocalization.of(context)!
-                                  .translate('logging_out')!,
-                            );
+                                    context: context,
+                                    message: AppLocalization.of(context)!
+                                        .translate('logging_out')!);
                             authProvider
                                 .signOutProvider(context)
                                 .then((bool isLogoutSuccess) async {
@@ -600,7 +599,8 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                       ),
                                       child: Center(
                                         child: Text(
-                                          "Logout successfully",
+                                          AppLocalization.of(context)!
+                                              .translate('logout_success')!,
                                           style: TextStyle(
                                             color: Theme.of(context)
                                                 .colorScheme

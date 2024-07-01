@@ -227,9 +227,10 @@ class _ReportScreenState extends State<ReportScreen> {
               "assets/images/pictures/talikhidmat/talikhidmat_banner.jpg"),
           Container(
             margin: const EdgeInsets.only(top: 5.0),
-            child: const Text(
-              "Your feedback makes a difference",
-              style: TextStyle(
+            child: Text(
+              AppLocalization.of(context)!
+                  .translate('your_feedback_makes_a_difference')!,
+              style: const TextStyle(
                 fontStyle: FontStyle.italic,
               ),
             ),
@@ -349,7 +350,7 @@ class _ReportScreenState extends State<ReportScreen> {
           const SizedBox(
             height: 15.0,
           ),
-          const Text("Attachments:"),
+          Text("${AppLocalization.of(context)!.translate("attachments")} :"),
           Container(
             margin: const EdgeInsets.only(
               top: 15.0,

@@ -139,8 +139,9 @@ class _CaseDetailBottomModalState extends State<CaseDetailBottomModal> {
                   buildCaseStatusContainer(
                       caseData.reportedCaseDetail!.eventStatus!),
                   CaseDetailBottomBar(
-                    label: "Case Number",
-                    value: caseData.reportedCaseDetail!.talikhidmatCaseId ?? "",
+                    label: AppLocalization.of(context)!.translate('case_n')!,
+                    value:
+                        caseData.reportedCaseDetail!.talikhidmatCaseId ?? "--",
                   ),
                   // CaseDetailBottomBar(
                   //   label: AppLocalization.of(context)!.translate('case_s')!,
@@ -156,12 +157,14 @@ class _CaseDetailBottomModalState extends State<CaseDetailBottomModal> {
                         : '${AppLocalization.of(context)!.translate('latitude')!}: ${caseData.reportedCaseDetail!.eventLatitude ?? ""}\n${AppLocalization.of(context)!.translate('longitude')!}: ${caseData.reportedCaseDetail!.eventLatitude ?? ""}',
                   ),
                   CaseDetailBottomBar(
-                    label: "Case Category",
+                    label: AppLocalization.of(context)!
+                        .translate('case_category')!,
                     value: formatCaseCategory(
                         caseData.reportedCaseDetail!.eventType ?? ""),
                   ),
                   CaseDetailBottomBar(
-                    label: "Case Message",
+                    label:
+                        AppLocalization.of(context)!.translate('case_message')!,
                     value: caseData.reportedCaseDetail!.eventDesc ?? "",
                   ),
                   CaseDetailBottomBar(
@@ -180,7 +183,8 @@ class _CaseDetailBottomModalState extends State<CaseDetailBottomModal> {
                         caseData.reportCaseAttachmentList,
                       ),
                       icon: const Icon(Icons.file_present_outlined),
-                      label: Text("Attachment File"),
+                      label: Text(AppLocalization.of(context)!
+                          .translate('attachment_file')!),
                       style: OutlinedButton.styleFrom(
                         side: BorderSide(
                           color: Theme.of(context).colorScheme.primary,
@@ -209,7 +213,7 @@ class _CaseDetailBottomModalState extends State<CaseDetailBottomModal> {
             borderRadius: const BorderRadius.all(Radius.circular(5.0)),
           ),
           child: Text(
-            "NEW",
+            AppLocalization.of(context)!.translate('new_2')!,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontWeight: FontWeight.bold,
@@ -225,7 +229,7 @@ class _CaseDetailBottomModalState extends State<CaseDetailBottomModal> {
             borderRadius: const BorderRadius.all(Radius.circular(5.0)),
           ),
           child: Text(
-            "PENDING",
+            AppLocalization.of(context)!.translate('pending_2')!,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontWeight: FontWeight.bold,
@@ -241,7 +245,7 @@ class _CaseDetailBottomModalState extends State<CaseDetailBottomModal> {
             borderRadius: const BorderRadius.all(Radius.circular(5.0)),
           ),
           child: Text(
-            "RESOLVED",
+            AppLocalization.of(context)!.translate('resolved_2')!,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontWeight: FontWeight.bold,

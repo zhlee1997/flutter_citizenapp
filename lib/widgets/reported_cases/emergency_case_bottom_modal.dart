@@ -141,7 +141,7 @@ class EmergencyCaseBottomModal extends StatelessWidget {
                   buildCaseStatusContainer(
                       caseData.reportedCaseDetail!.eventStatus!),
                   CaseDetailBottomBar(
-                    label: "Case Number",
+                    label: AppLocalization.of(context)!.translate('case_n')!,
                     value: caseData.reportedCaseDetail!.eventCode!,
                   ),
                   // CaseDetailBottomBar(
@@ -159,13 +159,22 @@ class EmergencyCaseBottomModal extends StatelessWidget {
                         '${AppLocalization.of(context)!.translate('latitude')!}: ${caseData.reportedCaseDetail!.eventLatitude ?? ""}\n${AppLocalization.of(context)!.translate('longitude')!}: ${caseData.reportedCaseDetail!.eventLongitude ?? ""}',
                   ),
                   CaseDetailBottomBar(
-                    label: "Case Category",
+                    label: AppLocalization.of(context)!
+                        .translate('case_category')!,
                     value: formatEmergencyCaseCategory(
                         caseData.reportedCaseDetail!.eventTargetUrgent ?? ""),
                   ),
                   CaseDetailBottomBar(
-                    label: "Case Message",
+                    label:
+                        AppLocalization.of(context)!.translate('case_message')!,
                     value: caseData.reportedCaseDetail!.eventDesc ?? "",
+                  ),
+                  // Add in eventNeedHelp field
+                  CaseDetailBottomBar(
+                    label: "Is It Yourself?",
+                    value: caseData.reportedCaseDetail!.eventNeedHelp == "1"
+                        ? "Yes"
+                        : "No",
                   ),
                   CaseDetailBottomBar(
                     label: AppLocalization.of(context)!.translate('date_sub')!,

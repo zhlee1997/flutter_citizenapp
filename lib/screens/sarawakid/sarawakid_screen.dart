@@ -62,7 +62,8 @@ class _SarawakIDScreenState extends State<SarawakIDScreen> {
                       ),
                       child: Center(
                         child: Text(
-                          "Login successfully!",
+                          AppLocalization.of(context)!
+                              .translate('login_success')!,
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.primary,
                           ),
@@ -106,7 +107,8 @@ class _SarawakIDScreenState extends State<SarawakIDScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Login Now to CitizenApp'),
+        title: Text(
+            AppLocalization.of(context)!.translate('login_now_to_citizenApp')!),
         bottom: loadingPercentage < 100
             ? PreferredSize(
                 preferredSize:

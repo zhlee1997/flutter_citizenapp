@@ -32,9 +32,9 @@ class GlobalDialogHelper {
                   overlayColor: MaterialStateProperty.all<Color>(
                       Colors.red.withOpacity(0.1)),
                 ),
-                child: const Text(
-                  'YES',
-                  style: TextStyle(
+                child: Text(
+                  AppLocalization.of(context)!.translate('yes')!,
+                  style: const TextStyle(
                     color: Colors.red,
                   ),
                 )),
@@ -42,7 +42,7 @@ class GlobalDialogHelper {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text('NO'),
+              child: Text(AppLocalization.of(context)!.translate('no')!),
             ),
           ],
         );

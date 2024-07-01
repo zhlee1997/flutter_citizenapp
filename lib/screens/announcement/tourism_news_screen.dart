@@ -7,6 +7,7 @@ import '../../services/announcement_services.dart';
 import '../../providers/language_provider.dart';
 import './announcement_detail_screen.dart';
 import '../../utils/global_dialog_helper.dart';
+import '../../utils/app_localization.dart';
 
 class TourismNewsScreen extends StatefulWidget {
   static const String routeName = "tourism-news-screen";
@@ -150,7 +151,8 @@ class _TourismNewsScreenState extends State<TourismNewsScreen> {
                   expandedHeight: screenSize.height * 0.25,
                   backgroundColor: Theme.of(context).colorScheme.secondary,
                   flexibleSpace: FlexibleSpaceBar(
-                    title: const Text("Tourism News"),
+                    title: Text(AppLocalization.of(context)!
+                        .translate('tourism_news')!),
                     background: Image.asset(
                       "assets/images/pictures/announcement/tourism_news.jpg",
                       fit: BoxFit.cover,
@@ -158,7 +160,7 @@ class _TourismNewsScreenState extends State<TourismNewsScreen> {
                   ),
                 ),
                 SliverPadding(
-                  padding: EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(8.0),
                   sliver: SliverList.separated(
                     itemCount: _news.length,
                     itemBuilder: (context, index) {

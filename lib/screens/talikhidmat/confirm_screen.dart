@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/talikhidmat_provider.dart';
+import '../../utils/app_localization.dart';
 
 class ConfirmScreen extends StatelessWidget {
   const ConfirmScreen({super.key});
@@ -51,9 +52,9 @@ class ConfirmScreen extends StatelessWidget {
                     const SizedBox(
                       width: 10.0,
                     ),
-                    const Text(
-                      "Note",
-                      style: TextStyle(
+                    Text(
+                      AppLocalization.of(context)!.translate("note_2")!,
+                      style: const TextStyle(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -62,9 +63,10 @@ class ConfirmScreen extends StatelessWidget {
                 const SizedBox(
                   height: 8.0,
                 ),
-                const Text(
-                  "Please verify and check the information below before submission.",
-                  style: TextStyle(
+                Text(
+                  AppLocalization.of(context)!
+                      .translate("please_verify_and_check")!,
+                  style: const TextStyle(
                     fontSize: 13.0,
                   ),
                 ),
@@ -74,7 +76,9 @@ class ConfirmScreen extends StatelessWidget {
           const SizedBox(
             height: 20.0,
           ),
-          const Text("TALIKHIDMAT REQUEST"),
+          Text(
+            AppLocalization.of(context)!.translate("talikhidmat_request")!,
+          ),
           Text(
             returnCategoryInText(
                 Provider.of<TalikhidmatProvider>(context).category),
@@ -85,7 +89,7 @@ class ConfirmScreen extends StatelessWidget {
           const SizedBox(
             height: 10.0,
           ),
-          const Text("MESSAGE"),
+          Text(AppLocalization.of(context)!.translate("message_2")!),
           Text(
             Provider.of<TalikhidmatProvider>(context).message,
             style: const TextStyle(
@@ -95,7 +99,7 @@ class ConfirmScreen extends StatelessWidget {
           const SizedBox(
             height: 10.0,
           ),
-          const Text("ADDRESS"),
+          Text(AppLocalization.of(context)!.translate("address_2")!),
           Text(
             Provider.of<TalikhidmatProvider>(context).address,
             style: const TextStyle(
@@ -105,7 +109,7 @@ class ConfirmScreen extends StatelessWidget {
           const SizedBox(
             height: 10.0,
           ),
-          const Text("LOCATION"),
+          Text(AppLocalization.of(context)!.translate("location_2")!),
           Text(
             "${Provider.of<TalikhidmatProvider>(context).latitude}, ${Provider.of<TalikhidmatProvider>(context).longitude}",
             style: const TextStyle(
@@ -115,8 +119,8 @@ class ConfirmScreen extends StatelessWidget {
           const SizedBox(
             height: 10.0,
           ),
-          const Text("ATTACHMENTS"),
-          // TODO: Attachments (eg: 5 images)
+          Text(AppLocalization.of(context)!.translate("attachments_2")!),
+          // Attachments (eg: 5 images)
           Provider.of<TalikhidmatProvider>(context).attachments.isEmpty
               ? const Text(
                   "No attachments",

@@ -156,11 +156,11 @@ class _BillPaymentCheckoutScreenState extends State<BillPaymentCheckoutScreen> {
         Provider.of<BillProvider>(context, listen: false).setPaymentItem(temp);
         return temp;
       case "4":
-        temp = "Other Utilities - KWB";
+        temp = "Water Utility - KWB";
         Provider.of<BillProvider>(context, listen: false).setPaymentItem(temp);
         return temp;
       default:
-        temp = "Other Utilities - SESCO";
+        temp = "Electricity Utility - SESCO";
         Provider.of<BillProvider>(context, listen: false).setPaymentItem(temp);
         return temp;
     }

@@ -7,6 +7,7 @@ import '../../models/announcement_model.dart';
 import '../../providers/language_provider.dart';
 import './homepage_citizen_card.dart';
 import '../../screens/announcement/announcement_detail_screen.dart';
+import '../../utils/app_localization.dart';
 
 class HomepageCitizenAnnouncement extends StatelessWidget {
   final bool citizenShimmer;
@@ -72,7 +73,7 @@ class HomepageCitizenAnnouncement extends StatelessWidget {
               const SizedBox(
                 height: 10.0,
               ),
-              const Text("No announcement"),
+              Text(AppLocalization.of(context)!.translate('no_announcement')!),
             ],
           ),
         ),

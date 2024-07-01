@@ -105,9 +105,10 @@ class _OtherEmergencyBottomModalState extends State<OtherEmergencyBottomModal> {
                 padding: const EdgeInsets.symmetric(
                   horizontal: 5.0,
                 ),
-                child: const Text(
-                  "Describe your emergency to us",
-                  style: TextStyle(
+                child: Text(
+                  AppLocalization.of(context)!
+                      .translate('enter_here_to_tell_us_more')!,
+                  style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18.0,
                   ),
@@ -122,8 +123,9 @@ class _OtherEmergencyBottomModalState extends State<OtherEmergencyBottomModal> {
                   child: TextFormField(
                       maxLength: _otherTextFormFieldLengthLimit,
                       controller: textEditingController,
-                      decoration: const InputDecoration(
-                        labelText: 'Enter here to tell us more',
+                      decoration: InputDecoration(
+                        labelText: AppLocalization.of(context)!
+                            .translate('describe_your_emergency_to_us')!,
                       ),
                       textInputAction: TextInputAction.done,
                       inputFormatters: [
@@ -148,9 +150,10 @@ class _OtherEmergencyBottomModalState extends State<OtherEmergencyBottomModal> {
                 padding: const EdgeInsets.symmetric(
                   horizontal: 5.0,
                 ),
-                child: const Text(
-                  "Are you the one in need of help?",
-                  style: TextStyle(
+                child: Text(
+                  AppLocalization.of(context)!
+                      .translate('are_you_the_one_in_need_of_help')!,
+                  style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18.0,
                   ),
@@ -183,9 +186,9 @@ class _OtherEmergencyBottomModalState extends State<OtherEmergencyBottomModal> {
                       );
                       widget.handleProceedNext();
                     },
-                    child: const Text(
-                      "Yes",
-                      style: TextStyle(
+                    child: Text(
+                      AppLocalization.of(context)!.translate('yes')!,
+                      style: const TextStyle(
                         fontSize: 16.0,
                         color: Colors.white,
                       ),
@@ -219,7 +222,7 @@ class _OtherEmergencyBottomModalState extends State<OtherEmergencyBottomModal> {
                       widget.handleProceedNext();
                     },
                     child: Text(
-                      "No",
+                      AppLocalization.of(context)!.translate('no')!,
                       style: TextStyle(
                         fontSize: 16.0,
                         color: Colors.grey[700],

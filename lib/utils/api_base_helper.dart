@@ -1,6 +1,8 @@
+import 'dart:io';
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:dio/io.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -44,6 +46,39 @@ class ApiBaseHelper {
       responseJson = _returnResponse(response);
     } on Exception catch (e) {
       print('getError: ${e.toString()}');
+      // make it explicit that this function can throw exceptions
+      rethrow;
+    }
+    // _checkResponse(responseJson);
+    return responseJson;
+  }
+
+  Future<dynamic> getThirdParty(
+    String url, {
+    Map<String, dynamic>? queryParameters,
+  }) async {
+    final dio = Dio();
+    dio.httpClientAdapter = IOHttpClientAdapter(
+      createHttpClient: () {
+        final client = HttpClient();
+        client.badCertificateCallback =
+            (X509Certificate cert, String host, int port) => true;
+        return client;
+      },
+    );
+
+    var responseJson;
+
+    try {
+      print("getURLThirdParty: $url");
+      print("getParametersThirdParty: $queryParameters");
+      final response = await dio.get(
+        url,
+        queryParameters: queryParameters,
+      );
+      responseJson = _returnResponse(response);
+    } on Exception catch (e) {
+      print('getThirdPartyError: ${e.toString()}');
       // make it explicit that this function can throw exceptions
       rethrow;
     }

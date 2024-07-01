@@ -7,6 +7,7 @@ import '../../services/announcement_services.dart';
 import '../../providers/language_provider.dart';
 import './announcement_detail_screen.dart';
 import '../../utils/global_dialog_helper.dart';
+import '../../utils/app_localization.dart';
 
 class CitizenAnnouncementsScreen extends StatefulWidget {
   static const String routeName = "citizen-announcements-screen";
@@ -153,7 +154,8 @@ class _CitizenAnnouncementsScreenState
                   expandedHeight: screenSize.height * 0.25,
                   backgroundColor: Theme.of(context).colorScheme.secondary,
                   flexibleSpace: FlexibleSpaceBar(
-                    title: const Text("Citizen Announcements"),
+                    title: Text(AppLocalization.of(context)!
+                        .translate('citizen_announcements')!),
                     background: Image.asset(
                       "assets/images/pictures/announcement/citizen_announcement.jpg",
                       fit: BoxFit.cover,

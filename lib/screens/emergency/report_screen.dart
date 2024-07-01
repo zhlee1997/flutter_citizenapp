@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../utils/app_localization.dart';
+
 class ReportScreen extends StatelessWidget {
   final VoidCallback handleVoiceNoteBottomModal;
   final void Function(int) handleEmergencyBottomModal;
@@ -23,9 +25,9 @@ class ReportScreen extends StatelessWidget {
             bottom: 10.0,
           ),
           alignment: Alignment.centerLeft,
-          child: const Text(
-            "Select one for emergency request",
-            style: TextStyle(
+          child: Text(
+            AppLocalization.of(context)!.translate('select_one_for')!,
+            style: const TextStyle(
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -53,11 +55,11 @@ class ReportScreen extends StatelessWidget {
                   ),
                 ),
                 padding: const EdgeInsets.all(8.0),
-                child: const Center(
+                child: Center(
                   child: Text(
-                    "HARASSMENT",
+                    AppLocalization.of(context)!.translate('harassment')!,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       // fontSize: 14.0,
                     ),
@@ -78,11 +80,11 @@ class ReportScreen extends StatelessWidget {
                   ),
                 ),
                 padding: const EdgeInsets.all(8.0),
-                child: const Center(
+                child: Center(
                   child: Text(
-                    "FIRE/RESCUE",
+                    AppLocalization.of(context)!.translate('fire/rescue')!,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       // fontSize: 16.0,
                     ),
@@ -103,11 +105,12 @@ class ReportScreen extends StatelessWidget {
                   ),
                 ),
                 padding: const EdgeInsets.all(8.0),
-                child: const Center(
+                child: Center(
                   child: Text(
-                    "TRAFFIC ACCIDENT/INJURIES",
+                    AppLocalization.of(context)!
+                        .translate('traffic_accident/injuries')!,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       // fontSize: 16.0,
                     ),
@@ -128,11 +131,11 @@ class ReportScreen extends StatelessWidget {
                   ),
                 ),
                 padding: const EdgeInsets.all(8.0),
-                child: const Center(
+                child: Center(
                   child: Text(
-                    "THEFT/ROBBERY",
+                    AppLocalization.of(context)!.translate('theft/robbery')!,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       // fontSize: 16.0,
                     ),
@@ -153,11 +156,12 @@ class ReportScreen extends StatelessWidget {
                   ),
                 ),
                 padding: const EdgeInsets.all(8.0),
-                child: const Center(
+                child: Center(
                   child: Text(
-                    "PHYSICAL VIOLENCE",
+                    AppLocalization.of(context)!
+                        .translate('physical_violence')!,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       // fontSize: 16.0,
                     ),
@@ -178,11 +182,11 @@ class ReportScreen extends StatelessWidget {
                   ),
                 ),
                 padding: const EdgeInsets.all(8.0),
-                child: const Center(
+                child: Center(
                   child: Text(
-                    "OTHERS",
+                    AppLocalization.of(context)!.translate('others')!,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       // fontSize: 16.0,
                     ),
@@ -197,9 +201,10 @@ class ReportScreen extends StatelessWidget {
             vertical: 20.0,
           ),
           alignment: Alignment.center,
-          child: const Text(
-            "OR: Record your voice for help",
-            style: TextStyle(
+          child: Text(
+            AppLocalization.of(context)!
+                .translate('or_record_your_voice_for_help')!,
+            style: const TextStyle(
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -226,16 +231,16 @@ class ReportScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.record_voice_over_outlined,
                     size: 27.5,
                     color: Colors.red,
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 10.0,
                   ),
                   Text(
-                    "VOICE RECORDING",
+                    AppLocalization.of(context)!.translate('voice_recording')!,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,

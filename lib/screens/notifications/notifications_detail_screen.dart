@@ -232,8 +232,10 @@ class _NotificationsDetailScreenState extends State<NotificationsDetailScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // TODO: temp add words for ultilities
             Text(
-              _inbox!.msgTitle,
+              // _inbox!.msgTitle,
+              "Utilities Bill Payment",
               style: Theme.of(context).textTheme.titleLarge,
             ),
             SizedBox(

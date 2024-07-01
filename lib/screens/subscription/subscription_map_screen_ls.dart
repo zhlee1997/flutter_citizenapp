@@ -1,0 +1,272 @@
+import 'dart:async';
+import 'dart:collection';
+import 'dart:ui' as ui;
+
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
+
+import '../../utils/global_dialog_helper.dart';
+import '../../utils/app_localization.dart';
+import '../../widgets/subscription/map_bottom_sheet_widget.dart';
+import '../../widgets/subscription/map_bottom_sheet_widget_ls.dart';
+import '../../providers/cctv_provider.dart';
+import '../../models/camera_subscription_model.dart';
+import '../../providers/camera_subscription_provider.dart';
+
+class SubscriptionMapScreenLS extends StatefulWidget {
+  static const String routeName = "subscription-map-screen-ls";
+
+  const SubscriptionMapScreenLS({super.key});
+
+  @override
+  State<SubscriptionMapScreenLS> createState() =>
+      _SubscriptionMapScreenLSState();
+}
+
+class _SubscriptionMapScreenLSState extends State<SubscriptionMapScreenLS> {
+  final Completer<GoogleMapController> _controller =
+      Completer<GoogleMapController>();
+
+  final GlobalDialogHelper _globalDialogHelper = GlobalDialogHelper();
+
+  Set<Marker> _markers = HashSet<Marker>();
+
+  bool _isError = false;
+  late bool _isLoading;
+  late double _latitude;
+  late double _longitude;
+  late CameraPosition _initialLocation;
+
+  Future<Uint8List> getBytesFromAsset(String path, int width) async {
+    ByteData data = await rootBundle.load(path);
+    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
+        targetWidth: width);
+    ui.FrameInfo fi = await codec.getNextFrame();
+    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!
+        .buffer
+        .asUint8List();
+  }
+
+  double convertStringToDouble(String value) {
+    return double.parse(value);
+  }
+
+  Future<void> onPressCctvIcon(CameraSubscriptionModel cctv) async {
+    // LS Login API
+    // https://10.16.24.144:18445/api/v1/Login?user=admin&password=450cd8c9ccc2a97d8f1619f0201b9d7f
+    Future<void> handleQueryLSLogin() async {
+      try {
+        await Provider.of<CCTVProvider>(context, listen: false)
+            .getLinkingVisionLoginProvider();
+      } catch (e) {
+        setState(() {
+          _isError = true;
+        });
+      }
+
+      try {
+        await Provider.of<CCTVProvider>(context, listen: false)
+            .getCctvDetailProvider(cctv);
+      } catch (e) {
+        setState(() {
+          _isError = true;
+        });
+      }
+
+      Map<String, dynamic> data = {
+        "channel": "02",
+        "thridDeviceId": cctv.deviceCode,
+      };
+      try {
+        await Provider.of<CCTVProvider>(context, listen: false)
+            .getCameraShortCutUrlProvider(data);
+      } catch (e) {
+        setState(() {
+          _isError = true;
+        });
+      }
+    }
+
+    await showModalBottomSheet(
+      context: context,
+      showDragHandle: true,
+      builder: (_) {
+        return FutureBuilder(
+            future: handleQueryLSLogin(),
+            builder: (_, AsyncSnapshot snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else {
+                if (_isError) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          height: 150,
+                          child: SvgPicture.asset(
+                              'assets/images/svg/undraw_online.svg'),
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Text(AppLocalization.of(context)!
+                            .translate('camera_is_not_available')!),
+                      ],
+                    ),
+                  );
+                }
+                return MapBottomSheetWidgetLS(
+                  cctvLatitude: cctv.latitude,
+                  cctvLongitude: cctv.longitude,
+                );
+              }
+            });
+      },
+    );
+  }
+
+  /// Displays the markers of CCTV on Google Map when screen first renders
+  Future<void> _renderMarker() async {
+    try {
+      // TODO: vms/getCameraList => API
+
+      List<CameraSubscriptionModel> cctvModel =
+          Provider.of<CameraSubscriptionProvider>(context, listen: false)
+              .cameraSubscription;
+
+      final Uint8List markerIcon =
+          await getBytesFromAsset('assets/images/icon/cctv.png', 80);
+      cctvModel.forEach((cctv) {
+        if (cctv.latitude.isNotEmpty && cctv.longitude.isNotEmpty) {
+          setState(() {
+            _markers.add(
+              Marker(
+                markerId: MarkerId(cctv.id),
+                position: LatLng(
+                  double.parse(cctv.latitude),
+                  double.parse(cctv.longitude),
+                ),
+                icon: BitmapDescriptor.fromBytes(markerIcon),
+                onTap: () async {
+                  setState(() {
+                    _isError = false;
+                  });
+                  await onPressCctvIcon(cctv);
+                },
+              ),
+            );
+          });
+        }
+      });
+      setState(() {
+        _isLoading = false;
+      });
+    } catch (e) {
+      print("renderMarker error: ${e.toString()}");
+    }
+  }
+
+  Future<void> _showBottomModalSheetFirstNote() async {
+    await showModalBottomSheet(
+        context: context,
+        builder: (_) {
+          return Container(
+              // Define padding for the container.
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 15,
+              ),
+              // Create a Wrap widget to display the sheet contents.
+              child: Wrap(
+                spacing: 60, // Add spacing between the child widgets.
+                children: <Widget>[
+                  // Add a container with height to create some space.
+                  Container(height: 10),
+                  // Add a text widget with a title for the sheet.
+                  Text(
+                    "Note",
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  Container(height: 10), // Add some more space.
+                  // Add a text widget with a long description for the sheet.
+                  Text(
+                    'Currently, the location of cameras spans across city of Kuching. It will be updated from time to time.',
+                    style: TextStyle(
+                        color: Colors.grey[600], // Set the text color.
+                        fontSize: 16.0 // Set the text size.
+                        ),
+                  ),
+                  Container(height: 10), // Add some more space.
+                  // Add a row widget to display buttons for closing and reading more.
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment
+                        .end, // Align the buttons to the right.
+                    children: <Widget>[
+                      // Add an elevated button to read more.
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primary,
+                        ), // Set the button background color.
+                        onPressed: () {
+                          Navigator.pop(context); // Close the sheet.
+                        },
+                        child: Text("Okay",
+                            style: TextStyle(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .inversePrimary)), // Add the button text.
+                      )
+                    ],
+                  )
+                ],
+              ));
+        });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _isLoading = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      // default location: Kuching Waterfront
+      _latitude = 1.558497;
+      _longitude = 110.344320;
+      _initialLocation = CameraPosition(
+        target: LatLng(_latitude, _longitude),
+        zoom: 14.4746,
+      );
+      _renderMarker();
+      _showBottomModalSheetFirstNote();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Map Display"),
+      ),
+      body: _isLoading
+          ? _globalDialogHelper.showLoadingSpinner()
+          : GoogleMap(
+              initialCameraPosition: _initialLocation,
+              onMapCreated: (GoogleMapController controller) {
+                _controller.complete(controller);
+              },
+              myLocationEnabled: false,
+              myLocationButtonEnabled: false,
+              mapToolbarEnabled: false,
+              mapType: MapType.terrain,
+              markers: _markers,
+            ),
+    );
+  }
+}
