@@ -9,6 +9,7 @@ import '../../services/feedback_services.dart';
 import '../../utils/global_dialog_helper.dart';
 import '../../providers/auth_provider.dart';
 import '../../widgets/feedback/feedback_history_full_dialog.dart';
+import '../../utils/app_localization.dart';
 
 class SendFeedbackScreen extends StatefulWidget {
   static const String routeName = 'send-feedback-screen';
@@ -275,16 +276,18 @@ class _SendFeedbackScreenState extends State<SendFeedbackScreen> {
                   onPressed: () {
                     // Perform any action needed with the entered text
                     String enteredText = _textEditingController.text;
-
                     _handleSubmitFeedback(enteredText);
                   },
-                  child: const Text(
-                    "Send Feedback",
-                    style: TextStyle(
+                  child: Text(
+                    AppLocalization.of(context)!.translate('send_feedback')!,
+                    style: const TextStyle(
                       fontSize: 16.0,
                     ),
                   ),
                 ),
+              ),
+              const SizedBox(
+                height: 20.0,
               ),
             ],
           ),
@@ -293,12 +296,13 @@ class _SendFeedbackScreenState extends State<SendFeedbackScreen> {
       builder: (_, AuthProvider authProvider, Widget? child) {
         return Scaffold(
           appBar: AppBar(
-            title: const Text("Send Feedback"),
+            title:
+                Text(AppLocalization.of(context)!.translate('send_feedback')!),
             actions: authProvider.isAuth
                 ? <Widget>[
                     IconButton(
                       onPressed: () {
-                        // TODO: FutureBuilder => call Get Feedback API
+                        // FutureBuilder => call Get Feedback API
                         showDialog(
                             context: context,
                             builder: (_) {

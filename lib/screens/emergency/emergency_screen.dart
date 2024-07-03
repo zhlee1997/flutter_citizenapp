@@ -119,7 +119,7 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
     try {
       globalDialogHelper.buildCircularProgressWithTextCenter(
         context: context,
-        message: "Submitting",
+        message: AppLocalization.of(context)!.translate('submitting')!,
       );
       var response = await _eventServices.create(paramater);
       if (response["status"] == "500") {

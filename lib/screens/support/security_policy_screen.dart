@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
+import '../../utils/app_localization.dart';
+
 class SecurityPolicyScreen extends StatefulWidget {
   static const String routeName = "security-policy-screen";
 
@@ -17,7 +19,7 @@ class _SecurityPolicyScreenState extends State<SecurityPolicyScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Security Policy"),
+        title: Text(AppLocalization.of(context)!.translate('security_policy')!),
         bottom: loadingPercentage < 100
             ? PreferredSize(
                 preferredSize:

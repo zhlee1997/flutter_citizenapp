@@ -138,7 +138,7 @@ class _RecordingBottomModalState extends State<RecordingBottomModal> {
 
     GlobalDialogHelper().buildCircularProgressWithTextCenter(
       context: context,
-      message: "Uploading Audio",
+      message: AppLocalization.of(context)!.translate('upload_audio')!,
     );
 
     Uint8List uint8listAudio =
@@ -285,7 +285,7 @@ class _RecordingBottomModalState extends State<RecordingBottomModal> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Text(
-                  "Voice Recording",
+                  AppLocalization.of(context)!.translate('voice_recording_2')!,
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
                 IconButton.filledTonal(
@@ -293,7 +293,7 @@ class _RecordingBottomModalState extends State<RecordingBottomModal> {
                     await recorderController.pause(); // Pause recording
                     Navigator.of(context).pop();
                   },
-                  icon: Icon(Icons.close_outlined),
+                  icon: const Icon(Icons.close_outlined),
                 )
               ],
             ),
@@ -329,11 +329,12 @@ class _RecordingBottomModalState extends State<RecordingBottomModal> {
                       ? SizedBox(
                           width: screenSize.width * 0.05,
                           height: screenSize.width * 0.05,
-                          child: CircularProgressIndicator(
+                          child: const CircularProgressIndicator(
                             strokeWidth: 2.0,
                           ),
                         )
-                      : Text("START RECORDING"),
+                      : Text(AppLocalization.of(context)!
+                          .translate('start_recording')!),
                 ),
               ),
             if (isRecording)

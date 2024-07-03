@@ -7,22 +7,23 @@ import '../../utils/app_localization.dart';
 class ConfirmScreen extends StatelessWidget {
   const ConfirmScreen({super.key});
 
-  String returnCategoryInText(int category) {
+  String returnCategoryInText(int category, BuildContext context) {
     switch (category) {
       case 0:
-        return "HARASSMENT";
+        return AppLocalization.of(context)!.translate('harassment')!;
       case 1:
-        return "FIRE/RESCUE";
+        return AppLocalization.of(context)!.translate('fire/rescue')!;
       case 2:
-        return "TRAFFIC ACCIDENT/INJURIES";
+        return AppLocalization.of(context)!
+            .translate('traffic_accident/injuries')!;
       case 3:
-        return "THEFT/ROBBERY";
+        return AppLocalization.of(context)!.translate('theft/robbery')!;
       case 4:
-        return "PHYSICAL VIOLENCE";
+        return AppLocalization.of(context)!.translate('physical_violence')!;
       case 5:
-        return "OTHERS";
+        return AppLocalization.of(context)!.translate('others')!;
       default:
-        return "VOICE RECORDING";
+        return AppLocalization.of(context)!.translate('voice_recording')!;
     }
   }
 
@@ -32,27 +33,32 @@ class ConfirmScreen extends StatelessWidget {
   /// Returns description message
   String returnRemarksInText(BuildContext context, int categoryIndex) {
     if (categoryIndex == 0) {
-      return 'You reported Harassment';
+      return AppLocalization.of(context)!.translate('you_reported_harassment')!;
     } else if (categoryIndex == 1) {
-      return 'You reported Fire/Rescue';
+      return AppLocalization.of(context)!
+          .translate('you_reported_fire_rescue')!;
     } else if (categoryIndex == 2) {
-      return 'You reported Traffic Accident/Injuries';
+      return AppLocalization.of(context)!
+          .translate('you_reported_traffic_accident_injuries')!;
     } else if (categoryIndex == 3) {
-      return 'You reported Theft/Robbery';
+      return AppLocalization.of(context)!
+          .translate('you_reported_theft_robbery')!;
     } else if (categoryIndex == 4) {
-      return 'You reported Physical Violence';
+      return AppLocalization.of(context)!
+          .translate('you_reported_physical_violence')!;
     } else if (categoryIndex == 5) {
-      return Provider.of<EmergencyProvider>(context).otherText ?? "No remarks";
+      return Provider.of<EmergencyProvider>(context).otherText ??
+          AppLocalization.of(context)!.translate('no_remarks')!;
     } else {
-      return "You submitted Voice Recording";
+      return AppLocalization.of(context)!
+          .translate('you_submitted_voice_recording')!;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
-
     final String audioPath = Provider.of<EmergencyProvider>(context).audioPath;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -127,7 +133,7 @@ class ConfirmScreen extends StatelessWidget {
         Text(AppLocalization.of(context)!.translate('emergency_request_2')!),
         Text(
           returnCategoryInText(
-              Provider.of<EmergencyProvider>(context).category),
+              Provider.of<EmergencyProvider>(context).category, context),
           style: const TextStyle(
             fontWeight: FontWeight.bold,
           ),
@@ -150,7 +156,9 @@ class ConfirmScreen extends StatelessWidget {
         ),
         Text(AppLocalization.of(context)!.translate('is_it_you_yourself')!),
         Text(
-          Provider.of<EmergencyProvider>(context).yourself ? "YES" : "NO",
+          Provider.of<EmergencyProvider>(context).yourself
+              ? AppLocalization.of(context)!.translate('yes')!
+              : AppLocalization.of(context)!.translate('no')!,
           style: const TextStyle(
             fontWeight: FontWeight.bold,
           ),

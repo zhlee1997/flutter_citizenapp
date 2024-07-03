@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../screens/subscription/subsription_package_screen.dart';
+import '../../utils/app_localization.dart';
 
 class SubscriptionPreviewDialog extends StatelessWidget {
   const SubscriptionPreviewDialog({super.key});
@@ -20,7 +21,7 @@ class SubscriptionPreviewDialog extends StatelessWidget {
               Container(
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.secondary,
-                  borderRadius: BorderRadius.only(
+                  borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(
                         20.0), // Adjust the radius for the top-left corner
                     topRight: Radius.circular(
@@ -80,8 +81,8 @@ class SubscriptionPreviewDialog extends StatelessWidget {
               left: 16.0,
             ),
             child: Text(
-              'Subscribe with us',
-              style: TextStyle(
+              AppLocalization.of(context)!.translate('subscribe_with_us')!,
+              style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18.0,
               ),
@@ -96,7 +97,7 @@ class SubscriptionPreviewDialog extends StatelessWidget {
               right: 16.0,
             ),
             child: Text(
-              'Just in time for you: This subscription grant you special access to the in-depth experience of the Kuching city in your mobile',
+              AppLocalization.of(context)!.translate('just_in_time_for_you')!,
               textAlign: TextAlign.justify,
             ),
           ),
@@ -109,7 +110,6 @@ class SubscriptionPreviewDialog extends StatelessWidget {
               onPressed: () {
                 // Close the dialog and navigate to the subscription module
                 Navigator.of(context).pop();
-                // TODO
                 Navigator.of(context)
                     .pushNamed(SubscriptionPackageScreen.routeName);
               },
@@ -125,20 +125,20 @@ class SubscriptionPreviewDialog extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    'Subscribe Now',
-                    style: TextStyle(
+                    AppLocalization.of(context)!.translate('subscribe_now')!,
+                    style: const TextStyle(
                       fontSize: 18.0,
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 8.0,
                   ),
-                  Icon(Icons.arrow_forward),
+                  const Icon(Icons.arrow_forward),
                 ],
               ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 20.0,
           )
         ],

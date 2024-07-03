@@ -165,9 +165,9 @@ class _VoiceNoteBottomModalState extends State<VoiceNoteBottomModal> {
             margin: const EdgeInsets.symmetric(
               vertical: 10.0,
             ),
-            child: const Text(
-              "Each recording session has 10 seconds.",
-              style: TextStyle(
+            child: Text(
+              AppLocalization.of(context)!.translate('each_recording_session')!,
+              style: const TextStyle(
                 fontWeight: FontWeight.bold,
               ),
             ),
