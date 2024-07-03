@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_citizenapp/providers/subscription_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../providers/subscription_provider.dart';
+import '../../utils/app_localization.dart';
 
 class SubscriptionFrequencyBottomModal extends StatefulWidget {
   final VoidCallback handleProceedNow;
@@ -39,7 +41,7 @@ class _SubscriptionFrequencyBottomModalState
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(
+      padding: const EdgeInsets.only(
         left: 8.0,
         right: 8.0,
         bottom: 8.0,
@@ -57,22 +59,23 @@ class _SubscriptionFrequencyBottomModalState
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Text(
-                  "Access left per day",
+                  AppLocalization.of(context)!
+                      .translate('access_left_per_day')!,
                   style: Theme.of(context)
                       .textTheme
                       .bodyLarge!
                       .copyWith(fontWeight: FontWeight.bold),
                 ),
-                Text("${freq} times"),
+                Text("$freq times"),
               ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
+          const Padding(
+            padding: EdgeInsets.all(8.0),
             child: Text(
                 "You have limited access per day for the subscription services. Are you sure to proceed?"),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10.0,
           ),
           Row(
@@ -83,7 +86,7 @@ class _SubscriptionFrequencyBottomModalState
                     backgroundColor: Theme.of(context).colorScheme.secondary,
                   ),
                   onPressed: () => Navigator.of(context).pop(),
-                  child: Text(
+                  child: const Text(
                     "Later",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
@@ -91,7 +94,7 @@ class _SubscriptionFrequencyBottomModalState
                   ),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 width: 10.0,
               ),
               Expanded(
@@ -100,7 +103,7 @@ class _SubscriptionFrequencyBottomModalState
                     backgroundColor: Theme.of(context).colorScheme.primary,
                   ),
                   onPressed: widget.handleProceedNow,
-                  child: Text(
+                  child: const Text(
                     "Proceed Now",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
@@ -111,7 +114,7 @@ class _SubscriptionFrequencyBottomModalState
               )
             ],
           ),
-          SizedBox(
+          const SizedBox(
             height: 10.0,
           ),
         ],

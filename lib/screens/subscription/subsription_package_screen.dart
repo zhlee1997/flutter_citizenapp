@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
@@ -11,6 +9,7 @@ import '../../widgets/subscription/subscription_price_card.dart';
 import '../../screens/subscription/subscription_checkout_screen.dart';
 import '../../arguments/subscription_checkout_screen.dart';
 import '../../services/subscription_services.dart';
+import '../../utils/app_localization.dart';
 
 class SubscriptionPackageScreen extends StatefulWidget {
   static const String routeName = 'subscription-package-screen';
@@ -104,8 +103,8 @@ class _SubscriptionPackageScreenState extends State<SubscriptionPackageScreen> {
                 vertical: screenSize.width * 0.02,
               ),
               child: Text(
-                "Get Premium access to all features, including the live city view in Kuching",
-                style: TextStyle(
+                AppLocalization.of(context)!.translate('get_premium_access')!,
+                style: const TextStyle(
                   fontSize: 20.0,
                   fontWeight: FontWeight.bold,
                 ),
@@ -117,18 +116,21 @@ class _SubscriptionPackageScreenState extends State<SubscriptionPackageScreen> {
                 right: screenSize.width * 0.05,
               ),
               child: Text(
-                "This subscription grant you special access to the in-depth experience of the Kuching city in your mobile. All the benefits of the Premium access are listed below:",
-                style: TextStyle(
+                AppLocalization.of(context)!
+                    .translate('this_subscription_grant')!,
+                style: const TextStyle(
                   fontSize: 16.0,
                   height: 1.5,
                 ),
               ),
             ),
-            const SubscriptionBenefitCard(
+            SubscriptionBenefitCard(
               contents: <String>[
-                "Access to city view in live",
-                "Improving camera experience",
-                "Guaranteed privacy protection"
+                AppLocalization.of(context)!.translate('access_to_city_view')!,
+                AppLocalization.of(context)!
+                    .translate('improving_camera_experience')!,
+                AppLocalization.of(context)!
+                    .translate('guaranteed_privacy_protectiob')!
               ],
             ),
             priceShimmer
@@ -158,9 +160,9 @@ class _SubscriptionPackageScreenState extends State<SubscriptionPackageScreen> {
                 onPressed: isChecked
                     ? () => _handleNavigateToPaymentCheckoutScreen()
                     : null,
-                child: const Text(
-                  "Continue Payment",
-                  style: TextStyle(
+                child: Text(
+                  AppLocalization.of(context)!.translate('continue_payment')!,
+                  style: const TextStyle(
                     letterSpacing: 0.5,
                     fontSize: 18,
                   ),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../utils/app_localization.dart';
+
 class SubscriptionPriceCard extends StatefulWidget {
   final double oneMonthPrice;
   final double threeMonthPrice;
@@ -54,9 +56,9 @@ class _SubscriptionPriceCardState extends State<SubscriptionPriceCard> {
           margin: EdgeInsets.only(
             bottom: screenSize.width * 0.03,
           ),
-          child: const Text(
-            "Select your package",
-            style: TextStyle(
+          child: Text(
+            AppLocalization.of(context)!.translate('select_your_package')!,
+            style: const TextStyle(
               fontSize: 15.0,
               fontWeight: FontWeight.bold,
             ),
