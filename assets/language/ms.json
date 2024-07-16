@@ -146,7 +146,7 @@
   "no_inbox_data": "Tiada Data Peti Masuk",
   "delete": "Padam",
   "payment_failed": "Pembayaran gagal",
-  "payment_in_progress": "Pembayaran Sedang Berlangsung",
+  "redirecting_spay_global": "Pembayaran Sedang Berlangsung",
   "upload_photo": "Memuat naik Foto",
   "upload_fail": "Gagal Memuat naik",
   "submit_fail": "Hantaran Gagal",

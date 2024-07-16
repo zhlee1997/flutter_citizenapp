@@ -232,10 +232,8 @@ class _NotificationsDetailScreenState extends State<NotificationsDetailScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // TODO: temp add words for ultilities
             Text(
-              // _inbox!.msgTitle,
-              "Utilities Bill Payment",
+              _inbox!.msgTitle,
               style: Theme.of(context).textTheme.titleLarge,
             ),
             SizedBox(
@@ -376,6 +374,122 @@ class _NotificationsDetailScreenState extends State<NotificationsDetailScreen> {
             InboxCell(
               label: "Case Description:",
               value: "\n${_msgContext!["caseDescription"]}",
+              isSpaced: false,
+            ),
+            SizedBox(
+              height: screenSize.height * 0.05,
+            ),
+            Text(
+              "${_msgContext!["greetings"] ?? ""}",
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+          ],
+        ),
+      );
+    }
+
+    // Water Utility Payment
+    if (_inbox!.msgType == "10") {
+      String price = double.parse(_msgContext!["amount"]).toStringAsFixed(2);
+
+      return SingleChildScrollView(
+        padding: const EdgeInsets.only(
+          left: 15,
+          right: 15,
+          top: 15,
+          bottom: 50,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              _inbox!.msgTitle,
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            SizedBox(
+              height: screenSize.height * 0.05,
+            ),
+            InboxCell(
+              label: "Sarawak ID:",
+              value: _inbox!.rcvSarawakId,
+              isSpaced: false,
+            ),
+            InboxCell(
+              label: "Full Name:",
+              value: _inbox!.rcvLoginName,
+              isSpaced: false,
+            ),
+            InboxCell(
+              label: "Transaction No.:",
+              value: _msgContext!["transactionNo"] ?? "",
+              isSpaced: false,
+            ),
+            InboxCell(
+              label: "Transaction Time:",
+              value: _msgContext!["transactionTime"] ?? "",
+              isSpaced: false,
+            ),
+            InboxCell(
+              label: "Amount (RM):",
+              value: price,
+              isSpaced: false,
+            ),
+            SizedBox(
+              height: screenSize.height * 0.05,
+            ),
+            Text(
+              "${_msgContext!["greetings"] ?? ""}",
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+          ],
+        ),
+      );
+    }
+
+    // Electricity Utility Payment
+    if (_inbox!.msgType == "11") {
+      String price = double.parse(_msgContext!["amount"]).toStringAsFixed(2);
+
+      return SingleChildScrollView(
+        padding: const EdgeInsets.only(
+          left: 15,
+          right: 15,
+          top: 15,
+          bottom: 50,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              _inbox!.msgTitle,
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            SizedBox(
+              height: screenSize.height * 0.05,
+            ),
+            InboxCell(
+              label: "Sarawak ID:",
+              value: _inbox!.rcvSarawakId,
+              isSpaced: false,
+            ),
+            InboxCell(
+              label: "Full Name:",
+              value: _inbox!.rcvLoginName,
+              isSpaced: false,
+            ),
+            InboxCell(
+              label: "Transaction No.:",
+              value: _msgContext!["transactionNo"] ?? "",
+              isSpaced: false,
+            ),
+            InboxCell(
+              label: "Transaction Time:",
+              value: _msgContext!["transactionTime"] ?? "",
+              isSpaced: false,
+            ),
+            InboxCell(
+              label: "Amount (RM):",
+              value: price,
               isSpaced: false,
             ),
             SizedBox(

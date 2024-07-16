@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_citizenapp/providers/inbox_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:provider/provider.dart';
@@ -75,6 +76,33 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
     );
   }
 
+  // check and refresh subscription status
+  Future<void> _refreshSubscriptionStatus() async {
+    try {
+      GlobalDialogHelper().buildCircularProgressWithTextCenter(
+          context: context, message: "Checking subscription");
+      bool success = await Provider.of<AuthProvider>(context, listen: false)
+          .queryUserInfoAfterSubscriptionProvider();
+      if (success) {
+        Navigator.of(context).pop();
+        bool vipStatus =
+            Provider.of<AuthProvider>(context, listen: false).auth!.vipStatus;
+        if (vipStatus) {
+          Fluttertoast.showToast(msg: "You are subscribed!");
+        } else {
+          Fluttertoast.showToast(msg: "You haven't subscribed.");
+        }
+      } else {
+        Navigator.of(context).pop();
+        Fluttertoast.showToast(msg: "Unable to check subscription status");
+      }
+    } catch (e) {
+      print("_refreshSubscriptionStatus error: ${e.toString()}");
+      Navigator.of(context).pop();
+      Fluttertoast.showToast(msg: "Error in refreshing profile");
+    }
+  }
+
   String formatDate(DateTime date) {
     return DateFormat('dd MMMM yyyy').format(date);
   }
@@ -137,7 +165,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
   void didChangeDependencies() {
     if (Provider.of<AuthProvider>(context).auth != null) {
       _authData = Provider.of<AuthProvider>(context).auth!;
-      _vipDueDate = _authData.vipDueDate ?? '---';
+      _vipDueDate = _authData.vipDueDate;
       _username = _authData.userName;
       _fullName = _authData.fullName;
       _isSubscribe = _authData.vipStatus;
@@ -147,7 +175,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
       _profileImage = _authData.profileImage;
       _identityNumber = _authData.identityNumber;
     }
-
+    print(_isSubscribe);
     super.didChangeDependencies();
   }
 
@@ -331,39 +359,63 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
             //           //     .pushNamed(SubscribeScreen.routeName);
             //         },
             //       ),
-            if (_isSubscribe)
-              Container(
-                margin: const EdgeInsets.symmetric(
-                  vertical: 5.0,
-                  horizontal: 10.0,
+            Container(
+              margin: const EdgeInsets.symmetric(
+                vertical: 5.0,
+                horizontal: 10.0,
+              ),
+              child: ListTile(
+                minVerticalPadding: 15.0,
+                shape: RoundedRectangleBorder(
+                  side: BorderSide(
+                    color: Theme.of(context).primaryColor,
+                    width: 0.5,
+                  ),
+                  borderRadius: BorderRadius.circular(10.0),
                 ),
-                child: ListTile(
-                  minVerticalPadding: 15.0,
-                  shape: RoundedRectangleBorder(
-                    side: BorderSide(
-                      color: Theme.of(context).primaryColor,
-                      width: 0.5,
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const Text(
+                      "Subscription Due Date:",
                     ),
-                    borderRadius: BorderRadius.circular(10.0),
+                    if (!_isSubscribe)
+                      GestureDetector(
+                          onTap: () async {
+                            try {
+                              await _refreshSubscriptionStatus();
+                            } catch (e) {
+                              print("Refresh susbcription failed: $e");
+                            }
+                          },
+                          child: const Text(
+                            "Refresh",
+                            style: TextStyle(
+                              color: Colors.blue,
+                              fontSize: 10.0,
+                              fontWeight: FontWeight.bold,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ))
+                  ],
+                ),
+                subtitle: Container(
+                  margin: EdgeInsets.only(
+                    top: screenSize.width * 0.015,
                   ),
-                  title: const Text(
-                    "Subscription Due Date:",
-                  ),
-                  subtitle: Container(
-                    margin: EdgeInsets.only(
-                      top: screenSize.width * 0.015,
-                    ),
-                    child: Text(
-                      _vipDueDate != null
-                          ? formatDate(DateTime.parse(_vipDueDate!))
-                          : "---",
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
+                  child: Text(
+                    _isSubscribe
+                        ? formatDate(DateTime.parse(_vipDueDate!))
+                        : "You have not subscribed yet",
+                    style: TextStyle(
+                      fontWeight: !_isSubscribe ? null : FontWeight.bold,
+                      fontStyle: !_isSubscribe ? FontStyle.italic : null,
                     ),
                   ),
                 ),
               ),
+            ),
             Container(
               margin: const EdgeInsets.symmetric(
                 vertical: 5.0,

@@ -16,6 +16,7 @@ class CameraSubscriptionProvider with ChangeNotifier {
         var cctvData = response['data'] as List;
         _cameraSubscription =
             cctvData.map((e) => CameraSubscriptionModel.fromJson(e)).toList();
+        _cameraSubscription.map((e) => print(e));
         notifyListeners();
         return true;
       } else {

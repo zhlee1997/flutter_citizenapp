@@ -496,7 +496,26 @@ class _HomePageState extends State<HomePage> {
             },
           );
         } else {
-          _showSubscriptionIntroDialog(context);
+          // TODO: check again for subscription status
+          _globalDialogHelper.buildCircularProgressWithTextCenter(
+              context: context, message: "Ready soon!");
+          bool success = await Provider.of<AuthProvider>(context, listen: false)
+              .queryUserInfoAfterSubscriptionProvider();
+          if (success) {
+            Navigator.of(context).pop();
+            bool vipStatus = Provider.of<AuthProvider>(context, listen: false)
+                .auth!
+                .vipStatus;
+            if (vipStatus) {
+              Fluttertoast.showToast(msg: "You are subscribed!");
+            } else {
+              _showSubscriptionIntroDialog(context);
+              Fluttertoast.showToast(msg: "You haven't subscribed.");
+            }
+          } else {
+            Navigator.of(context).pop();
+            Fluttertoast.showToast(msg: "Unable to check subscription status");
+          }
         }
       }
     } else {
@@ -870,7 +889,7 @@ class _HomePageState extends State<HomePage> {
                               ),
                             ),
                             GestureDetector(
-                              // TODO: check for location permission
+                              // check for location permission
                               onTap: () => _handleNavigateToEmergency(context),
                               child: Card(
                                 elevation: 5.0,

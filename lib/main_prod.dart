@@ -11,6 +11,15 @@ import 'firebase_options.dart';
 import './utils/notification/show_notification.dart';
 import './config/app_config.dart';
 
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+  }
+}
+
 Future<void> main() async {
   AppConfig.baseURL = AppConfig().baseUrlProduction;
   AppConfig.picFlavor = Flavor.prod;
@@ -22,6 +31,7 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  HttpOverrides.global = MyHttpOverrides();
   runApp(const MyApp());
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,

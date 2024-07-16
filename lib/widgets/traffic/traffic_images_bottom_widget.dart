@@ -31,14 +31,48 @@ class _TrafficImagesBottomWidgetState extends State<TrafficImagesBottomWidget> {
   Uint8List? imageByteData;
   late Uint8List watermarkImage;
 
+  ImageStream? _imageStream;
+  late ImageStreamListener _listener;
+
   String get returnCurrentTime =>
       DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now());
+
+  // Future<Uint8List?> _loadNetworkImage(String path) async {
+  //   final completer = Completer<ImageInfo>();
+  //   var img = NetworkImage(path);
+  //   img
+  //       .resolve(const ImageConfiguration())
+  //       .addListener(ImageStreamListener((info, _) {
+  //     if (!completer.isCompleted) {
+  //       print("Completing the completer");
+  //       completer.complete(info);
+  //     } else {
+  //       print("Completer already completed");
+  //       // completer.completeError(AssertionError('future not consumed'));
+  //     }
+  //   }));
+
+  //   final imageInfo = await completer.future;
+  //   final byteData =
+  //       await imageInfo.image.toByteData(format: ui.ImageByteFormat.png);
+  //   return byteData?.buffer.asUint8List();
+  // }
 
   Future<Uint8List?> _loadNetworkImage(String path) async {
     final completer = Completer<ImageInfo>();
     var img = NetworkImage(path);
-    img.resolve(const ImageConfiguration()).addListener(
-        ImageStreamListener((info, _) => completer.complete(info)));
+
+    _listener = ImageStreamListener((info, _) {
+      if (!completer.isCompleted) {
+        print("Completing the completer");
+        completer.complete(info);
+      } else {
+        print("Completer already completed");
+      }
+    });
+
+    _imageStream = img.resolve(const ImageConfiguration());
+    _imageStream!.addListener(_listener);
 
     final imageInfo = await completer.future;
     final byteData =
@@ -62,7 +96,7 @@ class _TrafficImagesBottomWidgetState extends State<TrafficImagesBottomWidget> {
   // }
 
   Future<void> _loadWatermark(BuildContext context) async {
-    timer = Timer(Duration(seconds: 7), () {
+    timer = Timer(const Duration(seconds: 7), () {
       Fluttertoast.showToast(
         msg: "Still loading... Please wait",
         toastLength: Toast.LENGTH_LONG,
@@ -70,6 +104,7 @@ class _TrafficImagesBottomWidgetState extends State<TrafficImagesBottomWidget> {
       );
     });
     try {
+      // "https://video.sioc.sma.gov.my:18445/api/v1/GetImage?token=0ba9--03445253975703320101_2450e628c6654835a282faf5e4185d8b&session=c6bca9f8-22da-4d29-a35d-cd6e69f44875"
       imageByteData = await _loadNetworkImage(cctvProvider.imageUrl)
           .timeout(const Duration(seconds: 12));
     } on TimeoutException catch (e) {
@@ -90,6 +125,8 @@ class _TrafficImagesBottomWidgetState extends State<TrafficImagesBottomWidget> {
       }
     } else {
       // no image byte data
+      timer.cancel();
+      Fluttertoast.cancel();
     }
   }
 
@@ -97,6 +134,23 @@ class _TrafficImagesBottomWidgetState extends State<TrafficImagesBottomWidget> {
   void didChangeDependencies() async {
     cctvProvider = Provider.of<CCTVProvider>(context, listen: false);
     super.didChangeDependencies();
+  }
+
+  // @override
+  // void dispose() {
+  //   // TODO: implement dispose
+  //   super.dispose();
+  //   timer.cancel();
+  // }
+
+  @override
+  void dispose() {
+    if (_imageStream != null) {
+      _imageStream!.removeListener(_listener);
+    }
+    timer.cancel();
+    Fluttertoast.cancel();
+    super.dispose();
   }
 
   @override

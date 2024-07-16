@@ -54,6 +54,15 @@ class _SubscriptionMapScreenLSState extends State<SubscriptionMapScreenLS> {
     return double.parse(value);
   }
 
+  String amendCCTVToken(String cctvId) {
+    if (cctvId.isNotEmpty) {
+      String updatedString = cctvId.replaceAll('#', '_');
+      return "0ba9--$updatedString";
+    } else {
+      return "";
+    }
+  }
+
   Future<void> onPressCctvIcon(CameraSubscriptionModel cctv) async {
     // LS Login API
     // https://10.16.24.144:18445/api/v1/Login?user=admin&password=450cd8c9ccc2a97d8f1619f0201b9d7f
@@ -78,11 +87,11 @@ class _SubscriptionMapScreenLSState extends State<SubscriptionMapScreenLS> {
 
       Map<String, dynamic> data = {
         "channel": "02",
-        "thridDeviceId": cctv.deviceCode,
+        "thridDeviceId": amendCCTVToken(cctv.deviceCode),
       };
       try {
-        await Provider.of<CCTVProvider>(context, listen: false)
-            .getCameraShortCutUrlProvider(data);
+        Provider.of<CCTVProvider>(context, listen: false)
+            .getLinkingVisionImageUrlProvider(data);
       } catch (e) {
         setState(() {
           _isError = true;

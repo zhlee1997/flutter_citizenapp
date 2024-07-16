@@ -40,8 +40,7 @@ class _SarawakIDScreenState extends State<SarawakIDScreen> {
 
       if (response != null) {
         await Provider.of<AuthProvider>(context, listen: false)
-            .queryLoginUserInfo(
-                response['userId']!, response['isSubscribed'] == 'true')
+            .queryLoginUserInfo(response['userId']!)
             .then((bool isLoginSuccess) {
           if (isLoginSuccess) {
             Provider.of<InboxProvider>(context, listen: false).refreshCount();

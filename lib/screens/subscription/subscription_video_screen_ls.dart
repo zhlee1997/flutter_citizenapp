@@ -132,8 +132,7 @@ class _SubscriptionVideoScreenLSState extends State<SubscriptionVideoScreenLS>
             ? "https://10.16.24.144:18445/rtc.html?token=$newOtherCCTVId&session=$newSession"
             : 'https://video.sioc.sma.gov.my:18445/rtc.html?token=$newOtherCCTVId&session=$newSession';
 
-        if (newOtherLiveUrl != null &&
-            !newOtherLiveUrl.contains("get live url is fail")) {
+        if (newOtherLiveUrl != null) {
           return newOtherLiveUrl;
         } else {
           return null;
@@ -202,6 +201,7 @@ class _SubscriptionVideoScreenLSState extends State<SubscriptionVideoScreenLS>
           as SubscriptionVideoScreenArguments;
       // rtc
       // https://10.16.24.144:18445/rtc.html?token=0ba9--03445253977265490101_2450e628c6654835a282faf5e4185d8b&session=1aa43ca0-8e85-4041-9368-77503d1e0dbb
+      session = Provider.of<CCTVProvider>(context, listen: false).sessionLS;
 
       setState(() {
         _isLoading = false;
@@ -537,7 +537,8 @@ class _SubscriptionVideoScreenLSState extends State<SubscriptionVideoScreenLS>
                                           borderRadius:
                                               BorderRadius.circular(5.0),
                                           child: Image.network(
-                                            _CCTVOtherModelList[index].picUrl,
+                                            // _CCTVOtherModelList[index].picUrl,
+                                            "https://video.sioc.sma.gov.my:18445/api/v1/GetImage?token=${amendCCTVToken(_CCTVOtherModelList[index].cctvId)}&session=$session",
                                             fit: BoxFit.cover,
                                             errorBuilder:
                                                 (context, error, stackTrace) =>
