@@ -110,7 +110,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   // receive error Object from activity (eventChannel) when error
-  void _onError(Object obj) {}
+  void _onError(Object obj) {
+    // TODO: Navigate to payment fail screen
+  }
 
   // display transaction result screen when a transaction is completed
   void jumpPayResult(Map<String, dynamic> param) {
@@ -349,8 +351,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     ? TextStyle(
                         color: Theme.of(context).colorScheme.primary,
                       )
-                    : const TextStyle(
-                        color: Colors.grey,
+                    : TextStyle(
+                        color: Colors.grey[600],
                       ),
           ),
         ),
@@ -409,9 +411,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 Icons.home,
                 color: Theme.of(context).colorScheme.primary,
               ),
-              icon: const Icon(
+              icon: Icon(
                 Icons.home_outlined,
-                color: Colors.grey,
+                color: Colors.grey[600],
               ),
               label: AppLocalization.of(context)!.translate('home')!,
             ),
@@ -420,9 +422,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 Icons.apps,
                 color: Theme.of(context).colorScheme.primary,
               ),
-              icon: const Icon(
+              icon: Icon(
                 Icons.apps_outlined,
-                color: Colors.grey,
+                color: Colors.grey[600],
               ),
               label: AppLocalization.of(context)!.translate('services')!,
             ),
@@ -439,9 +441,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   isLabelVisible:
                       Provider.of<InboxProvider>(context).unreadMessageCount !=
                           0,
-                  child: const Icon(
+                  child: Icon(
                     Icons.notifications_outlined,
-                    color: Colors.grey,
+                    color: Colors.grey[600],
                   )),
               label: AppLocalization.of(context)!.translate('notifications')!,
             ),
@@ -450,9 +452,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 Icons.account_circle,
                 color: Theme.of(context).colorScheme.primary,
               ),
-              icon: const Icon(
+              icon: Icon(
                 Icons.account_circle_outlined,
-                color: Colors.grey,
+                color: Colors.grey[600],
               ),
               label: AppLocalization.of(context)!.translate('profile')!,
             ),

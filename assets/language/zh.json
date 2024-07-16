@@ -146,7 +146,7 @@
   "no_inbox_data": "无收件箱信息",
   "delete": "删除",
   "payment_failed": "支付失败",
-  "payment_in_progress": "支付中",
+  "redirecting_spay_global": "支付中",
   "upload_photo": "上载照片中",
   "upload_fail": "上载失败",
   "submit_fail": "上传失败",

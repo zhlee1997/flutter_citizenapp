@@ -4,6 +4,7 @@ import '../models/camera_subscription_model.dart';
 import '../models/cctv_model.dart';
 import '../services/cctv_services.dart';
 import '../utils/app_constant.dart';
+import '../config/app_config.dart';
 
 class CCTVProvider with ChangeNotifier {
   late List<CCTVModel> _cctvModel;
@@ -126,5 +127,12 @@ class CCTVProvider with ChangeNotifier {
       print('getLinkingVisionLoginProvider fail: ${e.toString()}');
       throw e;
     }
+  }
+
+  void getLinkingVisionImageUrlProvider(Map<String, dynamic> data) {
+    _imageUrl = AppConfig().isProductionInternal
+        ? 'https://10.16.24.144:18445/api/v1/GetImage?token=${data["thridDeviceId"]}&session=$_sessionLS'
+        : 'https://video.sioc.sma.gov.my:18445/api/v1/GetImage?token=${data["thridDeviceId"]}&session=$_sessionLS';
+    print("LinkingVision imageUrl: $_imageUrl");
   }
 }

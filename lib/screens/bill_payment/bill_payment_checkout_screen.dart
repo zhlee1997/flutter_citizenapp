@@ -387,7 +387,7 @@ class _BillPaymentCheckoutScreenState extends State<BillPaymentCheckoutScreen> {
                               .buildCircularProgressWithTextCenter(
                             context: context,
                             message: AppLocalization.of(context)!
-                                .translate('payment_in_progress')!,
+                                .translate('redirecting_spay_global')!,
                           );
                           orderRequest(context, args);
                         } else {

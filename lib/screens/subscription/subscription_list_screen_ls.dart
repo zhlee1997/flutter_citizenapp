@@ -24,10 +24,11 @@ class SubscriptionListScreenLS extends StatefulWidget {
 }
 
 class _SubscriptionListScreenLSState extends State<SubscriptionListScreenLS> {
-  List<CameraSubscriptionModel> _cameraListModelList = [];
+  final List<CameraSubscriptionModel> _cameraListModelList = [];
   bool _isLoading = false;
   bool _noMoreLoad = true;
   bool _isError = false;
+  late String session;
 
   final GlobalDialogHelper _globalDialogHelper = GlobalDialogHelper();
 
@@ -107,14 +108,31 @@ class _SubscriptionListScreenLSState extends State<SubscriptionListScreenLS> {
     );
   }
 
+  String amendCCTVToken(String cctvId) {
+    if (cctvId.isNotEmpty) {
+      String updatedString = cctvId.replaceAll('#', '_');
+      return "0ba9--$updatedString";
+    } else {
+      return "";
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    SchedulerBinding.instance.addPostFrameCallback((_) {
+    SchedulerBinding.instance.addPostFrameCallback((_) async {
       setState(() {
         _isLoading = true;
       });
+      // to get first session from LinkingVision to load images
+      try {
+        await Provider.of<CCTVProvider>(context, listen: false)
+            .getLinkingVisionLoginProvider();
+      } catch (e) {
+        print("getLinkingVisionLoginProvider fail: $e");
+      }
+      session = Provider.of<CCTVProvider>(context, listen: false).sessionLS;
       _cameraListModelList.addAll(
           Provider.of<CameraSubscriptionProvider>(context, listen: false)
               .cameraSubscription);
@@ -128,7 +146,7 @@ class _SubscriptionListScreenLSState extends State<SubscriptionListScreenLS> {
         location: "",
         picUrl: "",
       ));
-      print(_cameraListModelList);
+      // print(_cameraListModelList);
       setState(() {
         _isLoading = false;
       });
@@ -182,7 +200,9 @@ class _SubscriptionListScreenLSState extends State<SubscriptionListScreenLS> {
                           ),
                           GestureDetector(
                             onTap: () => onPressCCTVSnapshotImage(
-                              imageUrl: _cameraListModelList[index].picUrl,
+                              // imageUrl: _cameraListModelList[index].picUrl,
+                              imageUrl:
+                                  "https://video.sioc.sma.gov.my:18445/api/v1/GetImage?token=${amendCCTVToken(_cameraListModelList[index].deviceCode)}&session=$session",
                               name: _cameraListModelList[index].deviceName,
                               location: _cameraListModelList[index].location,
                               latitide: _cameraListModelList[index].latitude,
@@ -194,7 +214,7 @@ class _SubscriptionListScreenLSState extends State<SubscriptionListScreenLS> {
                               width: double.infinity,
                               height: screenSize.height * 0.3,
                               child: Image.network(
-                                _cameraListModelList[index].picUrl,
+                                "https://video.sioc.sma.gov.my:18445/api/v1/GetImage?token=${amendCCTVToken(_cameraListModelList[index].deviceCode)}&session=$session",
                                 errorBuilder: (context, error, stackTrace) =>
                                     Image.asset(
                                   "assets/images/icon/sioc.png",

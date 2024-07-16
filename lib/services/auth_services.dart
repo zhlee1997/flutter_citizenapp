@@ -133,6 +133,9 @@ class AuthServices {
           'member/modifyById',
           data: body,
         );
+        if (response["status"] == 500) {
+          throw Future.error("Server error 500");
+        }
         print('updateProfileInfo API success: $response');
         return response;
       } catch (e) {

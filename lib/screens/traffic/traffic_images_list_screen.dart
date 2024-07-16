@@ -30,9 +30,34 @@ class _TrafficImagesListScreenState extends State<TrafficImagesListScreen> {
 
   final GlobalDialogHelper _globalDialogHelper = GlobalDialogHelper();
 
+  String amendCCTVToken(String cctvId) {
+    if (cctvId.isNotEmpty) {
+      String updatedString = cctvId.replaceAll('#', '_');
+      return "0ba9--$updatedString";
+    } else {
+      return "";
+    }
+  }
+
   // Tap the Camera Marker to show camera details
   Future<void> onPressCameraIcon(CameraSubscriptionModel cctv) async {
     Future<void> handleFuture() async {
+      try {
+        await Provider.of<CCTVProvider>(context, listen: false)
+            .getLinkingVisionLoginProvider();
+      } catch (e) {
+        setState(() {
+          _isError = true;
+        });
+      }
+
+      Map<String, dynamic> data = {
+        "channel": "02",
+        "thridDeviceId": amendCCTVToken(cctv.deviceCode),
+      };
+      Provider.of<CCTVProvider>(context, listen: false)
+          .getLinkingVisionImageUrlProvider(data);
+
       _cctvModelDetail = CCTVModelDetail(
         id: cctv.deviceCode,
         name: cctv.deviceName,
@@ -41,18 +66,6 @@ class _TrafficImagesListScreenState extends State<TrafficImagesListScreen> {
         updateTime: '',
         liveUrl: '',
       );
-      Map<String, dynamic> data = {
-        "channel": "02",
-        "thridDeviceId": cctv.deviceCode,
-      };
-      try {
-        await Provider.of<CCTVProvider>(context, listen: false)
-            .getCameraShortCutUrlProvider(data);
-      } catch (e) {
-        setState(() {
-          _isError = true;
-        });
-      }
     }
 
     await showModalBottomSheet(

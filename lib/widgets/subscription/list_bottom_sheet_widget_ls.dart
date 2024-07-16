@@ -148,8 +148,7 @@ class _ListBottomSheetWidgetLSState extends State<ListBottomSheetWidgetLS> {
             width: screenSize.width * 0.9,
             // height: screenSize.height * 0.06,
             child: ElevatedButton(
-              onPressed: cctvDetail != null &&
-                      !cctvDetail.liveUrl.contains("get live url is fail")
+              onPressed: cctvDetail != null
                   ? () async {
                       var cctvId =
                           Provider.of<CCTVProvider>(context, listen: false)
@@ -178,8 +177,7 @@ class _ListBottomSheetWidgetLSState extends State<ListBottomSheetWidgetLS> {
                       );
                     }
                   : null,
-              style: cctvDetail != null &&
-                      !cctvDetail.liveUrl.contains("get live url is fail")
+              style: cctvDetail != null
                   ? ButtonStyle(
                       backgroundColor: MaterialStateProperty.all(
                           Theme.of(context).colorScheme.secondary),
@@ -194,8 +192,7 @@ class _ListBottomSheetWidgetLSState extends State<ListBottomSheetWidgetLS> {
             ),
           ),
           Text(
-            cctvDetail != null &&
-                    !cctvDetail.liveUrl.contains("get live url is fail")
+            cctvDetail != null
                 ? "Each video session is ${subscriptionProvider.playbackDuration} minutes"
                 : "Unable to get video stream. Try again",
             style: Theme.of(context).textTheme.labelSmall,

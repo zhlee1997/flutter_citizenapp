@@ -437,7 +437,7 @@ class _NotificationsBottomNavScreenState
                                       subtitle: Text(
                                         _majorAnnouncements[index].description,
                                         overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontWeight: FontWeight.w300,
                                         ),
                                       ),
@@ -530,33 +530,24 @@ class _NotificationsBottomNavScreenState
                                                         .inversePrimary
                                                         .withOpacity(0.7),
                                                   ),
-                                                  // TODO: change icon accordingly
                                                   child: buildNotificationsIcon(
                                                       _inboxes[index].msgType)),
                                             ),
                                             title: Text(
-                                              _inboxes[index].msgType == "4"
-                                                  ? "Utilities Bill Payment"
-                                                  : _inboxes[index].msgTitle,
+                                              _inboxes[index].msgTitle,
                                               overflow: TextOverflow.ellipsis,
                                               style: const TextStyle(
                                                 fontWeight: FontWeight.w500,
                                               ),
                                             ),
-                                            // TODO: temp add words for ultilities
                                             subtitle: Text(
-                                                _inboxes[index].msgType == "4"
-                                                    ? "Utilities Bill Payment: Submitted"
-                                                    : _inboxes[index].msgType ==
-                                                            "1"
-                                                        ? json.decode(_inboxes[
-                                                                    index]
-                                                                .msgContext)[
-                                                            "content"]
-                                                        : json.decode(_inboxes[
-                                                                    index]
-                                                                .msgContext)[
-                                                            "title"],
+                                                _inboxes[index].msgType == "1"
+                                                    ? json.decode(_inboxes[
+                                                            index]
+                                                        .msgContext)["content"]
+                                                    : json.decode(_inboxes[
+                                                            index]
+                                                        .msgContext)["title"],
                                                 overflow: TextOverflow.ellipsis,
                                                 style: const TextStyle(
                                                   fontWeight: FontWeight.w300,
@@ -638,6 +629,16 @@ class _NotificationsBottomNavScreenState
       case "6":
         return Icon(
           Icons.sos_outlined,
+          color: Theme.of(context).colorScheme.primary,
+        );
+      case "10":
+        return Icon(
+          Icons.receipt_long_outlined,
+          color: Theme.of(context).colorScheme.primary,
+        );
+      case "11":
+        return Icon(
+          Icons.receipt_long_outlined,
           color: Theme.of(context).colorScheme.primary,
         );
       default:

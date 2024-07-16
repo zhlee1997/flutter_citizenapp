@@ -142,7 +142,7 @@ class AuthProvider with ChangeNotifier {
 
   // http://124.70.29.113:28300/loading.html?sarawakToken=159952acea21cbb45844594aa9ad4485&isSubscribed=false&userId=22569&siocToken=eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIyMjU2OSIsInVzZXJJZCI6IjEwMDIwNDU2MDciLCJuYW1lIjoiWmhvbmdMaWFuZ1dhbmciLCJleHAiOjE3MTI1NjI3MjQsImlhdCI6MTcxMTI2NjcyNH0.jx0vxGVxhVShHDsVgaDOPm1Zey_y5OZ9b0pKUK2YfbOvsGNTEH2aKPqp-0z7WmQdNhzCnS07fnJ3YOHmdrOJsCx1rzzw4MPPnn0gD2-N_OBbdTbD21xzacXViANqTsFlhxJYW0py1Q5KMsmuylufHt79w52qWesf8t1g1Rlv8l0&expire=1296000&loginMode=1
   // TO DEV: "isSubscribed" param not used by backend anymore
-  Future<bool> queryLoginUserInfo(String userId, bool isSubscribed) async {
+  Future<bool> queryLoginUserInfo(String userId) async {
     final prefs = await SharedPreferences.getInstance();
     final storage = new FlutterSecureStorage();
 
@@ -164,7 +164,7 @@ class AuthProvider with ChangeNotifier {
           userName: response['data']['sarawakId'] ?? '',
           fullName: response['data']['nickName'] ?? '',
           vipStatus: response['data']['vipStatus'] == "1",
-          vipDueDate: response['data']['vipDueDate'] ?? '',
+          vipDueDate: response['data']['vipDueDate'],
         );
         prefs.setString("userEmail", response['data']['email'] ?? '');
         prefs.setString(
