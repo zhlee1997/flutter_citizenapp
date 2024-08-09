@@ -383,13 +383,18 @@ class _BillPaymentCheckoutScreenState extends State<BillPaymentCheckoutScreen> {
                           androidPackageName: 'my.gov.sarawak.paybills',
                         );
                         if (isAppInstalled) {
-                          GlobalDialogHelper()
-                              .buildCircularProgressWithTextCenter(
-                            context: context,
-                            message: AppLocalization.of(context)!
-                                .translate('redirecting_spay_global')!,
-                          );
-                          orderRequest(context, args);
+                          try {
+                            GlobalDialogHelper()
+                                .buildCircularProgressWithTextCenter(
+                              context: context,
+                              message: AppLocalization.of(context)!
+                                  .translate('redirecting_spay_global')!,
+                            );
+                            await orderRequest(context, args);
+                          } catch (e) {
+                            Navigator.of(context).pop();
+                            print("orderRequest fail: ${e.toString()}");
+                          }
                         } else {
                           // Navigator.of(context).pop();
                           showNeedInstallSPayBottomModal();

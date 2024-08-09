@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_citizenapp/utils/global_dialog_helper.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../services/feedback_services.dart';
 import '../../models/feedback_model.dart';
+import '../../utils/global_dialog_helper.dart';
 
 class FeedbackHistoryFullDialog extends StatefulWidget {
   const FeedbackHistoryFullDialog({super.key});
@@ -27,22 +28,28 @@ class _FeedbackHistoryFullDialogState extends State<FeedbackHistoryFullDialog> {
     try {
       var response = await FeedbackServices().queryUserFeedbacks('$page');
       if (response["status"] == "200") {
-        var data = response['data']['list'] as List;
-        setState(() {
-          if (data.length < 20) {
-            _noMoreData = true;
-          }
-
-          if (page == 1) {
-            _feedbacks = data.map((e) => FeedbackModel.fromJson(e)).toList();
-          } else {
-            _feedbacks
-                .addAll(data.map((e) => FeedbackModel.fromJson(e)).toList());
-          }
-        });
+        if (response["data"]["list"] != null) {
+          var data = response['data']['list'] as List;
+          setState(() {
+            if (data.length < 20) {
+              _noMoreData = true;
+            }
+            if (page == 1) {
+              _feedbacks = data.map((e) => FeedbackModel.fromJson(e)).toList();
+            } else {
+              _feedbacks
+                  .addAll(data.map((e) => FeedbackModel.fromJson(e)).toList());
+            }
+          });
+        } else {
+          Navigator.of(context).pop();
+          _isLoading = false;
+          Fluttertoast.showToast(msg: "No feedback so far");
+        }
       }
       _isLoading = false;
     } catch (e) {
+      Navigator.of(context).pop();
       print("getFeedbacks error: ${e.toString()}");
       _isLoading = false;
     }

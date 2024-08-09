@@ -17,16 +17,15 @@ class AuthServices {
     try {
       var response = await _apiBaseHelper.get(
         'member/getById',
-        queryParameters: {
-          "memberId": memberId,
-        },
+        // queryParameters: {
+        //   "memberId": memberId,
+        // },
         requireToken: true,
       );
       print("queryUserInfo API success: $response");
       return response;
     } catch (e) {
-      print(e.toString());
-      print('queryUserInfo error');
+      print('queryUserInfo failed: ${e.toString()}');
       throw e;
     }
   }

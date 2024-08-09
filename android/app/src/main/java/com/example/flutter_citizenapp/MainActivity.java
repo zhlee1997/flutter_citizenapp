@@ -52,7 +52,8 @@ public class MainActivity extends FlutterActivity implements SarawakPayCallback 
         eventChannelPay.setStreamHandler(new EventChannel.StreamHandler() {
             @Override
             public void onListen(Object o, EventChannel.EventSink eventSink) {
-                System.out.println(">>>>"+"调用了成功回调"+"<<<<");
+                System.out.println("init eventChannelPay onListen: " +  ">>>>" + "调用了成功回调" + "<<<<");
+                System.out.println("init eventChannelPay mFactory: " +  mFactory);
                 eventSinkS = eventSink;
             }
 
@@ -79,23 +80,24 @@ public class MainActivity extends FlutterActivity implements SarawakPayCallback 
     
     //发送请求
     public void sendRequest() {
-        System.out.println("Exec sendRequest..");
-        System.out.println(data);
+        System.out.println("spay java sendRequest: Exec sendRequest..");
+        System.out.println("spay java sendRequest: " + mFactory);
+        System.out.println("spay java sendRequest: " + data);
         //发送请求
         mFactory.sendReq(data, this);
     }
 
     @Override
     public void payResult(BaseCallbackBean baseCallbackBean) {
-        //其中baseCallbackBean封装了相应的请求信息
-        System.out.println(baseCallbackBean.getFlag()+"<<<<<<<<<<<<<");
+        //其中baseCallbackBean封装了相应的请求返回信息
+        System.out.println("spay java payResult: " + baseCallbackBean.getFlag() + "<<<<<<<<<<<<<");
         if (eventSinkS != null) {
-            System.out.println("调用了"+"<<<<<<<<<<<<<");
+            System.out.println("spay java payResult: " + "调用了eventSinkS" + "<<<<<<<<<<<<<");
             eventSinkS.success(baseCallbackBean.getFlag());
         } else {
-            System.out.println("eventSink空"+"<<<<<<<<<<<<<");
+            System.out.println("spay java payResult: " + "eventSink空" + "<<<<<<<<<<<<<");
         }
-        System.out.println("调用后"+"<<<<<<<<<<<<<");
+        System.out.println("spay java payResult: " + "调用后resultDelegate" + "<<<<<<<<<<<<<");
         resultDelegate.success(baseCallbackBean.getFlag());
     }
 

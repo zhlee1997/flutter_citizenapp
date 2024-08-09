@@ -14,6 +14,7 @@ import '../announcement/tourism_news_screen.dart';
 import '../../widgets/subscription/subscription_whitelist_bottom_modal.dart';
 import '../subscription/subscription_choose_screen.dart';
 import '../../widgets/subscription/subscription_preview_dialog.dart';
+import '../../widgets/subscription/subscription_frequency_bottom_modal.dart';
 
 import '../../providers/auth_provider.dart';
 import '../../providers/subscription_provider.dart';
@@ -32,6 +33,8 @@ class ServicesBottomNavScreen extends StatefulWidget {
 }
 
 class _ServicesBottomNavScreenState extends State<ServicesBottomNavScreen> {
+  final GlobalDialogHelper _globalDialogHelper = GlobalDialogHelper();
+
   bool isSubscribed = false;
   bool isSubscriptionEnabled = false;
   bool _isLoading = false;
@@ -246,9 +249,40 @@ class _ServicesBottomNavScreenState extends State<ServicesBottomNavScreen> {
         _handleSubscriptionWhitelistBottomModal(context);
       } else {
         if (isSubscribed) {
-          Navigator.of(context).pushNamed(SubscriptionChooseScreen.routeName);
+          _handleSubscriptionFrequencyBottomModal(
+            context: context,
+            handleProceedNow: () async {
+              bool canProceed = await subscriptionProvider.setFrequencyLimit();
+              if (canProceed) {
+                Navigator.of(context).pop();
+                Navigator.of(context)
+                    .pushNamed(SubscriptionChooseScreen.routeName);
+              } else {
+                Fluttertoast.showToast(msg: "No more access left");
+              }
+            },
+          );
         } else {
-          _showSubscriptionIntroDialog(context);
+          // check again for subscription status
+          _globalDialogHelper.buildCircularProgressWithTextCenter(
+              context: context, message: "Ready soon!");
+          bool success = await Provider.of<AuthProvider>(context, listen: false)
+              .queryUserInfoAfterSubscriptionProvider();
+          if (success) {
+            Navigator.of(context).pop();
+            bool vipStatus = Provider.of<AuthProvider>(context, listen: false)
+                .auth!
+                .vipStatus;
+            if (vipStatus) {
+              Fluttertoast.showToast(msg: "You are subscribed!");
+            } else {
+              Fluttertoast.showToast(msg: "You haven't subscribed.");
+              _showSubscriptionIntroDialog(context);
+            }
+          } else {
+            Navigator.of(context).pop();
+            Fluttertoast.showToast(msg: "Unable to check subscription status");
+          }
         }
       }
     } else {
@@ -264,6 +298,21 @@ class _ServicesBottomNavScreenState extends State<ServicesBottomNavScreen> {
         return SubscriptionWhitelistBottomModal(
           handleNavigateToChooseScreen: () => Navigator.of(context)
               .pushNamed(SubscriptionChooseScreen.routeName),
+        );
+      },
+    );
+  }
+
+  Future<void> _handleSubscriptionFrequencyBottomModal({
+    required BuildContext context,
+    required VoidCallback handleProceedNow,
+  }) async {
+    await showModalBottomSheet(
+      showDragHandle: true,
+      context: context,
+      builder: (BuildContext context) {
+        return SubscriptionFrequencyBottomModal(
+          handleProceedNow: handleProceedNow,
         );
       },
     );

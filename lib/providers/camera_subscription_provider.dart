@@ -14,9 +14,10 @@ class CameraSubscriptionProvider with ChangeNotifier {
 
       if (response['status'] == "200") {
         var cctvData = response['data'] as List;
+        var newData =
+            cctvData.where((element) => element["deviceCode"] != null);
         _cameraSubscription =
-            cctvData.map((e) => CameraSubscriptionModel.fromJson(e)).toList();
-        _cameraSubscription.map((e) => print(e));
+            newData.map((e) => CameraSubscriptionModel.fromJson(e)).toList();
         notifyListeners();
         return true;
       } else {

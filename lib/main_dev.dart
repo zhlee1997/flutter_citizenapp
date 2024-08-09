@@ -8,20 +8,22 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'my_app.dart';
 import 'firebase_options.dart';
 import './utils/notification/show_notification.dart';
 import './config/app_config.dart';
 
-Future<void> main() async {
-  AppConfig.baseURL = AppConfig().baseUrlDev;
-  AppConfig.picFlavor = Flavor.dev;
-  AppConfig.sarawakIdCallbackURL = AppConfig().sarawakIdCallbackURLDev;
-  AppConfig.sarawakIdClientID = AppConfig().sarawakIdClientIDDev;
-
-  runZonedGuarded(
+void main() async {
+  await runZonedGuarded(
     () async {
+      await dotenv.load(fileName: ".env");
+      AppConfig.baseURL = AppConfig().baseUrlDev;
+      AppConfig.picFlavor = Flavor.dev;
+      AppConfig.sarawakIdCallbackURL = AppConfig().sarawakIdCallbackURLDev;
+      AppConfig.sarawakIdClientID = AppConfig().sarawakIdClientIDDev;
+
       // Ensure Flutter is initialized
       WidgetsFlutterBinding.ensureInitialized();
       await Firebase.initializeApp(

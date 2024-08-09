@@ -496,7 +496,7 @@ class _HomePageState extends State<HomePage> {
             },
           );
         } else {
-          // TODO: check again for subscription status
+          // check again for subscription status
           _globalDialogHelper.buildCircularProgressWithTextCenter(
               context: context, message: "Ready soon!");
           bool success = await Provider.of<AuthProvider>(context, listen: false)
@@ -509,8 +509,8 @@ class _HomePageState extends State<HomePage> {
             if (vipStatus) {
               Fluttertoast.showToast(msg: "You are subscribed!");
             } else {
-              _showSubscriptionIntroDialog(context);
               Fluttertoast.showToast(msg: "You haven't subscribed.");
+              _showSubscriptionIntroDialog(context);
             }
           } else {
             Navigator.of(context).pop();

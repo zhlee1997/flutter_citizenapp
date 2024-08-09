@@ -300,7 +300,7 @@ class _BusMapScreenState extends State<BusMapScreen> {
     return Scaffold(
       endDrawer: BusMapFilterDrawer(onPressAnimate: () {}),
       appBar: AppBar(
-        title: Text("Bus Schedule"),
+        title: const Text("Bus Schedule"),
         leading: GestureDetector(
           child: Icon(
               Platform.isIOS ? Icons.arrow_back_ios_rounded : Icons.arrow_back),

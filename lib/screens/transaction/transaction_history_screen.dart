@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter/scheduler.dart';
 
 import '../../providers/language_provider.dart';
 import '../../providers/transaction_provider.dart';
@@ -61,9 +62,9 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
         _isLoading = true;
       });
       final prefs = await SharedPreferences.getInstance();
-      var userId = prefs.getString('userId');
+      // var userId = prefs.getString('userId');
       var map = {
-        'memberId': userId,
+        // 'memberId': userId,
         'orderStatus': '2',
         'startTime': startTime,
         'endTime': endTime
@@ -117,8 +118,14 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
   @override
   void initState() {
     super.initState();
-    getDateFirstAndLastDate(_dateTime);
-    getTransactionList(context);
+    SchedulerBinding.instance.addPostFrameCallback((_) async {
+      try {
+        getDateFirstAndLastDate(_dateTime);
+        await getTransactionList(context);
+      } catch (e) {
+        print("getTransactionList error: ${e.toString()}");
+      }
+    });
   }
 
   @override
@@ -142,13 +149,17 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
                       .locale
                       .languageCode,
                 ),
-              ).then((DateTime? date) {
+              ).then((DateTime? date) async {
                 if (date != null) {
-                  getDateFirstAndLastDate(date);
-                  getTransactionList(context);
-                  setState(() {
-                    _dateTime = date;
-                  });
+                  try {
+                    getDateFirstAndLastDate(date);
+                    await getTransactionList(context);
+                    setState(() {
+                      _dateTime = date;
+                    });
+                  } catch (e) {
+                    print("getTransactionList error: ${e.toString()}");
+                  }
                 }
               });
             },

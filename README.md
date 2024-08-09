@@ -1,6 +1,6 @@
 # flutter_citizenapp
 
-A new Flutter project.
+A SMA project.
 
 ## Getting Started
 

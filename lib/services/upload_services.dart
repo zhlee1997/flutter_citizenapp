@@ -35,6 +35,12 @@ class UploadServices {
           data: formData,
           cancelToken: cancelToken,
         );
+
+        if (response["status"] == "300") {
+          print("uploadFile failed: status code 300");
+          throw Exception("uploadFile failed: status code 300");
+        }
+
         print("uploadFile API success: $response");
         return response;
       }

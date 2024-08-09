@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:convert'; // for the utf8.encode method
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -8,6 +9,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:crypto/crypto.dart';
 
 import '../../providers/cctv_provider.dart';
 import '../../arguments/subscription_video_screen_arguments.dart';
@@ -118,12 +121,15 @@ class _SubscriptionVideoScreenLSState extends State<SubscriptionVideoScreenLS>
   //  Get CCTV Detail API
   Future<String?> getOtherLiveUrl(CCTVOtherModel cctvOtherModel) async {
     final CCTVServices cctvServices = CCTVServices();
+    var bytes = utf8.encode(dotenv.env["password"]!); // data being hashed
+    var digest = md5.convert(bytes);
 
     try {
       Map<String, dynamic> map = {
-        "user": "admin",
-        "password": "450cd8c9ccc2a97d8f1619f0201b9d7f",
+        "user": dotenv.env["username"],
+        "password": digest.toString(),
       };
+
       var response = await cctvServices.getLinkingVisionLogin(map);
       if (response['bStatus'] == true) {
         String newSession = response["strSession"] ?? "";
@@ -131,12 +137,9 @@ class _SubscriptionVideoScreenLSState extends State<SubscriptionVideoScreenLS>
         String newOtherLiveUrl = AppConfig().isProductionInternal
             ? "https://10.16.24.144:18445/rtc.html?token=$newOtherCCTVId&session=$newSession"
             : 'https://video.sioc.sma.gov.my:18445/rtc.html?token=$newOtherCCTVId&session=$newSession';
-
-        if (newOtherLiveUrl != null) {
-          return newOtherLiveUrl;
-        } else {
-          return null;
-        }
+        return newOtherLiveUrl;
+      } else {
+        throw Exception("LS login api return false");
       }
     } catch (e) {
       print("getOtherLiveUrl fail: ${e.toString()}");

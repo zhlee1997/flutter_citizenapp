@@ -1,5 +1,5 @@
 name: flutter_citizenapp
-description: "A new Flutter project."
+description: "A SMA project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
@@ -16,7 +16,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.0+16
+version: 1.0.0+17
 
 environment:
   sdk: ">=3.2.2 <4.0.0"
@@ -41,7 +41,6 @@ dependencies:
   path_provider: ^2.1.1
   flutter_vlc_player: ^7.4.1
   uuid: ^4.3.3
-  http: ^1.2.0
   lottie: ^3.0.0
   audioplayers: ^6.0.0
   google_maps_flutter: ^2.6.1
@@ -73,7 +72,6 @@ dependencies:
   http_parser: ^4.0.2
   flutter_spinkit: ^5.2.0
   photo_view: ^0.15.0
-  fijkplayer: ^0.11.0
   dio: ^5.4.1
   mask_text_input_formatter: ^2.9.0
   flutter_polyline_points: ^2.0.0
@@ -87,6 +85,8 @@ dependencies:
   firebase_analytics: ^10.8.9
   month_picker_dialog: ^2.12.0
   appcheck: ^1.1.0
+  flutter_dotenv: ^5.1.0
+  crypto: ^3.0.3
 
 dev_dependencies:
   flutter_test:
@@ -198,6 +198,9 @@ flutter:
 
     #disclaimer
     - assets/disclaimer/security_disclaimer.md
+
+    #env
+    - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

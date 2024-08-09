@@ -265,9 +265,14 @@ class _NotificationsBottomNavScreenState
           _isLoading = true;
         });
       }
-      await getMajorAnnouncements(_majorPage);
-      await Provider.of<InboxProvider>(context, listen: false)
-          .refreshNotificationsProvider();
+      try {
+        await getMajorAnnouncements(_majorPage);
+        await Provider.of<InboxProvider>(context, listen: false)
+            .refreshNotificationsProvider();
+      } catch (e) {
+        print("error loading inbox page: $e");
+      }
+
       if (mounted) {
         setState(() {
           _isLoading = false;
