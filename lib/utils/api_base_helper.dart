@@ -1,14 +1,17 @@
 import 'dart:io';
-import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
-import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:logger/logger.dart';
 
 import './app_exception.dart';
 import '../config/app_config.dart';
+
+var logger = Logger(
+  printer: PrettyPrinter(),
+);
 
 class ApiBaseHelper {
   final String _baseUrl = AppConfig.baseURL;
@@ -20,36 +23,49 @@ class ApiBaseHelper {
     required bool requireToken,
   }) async {
     final dio = Dio();
-    final storage = new FlutterSecureStorage();
+    const storage = FlutterSecureStorage();
     var siocToken = await storage.read(key: 'siocToken');
     var sarawakToken = await storage.read(key: 'sarawakToken');
-    print("Authorization header: $siocToken");
+    logger.d("Authorization header: $siocToken");
 
-    var responseJson;
+    dynamic responseJson;
 
     try {
-      print("getURL: $_baseUrl$url");
-      print("getParameters: $queryParameters");
+      logger.d("getURL: $_baseUrl$url");
+      logger.d("getParameters: $queryParameters");
       final response = await dio.get(
         "$_baseUrl$url",
+        queryParameters: queryParameters,
         options: requireToken
             ? Options(
+                receiveTimeout: const Duration(seconds: 15),
+                sendTimeout: const Duration(seconds: 10),
                 headers: {
                   'Authorization': siocToken ?? '',
                   'sarawakToken': sarawakToken ?? '',
                 },
                 contentType: Headers.jsonContentType,
               )
-            : null,
-        queryParameters: queryParameters,
+            : Options(
+                receiveTimeout: const Duration(seconds: 15),
+                sendTimeout: const Duration(seconds: 10),
+                contentType: Headers.jsonContentType,
+              ),
       );
       responseJson = _returnResponse(response);
-    } on Exception catch (e) {
-      print('getError: ${e.toString()}');
-      // make it explicit that this function can throw exceptions
+    } on DioException catch (e) {
+      if (e.type == DioExceptionType.sendTimeout) {
+        // Handle send timeout
+        logger.d("Send Timeout Error: $e");
+      } else if (e.type == DioExceptionType.receiveTimeout) {
+        // Handle receive timeout
+        logger.d("Receive Timeout Error: $e");
+      } else {
+        // Handle other errors
+        logger.d("getError: ${e.toString()}");
+      }
       rethrow;
     }
-    // _checkResponse(responseJson);
     return responseJson;
   }
 
@@ -67,22 +83,33 @@ class ApiBaseHelper {
       },
     );
 
-    var responseJson;
+    dynamic responseJson;
 
     try {
-      print("getURLThirdParty: $url");
-      print("getParametersThirdParty: $queryParameters");
+      logger.d("getURLThirdParty: $url");
+      logger.d("getParametersThirdParty: $queryParameters");
       final response = await dio.get(
         url,
         queryParameters: queryParameters,
+        options: Options(
+          receiveTimeout: const Duration(seconds: 15),
+          sendTimeout: const Duration(seconds: 10),
+        ),
       );
       responseJson = _returnResponse(response);
-    } on Exception catch (e) {
-      print('getThirdPartyError: ${e.toString()}');
-      // make it explicit that this function can throw exceptions
+    } on DioException catch (e) {
+      if (e.type == DioExceptionType.sendTimeout) {
+        // Handle send timeout
+        logger.d("Send Timeout Error: $e");
+      } else if (e.type == DioExceptionType.receiveTimeout) {
+        // Handle receive timeout
+        logger.d("Receive Timeout Error: $e");
+      } else {
+        // Handle other errors
+        logger.d("getThirdPartyError: ${e.toString()}");
+      }
       rethrow;
     }
-    // _checkResponse(responseJson);
     return responseJson;
   }
 
@@ -95,18 +122,24 @@ class ApiBaseHelper {
     int domainFlagValue = 0,
   }) async {
     final dio = Dio();
-    final storage = new FlutterSecureStorage();
+    const storage = FlutterSecureStorage();
     var siocToken = await storage.read(key: 'siocToken');
     var sarawakToken = await storage.read(key: 'sarawakToken');
+    logger.d("Authorization header: $siocToken");
 
-    var responseJson;
+    dynamic responseJson;
 
     try {
-      print("postURL: $_baseUrl$url");
-      print("postData: $data");
+      logger.d("postURL: $_baseUrl$url");
+      logger.d("postData: $data");
       final response = await dio.post(
         "$_baseUrl$url",
+        data: data,
+        cancelToken: cancelToken,
         options: Options(
+          receiveTimeout: const Duration(seconds: 15),
+          sendTimeout: const Duration(seconds: 10),
+          contentType: Headers.jsonContentType,
           headers: domainFlag
               ? {
                   'Authorization': siocToken ?? '',
@@ -118,21 +151,24 @@ class ApiBaseHelper {
                   'sarawakToken': sarawakToken ?? '',
                 },
         ),
-        data: data,
-        cancelToken: cancelToken,
       );
 
       responseJson = _returnResponse(response);
-    } on DioException catch (error) {
-      if (CancelToken.isCancel(error)) {
-        print('Request canceled: ${error.message}');
+    } on DioException catch (e) {
+      if (e.type == DioExceptionType.sendTimeout) {
+        // Handle send timeout
+        logger.d("Send Timeout Error: $e");
+      } else if (e.type == DioExceptionType.receiveTimeout) {
+        // Handle receive timeout
+        logger.d("Receive Timeout Error: $e");
+      } else if (CancelToken.isCancel(e)) {
+        logger.e('Request canceled: ${e.message}');
+      } else {
+        // Handle other errors
+        logger.d("postError: ${e.toString()}");
       }
-    } catch (e) {
-      print('postError: ${e.toString()}');
-      // make it explicit that this function can throw exceptions
       rethrow;
     }
-    // _checkResponse(responseJson);
     return responseJson;
   }
 
@@ -143,34 +179,44 @@ class ApiBaseHelper {
     Function(int, int)? onSendProgress,
   }) async {
     final dio = Dio();
-    final storage = new FlutterSecureStorage();
+    const storage = FlutterSecureStorage();
     var siocToken = await storage.read(key: 'siocToken');
     var sarawakToken = await storage.read(key: 'sarawakToken');
 
-    var responseJson;
+    dynamic responseJson;
 
     try {
-      print("deleteURL: $_baseUrl$url");
-      print("deleteData: $data");
+      logger.d("deleteURL: $_baseUrl$url");
+      logger.d("deleteData: $data");
       final response = await dio.delete(
         "$_baseUrl$url",
+        data: data,
         options: requireToken
             ? Options(
+                receiveTimeout: const Duration(seconds: 15),
+                sendTimeout: const Duration(seconds: 10),
+                contentType: Headers.jsonContentType,
                 headers: {
                   'Authorization': siocToken ?? '',
                   'sarawakToken': sarawakToken ?? '',
                 },
               )
             : null,
-        data: data,
       );
       responseJson = _returnResponse(response);
-    } catch (e) {
-      print('deleteError: ${e.toString()}');
-      // make it explicit that this function can throw exceptions
+    } on DioException catch (e) {
+      if (e.type == DioExceptionType.sendTimeout) {
+        // Handle send timeout
+        print("Send Timeout Error: $e");
+      } else if (e.type == DioExceptionType.receiveTimeout) {
+        // Handle receive timeout
+        print("Receive Timeout Error: $e");
+      } else {
+        // Handle other errors
+        print('deleteError: ${e.toString()}');
+      }
       rethrow;
     }
-    // _checkResponse(responseJson);
     return responseJson;
   }
 
@@ -179,26 +225,18 @@ class ApiBaseHelper {
       case 200:
         var responseJson = response.data;
         return responseJson;
-      // TODO: temp added for JSON Server
-      // case 201:
-      //   var responseJson = json.decode(response.data.toString());
-      // return response.statusCode.toString();
       case 400:
         throw BadRequestException(response.data.toString());
       case 401:
       case 403:
         throw UnauthorisedException(response.data.toString());
+      case 40101:
+      case 40301:
+        _deleteLocalData();
       case 500:
       default:
         throw FetchDataException(
             'Error occured while Communication with Server with StatusCode : ${response.statusCode}');
-    }
-  }
-
-  void _checkResponse(http.Response response) {
-    var responseJson = json.decode(response.body.toString());
-    if (responseJson['status'] == 40101 || responseJson['status'] == 40301) {
-      _deleteLocalData();
     }
   }
 

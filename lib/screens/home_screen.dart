@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:lottie/lottie.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -62,6 +63,10 @@ class _HomeScreenState extends State<HomeScreen> {
   // stream for listening to SPay SDK when payment is done
   void _onData(Object? obj) async {
     try {
+      GlobalDialogHelper().buildCircularProgressWithTextCenter(
+        context: context,
+        message: "Fetching data",
+      );
       if (isSubscription) {
         // TODO: Temp skip auth checking
         await Provider.of<AuthProvider>(context, listen: false)
@@ -75,7 +80,8 @@ class _HomeScreenState extends State<HomeScreen> {
       /// if success, navigate to Successful Payment Screen
       ///
       /// else, navigate to Due Payment Screen
-      if (encryptedData.isNotEmpty) {
+      if (encryptedData.isNotEmpty ||
+          !encryptedData.contains("Order Acquisition Fail")) {
         print("encryptData: $encryptedData");
         Map<String, dynamic> param = {"encryptData": encryptedData};
         var response = await SubscriptionServices().decryptData(param);
@@ -90,22 +96,26 @@ class _HomeScreenState extends State<HomeScreen> {
           jumpPayResult(payResult);
         }
       } else {
+        // encryptedData is empty
+        // encryptedData contains "Order Acquisition Fail"
+        Navigator.of(context).pop(true);
         if (isSubscription) {
-          Navigator.of(context).pushNamedAndRemoveUntil(
-            SubscriptionDueScreen.routeName,
-            (route) => route.isFirst,
-          );
+          Navigator.of(context).pushNamed(SubscriptionDueScreen.routeName);
           return;
         }
-        Navigator.of(context).pushNamedAndRemoveUntil(
-          BillPaymentDueScreen.routeName,
-          (route) => route.isFirst,
-        );
+        Navigator.of(context).pushNamed(BillPaymentDueScreen.routeName);
         return;
       }
     } catch (e) {
+      // decryptData error: Service not found!
       print("_onData error: ${e.toString()}");
-      throw e;
+      Navigator.of(context).pop();
+      if (isSubscription) {
+        Navigator.of(context).pushNamed(SubscriptionDueScreen.routeName);
+        return;
+      }
+      Navigator.of(context).pushNamed(BillPaymentDueScreen.routeName);
+      return;
     }
   }
 
@@ -120,9 +130,8 @@ class _HomeScreenState extends State<HomeScreen> {
       // for subscription, after payment
       Provider.of<SubscriptionProvider>(context, listen: false)
           .changeIsSubscription(false);
-      Navigator.of(context).pushNamedAndRemoveUntil(
+      Navigator.of(context).pushNamed(
         SubscriptionResultScreen.routeName,
-        (route) => route.isFirst,
         arguments: SubscriptionResultScreenArguments(
           orderAmt: param["orderAmt"],
           orderDate: param["orderDate"],
@@ -130,9 +139,8 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ); // is used to keep only the first route (the HomeScreen);
     } else {
-      Navigator.of(context).pushNamedAndRemoveUntil(
+      Navigator.of(context).pushNamed(
         BillPaymentResultScreen.routeName,
-        (route) => route.isFirst,
         arguments: BillPaymentResultScreenArguments(
           orderAmt: param["orderAmt"],
           orderDate: param["orderDate"],

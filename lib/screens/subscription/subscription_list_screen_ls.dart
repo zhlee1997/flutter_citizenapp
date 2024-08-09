@@ -129,27 +129,26 @@ class _SubscriptionListScreenLSState extends State<SubscriptionListScreenLS> {
       try {
         await Provider.of<CCTVProvider>(context, listen: false)
             .getLinkingVisionLoginProvider();
+        session = Provider.of<CCTVProvider>(context, listen: false).sessionLS;
+        _cameraListModelList.addAll(
+            Provider.of<CameraSubscriptionProvider>(context, listen: false)
+                .cameraSubscription);
+        _cameraListModelList.add(CameraSubscriptionModel(
+          channel: "",
+          deviceCode: "",
+          deviceName: "",
+          id: "",
+          latitude: "",
+          longitude: "",
+          location: "",
+          picUrl: "",
+        ));
+        setState(() {
+          _isLoading = false;
+        });
       } catch (e) {
         print("getLinkingVisionLoginProvider fail: $e");
       }
-      session = Provider.of<CCTVProvider>(context, listen: false).sessionLS;
-      _cameraListModelList.addAll(
-          Provider.of<CameraSubscriptionProvider>(context, listen: false)
-              .cameraSubscription);
-      _cameraListModelList.add(CameraSubscriptionModel(
-        channel: "",
-        deviceCode: "",
-        deviceName: "",
-        id: "",
-        latitude: "",
-        longitude: "",
-        location: "",
-        picUrl: "",
-      ));
-      // print(_cameraListModelList);
-      setState(() {
-        _isLoading = false;
-      });
     });
   }
 

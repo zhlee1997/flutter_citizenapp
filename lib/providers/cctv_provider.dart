@@ -1,4 +1,8 @@
+import 'dart:convert'; // for the utf8.encode method
+
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:crypto/crypto.dart';
 
 import '../models/camera_subscription_model.dart';
 import '../models/cctv_model.dart';
@@ -112,16 +116,22 @@ class CCTVProvider with ChangeNotifier {
   }
 
   Future<void> getLinkingVisionLoginProvider() async {
+    var bytes = utf8.encode(dotenv.env["password"]!); // data being hashed
+    var digest = md5.convert(bytes);
+
     try {
       Map<String, dynamic> map = {
-        "user": "admin",
-        "password": "450cd8c9ccc2a97d8f1619f0201b9d7f",
+        "user": dotenv.env["username"],
+        "password": digest.toString(),
       };
       var response = await CCTVServices().getLinkingVisionLogin(map);
       if (response['bStatus'] == true) {
         String session = response["strSession"];
         _sessionLS = session;
         print("LinkingVision session: $session");
+      } else {
+        _sessionLS = response["strSession"];
+        throw Exception("LS login api return false");
       }
     } catch (e) {
       print('getLinkingVisionLoginProvider fail: ${e.toString()}');

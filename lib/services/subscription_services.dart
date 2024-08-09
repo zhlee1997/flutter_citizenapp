@@ -16,13 +16,12 @@ class SubscriptionServices {
       return response;
     } catch (e) {
       print('queryPackageAndSubscriptionEnable error: ${e.toString()}');
-      // TODO: Error handling
       // throw e;
       rethrow;
     }
   }
 
-  // TODO: NEW API: querySubscriptionWhitelisted
+  // NEW API: querySubscriptionWhitelisted
   Future<dynamic> querySubscriptionWhitelisted({
     required String subscribeId,
     required String memberId,
@@ -30,7 +29,7 @@ class SubscriptionServices {
     try {
       Map<String, dynamic> queryParameters = {
         "subscribeId": subscribeId,
-        "memberId": memberId,
+        // "memberId": memberId,
       };
       var response = await _apiBaseHelper.get(
         'member/subscribePackageMemberRlt/queryList',
@@ -41,21 +40,20 @@ class SubscriptionServices {
       return response;
     } catch (e) {
       print('querySubscriptionWhitelisted error: ${e.toString()}');
-      // TODO: Error handling
       // throw e;
       rethrow;
     }
   }
 
   // check subscription package option
-  // TODO: NEW API: querySubscriptionPackageOption
+  // NEW API: querySubscriptionPackageOption
   Future<dynamic> querySubscriptionPackageOption({
     required String subscribeId,
     required String memberId,
   }) async {
     Map<String, dynamic> queryParameters = {
       "subscribeId": subscribeId,
-      "memberId": memberId,
+      // "memberId": memberId,
     };
     try {
       var response = await _apiBaseHelper.get(
@@ -119,6 +117,11 @@ class SubscriptionServices {
         'payment/orderForm/decryptData',
         data: json.encode(data),
       );
+
+      if (response["status"] == "500") {
+        throw Exception("decryptData error: ${response["message"]}");
+      }
+
       print('decryptData API success: $response');
       return response;
     } catch (e) {

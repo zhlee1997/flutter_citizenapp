@@ -399,13 +399,18 @@ class _SubscriptionCheckoutScreenState
                           androidPackageName: 'my.gov.sarawak.paybills',
                         );
                         if (isAppInstalled) {
-                          GlobalDialogHelper()
-                              .buildCircularProgressWithTextCenter(
-                            context: context,
-                            message: AppLocalization.of(context)!
-                                .translate('redirecting_spay_global')!,
-                          );
-                          orderRequest(context, args.selectedPrice);
+                          try {
+                            GlobalDialogHelper()
+                                .buildCircularProgressWithTextCenter(
+                              context: context,
+                              message: AppLocalization.of(context)!
+                                  .translate('redirecting_spay_global')!,
+                            );
+                            await orderRequest(context, args.selectedPrice);
+                          } catch (e) {
+                            Navigator.of(context).pop();
+                            print("orderRequest fail: ${e.toString()}");
+                          }
                         } else {
                           // Navigator.of(context).pop();
                           showNeedInstallSPayBottomModal();

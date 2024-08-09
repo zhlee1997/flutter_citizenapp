@@ -155,7 +155,7 @@ class _NewCaseScreenState extends State<NewCaseScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Submit Feedback'),
+          title: const Text('Submit Feedback'),
         ),
         body: Stepper(
           type: StepperType.horizontal,

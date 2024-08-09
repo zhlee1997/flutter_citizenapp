@@ -35,6 +35,10 @@ class BillServices {
         'payment/orderForm/create/confirm',
         data: json.encode(data),
       );
+
+      // to handle: {data:, message: 5633470832784523283, status: 200}
+      if (response["data"] == "") throw Exception("data is null");
+
       print('confirmBillOrder API success: $response');
       return response;
     } catch (e) {

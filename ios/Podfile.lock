@@ -5,7 +5,6 @@ PODS:
     - Flutter
   - audioplayers_darwin (0.0.1):
     - Flutter
-  - BIJKPlayer (0.7.16)
   - device_info_plus (0.0.1):
     - Flutter
   - ffmpeg-kit-ios-https (6.0)
@@ -14,9 +13,6 @@ PODS:
     - Flutter
   - ffmpeg_kit_flutter/https (6.0.3):
     - ffmpeg-kit-ios-https (= 6.0)
-    - Flutter
-  - fijkplayer (0.11.0):
-    - BIJKPlayer (~> 0.7.16)
     - Flutter
   - Firebase/Analytics (10.25.0):
     - Firebase/Core
@@ -288,7 +284,6 @@ DEPENDENCIES:
   - audioplayers_darwin (from `.symlinks/plugins/audioplayers_darwin/ios`)
   - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
   - ffmpeg_kit_flutter (from `.symlinks/plugins/ffmpeg_kit_flutter/ios`)
-  - fijkplayer (from `.symlinks/plugins/fijkplayer/ios`)
   - firebase_analytics (from `.symlinks/plugins/firebase_analytics/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - firebase_crashlytics (from `.symlinks/plugins/firebase_crashlytics/ios`)
@@ -317,7 +312,6 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
-    - BIJKPlayer
     - ffmpeg-kit-ios-https
     - Firebase
     - FirebaseAnalytics
@@ -363,8 +357,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/device_info_plus/ios"
   ffmpeg_kit_flutter:
     :path: ".symlinks/plugins/ffmpeg_kit_flutter/ios"
-  fijkplayer:
-    :path: ".symlinks/plugins/fijkplayer/ios"
   firebase_analytics:
     :path: ".symlinks/plugins/firebase_analytics/ios"
   firebase_core:
@@ -420,11 +412,9 @@ SPEC CHECKSUMS:
   appcheck: e1ab9d4e03736f03e0401554a134d1ed502d7629
   audio_waveforms: cd736909ebc6b6a164eb74701d8c705ce3241e1c
   audioplayers_darwin: 877d9a4d06331c5c374595e46e16453ac7eafa40
-  BIJKPlayer: 4c5d66e5cb99ae5bade6f22a4fcc031722a81c64
   device_info_plus: 97af1d7e84681a90d0693e63169a5d50e0839a0d
   ffmpeg-kit-ios-https: f9c838aa5400a6c5ba12324c6b798f52197ba354
   ffmpeg_kit_flutter: b4ca70cac3fc1d8ac14cdc660754b60870358732
-  fijkplayer: 8b6d864948dc28e6e07248ed4fce61a7467db4df
   Firebase: 0312a2352584f782ea56f66d91606891d4607f06
   firebase_analytics: 0b2b459312872129295c3f9c44225eda552fd8f3
   firebase_core: 0b39f4f424e02eecabb2356ddf331fa07b772af8

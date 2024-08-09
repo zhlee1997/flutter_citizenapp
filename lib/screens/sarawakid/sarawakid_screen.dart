@@ -121,8 +121,9 @@ class _SarawakIDScreenState extends State<SarawakIDScreen> {
       body: InAppWebView(
         key: _webviewKey,
         initialData: InAppWebViewInitialData(
-            data:
-                """<script src="https://sarawakid-tnt.sarawak.gov.my/web/share/swkid_plugin/?lang=en"></script>
+          data:
+              // """<script src="https://sarawakid-tnt.sarawak.gov.my/web/share/swkid_plugin/?lang=en"></script>
+              """<script src="https://sarawakid.sarawak.gov.my/web/share/swkid_plugin/?lang=en"></script>
 <script type="text/javascript" language="javascript">
     document.addEventListener("DOMContentLoaded", function () {
         swkid_sso_init({
@@ -136,7 +137,8 @@ class _SarawakIDScreenState extends State<SarawakIDScreen> {
         });
         swkid_login_form_submit();
     });
-</script>"""),
+</script>""",
+        ),
         initialSettings: InAppWebViewSettings(
           incognito: true,
         ),

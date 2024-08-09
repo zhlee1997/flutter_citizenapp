@@ -34,7 +34,8 @@ class AppConfig {
 
   static String sarawakIdClientID = ''; // default
   String get sarawakIdClientIDProduction =>
-      'citizenapp_mobile_production'; // Production Env
+      'citizenapp_mobile'; // Production Env
+  // 'citizenapp_mobile_production'; // Production Env
   String get sarawakIdClientIDStaging =>
       'citizenapp_mobile_staging'; // Staging Env
   String get sarawakIdClientIDDev => 'citizenapp_mobile_dev'; // Dev Env

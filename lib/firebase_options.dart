@@ -3,6 +3,7 @@
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 /// Default [FirebaseOptions] for use with your Firebase apps.
 ///
@@ -49,21 +50,22 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDLLp-cs2czzDmxfZ5dj2ckU7xrdPAiPxI',
-    appId: '1:664335931229:android:6a7dc365f6515eafbebab4',
+  static FirebaseOptions android = FirebaseOptions(
+    apiKey: dotenv.env['androidApiKey']!,
+    appId: dotenv.env['androidAppId']!,
     messagingSenderId: '664335931229',
     projectId: 'sioc2a',
     storageBucket: 'sioc2a.appspot.com',
   );
 
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCISHKOIjGdq03w0HE3_eeO5DuMofu1tlY',
-    appId: '1:664335931229:ios:a251aa26e60258bcbebab4',
+  static FirebaseOptions ios = FirebaseOptions(
+    apiKey: dotenv.env['iosApiKey']!,
+    appId: dotenv.env['iosAppId']!,
     messagingSenderId: '664335931229',
     projectId: 'sioc2a',
     storageBucket: 'sioc2a.appspot.com',
-    androidClientId: '664335931229-tnn7rs9rspp3g65ko493r91hf1oqj2ia.apps.googleusercontent.com',
+    androidClientId:
+        '664335931229-tnn7rs9rspp3g65ko493r91hf1oqj2ia.apps.googleusercontent.com',
     iosBundleId: 'com.sioc.sma.flutterCitizenapp',
   );
 }

@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:fijkplayer/fijkplayer.dart';
+// import 'package:fijkplayer/fijkplayer.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -31,7 +31,7 @@ class SubscriptionVideoScreen extends StatefulWidget {
 
 class _SubscriptionVideoScreenState extends State<SubscriptionVideoScreen>
     with SingleTickerProviderStateMixin {
-  final FijkPlayer player = FijkPlayer();
+  // final FijkPlayer player = FijkPlayer();
 
   late Timer timer;
   late Timer videoTimer;
@@ -77,47 +77,47 @@ class _SubscriptionVideoScreenState extends State<SubscriptionVideoScreen>
   }
 
   void _fijkValueListener() {
-    FijkState state = player.state;
-    print("PlayerStates: ${state.index}");
+    // FijkState state = player.state;
+    // print("PlayerStates: ${state.index}");
 
-    if (state.index == 0) {
-      player.setDataSource(
-        args.liveUrl,
-        autoPlay: true,
-      );
-    }
+    // if (state.index == 0) {
+    //   player.setDataSource(
+    //     args.liveUrl,
+    //     autoPlay: true,
+    //   );
+    // }
 
-    if (state.index == 4) {
-      Fluttertoast.cancel();
-      timer.cancel();
-    }
+    // if (state.index == 4) {
+    //   Fluttertoast.cancel();
+    //   timer.cancel();
+    // }
 
-    if (state.index == 6) {
-      Future.delayed(const Duration(seconds: 5), () {
-        print('error player reset!');
-        player.reset(); // player will be in state 0
-      });
-    }
+    // if (state.index == 6) {
+    //   Future.delayed(const Duration(seconds: 5), () {
+    //     print('error player reset!');
+    //     player.reset(); // player will be in state 0
+    //   });
+    // }
 
-    if (state.index == 8) {
-      print('video player in error state');
-      Fluttertoast.cancel();
-      timer.cancel();
+    // if (state.index == 8) {
+    //   print('video player in error state');
+    //   Fluttertoast.cancel();
+    //   timer.cancel();
 
-      final snackBar = SnackBar(
-        content: const Text('An error has occurred. Tap to retry'),
-        action: SnackBarAction(
-          label: "Retry",
-          onPressed: (() {
-            player.reset(); // player will be in state 0
-            _setTimer();
-          }),
-        ),
-        duration: const Duration(minutes: 1),
-      );
+    //   final snackBar = SnackBar(
+    //     content: const Text('An error has occurred. Tap to retry'),
+    //     action: SnackBarAction(
+    //       label: "Retry",
+    //       onPressed: (() {
+    //         player.reset(); // player will be in state 0
+    //         _setTimer();
+    //       }),
+    //     ),
+    //     duration: const Duration(minutes: 1),
+    //   );
 
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    }
+    //   ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    // }
   }
 
   // return Google Map URL
@@ -242,44 +242,44 @@ class _SubscriptionVideoScreenState extends State<SubscriptionVideoScreen>
       // Accessing the arguments passed to the modal route
       args = ModalRoute.of(context)!.settings.arguments
           as SubscriptionVideoScreenArguments;
-      player.setDataSource(
-        // FLV Stream
-        args.liveUrl,
+      // player.setDataSource(
+      //   // FLV Stream
+      //   args.liveUrl,
 
-        // RTSP Stream
-        // "rtsp://rtspstream:ee1530a1676f130466b44e88b46caa30@zephyr.rtsp.stream/movie",
+      //   // RTSP Stream
+      //   // "rtsp://rtspstream:ee1530a1676f130466b44e88b46caa30@zephyr.rtsp.stream/movie",
 
-        // HLS Stream
-        // "https://flipfit-cdn.akamaized.net/flip_hls/661f570aab9d840019942b80-473e0b/video_h1.m3u8",
-        autoPlay: true,
-        showCover: true,
-      );
-      player.addListener(_fijkValueListener);
+      //   // HLS Stream
+      //   // "https://flipfit-cdn.akamaized.net/flip_hls/661f570aab9d840019942b80-473e0b/video_h1.m3u8",
+      //   autoPlay: true,
+      //   showCover: true,
+      // );
+      // player.addListener(_fijkValueListener);
 
       // Playback duration limit
       var playbackDurationLimit =
           Provider.of<SubscriptionProvider>(context, listen: false)
               .playbackDuration;
-      _videoStreamSubscription =
-          player.onCurrentPosUpdate.listen((Duration duration) {
-        if (duration.inMinutes == int.parse(playbackDurationLimit)) {
-          player.release();
-          Fluttertoast.cancel();
-          timer.cancel();
+      // _videoStreamSubscription =
+      //     player.onCurrentPosUpdate.listen((Duration duration) {
+      //   if (duration.inMinutes == int.parse(playbackDurationLimit)) {
+      //     player.release();
+      //     Fluttertoast.cancel();
+      //     timer.cancel();
 
-          final videoSnackBar = SnackBar(
-            content:
-                Text('$playbackDurationLimit-min playing duration reached.'),
-            action: SnackBarAction(
-              label: "Back",
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-            duration: const Duration(minutes: 1),
-          );
+      //     final videoSnackBar = SnackBar(
+      //       content:
+      //           Text('$playbackDurationLimit-min playing duration reached.'),
+      //       action: SnackBarAction(
+      //         label: "Back",
+      //         onPressed: () => Navigator.of(context).pop(),
+      //       ),
+      //       duration: const Duration(minutes: 1),
+      //     );
 
-          ScaffoldMessenger.of(context).showSnackBar(videoSnackBar);
-        }
-      });
+      //     ScaffoldMessenger.of(context).showSnackBar(videoSnackBar);
+      //   }
+      // });
       // get other cameras => API
       getOtherCamerasList(args.deviceCode);
       // CCTV latitude, longitude
@@ -307,8 +307,8 @@ class _SubscriptionVideoScreenState extends State<SubscriptionVideoScreen>
       timer.cancel();
     }
     Fluttertoast.cancel();
-    player.removeListener(_fijkValueListener);
-    player.release();
+    // player.removeListener(_fijkValueListener);
+    // player.release();
     _videoStreamSubscription.cancel();
   }
 
@@ -331,14 +331,14 @@ class _SubscriptionVideoScreenState extends State<SubscriptionVideoScreen>
         ),
         body: Column(
           children: [
-            SizedBox(
-              height: screenSize.height * 0.32,
-              child: FijkView(
-                fs: true,
-                player: player,
-                color: Colors.black,
-              ),
-            ),
+            // SizedBox(
+            //   height: screenSize.height * 0.32,
+            //   child: FijkView(
+            //     fs: true,
+            //     player: player,
+            //     color: Colors.black,
+            //   ),
+            // ),
             TabBar(
               tabs: const [
                 Tab(

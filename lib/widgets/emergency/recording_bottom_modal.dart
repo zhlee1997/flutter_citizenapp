@@ -205,7 +205,7 @@ class _RecordingBottomModalState extends State<RecordingBottomModal> {
         setState(() {});
       }
     } catch (e) {
-      Fluttertoast.showToast(msg: "Geocode error. Please try again");
+      // Fluttertoast.showToast(msg: "Geocode error. Please try again");
       print("_geocodeAddress error: ${e.toString()}");
     }
   }

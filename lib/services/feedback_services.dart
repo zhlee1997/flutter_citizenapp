@@ -60,11 +60,11 @@ class FeedbackServices {
     String pageSize = '20',
   }) async {
     final prefs = await SharedPreferences.getInstance();
-    var userId = prefs.getString('userId');
+    // var userId = prefs.getString('userId');
     var queryParameters = {
       'pageNum': pageNum,
       'pageSize': pageSize,
-      "memberId": userId,
+      // "memberId": userId,
     };
     try {
       var response = await _apiBaseHelper.get(

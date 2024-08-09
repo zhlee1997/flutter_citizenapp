@@ -25,7 +25,7 @@ class LanguageProvider extends ChangeNotifier {
       }
       notifyListeners();
     } catch (e) {
-      print("checkLanguage error: ${e.toString()}");
+      logger.e("checkLanguage error: ${e.toString()}");
       rethrow;
     }
   }
