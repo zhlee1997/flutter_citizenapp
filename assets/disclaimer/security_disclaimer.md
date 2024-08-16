@@ -1,8 +1,8 @@
-# Security Disclaimer for CCTV Usage in [City Name] Smart City Project
+# Security Disclaimer for CCTV Usage in Kuching Smart City Project
 
 **Dear Residents and Visitors,**
 
-Welcome to [City Name]'s Smart City project, where we are committed to enhancing safety and security through the use of modern technologies. As part of this initiative, Closed-Circuit Television (CCTV) cameras have been strategically placed in public spaces to monitor and ensure the safety of the community.
+Welcome to Kuching's Smart City project, where we are committed to enhancing safety and security through the use of modern technologies. As part of this initiative, Closed-Circuit Television (CCTV) cameras have been strategically placed in public spaces to monitor and ensure the safety of the community.
 
 ## Purpose of CCTV Usage:
 
@@ -25,15 +25,15 @@ We are committed to protecting your privacy, and the following measures have bee
 
 1. **Public Notice:** Clear signage is placed in areas under CCTV surveillance to inform the public.
 2. **Legal Compliance:** CCTV usage complies with all relevant laws and regulations.
-3. **Public Feedback:** We welcome feedback from the public regarding the CCTV system. Please contact [Contact Information] for any concerns or inquiries.
+3. **Public Feedback:** We welcome feedback from the public regarding the CCTV system. Please contact SMA for any concerns or inquiries.
 
 ## Disclaimer:
 
-While every effort is made to protect privacy and maintain the security of collected data, [City Name] Smart City Project cannot guarantee the absolute prevention of unauthorized access. By entering public spaces within the Smart City, you acknowledge and accept the use of CCTV cameras for security purposes.
+While every effort is made to protect privacy and maintain the security of collected data, Kuching Smart City Project cannot guarantee the absolute prevention of unauthorized access. By entering public spaces within the Smart City, you acknowledge and accept the use of CCTV cameras for security purposes.
 
 Thank you for your cooperation and understanding.
 
 **Sincerely,**
 
-[City Name] Smart City Project  
-[Contact Information]
+Kuching Smart City Project  
+SARAWAK MULTIMEDIA AUTHORITY
