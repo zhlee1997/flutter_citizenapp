@@ -144,10 +144,14 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
                 initialDate: DateTime.now(),
                 firstDate: DateTime(DateTime.now().year - 1),
                 lastDate: DateTime(DateTime.now().year + 1),
-                locale: Locale(
-                  Provider.of<LanguageProvider>(context, listen: false)
-                      .locale
-                      .languageCode,
+                monthPickerDialogSettings: MonthPickerDialogSettings(
+                  dialogSettings: PickerDialogSettings(
+                    locale: Locale(
+                      Provider.of<LanguageProvider>(context, listen: false)
+                          .locale
+                          .languageCode,
+                    ),
+                  ),
                 ),
               ).then((DateTime? date) async {
                 if (date != null) {

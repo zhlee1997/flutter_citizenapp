@@ -69,7 +69,7 @@ class GeneralHelper {
         return iosAppInstalled;
       } else {
         bool? androidAppInstalled =
-            await AppCheck.isAppInstalled(androidPackageName);
+            await AppCheck().isAppInstalled(androidPackageName);
         return androidAppInstalled;
       }
     } catch (e) {

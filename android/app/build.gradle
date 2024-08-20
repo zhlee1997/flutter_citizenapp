@@ -127,7 +127,7 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation(name: 'paylibrary-release', ext: 'aar')
-
+    implementation 'com.android.support:multidex:2.0.1'
 }
 
 // This must appear at the bottom of the file
